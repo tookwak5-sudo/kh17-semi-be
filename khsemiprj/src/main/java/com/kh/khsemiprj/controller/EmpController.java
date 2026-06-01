@@ -21,6 +21,7 @@ import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
 
+import ch.qos.logback.core.model.Model;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -125,11 +126,19 @@ public class EmpController {
 	}
 
 	//아이디 찾기 페이지
-	@GetMapping("/findId")
-	public String findId() {
-		return "emp/findId";
-	}
-	
+//	@GetMapping("/findId")
+//	public String findId() {
+//		return "emp/findId";
+//	}
+//	
+//	@PostMapping("/findId")
+//	public String findId(@RequestMapping String empName,
+//					@RequestMapping String empEmail,
+//						Model model)
+//	{
+//		
+//	}
+//	
 //	@postMapping("/findId")
 //	public String findId()
 	
