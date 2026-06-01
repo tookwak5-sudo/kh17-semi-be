@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,7 +122,7 @@ public class EmpController {
 	}
 	@RequestMapping("/joinFinish")
 	public String joinFinish() {
-		return "member/joinFinish";
+		return "emp/joinFinish";
 	}
 
 	//아이디 찾기 페이지
@@ -161,8 +162,19 @@ public class EmpController {
 		
 		//certDao.delete(certDto.getCertEmail());//인증기록 삭제
 		certDao.update(certDto.getCertEmail());//인증완료(cert_yn='Y')로 업데이트
-		return "member/cert";
+		return "emp/cert";
 	}
 	
+	@RequestMapping("/mypage")
+	public String mypage(HttpSession session,Model model) {
+		String loginId =(String) session.getAttribute("empId");
+		
+		EmpDto empDto = empDao.selectOne(loginId);
+		model.addAttribute("empDto", empDto);
+		
+		//근태 로그 및 로그인 로그 필요.
+		
+		return "emp/mypage";
+	}
 
 }

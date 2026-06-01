@@ -40,7 +40,7 @@ public class EmpDao {
 	}
 
 	public void connect(String empId, int attachNo) {
-		String sql = "insert into member_profile(emp_id, attach_no) values(?, ?)";
+		String sql = "insert into emp_profile(emp_id, attach_no) values(?, ?)";
 		Object[] params = { empId, attachNo };
 		jdbcTemplate.update(sql, params);
 	}
