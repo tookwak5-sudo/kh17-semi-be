@@ -6,6 +6,6 @@ public class GetOutException extends RuntimeException{
 	}
 	
 	public GetOutException(String message) {
-		super(message);
+		super(message); 
 	}
 }
