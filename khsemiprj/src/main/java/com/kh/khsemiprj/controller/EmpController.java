@@ -134,8 +134,7 @@ public class EmpController {
 	@PostMapping("/findId")
 	public String findId(@RequestParam String empName,
 					@RequestParam String empEmail,
-						Model model)
-	{
+						Model model){
 		EmpDto empDto = empDao.selectId(empName, empEmail);
 		
 		if(empDto == null) {
@@ -149,6 +148,25 @@ public class EmpController {
 		
 	}
 	
+	//비밀번호 찾기 페이지
+	@GetMapping("/findPassword")
+	public String findPassword() {
+		return "emp/findPassword";
+	}
+	
+	@PostMapping("/findPassword")
+	public String findId(@RequestParam String empId, Model model) {
+		EmpDto empDto = empDao.selectOne(empId);
+		
+		if(empDto == null) {
+			//일치하는 회원이 없었을때
+			return "redirect:./findPassword?error";
+		}
+		else {
+			model.addAttribute("empPassword", empDto.getEmpPassword());
+			return "emp/findPasswordResult";
+		}
+	}
 
 	//이메일 인증 완료 페이지
 	@GetMapping("/cert")
