@@ -10,7 +10,7 @@ import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.mapper.EmpMapper;
 
 @Repository
-public class EmpDao {
+public class EmpPositionDeptDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
@@ -23,10 +23,14 @@ public class EmpDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 	
-	//사원 전체 조회
-		public List<EmpDto> empList() {
-			String sql = "select * from emp order by emp_id asc";
-			return jdbcTemplate.query(sql, empMapper);
-		}
 		
+	// 사원아이디를 통해 사원의 직책, 부서 조회
+		public List<EmpDto> selectList(EmpDto empDto) {
+				String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, d.dept_name "
+						+ "FROM emp e "
+						+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+						+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+						+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no;";
+				return jdbcTemplate.query(sql, empMapper);
+		}
 }

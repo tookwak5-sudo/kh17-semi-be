@@ -49,7 +49,8 @@ public class DeptController {
 	
 	// 부서 목록 
 	@RequestMapping("/list")
-	public String list(Model model) {		
+	public String list(Model model) {
+		
 		List<EmpDto> empList = empDao.empList();
 		model.addAttribute("empList", empList);
 		return "dept/list";
