@@ -57,10 +57,10 @@
             <div> 
             	<%-- <jsp:include page="/WEB-INF/views/template/menu-member.jsp"></jsp:include> --%>
 				<c:if test="${sessionScope.loginId != null && sessionScope.loginLevel != null}">
-					<c:if test="${sessionScope.loginLevel == '0'}">
+					<c:if test="${sessionScope.loginLevel == '0' || sessionScope.loginLevel == null}">
 						<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
 					</c:if>
-					<c:if test="${sessionScope.loginLevel != '0'}">
+					<c:if test="${sessionScope.loginLevel == '1' || sessionScope.loginLevel == '2'}">
 						<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
 					</c:if>
 				</c:if>
