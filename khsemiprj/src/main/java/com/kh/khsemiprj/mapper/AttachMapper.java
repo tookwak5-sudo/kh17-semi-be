@@ -8,10 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.kh.khsemiprj.dto.AttachDto;
 
-
-
 @Component
-public class AttachMapper implements RowMapper<AttachDto>{
+public class AttachMapper implements RowMapper<AttachDto> {
 	@Override
 	public AttachDto mapRow(ResultSet rs, int rowNum) throws SQLException {
 		AttachDto attachDto = new AttachDto();
