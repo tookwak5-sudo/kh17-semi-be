@@ -16,7 +16,7 @@
 
         h2 { color: #333; margin-bottom: 30px; }
 
-        .org-chart-container {
+        .dept-chart-container {
             display: flex;
             justify-content: center;
             overflow-x: auto;
@@ -117,19 +117,16 @@
         }
     </style>
 
-    <h2>사내 조직도</h2>
-
-    <h2>사내 조직도 (부서 및 부서원 일체형)</h2>
-
-    <div class="org-chart-container">
-        <div class="tree" id="orgChart">
+    <div class="dept-chart-container">
+        <div class="tree" id="deptChart">
             <!-- JavaScript로 트리 구조가 생성됩니다. -->
         </div>
     </div>
 
 <script>
     // 1. 변경된 데이터 구조: 부서 정보와 그 부서에 속한 멤버 리스트(members)를 분리
-    const orgData = {
+    const deptChartList = JSON.parse('${deptChartJson}');
+    /* const deptChartList = {
         deptName: "경영진",
         isRoot: true, // 최상위 표시용 플래그
         members: [
@@ -178,26 +175,23 @@
                 ]
             }
         ]
-    };
+    }; */
 
     // 2. 부서 박스와 내부에 사원 리스트를 포함하여 트리를 그리는 재귀 함수
     function createTree(node) {
-        const li = document.createElement('li');
+		const li = document.createElement('li');
         
-        // 부서 카드 생성
         const deptCard = document.createElement('div');
-        deptCard.className = `dept-card ${node.isRoot ? 'root-node' : ''}`;
+        deptCard.className = `dept-card \${node.deptDepth == 0 ? 'root-node' : ''}`;
         
-        // 부서 헤더 추가 (부서명 및 사원 수 표시)
         const memberCount = node.members ? node.members.length : 0;
         deptCard.innerHTML = `
             <div class="dept-header">
-                <span>${node.deptName}</span>
-                <span style="font-size:11px; opacity:0.8;">(${memberCount}명)</span>
+                <span>\${node.deptName}</span>
+                <span style="font-size:11px; opacity:0.8;">(\${memberCount}명)</span>
             </div>
         `;
 
-        // 부서원 리스트 영역 생성
         const memberListDiv = document.createElement('div');
         memberListDiv.className = 'member-list';
 
@@ -206,25 +200,17 @@
                 const item = document.createElement('div');
                 item.className = 'member-item';
                 item.innerHTML = `
-                    <span class="member-name">${member.name}</span>
-                    <span class="member-title">${member.title}</span>
+                    <span class="member-name">\${member.name}</span>
+                    <span class="member-title">\${member.title}</span>
                 `;
-                
-                // 개별 부서원 클릭 이벤트 예시
-                item.onclick = function(e) {
-                    e.stopPropagation(); // 부서 카드 클릭과 버블링 방지
-                    alert(`사원 정보: ${member.name} (${member.title})`);
-                };
                 memberListDiv.appendChild(item);
             });
         } else {
             memberListDiv.innerHTML = `<div class="empty-member">배치 사원 없음</div>`;
         }
-
         deptCard.appendChild(memberListDiv);
         li.appendChild(deptCard);
 
-        // 하위 부서(children)가 있다면 세로선 연결을 위해 재귀 호출
         if (node.children && node.children.length > 0) {
             const ul = document.createElement('ul');
             node.children.forEach(child => {
@@ -232,15 +218,26 @@
             });
             li.appendChild(ul);
         }
-
         return li;
     }
 
     // 3. 트리 렌더링 시작
-    const chartContainer = document.getElementById('orgChart');
+    /* const chartContainer = document.getElementById('deptChart');
     const rootUl = document.createElement('ul');
-    rootUl.appendChild(createTree(orgData));
-    chartContainer.appendChild(rootUl);
+    rootUl.appendChild(createTree(deptData));
+    chartContainer.appendChild(rootUl); */
+    
+    if (deptChartList && deptChartList.length > 0) {
+        const chartContainer = document.getElementById('deptChart');
+        // 트리 전체를 감싸는 최상위 ul 생성
+        const rootUl = document.createElement('ul');
+        // 📌 여러 개의 루트 노드를 반복문 돌리며 rootUl에 li 형태로 붙여줍니다.
+        deptChartList.forEach(rootNode => {
+            rootUl.appendChild(createTree(rootNode));
+        });
+        chartContainer.appendChild(rootUl);
+    }
+    
 </script>
 	
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
