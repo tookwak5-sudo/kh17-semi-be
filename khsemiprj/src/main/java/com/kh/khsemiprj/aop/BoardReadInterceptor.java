@@ -47,6 +47,7 @@ public class BoardReadInterceptor implements HandlerInterceptor{
 //		if(loginId == null) {
 //			return true;
 //		}
+		
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
 		
