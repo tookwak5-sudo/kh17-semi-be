@@ -1,0 +1,569 @@
+@charset "UTF-8";
+
+/* 전체에 적용할 디자인 */
+* {
+    box-sizing: border-box; /* 크기 설정 기준을 테두리로 정한다 */
+    font-family: sans-serif;
+}
+
+/* 
+    컨테이너 디자인 
+    - 기본적으로 가운데 배치되도록 구현
+    - 폭은 유틸리티 클래스로 지정하도록 구현
+*/
+.container {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 
+    셀 디자인
+    - 기본적으로 10px의 상하 간격을 가지도록 구현
+    - 필요하다면 인라인 스타일 또는 유틸리티 클래스로 재설정하도록 구현
+*/
+.cell {
+    margin: 10px 0px;
+}
+
+
+/*
+    유틸리티 디자인
+    - 자주 사용할 법한 디자인들을 클래스로 만들어서 보관해둠
+*/
+.left {
+    text-align: left !important;
+}
+.center {
+    text-align: center !important;
+}
+.right {
+    text-align: right !important;
+}
+
+
+/* 
+    폭 유틸리티 클래스 
+    - 50px 단위로 설정할 수 있도록 구현
+    - 200px ~ 1200px까지 구현
+    - w-* 로 구현
+*/
+.w-200 { width:200px !important; }
+.w-250 { width:250px !important; }
+.w-300 { width:300px !important; }
+.w-350 { width:350px !important; }
+.w-400 { width:400px !important; }
+.w-450 { width:450px !important; }
+.w-500 { width:500px !important; }
+.w-550 { width:550px !important; }
+.w-600 { width:600px !important; }
+.w-650 { width:650px !important; }
+.w-700 { width:700px !important; }
+.w-750 { width:750px !important; }
+.w-800 { width:800px !important; }
+.w-850 { width:850px !important; }
+.w-900 { width:900px !important; }
+.w-950 { width:950px !important; }
+.w-1000 { width:1000px !important; }
+.w-1050 { width:1050px !important; }
+.w-1100 { width:1100px !important; }
+.w-1150 { width:1150px !important; }
+.w-1200 { width:1200px !important; }
+
+/* 폭 비율 설정 */
+.w-100 { width:100% !important; }
+.w-80 { width:80% !important; }
+.w-75 { width:75% !important; }
+.w-66 { width:66.6666% !important; }
+.w-60 { width:60% !important; }
+.w-50 { width:50% !important; }
+.w-40 { width:40% !important; }
+.w-33 { width:33.3333% !important; }
+.w-25 { width:25% !important; }
+.w-20 { width:20% !important; }
+
+/*
+    여백(margin) 유틸리티 클래스
+    - 네 개의 방향(top, bottom, left, right)를 각각 처리
+    - left는 차별적인 단어 이슈+세로형 문제로 start로 대체하여 사용
+    - right 역시 같은 문제로 end로 대체하여 사용
+    - margin-left 는 ms, margin-right는 me로 표현
+*/
+.mt-0 { margin-top: 0px !important; }
+.mt-10 { margin-top: 10px !important; }
+.mt-20 { margin-top: 20px !important; }
+.mt-30 { margin-top: 30px !important; }
+.mt-40 { margin-top: 40px !important; }
+.mt-50 { margin-top: 50px !important; }
+
+.mb-0 { margin-bottom: 0px !important; }
+.mb-10 { margin-bottom: 10px !important; }
+.mb-20 { margin-bottom: 20px !important; }
+.mb-30 { margin-bottom: 30px !important; }
+.mb-40 { margin-bottom: 40px !important; }
+.mb-50 { margin-bottom: 50px !important; }
+
+.ms-0 { margin-left: 0px !important; }
+.ms-10 { margin-left: 10px !important; }
+.ms-20 { margin-left: 20px !important; }
+.ms-30 { margin-left: 30px !important; }
+.ms-40 { margin-left: 40px !important; }
+.ms-50 { margin-left: 50px !important; }
+
+.me-0 { margin-right: 0px !important; }
+.me-10 { margin-right: 10px !important; }
+.me-20 { margin-right: 20px !important; }
+.me-30 { margin-right: 30px !important; }
+.me-40 { margin-right: 40px !important; }
+.me-50 { margin-right: 50px !important; }
+
+/* 글자 색상 유틸리티 클래스 */
+.red { color: #d63031 !important; }
+.orange { color: #e17055 !important; }
+.yellow { color: #fdcb6e !important; }
+.green { color: #00b894 !important; }
+.blue { color: #0984e3 !important; }
+.purple { color: #6c5ce7 !important; }
+.white { color: #FFFFFF !important; }
+.black { color: #2d3436 !important; }
+.gray { color: #636e72 !important; }
+.silver { color: #BDC3C7 !important; }
+.gold { color: #D4AF37 !important; }
+
+
+
+/* 컴포넌트(Component) 디자인 */
+
+/* 입력창(field) 디자인 */
+.field {
+    outline: none; /* 기본 강조선 제거 */
+    font-size: 20px;
+    padding: 0.35em 0.75em;
+    border: 1px solid #636e72;
+    border-radius: 0.1em;
+}
+textarea.field {
+    resize: none;
+}
+.field:focus { /*조건부 디자인 : 입력 상태일 경우 */
+    border-color: #2d3436;
+}
+
+/* 입력창 확장 스타일 (1) - 밑줄만 있는 입력창 */
+.field.field-underline { 
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+
+/* 
+    버튼(btn) 디자인 
+    - btn이라는 클래스를 부여하면 글꼴이나 여백등 기본 설정을 수행
+    - 역할(긍정/부정/중립)에 따라 색상을 부여
+        - 긍정버튼 : btn-positive 클래스를 추가로 부여
+        - 중립버튼 : btn-neutral 클래스를 추가로 부여
+        - 부정버튼 : btn-negative 클래스를 추가로 부여
+*/
+.btn {
+    outline: none;
+    font-size: 18px;
+    padding: 0.5em 0.75em;
+    border: 1px solid #636e72;
+    border-radius: 0.1em;
+    cursor: pointer;
+}
+a.btn {
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+}
+.btn:hover { /* 조건부 디자인 : 마우스가 올라갔을 때 */
+    filter: brightness(0.95);
+}
+.btn.btn-positive {/* 긍정버튼 */
+    background-color: #0984e3;
+    border-color: #0984e3;
+    color: white;
+}
+.btn.btn-neutral {/* 중립버튼 */
+    background-color: #FFFFFF;
+    color: #2d3436;
+}
+.btn.btn-negative {/* 부정버튼 */
+    background-color: #d63031;
+    border-color: #d63031;
+    color: white;
+}
+
+/* 
+    테이블 디자인 
+    - 테이블은 다양한 태그가 조합된 구조를 가진다
+    - 최상위 태그인 <table>에 클래스를 부여하고 나머지는 탐색
+    - 연계 선택자 : 하위, 후손 선택자
+
+    후손 선택자
+    - .table th 와 같이 띄어쓰기로 내부에 포함된 요소임을 명시
+    - 테이블이 중첩된 경우 원치 않는 대상이 선택될 수 있음
+
+    자식(하위) 선택자
+    - .table > thead > tr > th 과 같이 부등호 표시로 연결
+*/
+.table {
+    width: 100%;
+    border: 1px solid #2d3436;
+    border-collapse: collapse;
+}
+
+.table > thead > tr > th, 
+.table > tbody > tr > td
+{
+    border: 1px solid #2d3436;
+    padding: 0.2em;
+}
+
+.table > tbody {
+    text-align: center;
+}
+
+/* 테이블 확장 스타일 - 마우스 감지 색상 변경 테이블 */
+.table.table-hover > tbody > tr:hover {
+    background-color: #dfe6e9;
+}
+
+/* 
+    테이블 확장 스타일 - 줄무늬 테이블 
+    - nth-child라는 조건은 "N번째 자식"이라는 뜻
+    - 값에 n을 포함시키면 n=1,2,3,4,5,... 로 변하며 적용
+*/
+.table.table-stripe > thead > tr,
+.table.table-stripe > tbody > tr:nth-child(2n) 
+{
+    background-color: #dfe6e9;
+}
+
+/* 
+    페이지네이션 디자인 
+    - .pagination이라고 추가하면 자동 적용되도록 구현
+    - a태그를 개조해서 폭 설정이 가능하도록 구현
+*/
+.pagination {
+    text-align: center;
+    font-size: 16px;
+    color: #2d3436;
+}
+.pagination > a {
+    text-decoration: none;
+    /* border: 1px solid transparent; */
+    display: inline-block;
+    min-width: 2em;
+    padding: 0.25em;
+    text-align: center;
+    color: inherit;
+    font-size: inherit;
+}
+.pagination > a.on,
+.pagination > a:hover {
+    /* border: 1px solid #b2bec3; */
+    box-shadow: 0 0 0 1px #b2bec3;
+    font-weight: bold;
+    color: #e17055;
+}
+
+/* 
+    링크 디자인 
+    - 변화를 부드럽게 보여주도록 처리
+    - transition-property : 변화를 부드럽게 처리할 항목
+    - transition-duration : 변화가 완료되는 지속시간
+    - transition-timing-function : 변화의 처리방식
+        - linear : 일정한 변화
+        - ease-out : 끝을 느리게 (자동차 브레이크)
+*/
+.link {
+    display: inline-block;
+    color: #2d3436;
+    text-decoration: none;
+    transition-property: transform, color;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-out;
+}
+.link:hover {
+    /* text-decoration: underline; */
+    color: #0984e3;
+    /* 
+        transform을 이용한 물리적인 변화
+        - translate()로 이동
+        - rotate()로 회전
+        - skew()로 기울이기
+        - scale()로 확대/축소
+    */
+    transform: scale(1.01);
+}
+
+/*
+    float 전용 격리 영역 생성
+    - .float-area 안에 있는 모든 항목은 float:left이다.
+    - 새로운 영역을 만들어 clear는 힘드니 가상영역을 활용
+        - ::before 는 시작 지점을 의미
+        - ::after 는 종료 지점을 의미
+*/
+.float-area > * {
+    float: left;
+}
+.float-area::after {
+    /* 이 영역은 실제로는 존재하지 않는다(content로 생성) */
+    content:"";     /*생성하고*/
+    display: block; /*한줄을 다 차지하게 만들고*/
+    clear: both;    /*사용한 float들을 청소*/
+}
+
+/*
+    flex 디자인
+    - 기본 영역은 .flex-area로 설정
+    - 내부에 .flex-fill이 있다면 flex-grow 설정
+    - 정중앙 배치만 할 경우 .flex-center를 영역에 추가 설정
+    - 세로 배치를 원한다면 .flex-vertical을 영역에 추가 설정
+*/
+.flex-area {
+    display: flex;
+    flex-direction: row;    /* 한 줄에 배치 */
+    flex-wrap: nowrap;      /* 줄바꿈 금지 */
+}
+.flex-area > .flex-fill {
+    flex-grow: 1;
+}
+.flex-area.flex-center {
+    justify-content: center;
+    align-items: center;
+}
+.flex-area.flex-vertical {
+    flex-direction: column;
+}
+
+
+/* 말줄임표 처리 */
+.ellipsis {
+    white-space: nowrap;    /*줄바꿈 금지*/
+    overflow: hidden;       /*넘어가면 숨김처리*/
+    text-overflow: ellipsis;/*글자가 넘어간 부분을 말줄임표로 표시*/
+}
+.ellipsis-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.ellipsis-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.ellipsis-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 전체화면 보호기 */
+.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /* 불투명(1) - 배경색을 주고 불투명도(opacity)를 조절 (내용물도 투명해짐) */
+    /* background-color: black; */
+    /* opacity: 0.5; */
+
+    /* 불투명(2) - 배경색에 투명도(alpha)를 부여 (내용물에는 영향이 없음) */
+    background-color: rgba(0, 0, 0, 0.5);
+
+    /* 내용물을 가운데 위치하도록 설정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 드롭다운 메뉴 디자인 */
+/* (1) ul 태그의 기본 스타일 제거 */
+.menu , 
+.menu ul /* .sub-menu 대신 */
+{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+/* (2) 서브메뉴를 숨김 */
+.menu ul {
+    display: none;
+}
+/* (3) 메뉴를 가로로 나오게 배치 */
+.menu {
+    display: flex;
+}
+/* (4) 모든 메뉴에 폭과 여백 지정 */
+.menu li {
+    width: 150px;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 0.5em;
+    text-align: center;
+}
+/* (5) 메뉴에 마우스가 올라가면 하위 메뉴를 출력 */
+.menu li:hover > ul {
+    display: block;
+}
+/* (6) 하위메뉴는 absolute 배치를 통해 다음 컨텐츠의 위치에 영향을 주지 않도록 변경 (+기준영역 설정) */
+.menu li {
+    position: relative;
+}
+.menu ul {
+    position: absolute;
+    left: 0;
+    top:100%;
+    width: 150px;
+}
+/* (7) 좌우 분리를 위한 .divider 생성 */
+.menu > .divider {
+    width: 0px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+/* (8) 메뉴, 항목, 링크의 디자인 변경 */
+.menu, 
+.menu ul {
+    background-color: #2d3436;
+    color: white;
+}
+.menu a {
+    color: inherit;
+    background-color: inherit;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+/* .menu a:hover  */
+.menu li:hover 
+{
+    background-color: #636e72;
+}
+/* 
+    (9) 3차메뉴부터는 좌측 아니면 우측에 나와야 함 
+    - 기본적으로 우측에 나오도록 처리
+    - 단, .divider 뒤에 있는 메뉴들은 좌측에 나오도록 처리
+*/
+.menu > li li:hover > ul {
+    top: 0;
+    left: 100%;
+}
+.menu > li.divider ~ li li:hover > ul {
+    top: 0;
+    left: auto;
+    right: 100%;
+}
+
+/* 이미지 관련 스타일 */
+.image-shadow {
+    box-shadow: 0 0 2px 1px gray;
+}
+.image-circle {
+    border-radius: 50%;
+}
+.image-round {
+    border-radius: 1em;
+}
+.image-hover {
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    position: relative;
+}
+.image-hover > img {
+    width: 100%;
+    height: 100%;
+}
+.image-hover > .content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* display: none; */
+    opacity: 0;
+
+    transition: opacity 0.1s ease-out;
+}
+.image-hover:hover > .content {
+    /* display: flex; */
+    opacity: 1;
+}
+
+
+/* 
+    피드백 디자인 
+    - 자바스크립트와 결합하여 입력창의 피드백을 표시하기 위한 디자인
+    - .field에 .success가 붙으면 뒤에 있는 .success-feedback을 출력
+    - .field에 .fail이 붙으면 뒤에 있는 .fail-feedback을 출력
+        - 만약 에러상황이 여러개라면 .field에 data-error="1"과 같이 보여줄 순서를 지정
+        - .fail-feedback 내부에 div를 에러 개수만큼 배치 (data-error에 적힌 순서만 나오고 나머지는 숨김)
+        - 만약 에러가 하나뿐이라면 data-error없이 그냥 사용 가능
+    - .field에 .success나 .fail이 붙으면 상황에 맞게 입력창도 디자인을 변경
+    - .field에 우측 여백을 주고 상황에 맞는 이미지를 출력 (background-image)
+*/
+.field ~ .success-feedback {
+    color: #0984e3;
+    display: none;
+}
+.field ~ .fail-feedback {
+    color: #d63031;
+    display: none;
+}
+.field.success ~ .success-feedback {
+    display: block;
+}
+
+/* 실패 피드백 */
+.field.fail ~ .fail-feedback {
+    display: block;
+}
+.field ~ .fail-feedback > div {
+    display: none;
+}
+.field.fail[data-error="1"] ~ .fail-feedback > div:nth-child(1),
+.field.fail[data-error="2"] ~ .fail-feedback > div:nth-child(2),
+.field.fail[data-error="3"] ~ .fail-feedback > div:nth-child(3),
+.field.fail[data-error="4"] ~ .fail-feedback > div:nth-child(4),
+.field.fail[data-error="5"] ~ .fail-feedback > div:nth-child(5)
+{ 
+    display: block;
+}
+
+.field {
+    background-size: 1em;
+    background-repeat: no-repeat;
+    background-position-x: right 0.5em;
+    background-position-y: center;
+    padding-right: 2em;
+}
+select.field {
+    background-position-x: right 1em;
+}
+.field.success {
+    background-image: url("https://cdn.jsdelivr.net/gh/hiphop5782/cdn2/valid.png");
+    border-color: #0984e3;
+}
+.field.fail {
+    background-image: url("https://cdn.jsdelivr.net/gh/hiphop5782/cdn2/invalid.png");
+    border-color: #d63031;
+}
