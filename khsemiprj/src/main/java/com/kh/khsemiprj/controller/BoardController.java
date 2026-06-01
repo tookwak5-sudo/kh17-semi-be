@@ -78,9 +78,8 @@ public class BoardController {
 //		
 		//작성한 글이 "공지"라면 관리자인지를 반드시 확인
 		if(boardDto.getBoardHead() != null && boardDto.getBoardHead().equals("공지")) {
-			String adminLevel = (String)session.getAttribute("adminLevel");
-			//로그인 할 때 직급은 positionLevel로 session에 저장, 관리자 단계는 adminLevel로 session에 저장
-			if(adminLevel.isEmpty()) {//adminLevel이 비어있다면 (관리자가 아니라면)
+			String loginLevel = (String)session.getAttribute("loginLevel");
+			if(loginLevel.equals("0")) {//loginLevel이 0이라면 (관리자가 아니라면)
 				throw new GetOutException();
 			}
 		}
@@ -118,9 +117,9 @@ public class BoardController {
 	public String edit(@ModelAttribute BoardDto boardDto, HttpSession session) {
 		//작성한 글이 "공지"라면 관리자인지를 반드시 확인
 		if(boardDto.getBoardHead() != null && boardDto.getBoardHead().equals("공지")) {
-			String adminLevel = (String)session.getAttribute("adminLevel");
-			//로그인 할 때 직급은 positionLevel로 session에 저장, 관리자 단계는 adminLevel로 session에 저장
-			if(adminLevel.isEmpty()) {//adminLevel이 비어있다면 (관리자가 아니라면)
+			String loginLevel = (String)session.getAttribute("loginLevel");
+			//로그인 할 때 직급은 positionLevel로 session에 저장, 관리자 단계는 loginLevel로 session에 저장
+			if(loginLevel.equals("0")) {//loginLevel이 0이라면 (관리자가 아니라면)
 				throw new GetOutException();
 			}
 		}

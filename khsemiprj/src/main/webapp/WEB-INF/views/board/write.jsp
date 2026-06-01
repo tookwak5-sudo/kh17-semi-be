@@ -19,11 +19,11 @@
 		<label>제목 <i class="fa-solid fa-asterisk red"></i></label>
 		<input type="text" name="boardTitle" required class="field w-100">
 	</div>
-	<div class="cell mb-0">
-		<label>구분</label>
-	</div>
+	<c:if test="${sessionScope.loginLevel != '0'}">
+		<div class="cell mb-0">
+			<label>구분</label>
+		</div>
 	
-	<c:if test="${sessionScope.adminLevel != null}">
 		<div class="cell mt-0">
 			<select name="boardHead" class="field">
 				<option value="">선택 안함</option>

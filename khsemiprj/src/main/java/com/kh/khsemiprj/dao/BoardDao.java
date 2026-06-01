@@ -101,7 +101,7 @@ public class BoardDao {
 	public void insert(BoardDto boardDto) {
 		String sql = "insert into board("
 						+ "board_no, board_writer, board_head, "
-						+ "board_title, board_content, "
+						+ "board_title, board_content "
 					+ ") "
 					+ "values(?, ?, ?, ?, ?)";
 		Object[] params = {
