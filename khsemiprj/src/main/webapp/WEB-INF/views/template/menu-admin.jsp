@@ -31,6 +31,27 @@
 	    </a>
 	</li>
 	<li>
+	    <a href="#">
+	        <i class="fa-solid fa-database"></i>
+	        <span>부서관리</span>
+		</a>
+        <!-- 하위 메뉴 -->
+        <ul>
+            <li>
+                <a href="/dept/list">
+                    <i class="fa-solid fa-flag"></i>
+                    <span>부서 목록</span>
+                </a>
+            </li>
+            <li>
+                <a href="/dept/chart">
+                    <i class="fa-solid fa-flag"></i>
+                    <span>조직도</span>
+                </a>
+            </li>
+        </ul>
+	</li>
+	<li>
 	    <a href="/board/list">
 	        <i class="fa-solid fa-comments"></i>
 	        <span>게시판</span>
