@@ -131,9 +131,25 @@ public class EmpController {
 		return "emp/findId";
 	}
 	
-//	@postMapping("/findId")
-//	public String findId()
+	@PostMapping("/findId")
+	public String findId(@RequestParam String empName,
+					@RequestParam String empEmail,
+						Model model)
+	{
+		EmpDto empDto = empDao.selectId(empName, empEmail);
+		
+		if(empDto == null) {
+			// 일치하는 회원이 없었을때 
+			return "redirect:./findId?error";
+		}
+		else {
+			model.addAttribute("empId", empDto.getEmpId());
+			return "emp/findIdResult";
+		}
+		
+	}
 	
+
 	//이메일 인증 완료 페이지
 	@GetMapping("/cert")
 	public String cert(@ModelAttribute CertDto certDto) {
