@@ -169,23 +169,34 @@
 			</div>
 			
 		</div> 
+			<!-- 입력창  -->
+			<form action="./list">
+			    <input type="text" name="deptNo" class="field" placeholder="부서번호 입력">
+			    <button type="submit">검색</button>
+			</form>
 			<!-- 테이블 -->
 			<div class="cell center">
 				<table class="table">
 					<thead>
 						<tr>
+							<th>부서번호</th>
+							<th>부서</th>
+							<th>부서등급</th>
 							<th>사원아이디</th>
 							<th>이름</th>
 							<th>직급</th>
-							<th>부서</th>
+						
 						</tr>
 					</thead>
-				
-				<c:forEach var="empDto" items="${empList}">
-					<tr>
-						<td>${empDto.empId}</td>
-						<td>${empDto.empName}</td>
-					</tr>
+				<c:forEach var="empPositionDeptDto" items="${empList}">
+			    <tr>
+			        <td>${empPositionDeptDto.deptNo}</td>
+			        <td>${empPositionDeptDto.deptName}</td>
+			        <td>${empPositionDeptDto.empPositionLevel}</td>
+			        <td>${empPositionDeptDto.empId}</td>
+			        <td>${empPositionDeptDto.empName}</td>
+			        <td>${empPositionDeptDto.empPositionName}</td>
+			    </tr>
 				</c:forEach>
 				</table>
 			</div>
