@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 	
 	<style>
@@ -70,6 +73,33 @@
         }
     </style>
 	
+	<script>
+	    document.addEventListener('DOMContentLoaded', () => {
+	        // 모든 토글 버튼(화살표)을 가져옵니다.
+	        const toggleButtons = document.querySelectorAll('.toggle-btn');
+	
+	        toggleButtons.forEach(button => {
+	            button.addEventListener('click', (e) => {
+	                // 클릭한 화살표의 부모인 .dept-item 요소를 찾습니다.
+	                const deptItem = e.target.closest('.dept-item');
+	                
+	                // 하위 메뉴가 없는 말단 부서라면 토글하지 않고 무시합니다.
+	                if (deptItem.classList.contains('no-children')) return;
+	
+	                // .collapsed 클래스를 켜고 끕니다. (CSS에서 display: none 처리됨)
+	                deptItem.classList.toggle('collapsed');
+	
+	                // 클래스 유무에 따라 화살표 모양을 바꿉니다.
+	                if (deptItem.classList.contains('collapsed')) {
+	                    e.target.textContent = '▶';
+	                } else {
+	                    e.target.textContent = '▼';
+	                }
+	            });
+	        });
+	    });
+	</script>
+	
 	<h1>부서관리</h1>
 	<div>
 		<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
@@ -136,31 +166,26 @@
 	    </ul>
 	</div>
 	
-	<script>
-	    document.addEventListener('DOMContentLoaded', () => {
-	        // 모든 토글 버튼(화살표)을 가져옵니다.
-	        const toggleButtons = document.querySelectorAll('.toggle-btn');
-	
-	        toggleButtons.forEach(button => {
-	            button.addEventListener('click', (e) => {
-	                // 클릭한 화살표의 부모인 .dept-item 요소를 찾습니다.
-	                const deptItem = e.target.closest('.dept-item');
-	                
-	                // 하위 메뉴가 없는 말단 부서라면 토글하지 않고 무시합니다.
-	                if (deptItem.classList.contains('no-children')) return;
-	
-	                // .collapsed 클래스를 켜고 끕니다. (CSS에서 display: none 처리됨)
-	                deptItem.classList.toggle('collapsed');
-	
-	                // 클래스 유무에 따라 화살표 모양을 바꿉니다.
-	                if (deptItem.classList.contains('collapsed')) {
-	                    e.target.textContent = '▶';
-	                } else {
-	                    e.target.textContent = '▼';
-	                }
-	            });
-	        });
-	    });
-	</script>
+	<div class="container w-1200 mt-50 mb-50">
+		<!-- 테이블 -->
+		<div class="cell center">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>사원아이디</th>
+						<th>이름</th>
+						<th>직급</th>
+						<th>부서</th>
+					</tr>
+				</thead>
+			</table>
+			<c:forEach var="deptDto" items="${list}">
+				<tr>
+					<td>${deptDto.depthEmpId}</td>
+<%-- 					<td>${deptDto.de }</td> --%>
+				</tr>
+			</c:forEach>
+		</div>
+	</div>
 	
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
