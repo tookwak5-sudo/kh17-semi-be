@@ -47,7 +47,7 @@ public class EmpDao {
 
 	//아이디찾기
 	public EmpDto selectId(String empName, String empEmail) {
-		String sql = "select emp_id from emp where emp_name = ? and emp_email = ?";
+		String sql = "select * from emp where emp_name = ? and emp_email = ?";
 		Object[] params = {empName, empEmail};
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
