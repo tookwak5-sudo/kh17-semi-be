@@ -16,14 +16,35 @@ public class EmpDao {
 	@Autowired
 	private EmpMapper empMapper;
 	
-	//아이디를 통해 회원정보 불러오기 
+
+	public void join(EmpDto empDto) {
+		String sql = "insert into emp( "
+				+ "emp_id, emp_email, emp_password, emp_name, emp_birth, "
+				+ "emp_contact, emp_post, emp_address1, emp_address2)"
+				+ "values(?,?,?,?,?,?,?,?,?)";
+		Object[] params = {
+				empDto.getEmpId(),empDto.getEmpEmail(),empDto.getEmpPassword(),
+				empDto.getEmpName(),empDto.getEmpBirth(),empDto.getEmpContact(),
+				empDto.getEmpPost(),empDto.getEmpAddress1(),empDto.getEmpAddress2()
+			
+		};
+		jdbcTemplate.update(sql, params);
+	}
+	
+
 	public EmpDto selectOne(String loginId) {
 		String sql = "select * from emp where emp_id = ?";
 		Object[] params = { loginId };
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
-	
+
+	public void connect(String empId, int attachNo) {
+		String sql = "insert into member_profile(emp_id, attach_no) values(?, ?)";
+		Object[] params = { empId, attachNo };
+		jdbcTemplate.update(sql, params);
+	}
+
 	//아이디찾기
 	public EmpDto selectId(String empName, String empEmail) {
 		String sql = "select emp_id from emp where emp_name = ? and emp_email = ?";
@@ -32,4 +53,5 @@ public class EmpDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 	
+
 }
