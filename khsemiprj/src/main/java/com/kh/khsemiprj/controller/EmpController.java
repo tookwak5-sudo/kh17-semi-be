@@ -1,5 +1,6 @@
 package com.kh.khsemiprj.controller;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -10,13 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
-import com.kh.khsemiprj.dto.CertDto;
 import com.kh.khsemiprj.dto.EmpDto;
-import com.kh.khsemiprj.exception.GetOutException;
-import com.kh.khsemiprj.exception.WhoAreYouException;
+import com.kh.khsemiprj.service.AttachService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -27,8 +27,9 @@ public class EmpController {
 	
 	@Autowired
 	private EmpDao empDao;
+	
 	@Autowired
-	private CertDao certDao;
+	private AttachService attachService;
 	
 	@GetMapping("/login")
 	public String login() {
@@ -96,35 +97,23 @@ public class EmpController {
 		return "redirect:/";
 	}
 	
-	//이메일 인증 완료 페이지
-			@GetMapping("/cert")
-			public String cert(@ModelAttribute CertDto certDto) {
-				
-				//1. 정보가 있는지 확인
-				CertDto findDto = certDao.selectOne(certDto.getCertEmail());
-				if(findDto == null) throw new WhoAreYouException();
-				
-				//2. 번호가 맞는지 확인
-				boolean valid = certDto.getCertNumber().equals(findDto.getCertNumber());
-				if(valid == false) throw new GetOutException();
-				
-				//3. 시간이 유효한지 확인
-				LocalDateTime current = LocalDateTime.now();//현재시각
-				LocalDateTime sent = findDto.getCertTime().toLocalDateTime();//발송시각
-				Duration duration = Duration.between(sent, current);
-				if(duration.toMinutes() > 10) {//10분이 지났어?
-					throw new GetOutException();
+	@GetMapping("/join")
+	public String join() {
+		return "emp/join";
+	}
+	@PostMapping("/join")
+	public String join(@ModelAttribute EmpDto empDto, @RequestParam MultipartFile attach)throws IllegalStateException, IOException {
+		empDao.join(empDto);
+		//프로필이 있으면 추가 등록 및 연결
+				if(!attach.isEmpty()) {
+					int attachNo = attachService.save(attach);
+					empDao.connect(empDto.getEmpId(), attachNo);
 				}
 				
-				//4. 인증 가능한 상태인지 확인 (cert_yn = 'N')
-				//if(findDto.getCertYn().equals("Y")) {
-				if(findDto.isComplete()) {
-					throw new GetOutException();
-				}
-				
-				//certDao.delete(certDto.getCertEmail());//인증기록 삭제
-				certDao.update(certDto.getCertEmail());//인증완료(cert_yn='Y')로 업데이트
-				return "member/cert";
-			}
-	
+				return "redirect:./joinFinish";
+	}
+	@RequestMapping("/joinFinish")
+	public String joinFinish() {
+		return "member/joinFinish";
+	}
 }
