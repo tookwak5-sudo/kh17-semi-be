@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,7 +122,7 @@ public class EmpController {
 	}
 	@RequestMapping("/joinFinish")
 	public String joinFinish() {
-		return "member/joinFinish";
+		return "emp/joinFinish";
 	}
 
 	//아이디 찾기 페이지
@@ -130,9 +131,25 @@ public class EmpController {
 		return "emp/findId";
 	}
 	
-//	@postMapping("/findId")
-//	public String findId()
+	@PostMapping("/findId")
+	public String findId(@RequestParam String empName,
+					@RequestParam String empEmail,
+						Model model)
+	{
+		EmpDto empDto = empDao.selectId(empName, empEmail);
+		
+		if(empDto == null) {
+			// 일치하는 회원이 없었을때 
+			return "redirect:./findId?error";
+		}
+		else {
+			model.addAttribute("empId", empDto.getEmpId());
+			return "emp/findIdResult";
+		}
+		
+	}
 	
+
 	//이메일 인증 완료 페이지
 	@GetMapping("/cert")
 	public String cert(@ModelAttribute CertDto certDto) {
