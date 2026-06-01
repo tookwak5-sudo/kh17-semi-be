@@ -11,6 +11,7 @@ import com.kh.khsemiprj.mapper.AttachMapper;
 
 
 
+
 @Repository
 public class AttachDao {
 	@Autowired
@@ -49,4 +50,5 @@ public class AttachDao {
 		Object[] params = { attachNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
+
 }

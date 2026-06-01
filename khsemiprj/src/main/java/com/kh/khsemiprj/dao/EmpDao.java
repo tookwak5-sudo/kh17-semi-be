@@ -16,6 +16,7 @@ public class EmpDao {
 	@Autowired
 	private EmpMapper empMapper;
 	
+
 	public void join(EmpDto empDto) {
 		String sql = "insert into emp( "
 				+ "emp_id, emp_email, emp_password, emp_name, emp_birth, "
@@ -30,15 +31,27 @@ public class EmpDao {
 		jdbcTemplate.update(sql, params);
 	}
 	
+
 	public EmpDto selectOne(String loginId) {
 		String sql = "select * from emp where emp_id = ?";
 		Object[] params = { loginId };
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
+
 	public void connect(String empId, int attachNo) {
 		String sql = "insert into member_profile(emp_id, attach_no) values(?, ?)";
 		Object[] params = { empId, attachNo };
 		jdbcTemplate.update(sql, params);
 	}
+
+	//아이디찾기
+	public EmpDto selectId(String empName, String empEmail) {
+		String sql = "select emp_id from emp where emp_name = ? and emp_email = ?";
+		Object[] params = {empName, empEmail};
+		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+
 }

@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.AttachDao;
 import com.kh.khsemiprj.dto.AttachDto;
-import com.kh.khsemiprj.exception.TargetNotFoundException;
+import com.kh.khsemiprj.exception.TargetNotfoundException;
 
 
 //서비스 : 하나의 단위작업을 구현하기 위한 도구
@@ -44,7 +44,7 @@ public class AttachService {
 	public void delete(int attachNo) {
 		//정보가 있는지 먼저 확인
 		AttachDto attachDto = attachDao.selectOne(attachNo);
-		if(attachDto == null) throw new TargetNotFoundException("존재하지 않는 파일");
+		if(attachDto == null) throw new TargetNotfoundException("존재하지 않는 파일");
 		
 		attachDao.delete(attachNo);//DB 데이터 삭제
 		
@@ -53,3 +53,4 @@ public class AttachService {
 		target.delete();//파일 삭제 지시
 	}
 }
+
