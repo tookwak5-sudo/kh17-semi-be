@@ -27,8 +27,6 @@ public class AttachService {
 					attachDto.setAttachSize(attach.getSize());//파일 크기 설정
 					attachDao.insert(attachDto);//DB 등록 요청
 					
-					
-					
 					//업로드된 파일을 저장하는 코드 
 					File dir = new File("D:/upload");
 					dir.mkdirs();
