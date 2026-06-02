@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 import lombok.Data;
 
-@Data
+@Data 
 public class BoardDto {
 	private long boardNo;
 	private String boardHead;
@@ -15,7 +15,7 @@ public class BoardDto {
 	private String boardWriter;
 	private String boardContent;
 	private Timestamp boardWtime, boardEtime;
-	private long boardReadcount, boardLikecount, boardDisLikecount, boardReplycount;
+	private long boardReadcount, boardLikecount, boardDislikecount, boardReplycount;
 
 
 	public String getBoardWtimeString() {

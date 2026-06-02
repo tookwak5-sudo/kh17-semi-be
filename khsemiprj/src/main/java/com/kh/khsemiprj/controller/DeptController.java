@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,15 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.kh.khsemiprj.dao.DeptDao;
-import com.kh.khsemiprj.dao.EmpDao;
-import com.kh.khsemiprj.dao.EmpPositionDeptDao;
-import com.kh.khsemiprj.dto.DeptDto;
-import com.kh.khsemiprj.dto.EmpDto;
-import com.kh.khsemiprj.dto.EmpPositionDeptDto;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.khsemiprj.dao.DeptDao;
+import com.kh.khsemiprj.dao.EmpPositionDeptDao;
+import com.kh.khsemiprj.dto.DeptDto;
+import com.kh.khsemiprj.dto.EmpPositionDeptDto;
+import com.kh.khsemiprj.exception.TargetNotfoundException;
 
 @Controller
 @RequestMapping("/dept")
@@ -65,6 +62,40 @@ public class DeptController {
 		//System.out.println("컨트롤러에서 넘기는 리스트 사이즈: " + (empList == null ? "NULL입니다" : empList.size()));
 		model.addAttribute("empList", empList);
 		return "dept/list";
+	}
+	
+	// 부서 수정
+	@GetMapping("/edit")
+	public String edit(@RequestParam long deptNo, Model model) {
+		DeptDto deptDto = deptDao.selectOne(deptNo);
+		if(deptDto == null) throw new TargetNotfoundException("존재하지 않는 부서");
+		model.addAttribute("deptDto", deptDto);
+		//전체 부서 정보 넘기기
+		//본인보다 상위 부서인 부서의 정보만 넘기기
+		//전체 부서를 upperDeptDto에 넣고
+		List<DeptDto> upperDeptDto = deptDao.selectListAll();
+		//입력된 부서의 parent_no
+//		boolean check = 
+//		if(deptDto.getDeptParentNo() )
+		model.addAttribute("deptList",deptDao.deptList());
+		return "dept/edit";
+	}	
+	@PostMapping("/edit")
+	public String edit(@ModelAttribute DeptDto deptDto) {
+		//오류 검사는 get에서 진행함 바로 값을 가져오기
+		deptDao.update(deptDto);
+		return "redirect:./list";
+	//	return "redirect:dept/list"; //절대경로
+	}
+	
+	// 부서 삭제
+	@RequestMapping("/delete")
+	public String delete(@RequestParam long deptNo) {
+		DeptDto deptDto = deptDao.selectOne(deptNo);
+		if(deptDto == null) throw new TargetNotfoundException("존재하지 않는 부서");
+		deptDao.delete(deptNo);
+		return "redirect:./list"; //상대경로
+//		return "redirect:dept/list"; //절대경로
 	}
 	
 	@RequestMapping("/chart")
