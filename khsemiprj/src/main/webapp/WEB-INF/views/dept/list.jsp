@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 	
 	<style>
@@ -70,72 +73,6 @@
         }
     </style>
 	
-	<h1>부서관리</h1>
-	<div>
-		<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
-	</div>
-	<div class="dept-tree">
-	    <ul>
-	        <li class="dept-item">
-	            <div class="dept-row">
-	                <span class="toggle-btn">▼</span>
-	                <input type="checkbox" class="dept-checkbox" id="corp">
-	                <label for="corp" class="dept-name">(주) 대박기업</label>
-	            </div>
-	            
-	            <ul>
-	                <li class="dept-item">
-	                    <div class="dept-row">
-	                        <span class="toggle-btn">▼</span>
-	                        <input type="checkbox" class="dept-checkbox" id="dev">
-	                        <label for="dev" class="dept-name">개발본부</label>
-	                    </div>
-	                    <ul>
-	                        <li class="dept-item no-children">
-	                            <div class="dept-row">
-	                                <span class="toggle-btn">▶</span>
-	                                <input type="checkbox" class="dept-checkbox" id="dev-1">
-	                                <label for="dev-1" class="dept-name">플랫폼개발팀</label>
-	                            </div>
-	                        </li>
-	                        <li class="dept-item no-children">
-	                            <div class="dept-row">
-	                                <span class="toggle-btn">▶</span>
-	                                <input type="checkbox" class="dept-checkbox" id="dev-2">
-	                                <label for="dev-2" class="dept-name">데이터엔지니어링팀</label>
-	                            </div>
-	                        </li>
-	                    </ul>
-	                </li>
-	
-	                <li class="dept-item">
-	                    <div class="dept-row">
-	                        <span class="toggle-btn">▼</span>
-	                        <input type="checkbox" class="dept-checkbox" id="biz">
-	                        <label for="biz" class="dept-name">영업본부</label>
-	                    </div>
-	                    <ul>
-	                        <li class="dept-item no-children">
-	                            <div class="dept-row">
-	                                <span class="toggle-btn">▶</span>
-	                                <input type="checkbox" class="dept-checkbox" id="biz-1">
-	                                <label for="biz-1" class="dept-name">국내영업팀</label>
-	                            </div>
-	                        </li>
-	                        <li class="dept-item no-children">
-	                            <div class="dept-row">
-	                                <span class="toggle-btn">▶</span>
-	                                <input type="checkbox" class="dept-checkbox" id="biz-2">
-	                                <label for="biz-2" class="dept-name">글로벌마케팅팀</label>
-	                            </div>
-	                        </li>
-	                    </ul>
-	                </li>
-	            </ul>
-	        </li>
-	    </ul>
-	</div>
-	
 	<script>
 	    document.addEventListener('DOMContentLoaded', () => {
 	        // 모든 토글 버튼(화살표)을 가져옵니다.
@@ -162,5 +99,109 @@
 	        });
 	    });
 	</script>
+	
+	<div class="container w-1200 mt-50 mb-50">
+		<div class="flex-area">
+			<h1>부서관리</h1>
+			<div>
+				<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
+			</div>
+			<div class="dept-tree">
+			    <ul>
+			        <li class="dept-item">
+			            <div class="dept-row">
+			                <span class="toggle-btn">▼</span>
+			                <input type="checkbox" class="dept-checkbox" id="corp">
+			                <label for="corp" class="dept-name">(주) 대박기업</label>
+			            </div>
+			            
+			            <ul>
+			                <li class="dept-item">
+			                    <div class="dept-row">
+			                        <span class="toggle-btn">▼</span>
+			                        <input type="checkbox" class="dept-checkbox" id="dev">
+			                        <label for="dev" class="dept-name">개발본부</label>
+			                    </div>
+			                    <ul>
+			                        <li class="dept-item no-children">
+			                            <div class="dept-row">
+			                                <span class="toggle-btn">▶</span>
+			                                <input type="checkbox" class="dept-checkbox" id="dev-1">
+			                                <label for="dev-1" class="dept-name">플랫폼개발팀</label>
+			                            </div>
+			                        </li>
+			                        <li class="dept-item no-children">
+			                            <div class="dept-row">
+			                                <span class="toggle-btn">▶</span>
+			                                <input type="checkbox" class="dept-checkbox" id="dev-2">
+			                                <label for="dev-2" class="dept-name">데이터엔지니어링팀</label>
+			                            </div>
+			                        </li>
+			                    </ul>
+			                </li>
+			
+			                <li class="dept-item">
+			                    <div class="dept-row">
+			                        <span class="toggle-btn">▼</span>
+			                        <input type="checkbox" class="dept-checkbox" id="biz">
+			                        <label for="biz" class="dept-name">영업본부</label>
+			                    </div>
+			                    <ul>
+			                        <li class="dept-item no-children">
+			                            <div class="dept-row">
+			                                <span class="toggle-btn">▶</span>
+			                                <input type="checkbox" class="dept-checkbox" id="biz-1">
+			                                <label for="biz-1" class="dept-name">국내영업팀</label>
+			                            </div>
+			                        </li>
+			                        <li class="dept-item no-children">
+			                            <div class="dept-row">
+			                                <span class="toggle-btn">▶</span>
+			                                <input type="checkbox" class="dept-checkbox" id="biz-2">
+			                                <label for="biz-2" class="dept-name">글로벌마케팅팀</label>
+			                            </div>
+			                        </li>
+			                    </ul>
+			                </li>
+			            </ul>
+			        </li>
+			    </ul>
+			</div>
+			
+		</div> 
+			<!-- 입력창  -->
+			<form action="./list">
+			    <input type="text" name="deptNo" class="field" placeholder="부서번호 입력">
+			    <button type="submit">검색</button>
+			</form>
+			<!-- 테이블 -->
+			<div class="cell center">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>부서번호</th>
+							<th>부서</th>
+							<th>부서등급</th>
+							<th>사원아이디</th>
+							<th>이름</th>
+							<th>직급</th>
+						
+						</tr>
+					</thead>
+					<tbody>
+					<c:forEach var="empPositionDeptDto" items="${empList}">
+					    <tr>
+					        <td>${empPositionDeptDto.deptNo}</td>
+					        <td>${empPositionDeptDto.deptName}</td>
+					        <td>${empPositionDeptDto.empPositionLevel}</td>
+					        <td>${empPositionDeptDto.empId}</td>
+					        <td>${empPositionDeptDto.empName}</td>
+					        <td>${empPositionDeptDto.empPositionName}</td>
+					    </tr>
+					</c:forEach>
+					</tbody>
+				</table>
+			</div>
+	</div>
 	
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

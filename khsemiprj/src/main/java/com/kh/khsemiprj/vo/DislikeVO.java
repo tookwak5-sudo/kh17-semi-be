@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class DislikeVO {
 	private boolean action;
-	private int count;
+	private long count;
 }

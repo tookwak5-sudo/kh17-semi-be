@@ -4,10 +4,13 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
-<form action="./findId" method="post" autocomplete="off">
+<form action="./findPassword" method="post" autocomplete="off">
 <div class="container w-400 mt-50 mb-50">
 	<div class="cell center">
-		<h1>아이디 찾기</h1>
+		<h1>비밀번호 찾기</h1>
+	</div>
+	<div class="cell">
+		<label>아이디</label> <input type="text" name="empId" class="field w-100">
 	</div>
 	<div class="cell">
 		<label>이름</label> <input type="text" name="empName" class="field w-100">
@@ -18,7 +21,7 @@
 	
 	<div class="cell mt-50">
 		<button type="submit" class="btn btn-positive w-100">
-			<i class="fa-solid fa-user"></i> <span>확인</span>
+			<i class="fa-solid fa-lock"></i> <span>확인</span>
 		</button>
 	</div>
 </div>

@@ -21,7 +21,7 @@
 		<input type="text" name="boardTitle" required class="field w-100"
 				value="${boardDto.boardTitle}">
 	</div>
-	<c:if test="${sessionScope.adminLevel != null}">
+	<c:if test="${sessionScope.loginLevel != '0'}">
 		<div class="cell mb-0">
 			<label>구분</label>
 		</div>
