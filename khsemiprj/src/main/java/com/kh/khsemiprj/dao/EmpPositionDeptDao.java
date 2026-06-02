@@ -27,4 +27,36 @@ public class EmpPositionDeptDao {
 				Object[] params = {deptNo};
  				return jdbcTemplate.query(sql, empPositionDepthMapper, params);
 		}
+		
+	//사원 목록 조회
+	public List<EmpPositionDeptDto> selectList() {
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name "
+				+ "FROM emp e "
+				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
+				+ "ORDER BY e.emp_id asc";
+		
+		return jdbcTemplate.query(sql, empPositionDepthMapper);
+	}
+	
+	
+	//사원 목록 검색
+		public List<EmpPositionDeptDto> selectList(String column, String keyword) {
+			if (column == null || keyword == null || column.isEmpty() || keyword.isEmpty()) {
+				return selectList();
+			}
+			
+			String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name "
+					+ "FROM emp e "
+					+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+					+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+					+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
+					+ "WHERE instr(" + column + ", ?) >0 "
+					+ "ORDER BY " + column + " asc, e.emp_id asc";
+			
+			Object[] params = {keyword};
+			return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+		}
+	
 }
