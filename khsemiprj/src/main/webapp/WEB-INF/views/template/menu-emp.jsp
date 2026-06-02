@@ -67,6 +67,15 @@
                     <span>로그아웃</span>
                 </a>
             </li>
+            <li>
+                 <i class="fa-solid fa-right-from-bracket"></i>
+                 <span>출근</span>
+            </li>
+            <li>
+                 <i class="fa-solid fa-right-from-bracket"></i>
+                 <span>퇴근</span>
+            </li>
+          
         </ul>
     </li>
 </ul>

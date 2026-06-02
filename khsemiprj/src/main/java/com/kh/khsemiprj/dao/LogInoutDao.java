@@ -22,6 +22,14 @@ public class LogInoutDao {
 	//검색 허용할 컬럼
 	Set<String> allowColumns = Set.of("log_inout_emp_id", "log_inout_type");
 	
+	//상세 조회
+	public LogInoutDto selectOne(String loginId) {
+		String sql = "select * from log_inout where loginId = ?";
+		Object[] params = { loginId };
+		List<LogInoutDto> list =  jdbcTemplate.query(sql,logInoutMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
 	// 촐퇴근 목록 조회
 	public List<LogInoutDto> selectList(int page, int size) {
 		String sql = "SELECT * FROM ("
