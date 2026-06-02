@@ -24,7 +24,7 @@
 			</form>
 		</div>
 	</div>
-	<c:if test="${param.column != null && param.keyword != null}">
+	<c:if test="${param.column != null && param.keyword != null && param.keyword != ''}">
 	<div class="cell">
 		<h3>총 <span class="red">${list.size()}</span>명의 회원이 검색되었습니다</h3>
 	</div>
@@ -41,12 +41,12 @@
 				</tr>
 			</thead>
 			<tbody align="center">
-				<c:forEach var="empDto" items="${list}">
+				<c:forEach var="empPositionDto" items="${list}">
 				<tr>
-					<td>${empDto.empId}</td>
-					<td>${empDto.empName}</td>
-					<td>${deptDto.deptName}</td>
-					<td>${emppositiondeptDto.empPositionName}</td>
+					<td>${empPositionDto.empId}</td>
+					<td>${empPositionDto.empName}</td>
+					<td>${empPositionDto.deptName}</td>
+					<td>${empPositionDto.empPositionName}</td>
 				</tr>
 				</c:forEach>
 			</tbody>
