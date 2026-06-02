@@ -50,5 +50,7 @@ public class DeptDao {
 		Object[] params = {  };
 		return jdbcTemplate.query(sql, deptMapper, params);
 	}
+	
+	
 }
 

@@ -1,6 +1,7 @@
 package com.kh.khsemiprj.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -59,5 +60,22 @@ public class EmpDao {
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
-
+	
+	
+	
+	public List<EmpDto> selectList(){
+		String sql = "select * from emp order by emp_id asc";
+		return jdbcTemplate.query(sql, empMapper);
+	}	
+	//검색
+	public List<EmpDto> selectList(String column, String keyword) {
+		if(column == null || keyword == null ||
+			column.isEmpty() || keyword.isEmpty())  return selectList();
+		
+		String sql = "select * from emp "
+					+ "where instr("+column+", ?) > 0 "
+					+ "order by "+column+" asc, emp_id asc";
+		Object[] params = {keyword};
+		return jdbcTemplate.query(sql, empMapper, params);
+	}
 }
