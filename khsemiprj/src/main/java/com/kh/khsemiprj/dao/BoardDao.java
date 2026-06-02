@@ -25,8 +25,8 @@ public class BoardDao {
 	public List<BoardDto> selectList(int page, int size) {
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
-							+ "select * from board_list "
-							+ "order by board_no asc"
+							+ "select * from board "
+							+ "order by board_no desc"
 						+ ") TMP"
 					+ ") where rn between ? and ?";
 		int beginRow = page * size - (size-1);
@@ -35,14 +35,14 @@ public class BoardDao {
 		return jdbcTemplate.query(sql, boardMapper, params);
 	}
 	public List<BoardDto> selectList(PageVO pageVO) {
-		if(pageVO.isList()) 
+		if(pageVO.isList())
 			return selectList(pageVO.getPage(), pageVO.getSize());
-		if(!allowColumns.contains(pageVO.getColumn())) 
+		if(!allowColumns.contains(pageVO.getColumn()))
 			return selectList(pageVO.getPage(), pageVO.getSize());
 		
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
-							+ "select * from board_list "
+							+ "select * from board "
 							+ "where instr("+pageVO.getColumn()+", ?) > 0 "
 							+ "order by board_no asc"
 						+ ") TMP"
@@ -56,7 +56,7 @@ public class BoardDao {
 	}
 	//공지사항 조회
 	public List<BoardDto> selectNoticeList() {
-		String sql = "select * from board_list "
+		String sql = "select * from board "
 					+ "where board_head = '공지' "
 					+ "order by board_no desc";
 		return jdbcTemplate.query(sql, boardMapper);
@@ -167,7 +167,7 @@ public class BoardDao {
 		return jdbcTemplate.queryForObject(sql, int.class, params);
 	}
 	
-	public boolean updateBoardLikecount(int boardNo) {
+	public boolean updateBoardLikecount(long boardNo) {
 		String sql = "update board set board_likecount = ("
 						+ "select count(*) from board_like where board_no = ?"
 					+ ") where board_no = ?";
@@ -175,7 +175,7 @@ public class BoardDao {
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
-	public boolean updateBoardDislikecount(int boardNo) {
+	public boolean updateBoardDislikecount(long boardNo) {
 		String sql = "update board set board_dislikecount = ("
 						+ "select count(*) from board_dislike where board_no = ?"
 					+ ") where board_no = ?";

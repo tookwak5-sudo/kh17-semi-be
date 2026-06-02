@@ -12,27 +12,27 @@ public class BoardDislikeDao {
 	
 	//구현해야하는 기능 : 등록, 삭제, 검사, 개수확인
 	
-	public void insert(String empId, int boardNo) {
+	public void insert(String empId, long boardNo) {
 		String sql = "insert into board_dislike(emp_id, board_no) values(?, ?)";
 		Object[] params = {empId, boardNo};
 		jdbcTemplate.update(sql, params);
 	}
 	
-//	public boolean delete(String empId, int boardNo) {
-//		String sql = "delete board_dislike where emp_id=? and board_no=?";
-//		Object[] params = {empId, boardNo };
-//		return jdbcTemplate.update(sql, params) > 0;
-//	}
-	
-	public boolean check(String empId, int boardNo) {
-		String sql = "select count(*) from board_dislike where emp_id=? and board_no=?";
-		Object[] params = { empId, boardNo };
-		return jdbcTemplate.queryForObject(sql, int.class, params) > 0;
+	public boolean delete(String empId, long boardNo) {
+		String sql = "delete board_dislike where emp_id=? and board_no=?";
+		Object[] params = {empId, boardNo };
+		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
-	public int count(int boardNo) {
+	public boolean check(String empId, long boardNo) {
+		String sql = "select count(*) from board_dislike where emp_id=? and board_no=?";
+		Object[] params = { empId, boardNo };
+		return jdbcTemplate.queryForObject(sql, long.class, params) > 0;
+	}
+	
+	public long count(long boardNo) {
 		String sql = "select count(*) from board_dislike where board_no=?";
 		Object[] params = {boardNo};
-		return jdbcTemplate.queryForObject(sql, int.class, params);
+		return jdbcTemplate.queryForObject(sql, long.class, params);
 	}
 }

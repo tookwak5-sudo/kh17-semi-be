@@ -422,7 +422,7 @@
 	
 	<c:if test="${sessionScope.loginId == null}">
 	<div class="cell">
-		<h3>댓글 작성을 원하시면 <a href="/member/login">로그인</a>하세요</h3>
+		<h3>댓글 작성을 원하시면 <a href="/emp/login">로그인</a>하세요</h3>
 	</div>
 	</c:if>
 	
@@ -443,7 +443,7 @@
 	<div class="cell right">
 		<c:if test="${sessionScope.loginId != null}">
 		<a class="btn btn-positive" href="./write">글쓰기</a>
-		<a class="btn btn-positive" href="./write?boardParent=${boardDto.boardNo}">답글쓰기</a>
+		<!--  <a class="btn btn-positive" href="./write?boardParent=${boardDto.boardNo}">답글쓰기</a>-->
 		</c:if>
 		
 		<c:if test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
