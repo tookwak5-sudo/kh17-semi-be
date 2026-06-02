@@ -188,16 +188,18 @@
 						
 						</tr>
 					</thead>
-				<c:forEach var="empPositionDeptDto" items="${empList}">
-			    <tr>
-			        <td>${empPositionDeptDto.deptNo}</td>
-			        <td>${empPositionDeptDto.deptName}</td>
-			        <td>${empPositionDeptDto.empPositionLevel}</td>
-			        <td>${empPositionDeptDto.empId}</td>
-			        <td>${empPositionDeptDto.empName}</td>
-			        <td>${empPositionDeptDto.empPositionName}</td>
-			    </tr>
-				</c:forEach>
+					<tbody>
+					<c:forEach var="empPositionDeptDto" items="${empList}">
+					    <tr>
+					        <td>${empPositionDeptDto.deptNo}</td>
+					        <td>${empPositionDeptDto.deptName}</td>
+					        <td>${empPositionDeptDto.empPositionLevel}</td>
+					        <td>${empPositionDeptDto.empId}</td>
+					        <td>${empPositionDeptDto.empName}</td>
+					        <td>${empPositionDeptDto.empPositionName}</td>
+					    </tr>
+					</c:forEach>
+					</tbody>
 				</table>
 			</div>
 	</div>

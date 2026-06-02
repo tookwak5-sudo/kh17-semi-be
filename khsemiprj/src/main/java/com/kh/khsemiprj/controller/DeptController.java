@@ -55,7 +55,7 @@ public class DeptController {
 	public String list(Model model, @RequestParam(defaultValue = "0") int deptNo) {
 		
 		List<EmpPositionDeptDto> empList = empPositionDeptDao.selectDepthEmp(deptNo);
-		System.out.println("컨트롤러에서 넘기는 리스트 사이즈: " + (empList == null ? "NULL입니다" : empList.size()));
+		//System.out.println("컨트롤러에서 넘기는 리스트 사이즈: " + (empList == null ? "NULL입니다" : empList.size()));
 		model.addAttribute("empList", empList);
 		return "dept/list";
 	}
