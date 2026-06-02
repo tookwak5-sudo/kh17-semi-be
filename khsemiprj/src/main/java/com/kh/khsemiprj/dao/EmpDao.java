@@ -46,6 +46,7 @@ public class EmpDao {
 			return jdbcTemplate.query(sql, empMapper);
 		}
 
+
 		public void connect(String empId, int attachNo) {
 			String sql = "insert into member_profile(emp_id, attach_no) values(?, ?)";
 			Object[] params = { empId, attachNo };
@@ -65,6 +66,7 @@ public class EmpDao {
 		 */
 		
 		
+
 	//아이디찾기
 	public EmpDto selectId(String empName, String empEmail) {
 		String sql = "select * from emp where emp_name = ? and emp_email = ?";

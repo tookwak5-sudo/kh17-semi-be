@@ -3,11 +3,51 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
+ <!-- jQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="./preview.js"></script>
+
+
+
 <!-- kakao postapi cdn --> 
 <script
 	src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
 	$(function() {
+		
+		var state = {
+				empIdValid: false,
+				empNameValid: false,
+				empPasswordValid: false,
+				empPasswordCheckValid: false,
+				empEmailValid: false,
+				empEmailCertValid: false,
+				empBirthValid: false,
+				empContactValid: false,
+				empAddressValid: false,
+				
+				ok: function(){
+					return Object.values(this)
+					.filter(v => typeof v==="boolean")
+					.every(v => v === true);
+				}
+				
+		};
+		
+		$("[name=empId]").on("blur",function(){
+			var regex =/^[a-z][a-z0-9]{4,19}$/;
+			var empId = $("[name=empId]").val();
+			var valid = regex.text(empId);
+			if(valid == false){
+				$("[name=empId]").removeClass("success fail")
+				.addClass("fail").attr("data-error","1");
+				state.empIdValid = false;
+				return;
+			}
+			
+			
+		});
+		
 		//주소 검색 서비스 추가를 위한 코드
 		$("[name=empPost], [name=empAddress1], .btn-address-search").on(
 				"click", function() {
@@ -46,6 +86,9 @@
 					}).open();
 				});
 
+		
+		
+		
 	});
 </script>
 
@@ -72,7 +115,7 @@
 		</div>
 
 		<div class="cell">
-			<label>이메일</label> <input type="text" inputmode="email"
+			<label>이메일</label> <input type="email" inputmode="email"
 				name="empEmail" class="field w-100">
 
 		</div>
