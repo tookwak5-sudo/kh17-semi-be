@@ -199,5 +199,16 @@ public class EmpController {
 		return "member/cert";
 	}
 	
-
+	
+	//프로필 매핑
+		@RequestMapping("/profile")
+		public String profile(@RequestParam String empId) {
+			try {
+				int attachNo = empDao.searchProfile(empId);
+				return "redirect:/download/modern?attachNo="+attachNo;
+			}
+			catch(Exception e) {
+				return "redirect:/images/no_image.png";
+			}
+		}
 }

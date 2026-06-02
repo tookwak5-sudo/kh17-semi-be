@@ -64,6 +64,7 @@ public class EmpDao {
 		 * jdbcTemplate.query(sql, empMapper, params); }
 		 */
 		
+		
 	//아이디찾기
 	public EmpDto selectId(String empName, String empEmail) {
 		String sql = "select * from emp where emp_name = ? and emp_email = ?";
@@ -71,5 +72,12 @@ public class EmpDao {
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
+	
+	//프로필 이미지 찾기
+		public int searchProfile(String empId) {
+			String sql = "select attach_no from emp_profile where emp_id=?";
+			Object[] params = { empId };
+			return jdbcTemplate.queryForObject(sql, int.class, params);
+		}
 	
 }
