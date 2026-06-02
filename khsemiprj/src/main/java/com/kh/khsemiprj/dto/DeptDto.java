@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class DeptDto {
+
 	private long deptNo;
 	private Long deptParentNo;
 	private String deptName;
-	private int deptDepth;
+	private int deptDepth; //default 0 not null,
 	private String deptUseYn;
 	private String deptEmpId;
 	

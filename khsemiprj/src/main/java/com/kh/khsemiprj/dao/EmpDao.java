@@ -39,6 +39,13 @@ public class EmpDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 
+	
+	//사원 전체 조회
+		public List<EmpDto> empList() {
+			String sql = "select * from emp order by emp_id asc";
+			return jdbcTemplate.query(sql, empMapper);
+		}
+
 	public void connect(String empId, int attachNo) {
 		String sql = "insert into member_profile(emp_id, attach_no) values(?, ?)";
 		Object[] params = { empId, attachNo };
@@ -52,6 +59,5 @@ public class EmpDao {
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
-	
 
 }
