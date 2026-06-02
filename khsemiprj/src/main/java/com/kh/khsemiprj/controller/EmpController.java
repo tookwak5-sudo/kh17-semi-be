@@ -189,13 +189,11 @@ public class EmpController {
 		}
 		
 		//4. 인증 가능한 상태인지 확인 (cert_yn = 'N')
-		//if(findDto.getCertYn().equals("Y")) {
-		if(findDto.isComplete()) {
+		if(findDto.getCertYn().equals("Y")) {
 			throw new GetOutException();
 		}
 		
-		//certDao.delete(certDto.getCertEmail());//인증기록 삭제
-		certDao.update(certDto.getCertEmail());//인증완료(cert_yn='Y')로 업데이트
+		certDao.delete(certDto.getCertEmail());//인증기록 삭제
 		return "member/cert";
 	}
 	
