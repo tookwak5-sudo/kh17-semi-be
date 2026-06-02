@@ -48,9 +48,9 @@ public class BoardRestController {
 	public LikeVO likeAction(@RequestParam long boardNo, HttpSession session) {
 		String loginId = (String)session.getAttribute("loginId");
 		
-		boolean current = boardDislikeDao.check(loginId, boardNo);
-		if(current) {//싫어요 설정한 적이 있으면
-			boardDislikeDao.delete(loginId, boardNo);//싫어요 해제
+		boolean current = boardLikeDao.check(loginId, boardNo);
+		if(current) {//좋아요 설정한 적이 있으면
+			boardLikeDao.delete(loginId, boardNo);//좋아요 해제
 		}
 		else {
 			boardLikeDao.insert(loginId, boardNo);//좋아요 설정
@@ -67,9 +67,9 @@ public class BoardRestController {
 	public DislikeVO dislikeAction(@RequestParam long boardNo, HttpSession session) {
 		String loginId = (String)session.getAttribute("loginId");
 		
-		boolean current = boardLikeDao.check(loginId, boardNo);
-		if(current) {//좋아요 설정한 적이 있으면
-			boardLikeDao.delete(loginId, boardNo);//좋아요 해제
+		boolean current = boardDislikeDao.check(loginId, boardNo);
+		if(current) {//싫어요 설정한 적이 있으면
+			boardDislikeDao.delete(loginId, boardNo);//싫어요 해제
 		}
 		else {
 			boardDislikeDao.insert(loginId, boardNo);//싫어요 설정
