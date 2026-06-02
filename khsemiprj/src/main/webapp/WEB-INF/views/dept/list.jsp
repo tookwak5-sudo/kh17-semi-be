@@ -47,7 +47,7 @@
         }
 
         /* 체크박스 스타일 커스텀 */
-        .dept-checkbox {
+        .dept-checkbox, .emp-checkbox {
             margin-right: 8px;
             width: 16px;
             height: 16px;
@@ -71,13 +71,105 @@
         .collapsed > ul {
             display: none;
         }
+        
+        
+        .dept-change-list.active {
+        	display: block;
+        }
+        .dept-change-list {
+        	display: none;
+        }
+        .border {
+        	box-shadow: 0 0 0 1px #cccccc;
+        }
     </style>
 	
-	<script>
-	    document.addEventListener('DOMContentLoaded', () => {
-	        // 모든 토글 버튼(화살표)을 가져옵니다.
-	        const toggleButtons = document.querySelectorAll('.toggle-btn');
 	
+	<!-- 화면에 나오지 않으면서 언제든지 불러서 쓸 수 있는 화면 조각(템플릿) -->
+<script type="text/template" id="dept-template">
+<li class="dept-item">
+	<div class="dept-row">
+		<span class="toggle-btn">▼</span>
+		<input type="checkbox" name="dept" class="dept-checkbox" id="dept">
+		<label for="dept" class="dept-name">부서명</label>
+	</div>
+	<ul>
+	</ul>
+</li>
+</script>
+<script type="text/template" id="emp-template">
+<tr>
+	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp"></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+</script>
+<script type="text/template" id="emp-empty-template">
+<tr>
+	<td colspan="5">검색된 사원이 없습니다</td>
+</tr>
+</script>
+    
+    <script>
+    
+	    function createTree(node) {
+	    	
+	    	var template = $("#dept-template").text();
+            const li = $.parseHTML(template)[1];
+            $(li).find(".dept-checkbox").attr("id", "dept1_" + node.deptNo);
+            $(li).find(".dept-checkbox").attr("value", node.deptNo);
+            $(li).find(".dept-checkbox").attr("data-emp-id", node.deptEmpId);
+            $(li).find(".dept-name").text(node.deptName);
+            $(li).find("label").attr("for", "dept1_" + node.deptNo);
+	        if (node.children && node.children.length > 0) {
+	        	const ul = $(li).find("ul")[0];
+	            node.children.forEach(child => {
+	                ul.appendChild(createTree(child));
+	            });
+	        }
+	        return li;
+	    }
+	    
+		function createTree2(node) {
+	    	
+	    	var template = $("#dept-template").text();
+            const li = $.parseHTML(template)[1];
+            $(li).find(".dept-checkbox").attr("id", "dept2_" + node.deptNo);
+            $(li).find(".dept-checkbox").attr("value", node.deptNo);
+            $(li).find(".dept-name").text(node.deptName);
+            $(li).find("label").attr("for", "dept2_" + node.deptNo);
+	        if (node.children && node.children.length > 0) {
+	        	const ul = $(li).find("ul")[0];
+	            node.children.forEach(child => {
+	                ul.appendChild(createTree2(child));
+	            });
+	        }
+	        return li;
+	    }
+	    
+	    $(function(){
+		    const deptList = JSON.parse('${deptListJson}');
+		    if (deptList && deptList.length > 0) {
+		        const listContainer = $('#deptList');
+		        const rootUl = $(listContainer).find('ul')[0];
+		        // 📌 여러 개의 루트 노드를 반복문 돌리며 rootUl에 li 형태로 붙여줍니다.
+		        deptList.forEach(rootNode => {
+		            rootUl.appendChild(createTree(rootNode));
+		        });
+		        
+		        const listContainer2 = $('#deptList2');
+		        const rootUl2 = $(listContainer2).find('ul')[0];
+		        // 📌 여러 개의 루트 노드를 반복문 돌리며 rootUl에 li 형태로 붙여줍니다.
+		        deptList.forEach(rootNode => {
+		            rootUl2.appendChild(createTree2(rootNode));
+		        });
+		    }
+		    
+		    //화살표 이벤트 추가
+		    const toggleButtons = document.querySelectorAll('.toggle-btn');
+			
 	        toggleButtons.forEach(button => {
 	            button.addEventListener('click', (e) => {
 	                // 클릭한 화살표의 부모인 .dept-item 요소를 찾습니다.
@@ -97,111 +189,172 @@
 	                }
 	            });
 	        });
+		    
+		    $(document).on("click", "#deptList input[type=checkbox][name=dept]", function () {
+		    	if($(this).prop("checked")) {
+		    		$("#deptList input[type=checkbox][name=dept]").prop("checked", false);
+		    		$(this).prop("checked", true);
+		    		var deptNo = $(this).val();
+		    		var deptEmpId = $(this).attr("data-emp-id");
+		    		//변경할 부서 목록 숨기기
+		    		resetDeptList2();
+		    		//부서원 목록 가져오기
+		    		getEmpPositionDeptList(deptNo);
+		    		//기존 선택된 비활성화 해제
+		    		$("#deptList2 input[type=checkbox][name=dept]").prop("disabled", false);
+		    		//이동할 부서에서 내 부서 비활성화 시키기
+		    		$("#deptList2 input[type=checkbox][name=dept][value=" + deptNo + "]").prop("disabled", true);
+		    	}
+		    });
+		    
+		    $(document).on("click", "#deptList2 input[type=checkbox][name=dept]", function () {
+		    	if($(this).prop("checked")) {
+		    		$("#deptList2 input[type=checkbox][name=dept]").prop("checked", false);
+		    		$(this).prop("checked", true);
+		    	}
+		    });
+		    
+		    $(document).on("click", "#empList input[type=checkbox][name=emp]", function () {
+		    	if($(this).prop("checked")) {
+		    		//변경할 부서 목록 보이기
+		    		$(".dept-change-list").addClass("active");
+		    	}
+		    });
+		    
+		    $(document).on("click", ".check-emp-all", function () {
+		    	var checked = $(this).prop("checked");
+		    	$("#empList input[type=checkbox][name=emp]").prop("checked", checked);
+		    });
+		    
+		    function resetDeptList2() {
+		    	$(".dept-change-list").removeClass("active");
+		    	$(".emp-checkbox").prop("checked", false);
+		    	$("#deptList2 input[type=checkbox][name=dept]").prop("checked", false);
+		    }
+		    
+		    function getEmpPositionDeptList(deptNo) {
+		    	$.ajax({
+	                url : "/rest/dept/empPositionDeptList",
+	                method:"post",
+	                data: { deptNo : deptNo },
+	                success : function(response) {
+	                	$("#empList").empty();
+	                	if(response.length > 0) {
+		                	var deptList = response;
+		                	for(var i = 0; i < deptList.length; i++) {
+			                	var empId = deptList[i].empId;
+			                	var deptName = deptList[i].deptName;
+			                	var empName = deptList[i].empName;
+			                	var empPositionName = deptList[i].empPositionName;
+			                	var deptEmpId = deptList[i].deptEmpId;
+			                	
+			                	var template = $("#emp-template").text();
+			                	const tr = $.parseHTML(template)[1];
+			                	$(tr).find(".emp-checkbox").attr("value", empId);
+			                	$(tr).find("td:eq(1)").text(deptName);
+			                	$(tr).find("td:eq(2)").text(empId);
+			                	if(empId == deptEmpId) {
+			                		$(tr).find("td:eq(3)").html("<i class=\"fa-solid fa-crown gold\"></i> " + empName);
+			                	} else {
+			                		$(tr).find("td:eq(3)").html(empName);
+			                	}
+			                	$(tr).find("td:eq(4)").text(empPositionName);
+			                	$("#empList").append(tr);
+		                	}
+	                	} else {
+	                		var template = $("#emp-empty-template").text();
+	                		const tr = $.parseHTML(template)[1];
+	                		$("#empList").append(tr);
+	                	}
+	                }
+	            });
+		    }
+		    
+		    $(".dept-change").click(function () {
+		    	var empIdList = $("#empList input[type=checkbox]:checked").map(function () {
+		    		return $(this).val();
+		    	}).get();
+		    	var fromDeptNo = $("#deptList input[type=checkbox]:checked").val();
+		    	var deptNo = $("#deptList2 input[type=checkbox]:checked").val();
+		    	
+		    	if(toDeptNo == undefined) {
+		    		alert("이동할 부서를 선택하세요");
+		    		return false;
+		    	}
+		    	
+		    	if(confirm("선택한 사원들의 부서를 변경하시겠습니까?")) {
+		    		$.ajax({
+		                url : "/rest/dept/empPositionDeptUpdate",
+		                method:"post",
+		                data: { 
+		                	empIdList : empIdList
+		                	, deptNo : deptNo 
+		                	},
+		                success : function(response) {
+		                	if(response) {
+		                		//부서원 목록 다시 가져오기
+		                		getEmpPositionDeptList(fromDeptNo);
+		                	} else {
+		                		alert("부서 변경 중 오류가 발생했습니다.");
+		                	}
+		                }
+		            });
+		    	}
+		    });
 	    });
-	</script>
+    
+    </script>
 	
 	<div class="container w-1200 mt-50 mb-50">
 		<div class="flex-area">
 			<h1>부서관리</h1>
-			<div>
-				<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
-			</div>
-			<div class="dept-tree">
-			    <ul>
-			        <li class="dept-item">
-			            <div class="dept-row">
-			                <span class="toggle-btn">▼</span>
-			                <input type="checkbox" class="dept-checkbox" id="corp">
-			                <label for="corp" class="dept-name">(주) 대박기업</label>
-			            </div>
-			            
-			            <ul>
-			                <li class="dept-item">
-			                    <div class="dept-row">
-			                        <span class="toggle-btn">▼</span>
-			                        <input type="checkbox" class="dept-checkbox" id="dev">
-			                        <label for="dev" class="dept-name">개발본부</label>
-			                    </div>
-			                    <ul>
-			                        <li class="dept-item no-children">
-			                            <div class="dept-row">
-			                                <span class="toggle-btn">▶</span>
-			                                <input type="checkbox" class="dept-checkbox" id="dev-1">
-			                                <label for="dev-1" class="dept-name">플랫폼개발팀</label>
-			                            </div>
-			                        </li>
-			                        <li class="dept-item no-children">
-			                            <div class="dept-row">
-			                                <span class="toggle-btn">▶</span>
-			                                <input type="checkbox" class="dept-checkbox" id="dev-2">
-			                                <label for="dev-2" class="dept-name">데이터엔지니어링팀</label>
-			                            </div>
-			                        </li>
-			                    </ul>
-			                </li>
 			
-			                <li class="dept-item">
-			                    <div class="dept-row">
-			                        <span class="toggle-btn">▼</span>
-			                        <input type="checkbox" class="dept-checkbox" id="biz">
-			                        <label for="biz" class="dept-name">영업본부</label>
-			                    </div>
-			                    <ul>
-			                        <li class="dept-item no-children">
-			                            <div class="dept-row">
-			                                <span class="toggle-btn">▶</span>
-			                                <input type="checkbox" class="dept-checkbox" id="biz-1">
-			                                <label for="biz-1" class="dept-name">국내영업팀</label>
-			                            </div>
-			                        </li>
-			                        <li class="dept-item no-children">
-			                            <div class="dept-row">
-			                                <span class="toggle-btn">▶</span>
-			                                <input type="checkbox" class="dept-checkbox" id="biz-2">
-			                                <label for="biz-2" class="dept-name">글로벌마케팅팀</label>
-			                            </div>
-			                        </li>
-			                    </ul>
-			                </li>
-			            </ul>
-			        </li>
-			    </ul>
+		</div>
+		<div class="cell flex-area">
+			<div class="cell w-25">
+				<div class="cell">
+					<span>부서 목록</span>
+					<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
+				</div>
+				<div id="deptList" class="dept-tree border">
+					<ul>
+					</ul>
+				</div>
 			</div>
-			
-		</div> 
-			<!-- 입력창  -->
-			<form action="./list">
-			    <input type="text" name="deptNo" class="field" placeholder="부서번호 입력">
-			    <button type="submit">검색</button>
-			</form>
-			<!-- 테이블 -->
-			<div class="cell center">
-				<table class="table">
-					<thead>
-						<tr>
-							<th>부서번호</th>
-							<th>부서</th>
-							<th>부서등급</th>
-							<th>사원아이디</th>
-							<th>이름</th>
-							<th>직급</th>
-						
-						</tr>
-					</thead>
-					<tbody>
-					<c:forEach var="empPositionDeptDto" items="${empList}">
-					    <tr>
-					        <td>${empPositionDeptDto.deptNo}</td>
-					        <td>${empPositionDeptDto.deptName}</td>
-					        <td>${empPositionDeptDto.empPositionLevel}</td>
-					        <td>${empPositionDeptDto.empId}</td>
-					        <td>${empPositionDeptDto.empName}</td>
-					        <td>${empPositionDeptDto.empPositionName}</td>
-					    </tr>
-					</c:forEach>
-					</tbody>
-				</table>
+			<div class="cell w-50 ms-10 me-10">
+				<div class="cell">
+					<div class="cell">
+						<span>부서별 사원 목록</span>
+					</div>
+				</div>
+				<!-- 테이블 -->
+				<div class="cell center" style="width:580px;">
+					<table class="table">
+						<thead>
+							<tr>
+								<th><input type="checkbox" class="emp-checkbox check-emp-all"></th>
+								<th>부서</th>
+								<th>사원아이디</th>
+								<th>이름</th>
+								<th>직급</th>
+							</tr>
+						</thead>
+						<tbody id="empList">
+						</tbody>
+					</table>
+				</div>
 			</div>
+			<div class="cell w-25 dept-change-list">
+				<div class="cell">
+					<span>이동할 부서 목록</span>
+					<a class="btn btn-positive dept-change">변경</a>
+				</div>
+				<div id="deptList2" class="dept-tree border">
+					<ul>
+					</ul>
+				</div>
+			</div>
+		</div>
 	</div>
 	
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

@@ -18,13 +18,37 @@ public class EmpPositionDeptDao {
 	private EmpPositionDeptMapper empPositionDepthMapper;
 			
 	// 사원아이디를 통해 사원의 직책, 부서 조회 //  부서가 입력되면  그 부서에 해당되는 사원 출력
-		public List<EmpPositionDeptDto> selectDepthEmp(int deptNo) {
-				String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name "
-						+ "FROM emp e "
-						+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
-						+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
-						+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ?";
-				Object[] params = {deptNo};
- 				return jdbcTemplate.query(sql, empPositionDepthMapper, params);
-		}
+	public List<EmpPositionDeptDto> selectDepthEmp(long deptNo) {
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
+				+ "FROM emp e "
+				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ?";
+		Object[] params = {deptNo};
+		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+	}
+	
+	public boolean empPositionDeptUpdate(String empId, long deptNo) {
+		String sql = "update emp_dept_relation set dept_no = ? where emp_id = ?";
+		Object[] params = { deptNo, empId };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	public boolean deptEmpIdReset(long deptNo) {
+		String sql = "update emp set emp_grade = 0 where emp_id = (select dept_emp_id from dept where dept_no = ?) and emp_grade <= 1";
+		Object[] params = { deptNo };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	public boolean deptEmpIdUpdate(long deptNo, String empId) {
+		String sql = "update dept set dept_emp_id = ? where dept_no = ?";
+		Object[] params = { empId, deptNo };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	public boolean empGradeUpdate(String empId) {
+		String sql = "update emp set emp_grade = 1 where emp_id = ?";
+		Object[] params = { empId };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
 }

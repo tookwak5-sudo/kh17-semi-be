@@ -117,7 +117,7 @@
         }
     </style>
 
-    <div class="dept-chart-container">
+    <div class="dept-chart-container" style="justify-content: flex-start;">
         <div class="tree" id="deptChart">
             <!-- JavaScript로 트리 구조가 생성됩니다. -->
         </div>
