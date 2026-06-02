@@ -13,12 +13,18 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 	//등록한 인터셉터를 가져오도록 설정하고
 	@Autowired
 	private PageLogInterceptor pageLogInterceptor;
+	@Autowired
+	private BoardReadInterceptor boardReadInterceptor;
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(pageLogInterceptor)
 		.addPathPatterns("/**")
-		.excludePathPatterns("/emp/login")
+		.excludePathPatterns("/emp/login","/css/*","/js/*")
 		;
+		
+		//조회수 증가 처리를 하는 인터셉터
+				registry.addInterceptor(boardReadInterceptor)
+						.addPathPatterns("/board/detail");
 	}
 }

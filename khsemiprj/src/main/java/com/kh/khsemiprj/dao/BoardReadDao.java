@@ -17,11 +17,11 @@ public class BoardReadDao {
 		jdbcTemplate.update(sql, params);
 	}
 	//카운트
-	public int count(String empId, long boardNo) {
+	public long count(String empId, long boardNo) {
 		String sql = "select count(*) from board_read "
 				+ "where emp_id = ? and board_no = ?";
 		Object[] params = {empId, boardNo};
-		return jdbcTemplate.queryForObject(sql, int.class, params);
+		return jdbcTemplate.queryForObject(sql, long.class, params);
 	}
 }
 

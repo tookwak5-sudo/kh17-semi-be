@@ -25,8 +25,8 @@ public class BoardDao {
 	public List<BoardDto> selectList(int page, int size) {
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
-							+ "select * from board_list "
-							+ "order by board_no asc"
+							+ "select * from board "
+							+ "order by board_no desc"
 						+ ") TMP"
 					+ ") where rn between ? and ?";
 		int beginRow = page * size - (size-1);
@@ -35,14 +35,14 @@ public class BoardDao {
 		return jdbcTemplate.query(sql, boardMapper, params);
 	}
 	public List<BoardDto> selectList(PageVO pageVO) {
-		if(pageVO.isList()) 
+		if(pageVO.isList())
 			return selectList(pageVO.getPage(), pageVO.getSize());
-		if(!allowColumns.contains(pageVO.getColumn())) 
+		if(!allowColumns.contains(pageVO.getColumn()))
 			return selectList(pageVO.getPage(), pageVO.getSize());
 		
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
-							+ "select * from board_list "
+							+ "select * from board "
 							+ "where instr("+pageVO.getColumn()+", ?) > 0 "
 							+ "order by board_no asc"
 						+ ") TMP"
@@ -56,7 +56,7 @@ public class BoardDao {
 	}
 	//공지사항 조회
 	public List<BoardDto> selectNoticeList() {
-		String sql = "select * from board_list "
+		String sql = "select * from board "
 					+ "where board_head = '공지' "
 					+ "order by board_no desc";
 		return jdbcTemplate.query(sql, boardMapper);
@@ -89,14 +89,9 @@ public class BoardDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 	
-	//우리 등록이 달라졌어요
-	//(기존) 시퀀스 번호를 생성하면서 등록
-	//(변경) 시퀀스 번호 생성 먼저하고 등록을 나중에 → 자바가 등록될 대상의 기본키를 알 수 있도록
 	public long sequence() {
 		String sql = "select board_seq.nextval from dual";
-		//return jdbcTemplate.query(sql, boardMapper);//board테이블을 조회했을 때
-		return jdbcTemplate.queryForObject(sql, long.class);//정해진 형태 (null 불가)
-		//return jdbcTemplate.queryForObject(sql, Long.class);//정해진 형태 (null 허용)
+		return jdbcTemplate.queryForObject(sql, long.class);
 	}
 	public void insert(BoardDto boardDto) {
 		String sql = "insert into board("
@@ -167,7 +162,7 @@ public class BoardDao {
 		return jdbcTemplate.queryForObject(sql, int.class, params);
 	}
 	
-	public boolean updateBoardLikecount(int boardNo) {
+	public boolean updateBoardLikecount(long boardNo) {
 		String sql = "update board set board_likecount = ("
 						+ "select count(*) from board_like where board_no = ?"
 					+ ") where board_no = ?";
@@ -175,10 +170,18 @@ public class BoardDao {
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
-	public boolean updateBoardDislikecount(int boardNo) {
+	public boolean updateBoardDislikecount(long boardNo) {
 		String sql = "update board set board_dislikecount = ("
 						+ "select count(*) from board_dislike where board_no = ?"
 					+ ") where board_no = ?";
+		Object[] params = { boardNo, boardNo };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	public boolean updateBoardReplycount(long boardNo) {
+		String sql="update board set board_replycount = ("
+				+ "select count(*) from reply where reply_origin = ?"
+				+ ") where board_no = ?";
 		Object[] params = { boardNo, boardNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}

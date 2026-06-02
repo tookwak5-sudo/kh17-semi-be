@@ -17,7 +17,7 @@
 	</div>
 	
 	<div class="cell mt-10">
-		<a href="#" class="btn btn-neutral">비밀번호 찾으러가기</a>
+		<a href="./findPassword" class="btn btn-neutral">비밀번호 찾으러가기</a>
 	</div>
 </div>
 

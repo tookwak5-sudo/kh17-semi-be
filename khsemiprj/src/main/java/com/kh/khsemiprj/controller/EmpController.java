@@ -3,6 +3,7 @@ package com.kh.khsemiprj.controller;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,8 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
+import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dto.CertDto;
 import com.kh.khsemiprj.dto.EmpDto;
+import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
@@ -34,6 +37,9 @@ public class EmpController {
 	
 	@Autowired
 	private CertDao certDao;
+	
+	@Autowired
+	private EmpLeaveDao empLeaveDao;
 	
 	@Autowired
 	private AttachService attachService;
@@ -87,7 +93,7 @@ public class EmpController {
 		// - 1. 관리자 테이블 조회 후 존재 시 → loginLevel = 2로 설정
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
-		session.setAttribute("loginLevel", "0");
+		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
 		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
@@ -155,8 +161,9 @@ public class EmpController {
 	}
 	
 	@PostMapping("/findPassword")
-	public String findId(@RequestParam String empId, Model model) {
-		EmpDto empDto = empDao.selectOne(empId);
+	public String findPassword(@RequestParam String empId,@RequestParam String empName,
+			@RequestParam String empEmail,  Model model) {
+		EmpDto empDto = empDao.selectPassword(empId, empName, empEmail);
 		
 		if(empDto == null) {
 			//일치하는 회원이 없었을때
@@ -189,15 +196,95 @@ public class EmpController {
 		}
 		
 		//4. 인증 가능한 상태인지 확인 (cert_yn = 'N')
-		//if(findDto.getCertYn().equals("Y")) {
-		if(findDto.isComplete()) {
+		if(findDto.getCertYn().equals("Y")) {
 			throw new GetOutException();
 		}
 		
-		//certDao.delete(certDto.getCertEmail());//인증기록 삭제
-		certDao.update(certDto.getCertEmail());//인증완료(cert_yn='Y')로 업데이트
-		return "member/cert";
+		certDao.delete(certDto.getCertEmail());//인증기록 삭제
+		return "emp/cert";
+
 	}
 	
+
+	@RequestMapping("/mypage")
+	public String mypage(HttpSession session,Model model) {
+		
+		
+		String loginId =(String) session.getAttribute("loginId");
+		if(loginId==null) { 
+			System.out.println("현재 세션: "+loginId);
+			return "redirect:./login";
+		
+		}
+		EmpDto findEmpDto = empDao.selectOne(loginId);
+		
+		if(findEmpDto == null) return "redirect:./login";
+		model.addAttribute("findEmpDto", findEmpDto);
+		
+		//근태 로그 및 로그인 로그 필요.
+		
+		List<EmpLeaveDto> empLeaveList =empLeaveDao.selectList(loginId);
+		
+		
+		
+		
+		model.addAttribute("empLeaveList", empLeaveList);
+		
+		
+		
+		return "emp/mypage";
+	}
+	
+	//내 정보 수정 전 비밀번호 확인 페이지
+	@PostMapping("/checkPassword")
+	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto,@RequestParam String empPassword) {
+		
+		
+		String loginId = (String) session.getAttribute("empId");
+		
+		if(loginId==null) {
+			return "redirect:./login";
+		}
+		EmpDto findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null) {
+			return "redirect:./login";
+		}
+		boolean isValid = findEmpDto.getEmpPassword().equals(empDto.getEmpPassword());
+		if(!isValid) {
+			return "redirect:./checkPassword?error";
+		}
+		
+		return "redirect:./emp/edit";
+		
+	}
+	
+	//내 정보 수정의 겟 매핑
+	@GetMapping("/edit")
+	public String edit(HttpSession session, Model model) {
+		String loginId = (String) session.getAttribute("empId");
+		EmpDto empDto = empDao.selectOne(loginId);
+		if (empDto == null) {
+	        return "redirect:./login"; 
+	    }
+		model.addAttribute("empDto", empDto);
+		return "emp/edit";
+	}
+	
+	
+	
+	
+
+	
+	//프로필 매핑
+		@RequestMapping("/profile")
+		public String profile(@RequestParam String empId) {
+			try {
+				int attachNo = empDao.searchProfile(empId);
+				return "redirect:/download/modern?attachNo="+attachNo;
+			}
+			catch(Exception e) {
+				return "redirect:/images/no_image.png";
+			}
+		}
 
 }
