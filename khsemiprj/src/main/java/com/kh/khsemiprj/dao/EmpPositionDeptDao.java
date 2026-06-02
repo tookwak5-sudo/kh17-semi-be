@@ -18,7 +18,7 @@ public class EmpPositionDeptDao {
 	private EmpPositionDeptMapper empPositionDepthMapper;
 			
 	// 사원아이디를 통해 사원의 직책, 부서 조회 //  부서가 입력되면  그 부서에 해당되는 사원 출력
-		public List<EmpPositionDeptDto> selectDepthEmp(int deptNo) {
+		public List<EmpPositionDeptDto> selectDepthEmp(long deptNo) {
 				String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name "
 						+ "FROM emp e "
 						+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
@@ -28,3 +28,5 @@ public class EmpPositionDeptDao {
  				return jdbcTemplate.query(sql, empPositionDepthMapper, params);
 		}
 }
+
+

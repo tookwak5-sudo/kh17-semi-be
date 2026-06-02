@@ -56,7 +56,7 @@ public class DeptController {
 	
 	// 부서 목록 
 	@RequestMapping("/list")
-	public String list(Model model, @RequestParam(defaultValue = "0") int deptNo) {
+	public String list(Model model, @RequestParam(defaultValue = "0") long deptNo) {
 		
 		List<EmpPositionDeptDto> empList = empPositionDeptDao.selectDepthEmp(deptNo);
 		//System.out.println("컨트롤러에서 넘기는 리스트 사이즈: " + (empList == null ? "NULL입니다" : empList.size()));
@@ -69,14 +69,10 @@ public class DeptController {
 	public String edit(@RequestParam long deptNo, Model model) {
 		DeptDto deptDto = deptDao.selectOne(deptNo);
 		if(deptDto == null) throw new TargetNotfoundException("존재하지 않는 부서");
+		//승인된 부서 체크
+		boolean isChecked = "Y".equals(deptDto.getDeptUseYn());
+		model.addAttribute("isChecked", isChecked);
 		model.addAttribute("deptDto", deptDto);
-		//전체 부서 정보 넘기기
-		//본인보다 상위 부서인 부서의 정보만 넘기기
-		//전체 부서를 upperDeptDto에 넣고
-		List<DeptDto> upperDeptDto = deptDao.selectListAll();
-		//입력된 부서의 parent_no
-//		boolean check = 
-//		if(deptDto.getDeptParentNo() )
 		model.addAttribute("deptList",deptDao.deptList());
 		return "dept/edit";
 	}	
@@ -84,6 +80,9 @@ public class DeptController {
 	public String edit(@ModelAttribute DeptDto deptDto) {
 		//오류 검사는 get에서 진행함 바로 값을 가져오기
 		deptDao.update(deptDto);
+		
+		
+		
 		return "redirect:./list";
 	//	return "redirect:dept/list"; //절대경로
 	}
