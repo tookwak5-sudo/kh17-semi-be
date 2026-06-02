@@ -87,7 +87,7 @@ public class EmpController {
 		// - 1. 관리자 테이블 조회 후 존재 시 → loginLevel = 2로 설정
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
-		session.setAttribute("loginLevel", "0");
+		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
 		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
