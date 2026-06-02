@@ -4,11 +4,9 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
-<<<<<<< HEAD
+
 <form action="./insert" autocomplete="off" method="post" class="form-check">
-=======
-<form action="./insert" method="post" autocomplete="off">
->>>>>>> refs/remotes/origin/main
+
 	<div class="container w-400 mt-50">
 		
     	<div class="cell center">
@@ -25,11 +23,8 @@
         </div>
         <div class="cell">
             <label>상위 부서 선택</label> 
-<<<<<<< HEAD
+
             <select class="field w-100" name="deptParentNo">
-=======
-            <select class="field w-100" name="deptParentId">
->>>>>>> refs/remotes/origin/main
                 <option value="">선택하세요</option>
                 <c:forEach var="deptDto" items="${deptList}">
                 <option value="${deptDto.deptNo}">${deptDto.deptName}</option>
