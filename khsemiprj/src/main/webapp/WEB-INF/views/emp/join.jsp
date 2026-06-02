@@ -3,22 +3,45 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
+ <!-- jQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="./preview.js"></script>
+
+
+
 <!-- kakao postapi cdn --> 
 <script src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <script>
 	$(function() {
-		//상태객체
 		var state = {
-				empEmailValid : true,
-				empEmailCertValid : false,//인증 통과했는지
-				ok : function(){
-                    return Object.values(this)
-                    .filter(v => typeof v == "boolean")
-                    .every(v => v == true);
-                }
-            }
+				empIdValid: false,
+// 				empNameValid: false,
+// 				empPasswordValid: false,
+// 				empPasswordCheckValid: false,
+				empEmailValid: true,
+				empEmailCertValid: false,//인증 통과했는지
+// 				empBirthValid: false,
+// 				empContactValid: false,
+// 				empAddressValid: false,
+				ok: function(){
+					return Object.values(this)
+					.filter(v => typeof v==="boolean")
+					.every(v => v === true);
+				}
+		};
 		
+		$("[name=empId]").on("blur",function(){
+			var regex =/^[a-z][a-z0-9]{4,19}$/;
+			var empId = $("[name=empId]").val();
+			var valid = regex.text(empId);
+			if(valid == false){
+				$("[name=empId]").removeClass("success fail")
+				.addClass("fail").attr("data-error","1");
+				state.empIdValid = false;
+				return;
+			}
+		});	
 		//주소 검색 서비스 추가를 위한 코드
 		$("[name=empPost], [name=empAddress1], .btn-address-search").on(
 				"click", function() {
@@ -99,7 +122,6 @@
             if(certValid == false) {//인증번호가 형식에 맞지 않으면
                 return;
             }
-
             $.ajax({
                 url:"/rest/cert/check",
                 method:"post",
@@ -138,7 +160,6 @@
 	           $(this).find("input[name], textarea[name]").trigger("blur");
 	           return state.ok();
 	      	 });
-	   
 	});
 	</script>
 	
@@ -155,30 +176,25 @@
         </div>
      </script>
 
-
-
-
 <form action="./join" method="post" enctype="multipart/form-data" autocomplete="off" class="form-check">
 	<div class="container w-600 mt-50 mb-50">
 		<div class="cell center">
 			<h1>회원 가입</h1>
-
 		</div>
 
 		<div class="cell">
 			<label>아이디</label> <input type="text" name="empId"
 				class="field w-100">
-
 		</div>
 
 		<div class="cell">
 			<label>비밀번호</label> <input type="password" name="empPassword"
 				class="field w-100">
-
 		</div>
 		
 		<div class="cell">
 			<label>이메일</label>
+
 		</div>
 		<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
                 <input type="text" name="empEmail"
@@ -200,10 +216,7 @@
 		<div class="cell">
 			<label>성함</label> <input type="text" name="empName"
 				class="field w-100">
-
-
 		</div>
-
 
 		<div class="cell">
 			<label>생년월일</label> <input type="date" name="empBirth"
@@ -260,14 +273,5 @@
 				<i class="fa-solid fa-user-plus"></i> <span>회원 가입하기</span>
 			</button>
 		</div>
-
-
-
 	</div>
-
-
-
-
-
-
 </form>
