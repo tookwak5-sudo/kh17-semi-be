@@ -26,7 +26,7 @@
 
 		<div class="flex-area">
 			<div class="w-25">생년월일</div>
-			<div class="w-75 blue">${empDto.empBirth}</div>
+			<div class="w-75 blue">${findEmpDto.empBirth}</div>
 		</div>
 
 		<div class="flex-area">
@@ -50,31 +50,15 @@
 		</div>
 
 
-		<div class="flex-area">
-			<div class="w-25">승인상태</div>
-			<div class="w-75 blue">${findEmpDto.empValid}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">승인날짜</div>
-			<div class="w-75 blue">${findEmpDto.empValidDate}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">장기 휴가 시작일</div>
-			<div class="w-75 blue">${findEmpDto.empLongLeave}</div>
-		</div>
+		
+		
 		<!-- 		로그인 이력은 dto dao 구현 해야합니다 -->
 		<div class="flex-area">
 			<div class="w-25">로그인 이력</div>
 			<div class="w-75 blue">2026.06.01</div>
 		</div>
 
-		<div class="flex-area">
-			<div class="w-25">최종 비밀번호 변경일</div>
-			<div class="w-75 blue">${findEmpDto.empChange}</div>
-		</div>
-
+		
 	</div>
 
 
