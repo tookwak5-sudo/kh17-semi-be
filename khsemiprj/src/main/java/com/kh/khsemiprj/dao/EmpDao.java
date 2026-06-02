@@ -59,5 +59,13 @@ public class EmpDao {
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
+	
+	//비밀번호찾기
+	public EmpDto selectPassword(String empId, String empName, String empEmail) {
+		String sql = "select * from emp where emp_id = ? and emp_name = ? and emp_email = ?";
+		Object[] params = {empId,empName, empEmail};
+		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
 
 }

@@ -131,6 +131,13 @@
 	
 	         $("[name=empEmail]").trigger("focus");//커서 옮김
 	     });
+	     
+	   //폼검사
+	       $(".form-check").on("submit", function(){
+	           $(this).find("select[name]").trigger("input");
+	           $(this).find("input[name], textarea[name]").trigger("blur");
+	           return state.ok();
+	      	 });
 	   
 	});
 	</script>
@@ -199,7 +206,7 @@
 
 
 		<div class="cell">
-			<label>생년월일</label> <input type="text" name="empBirth"
+			<label>생년월일</label> <input type="date" name="empBirth"
 				class="field w-100">
 			<div class="fail-feedback">올바른 날짜 형식이 아닙니다</div>
 		</div>

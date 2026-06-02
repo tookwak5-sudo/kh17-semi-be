@@ -155,8 +155,9 @@ public class EmpController {
 	}
 	
 	@PostMapping("/findPassword")
-	public String findId(@RequestParam String empId, Model model) {
-		EmpDto empDto = empDao.selectOne(empId);
+	public String findPassword(@RequestParam String empId,@RequestParam String empName,
+			@RequestParam String empEmail,  Model model) {
+		EmpDto empDto = empDao.selectPassword(empId, empName, empEmail);
 		
 		if(empDto == null) {
 			//일치하는 회원이 없었을때
