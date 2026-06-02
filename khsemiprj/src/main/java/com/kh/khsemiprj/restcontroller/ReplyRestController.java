@@ -35,6 +35,8 @@ public class ReplyRestController {
 		replyDto.setReplyWriter(loginId);
 		
 		replyDao.insert(replyDto);
+		//댓글갯수 업데이트
+		boardDao.updateBoardReplycount(replyDto.getReplyOrigin());
 	}
 	
 	@PostMapping("/list")
@@ -67,7 +69,13 @@ public class ReplyRestController {
 	//댓글 삭제
 	@PostMapping("/delete")
 	public void delete(@RequestParam long replyNo) {
+		//댓글 삭제 전 어디 글에 있던 댓글인지 확인
+		ReplyDto replyDto=replyDao.selectOne(replyNo);
+		long boardNo = replyDto.getReplyOrigin();
+
 		replyDao.delete(replyNo);
+		//댓글갯수 업데이트
+		boardDao.updateBoardReplycount(boardNo);
 	}
 	
 	//댓글 수정
