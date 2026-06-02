@@ -13,5 +13,6 @@ public class EmpPositionDeptDto {
     private String empPositionName; // 직책 이름
     private String deptName;        // 부서 이름
     private int empPositionLevel;
+    private int empPositionNo;
     private int deptNo; // 부서번호
 }

@@ -43,7 +43,11 @@
 			<tbody align="center">
 				<c:forEach var="empPositionDto" items="${list}">
 				<tr>
-					<td>${empPositionDto.empId}</td>
+					<td>
+					<a href="detail?empId=${empPositionDto.empId}">
+					${empPositionDto.empId}
+					</a>
+					</td>
 					<td>${empPositionDto.empName}</td>
 					<td>${empPositionDto.deptName}</td>
 					<td>${empPositionDto.empPositionName}</td>
