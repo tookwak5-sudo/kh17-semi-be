@@ -24,6 +24,6 @@ public class EmpDto {
 	private String empValid;
 	private Timestamp empValidDate;
 	private Timestamp empChange;
-	private Timestamp empLongLeave;
+	private Timestamp empLongLeave;	
 	private int empGrade;
 }
