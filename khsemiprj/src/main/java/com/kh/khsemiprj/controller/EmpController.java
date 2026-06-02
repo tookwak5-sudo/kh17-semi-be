@@ -93,7 +93,7 @@ public class EmpController {
 		// - 1. 관리자 테이블 조회 후 존재 시 → loginLevel = 2로 설정
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
-		session.setAttribute("loginLevel", "0");
+		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
 		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
@@ -161,8 +161,9 @@ public class EmpController {
 	}
 	
 	@PostMapping("/findPassword")
-	public String findId(@RequestParam String empId, Model model) {
-		EmpDto empDto = empDao.selectOne(empId);
+	public String findPassword(@RequestParam String empId,@RequestParam String empName,
+			@RequestParam String empEmail,  Model model) {
+		EmpDto empDto = empDao.selectPassword(empId, empName, empEmail);
 		
 		if(empDto == null) {
 			//일치하는 회원이 없었을때
@@ -195,14 +196,13 @@ public class EmpController {
 		}
 		
 		//4. 인증 가능한 상태인지 확인 (cert_yn = 'N')
-		//if(findDto.getCertYn().equals("Y")) {
-		if(findDto.isComplete()) {
+		if(findDto.getCertYn().equals("Y")) {
 			throw new GetOutException();
 		}
 		
-		//certDao.delete(certDto.getCertEmail());//인증기록 삭제
-		certDao.update(certDto.getCertEmail());//인증완료(cert_yn='Y')로 업데이트
+		certDao.delete(certDto.getCertEmail());//인증기록 삭제
 		return "emp/cert";
+
 	}
 	
 

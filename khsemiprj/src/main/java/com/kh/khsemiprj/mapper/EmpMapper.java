@@ -29,6 +29,7 @@ public class EmpMapper implements RowMapper<EmpDto> {
 				.empValidDate(rs.getTimestamp("emp_valid_date"))
 				.empChange(rs.getTimestamp("emp_change"))
 				.empLongLeave(rs.getTimestamp("emp_long_leave"))
+				.empGrade(rs.getInt("emp_grade"))
 			.build();
 	}
 }

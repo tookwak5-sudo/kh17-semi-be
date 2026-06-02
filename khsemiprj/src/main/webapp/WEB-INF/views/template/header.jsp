@@ -33,7 +33,15 @@
     <!-- <link rel="stylesheet" type="text/css" href="/lib/multipage/multipage.css">
     <script src="/lib/multipage/multipage.js"></script> -->
 </head>
+
+
 <body>
+
+세션ID : ${pageContext.session.id},
+loginId : ${sessionScope.loginId},
+empGrade : ${sessionScope.empGrade}
+
+
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-1200">
         <div class="flex-area flex-vertical">

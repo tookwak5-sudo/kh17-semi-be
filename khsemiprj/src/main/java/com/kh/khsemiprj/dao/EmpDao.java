@@ -75,11 +75,18 @@ public class EmpDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 	
+	//비밀번호찾기
+	public EmpDto selectPassword(String empId, String empName, String empEmail) {
+		String sql = "select * from emp where emp_id = ? and emp_name = ? and emp_email = ?";
+		Object[] params = {empId,empName, empEmail};
+		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
 	//프로필 이미지 찾기
 		public int searchProfile(String empId) {
 			String sql = "select attach_no from emp_profile where emp_id=?";
 			Object[] params = { empId };
 			return jdbcTemplate.queryForObject(sql, int.class, params);
 		}
-	
 }
