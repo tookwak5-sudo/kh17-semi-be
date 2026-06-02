@@ -1,6 +1,11 @@
 package com.kh.khsemiprj.controller;
 
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +23,8 @@ import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/dept")
@@ -28,6 +34,7 @@ public class DeptController {
 	@Autowired
 	private EmpPositionDeptDao empPositionDeptDao;
 	
+
 	// 부서 정보 등록
 	@GetMapping("/insert")
 	public String insert(@ModelAttribute DeptDto deptDto, Model model) {
@@ -61,7 +68,40 @@ public class DeptController {
 	}
 	
 	@RequestMapping("/chart")
-	public String chart() {
+	public String chart(Model model) throws JsonProcessingException {
+		
+		// 1. 부서 목록 가져오기
+ 		List<DeptDto> list = deptDao.selectListAll();
+ 		
+ 		// 2. 부서 목록 트리구조로 변경
+ 		List<DeptDto> rootList = new ArrayList<>();
+ 	    Map<Long, DeptDto> dtoMap = new HashMap<>();
+ 	    
+ 	    // - 2-1. Map에 모두 저장
+ 	    for (DeptDto dto : list) {
+ 	        dtoMap.put(dto.getDeptNo(), dto);
+ 	    }
+ 	    
+ 	    // - 2-2. 부서번호를 키값으로 가지는 해시맵 생성
+ 	    for (DeptDto dto : list) {
+ 	    	Long deptParentNo = dto.getDeptParentNo();
+ 	    	dtoMap.put(dto.getDeptNo(), dto);
+ 	    	// 부모 ID가 없거나, 부모 ID가 있지만 Map에 존재하지 않는 경우 최상위(Root)로 취급
+ 	    	if (dto.getDeptDepth() == 0 || dto.getDeptParentNo() == null || !dtoMap.containsKey(deptParentNo)) {
+ 	            rootList.add(dto);
+ 	        } else {
+ 	        	// 부모가 있다면 해당 부모의 자식 리스트에 추가
+ 	            dtoMap.get(deptParentNo).getChildren().add(dto);
+ 	        }
+ 	    }
+ 		
+ 	    // 3. 자바 객체를 JSP의 JavaScript가 인식할 수 있도록 JSON 문자열로 변환
+ 	    ObjectMapper objectMapper = new ObjectMapper();
+ 	    String deptChartJson = objectMapper.writeValueAsString(rootList);
+ 	    
+ 	    // 4. Model에 담아서 jsp로 전달
+ 		model.addAttribute("deptChartJson", deptChartJson);
+		
 		return "dept/chart";
 	}
 }

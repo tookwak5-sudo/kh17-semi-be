@@ -49,7 +49,7 @@
 				</a>
 			</div>
 			<div class="w-50 right">
-				<a href="/emp/findId"><span>아이디 찾기</span></a> / <a href="/emp/findPw"><span>비밀번호 찾기</span></a>
+				<a href="/emp/findId"><span>아이디 찾기</span></a> / <a href="/emp/findPassword"><span>비밀번호 찾기</span></a>
 			</div>
 		</div>
 	</div>
