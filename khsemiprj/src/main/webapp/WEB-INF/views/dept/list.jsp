@@ -195,9 +195,10 @@
 		    		$("#deptList input[type=checkbox][name=dept]").prop("checked", false);
 		    		$(this).prop("checked", true);
 		    		var deptNo = $(this).val();
-		    		var deptEmpId = $(this).attr("data-emp-id");
 		    		//변경할 부서 목록 숨기기
 		    		resetDeptList2();
+					//부서장변경 버튼 보여주기 여부
+					if($(this).val() != "") $(".dept-emp-change").show();
 		    		//부서원 목록 가져오기
 		    		getEmpPositionDeptList(deptNo);
 		    		//기존 선택된 비활성화 해제
@@ -228,11 +229,13 @@
 		    
 		    function resetDeptList2() {
 		    	$(".dept-change-list").removeClass("active");
+				$(".dept-emp-change").hide();
 		    	$(".emp-checkbox").prop("checked", false);
 		    	$("#deptList2 input[type=checkbox][name=dept]").prop("checked", false);
 		    }
 		    
 		    function getEmpPositionDeptList(deptNo) {
+				if(deptNo == "") deptNo = null;
 		    	$.ajax({
 	                url : "/rest/dept/empPositionDeptList",
 	                method:"post",
@@ -288,7 +291,8 @@
 		                method:"post",
 		                data: { 
 		                	empIdList : empIdList
-		                	, deptNo : deptNo 
+							, fromDeptNo : fromDeptNo
+		                	, toDeptNo : deptNo 
 		                	},
 		                success : function(response) {
 		                	if(response) {
@@ -301,6 +305,38 @@
 		            });
 		    	}
 		    });
+			
+			$(".dept-emp-change").click(function () {
+				if($("#empList input[type=checkbox]:checked").length == 0) {
+					alert("부서원을 선택해주세요");
+					return false;
+				}
+				if($("#empList input[type=checkbox]:checked").length > 1) {
+					alert("부서장으로 지정할 부서원은 한명만 선택해주세요");
+					return false;
+				}
+				var deptNo = $("#deptList input[type=checkbox]:checked").val();
+				var empId = $("#empList input[type=checkbox]:checked").val();
+				
+				if(confirm("선택한 사원을 부서장으로 변경하시겠습니까?")) {
+		    		$.ajax({
+		                url : "/rest/dept/deptEmpIdUpdate",
+		                method:"post",
+		                data: { 
+		                	empId : empId
+							, deptNo : deptNo
+		                	},
+		                success : function(response) {
+		                	if(response) {
+		                		//부서원 목록 다시 가져오기
+		                		getEmpPositionDeptList(deptNo);
+		                	} else {
+		                		alert("부서 변경 중 오류가 발생했습니다.");
+		                	}
+		                }
+		            });
+		    	}
+			});
 	    });
     
     </script>
@@ -318,6 +354,13 @@
 				</div>
 				<div id="deptList" class="dept-tree border">
 					<ul>
+						<li class="dept-item">
+							<div class="dept-row">
+								<span class="toggle-btn">▼</span>
+								<input type="checkbox" name="dept" class="dept-checkbox" id="dept1_" value="">
+								<label for="dept1_" class="dept-name">부서없음</label>
+							</div>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -325,6 +368,7 @@
 				<div class="cell">
 					<div class="cell">
 						<span>부서별 사원 목록</span>
+						<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
 					</div>
 				</div>
 				<!-- 테이블 -->
@@ -351,6 +395,13 @@
 				</div>
 				<div id="deptList2" class="dept-tree border">
 					<ul>
+						<li class="dept-item">
+							<div class="dept-row">
+								<span class="toggle-btn">▼</span>
+								<input type="checkbox" name="dept" class="dept-checkbox" id="dept1_" value="">
+								<label for="dept1_" class="dept-name">부서없음</label>
+							</div>
+						</li>
 					</ul>
 				</div>
 			</div>

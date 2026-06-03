@@ -23,8 +23,9 @@ public class DeptRestController {
 	private EmpPositionDeptDao empPositionDeptDao;
 	
 	@PostMapping("/empPositionDeptList")
-	public List<EmpPositionDeptVO> empPositionDeptList(@RequestParam long deptNo) {
-		List<EmpPositionDeptDto> list = empPositionDeptDao.selectDepthEmp(deptNo);
+	public List<EmpPositionDeptVO> empPositionDeptList(@RequestParam String deptNo) {
+		Long longDeptNo = deptNo == "" ? null : Long.parseLong(deptNo);
+		List<EmpPositionDeptDto> list = longDeptNo == null ? empPositionDeptDao.selectDepthEmpByNull() : empPositionDeptDao.selectDepthEmp(longDeptNo);
 		List<EmpPositionDeptVO> newList = new ArrayList<>();
 		
 		for(EmpPositionDeptDto empPositionDeptDto : list) {
@@ -42,23 +43,49 @@ public class DeptRestController {
 		return newList;
 	};
 	
-	//@PostMapping("/deptEmpIdUpdate")
-	
+	//부서 변경
 	@PostMapping("/empPositionDeptUpdate")
 	public boolean empPositionDeptUpdate(@RequestParam List<String> empIdList
-										, @RequestParam long deptNo) {
+										, @RequestParam long fromDeptNo
+										, @RequestParam long toDeptNo) {
 		
 		try {
 			for(int i = 0; i < empIdList.size(); i++) {
 				String empId = empIdList.get(i);
-//				//부서장 리셋
-//				empPositionDeptDao.deptEmpIdReset(deptNo);
-//				//부서장 지정
-//				empPositionDeptDao.deptEmpIdUpdate(deptNo, empId);
-//				//부서장 회원의 권한 변경
-//				empPositionDeptDao.empGradeUpdate(empId);
+				//부서장 사원 아이디 확인
+				String deptEmpId = empPositionDeptDao.checkDeptEmpId(fromDeptNo);
+				//부서장이라면
+				if(deptEmpId == empId) {
+					//부서장 리셋
+					empPositionDeptDao.deptEmpIdReset(fromDeptNo);
+					//부서장 권한 강등
+					empPositionDeptDao.empGradeDemotion(deptEmpId);
+				}
 			}
 		
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
+	
+	//부서장 지정
+	@PostMapping("/deptEmpIdUpdate")
+	public boolean deptEmpIdUpdate(@RequestParam String empId
+										, @RequestParam long deptNo)
+	{
+		try {
+			//기존 부서장 사원 아이디 확인
+			String deptEmpId = empPositionDeptDao.checkDeptEmpId(deptNo);
+			//기존 부서장 리셋
+			empPositionDeptDao.deptEmpIdReset(deptNo);
+			//기존 부서장 권한 강등
+			empPositionDeptDao.empGradeDemotion(deptEmpId);
+			//신규 부서장 지정
+			empPositionDeptDao.deptEmpIdUpdate(deptNo, empId);
+			//신규 부서장 권한 상승
+			empPositionDeptDao.empGradePromotion(empId);
+			
 			return true;
 		} catch(Exception e) {
 			return false;
