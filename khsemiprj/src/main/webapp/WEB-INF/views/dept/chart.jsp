@@ -88,13 +88,13 @@
         }
 
         /* 👥 부서원 목록 컨테이너 */
-        .member-list {
+        .emp-list {
             background-color: #fff;
             padding: 6px 0;
         }
 
         /* 👤 개별 부서원 아이템 */
-        .member-item {
+        .emp-item {
             padding: 8px 14px;
             border-bottom: 1px dashed #edf2f7;
             display: flex;
@@ -105,77 +105,151 @@
             transition: background 0.2s;
         }
 
-        .member-item:last-child { border-bottom: none; }
-        .member-item:hover { background-color: #f1f7fe; }
+        .emp-item:last-child { border-bottom: none; }
+        .emp-item:hover { background-color: #f1f7fe; }
 
-        .member-name { font-weight: bold; color: #333; }
-        .member-title { font-size: 11px; color: #888; background: #e9ecef; padding: 2px 6px; border-radius: 4px; }
+        .emp-name { font-weight: bold; color: #333; }
+        .emp-position { font-size: 11px; color: #888; background: #e9ecef; padding: 2px 6px; border-radius: 4px; }
         
         /* 부서원이 없을 때 표시 */
-        .empty-member {
+        .empty-emp {
             padding: 10px; font-size: 12px; color: #b2bec3; text-align: center; font-style: italic;
         }
+        
+        /* 1. 최상위(ID가 orgChart인 컨테이너) 바로 아래에 있는 ul > li 들은 상단 연결선을 제거합니다. */
+		#deptChart > ul > li::before, 
+		#deptChart > ul > li::after {
+		    display: none !important;
+		}
+		
+		/* 2. 최상위 루트 노드들은 상단 여백(padding-top)을 없애서 선이 빠진 자리를 깔끔하게 밀착시킵니다. */
+		#deptChart > ul > li {
+		    padding-top: 0 !important;
+		}
+		
+		
+		/* 📦 조직도 외곽 컨테이너 (화면 중앙 정렬 및 여백 공간 확보) */
+		.dept-chart-wrapper {
+		    width: 100%;
+		    max-width: 1400px; /* 화면이 너무 퍼지지 않도록 최대 너비 제한 (자유롭게 조절 가능) */
+		    margin: 0 auto;
+		    padding: 0 20px;
+		    box-sizing: border-box;
+		}
+		
+		/* 🖼️ [수정/추가] 외곽 테두리가 들어간 실질적인 조직도 영역 박스 */
+		.dept-chart-container {
+		    display: flex;
+		    justify-content: flex-start; /* 스크롤 발생 시 왼쪽 정렬 유지로 깨짐 방지 */
+		    align-items: center;
+		    
+		    /* 🎨 디자인 포인트: 기존 디자인과 어우러지는 은은한 소프트 보더 */
+		    background-color: #ffffff;
+		    border: 1px solid #e2e8f0;       /* 부드러운 회색 테두리 */
+		    border-radius: 12px;            /* 모서리를 둥글게 */
+		    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 
+		                0 8px 10px -6px rgba(0, 0, 0, 0.05); /* 부드러운 대시보드 느낌의 그림자 */
+		    
+		    /* 📜 스크롤 바 스타일 */
+		    overflow-x: auto;
+		    overflow-y: hidden;
+		    padding: 40px;                  /* 내부 조직도와 테두리 사이의 여유 공간 */
+		    margin-bottom: 50px;
+		    box-sizing: border-box;
+		}
+		
+		/* 💡 스크롤바 디자인을 기존 테두리와 어울리게 깔끔하게 다듬기 (Chrome, Safari, Edge 지원) */
+		.dept-chart-container::-webkit-scrollbar {
+		    height: 8px; /* 스크롤바 두께 */
+		}
+		.dept-chart-container::-webkit-scrollbar-track {
+		    background: #f1f5f9; /* 스크롤바 뒷배경 */
+		    border-radius: 0 0 12px 12px; /* 컨테이너 라운드에 맞춤 */
+		}
+		.dept-chart-container::-webkit-scrollbar-thumb {
+		    background: #cbd5e1; /* 스크롤바 바(Thumb) 색상 */
+		    border-radius: 4px;
+		}
+		.dept-chart-container::-webkit-scrollbar-thumb:hover {
+		    background: #94a3b8; /* 마우스 올렸을 때 색상 */
+		}
+		
+		
+		/* 🔍 확대/축소 컨트롤 바 위치 설정 */
+		.dept-chart-container {
+		    position: relative; /* 버튼의 절대 위치 기준점이 됩니다 */
+		}
+		
+		.zoom-controls {
+		    position: absolute;
+		    top: 20px;
+		    right: 20px;
+		    display: flex;
+		    gap: 5px;
+		    z-index: 10; /* 조직도 선보다 위에 오도록 설정 */
+		    background: rgba(255, 255, 255, 0.9);
+		    padding: 6px;
+		    border-radius: 8px;
+		    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		    border: 1px solid #e2e8f0;
+		}
+		
+		/* 컨트롤 버튼 공통 스타일 */
+		.zoom-btn {
+		    width: 32px;
+		    height: 32px;
+		    border: 1px solid #cbd5e1;
+		    background-color: #ffffff;
+		    border-radius: 6px;
+		    font-size: 16px;
+		    font-weight: bold;
+		    color: #475569;
+		    cursor: pointer;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    transition: all 0.2s;
+		}
+		
+		.zoom-btn:hover {
+		    background-color: #f1f5f9;
+		    color: #1e293b;
+		    border-color: #94a3b8;
+		}
+		
+		/* 현재 배율 표시 텍스트 */
+		.zoom-text {
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    font-size: 12px;
+		    font-weight: bold;
+		    color: #64748b;
+		    min-width: 50px;
+		    user-select: none;
+		}
+		
+		/* 📌 [중요] 확대/축소 시 중심축 설정 */
+		#deptChart {
+		    transform-origin: top center; /* 상단 중앙을 기준으로 크기가 조절되어 정렬이 깨지지 않음 */
+		    transition: transform 0.2s ease-out; /* 변형될 때 부드럽게 애니메이션 적용 */
+		}
     </style>
 
-    <div class="dept-chart-container">
+    <div class="dept-chart-container" style="justify-content: flex-start;">
+    	<div class="zoom-controls">
+            <button class="zoom-btn" onclick="zoomOut()">-</button>
+            <div class="zoom-text" id="zoomLevel">100%</div>
+            <button class="zoom-btn" onclick="zoomIn()">+</button>
+            <button class="zoom-btn" onclick="zoomReset()" style="font-size: 11px;"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+        </div>
         <div class="tree" id="deptChart">
             <!-- JavaScript로 트리 구조가 생성됩니다. -->
         </div>
     </div>
-
 <script>
     // 1. 변경된 데이터 구조: 부서 정보와 그 부서에 속한 멤버 리스트(members)를 분리
     const deptChartList = JSON.parse('${deptChartJson}');
-    /* const deptChartList = {
-        deptName: "경영진",
-        isRoot: true, // 최상위 표시용 플래그
-        members: [
-            { name: "홍길동", title: "대표이사" }
-        ],
-        children: [
-            {
-                deptName: "영업본부",
-                members: [
-                    { name: "김철수", title: "본부장/이사" },
-                    { name: "이영희", title: "팀장/과장" },
-                    { name: "박민수", title: "사원" }
-                ],
-                children: [
-                    {
-                        deptName: "영업마케팅파트",
-                        members: [
-                            { name: "최다은", title: "대리" },
-                            { name: "정홍보", title: "사원" }
-                        ],
-                        children: [] // 하위 파트가 더 있다면 여기에 추가 가능
-                    }
-                ]
-            },
-            {
-                deptName: "개발본부",
-                members: [
-                    { name: "강기술", title: "연구소장/CTO" }
-                ],
-                children: [
-                    {
-                        deptName: "플랫폼개발팀",
-                        members: [
-                            { name: "정차장", title: "팀장/차장" },
-                            { name: "한지원", title: "대리" },
-                            { name: "조코딩", title: "사원" }
-                        ]
-                    },
-                    {
-                        deptName: "인프라보안팀",
-                        members: [
-                            { name: "김보안", title: "팀장/과장" },
-                            { name: "이네트", title: "사원" }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }; */
 
     // 2. 부서 박스와 내부에 사원 리스트를 포함하여 트리를 그리는 재귀 함수
     function createTree(node) {
@@ -184,31 +258,31 @@
         const deptCard = document.createElement('div');
         deptCard.className = `dept-card \${node.deptDepth == 0 ? 'root-node' : ''}`;
         
-        const memberCount = node.members ? node.members.length : 0;
+        const empCount = node.empList ? node.empList.length : 0;
         deptCard.innerHTML = `
             <div class="dept-header">
                 <span>\${node.deptName}</span>
-                <span style="font-size:11px; opacity:0.8;">(\${memberCount}명)</span>
+                <span style="font-size:11px; opacity:0.8;">(\${empCount}명)</span>
             </div>
         `;
 
-        const memberListDiv = document.createElement('div');
-        memberListDiv.className = 'member-list';
+        const empListDiv = document.createElement('div');
+        empListDiv.className = 'emp-list';
 
-        if (node.members && node.members.length > 0) {
-            node.members.forEach(member => {
+        if (node.empList && node.empList.length > 0) {
+            node.empList.forEach(emp => {
                 const item = document.createElement('div');
-                item.className = 'member-item';
+                item.className = 'emp-item';
                 item.innerHTML = `
-                    <span class="member-name">\${member.name}</span>
-                    <span class="member-title">\${member.title}</span>
+                    <span class="emp-name">\${emp.empName}</span>
+                    <span class="emp-position">\${emp.empPositionName}</span>
                 `;
-                memberListDiv.appendChild(item);
+                empListDiv.appendChild(item);
             });
         } else {
-            memberListDiv.innerHTML = `<div class="empty-member">배치 사원 없음</div>`;
+            empListDiv.innerHTML = `<div class="empty-emp">배치 사원 없음</div>`;
         }
-        deptCard.appendChild(memberListDiv);
+        deptCard.appendChild(empListDiv);
         li.appendChild(deptCard);
 
         if (node.children && node.children.length > 0) {
@@ -222,11 +296,6 @@
     }
 
     // 3. 트리 렌더링 시작
-    /* const chartContainer = document.getElementById('deptChart');
-    const rootUl = document.createElement('ul');
-    rootUl.appendChild(createTree(deptData));
-    chartContainer.appendChild(rootUl); */
-    
     if (deptChartList && deptChartList.length > 0) {
         const chartContainer = document.getElementById('deptChart');
         // 트리 전체를 감싸는 최상위 ul 생성
@@ -238,6 +307,58 @@
         chartContainer.appendChild(rootUl);
     }
     
+  	//기본 배율 및 설정값 정의
+	let currentScale = 1.0;
+	const maxScale = 1.5;     // 최대 150% 확대
+	const minScale = 0.4;     // 최소 40% 축소
+	const scaleStep = 0.1;    // 한 번 누를 때마다 10%씩 조절
+	
+	// 2. 배율 적용 함수 (에러 방지 가드 가동)
+	function applyZoom() {
+	    const chart = document.getElementById('deptChart');
+	    const text = document.getElementById('zoomLevel');
+	    
+	    // 예외 처리: HTML 요소를 찾지 못했을 때 스크립트 에러로 멈추는 것을 방지
+	    if (!chart || !text) {
+	        console.warn("조직도 요소를 찾을 수 없습니다.");
+	        return;
+	    }
+	    
+	    // 안전하게 숫자로 변환 후 CSS scale 적용
+	    const scaleValue = Number(currentScale);
+	    
+	 	// 📌 [변경] transform 대신 브라우저 표준 zoom 속성을 사용하여 직접 비율을 조절합니다.
+	    chart.style.zoom = scaleValue;
+	    
+	    /* [수정 포인트] Math.round 오류 방지
+	       scaleValue에 100을 곱한 뒤 소수점을 버리고 정수로 만듭니다.
+	       Math.floor()나 Math.round()를 쓰기 전 확실하게 숫자로 강제 변환합니다.
+	    */
+	    const percentage = Math.round(scaleValue * 100);
+	    text.innerText = percentage + "%";
+	}
+	
+	// ➕ 확대
+	function zoomIn() {
+	    if (currentScale < maxScale) {
+	        currentScale = parseFloat((currentScale + scaleStep).toFixed(1));
+	        applyZoom();
+	    }
+	}
+	
+	// ➖ 축소
+	function zoomOut() {
+	    if (currentScale > minScale) {
+	        currentScale = parseFloat((currentScale - scaleStep).toFixed(1));
+	        applyZoom();
+	    }
+	}
+	
+	// 🔄 원본 비율 리셋
+	function zoomReset() {
+	    currentScale = 1.0;
+	    applyZoom();
+	}
 </script>
 	
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
