@@ -56,7 +56,43 @@ public class DeptController {
 	
 	// 부서 목록 
 	@RequestMapping("/list")
-	public String list(Model model, @RequestParam(defaultValue = "0") int deptNo) {
+
+	public String list(Model model, @RequestParam(defaultValue = "0") long deptNo) throws JsonProcessingException {
+		
+		// 1. 부서 목록 가져오기
+ 		List<DeptDto> list = deptDao.selectListAll();
+ 		
+ 		// 2. 부서 목록 트리구조로 변경
+ 		List<DeptDto> rootList = new ArrayList<>();
+ 	    Map<Long, DeptDto> dtoMap = new HashMap<>();
+ 	    
+ 	    // - 2-1. Map에 모두 저장
+ 	    for (DeptDto dto : list) {
+ 	        dtoMap.put(dto.getDeptNo(), dto);
+ 	    }
+ 	    
+ 	    // - 2-2. 부서번호를 키값으로 가지는 해시맵 생성
+ 	    for (DeptDto dto : list) {
+ 	    	Long deptParentNo = dto.getDeptParentNo();
+ 	    	dtoMap.put(dto.getDeptNo(), dto);
+ 	    	// 부모 ID가 없거나, 부모 ID가 있지만 Map에 존재하지 않는 경우 최상위(Root)로 취급
+ 	    	if (dto.getDeptDepth() == 0 || dto.getDeptParentNo() == null || !dtoMap.containsKey(deptParentNo)) {
+ 	            rootList.add(dto);
+ 	        } else {
+ 	        	// 부모가 있다면 해당 부모의 자식 리스트에 추가
+ 	            dtoMap.get(deptParentNo).getChildren().add(dto);
+ 	        }
+ 	    }
+ 		
+ 	    // 3. 자바 객체를 JSP의 JavaScript가 인식할 수 있도록 JSON 문자열로 변환
+ 	    ObjectMapper objectMapper = new ObjectMapper();
+ 	    String deptListJson = objectMapper.writeValueAsString(rootList);
+ 	    
+ 	    // 4. Model에 담아서 jsp로 전달
+ 		model.addAttribute("deptListJson", deptListJson);
+		
+		List<DeptDto> deptList = deptDao.selectListAll();
+		model.addAttribute("deptList", deptList);
 		
 		List<EmpPositionDeptDto> empList = empPositionDeptDao.selectDepthEmp(deptNo);
 		//System.out.println("컨트롤러에서 넘기는 리스트 사이즈: " + (empList == null ? "NULL입니다" : empList.size()));
@@ -69,14 +105,10 @@ public class DeptController {
 	public String edit(@RequestParam long deptNo, Model model) {
 		DeptDto deptDto = deptDao.selectOne(deptNo);
 		if(deptDto == null) throw new TargetNotfoundException("존재하지 않는 부서");
+		//승인된 부서 체크
+		boolean isChecked = "Y".equals(deptDto.getDeptUseYn());
+		model.addAttribute("isChecked", isChecked);
 		model.addAttribute("deptDto", deptDto);
-		//전체 부서 정보 넘기기
-		//본인보다 상위 부서인 부서의 정보만 넘기기
-		//전체 부서를 upperDeptDto에 넣고
-		List<DeptDto> upperDeptDto = deptDao.selectListAll();
-		//입력된 부서의 parent_no
-//		boolean check = 
-//		if(deptDto.getDeptParentNo() )
 		model.addAttribute("deptList",deptDao.deptList());
 		return "dept/edit";
 	}	
@@ -84,6 +116,9 @@ public class DeptController {
 	public String edit(@ModelAttribute DeptDto deptDto) {
 		//오류 검사는 get에서 진행함 바로 값을 가져오기
 		deptDao.update(deptDto);
+		
+		
+		
 		return "redirect:./list";
 	//	return "redirect:dept/list"; //절대경로
 	}

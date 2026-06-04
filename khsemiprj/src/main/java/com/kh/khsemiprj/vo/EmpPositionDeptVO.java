@@ -1,4 +1,6 @@
-package com.kh.khsemiprj.dto;
+package com.kh.khsemiprj.vo;
+
+import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
-public class EmpPositionDeptDto {
+public class EmpPositionDeptVO {
 	private String empId;
 	private String empName;
 	// JOIN 결과를 담을 필드 추가
@@ -15,5 +17,4 @@ public class EmpPositionDeptDto {
     private int empPositionLevel;
     private long deptNo; // 부서번호
     private String deptEmpId; //부서장 아이디
-    private int empPositionNo;
 }

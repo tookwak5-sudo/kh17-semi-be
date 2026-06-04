@@ -12,14 +12,18 @@ import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 public class EmpPositionDeptMapper implements RowMapper<EmpPositionDeptDto> {
 	@Override
 	public EmpPositionDeptDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+		
+		String empPositionName = rs.getString("emp_position_name") == null ? "직급없음" : rs.getString("emp_position_name");
+		
 		return EmpPositionDeptDto.builder()
 				.empId(rs.getString("emp_id"))
 				.empName(rs.getString("emp_name"))
-				.empPositionName(rs.getString("emp_position_name"))
+				.empPositionName(empPositionName)
 				.empPositionLevel(rs.getInt("emp_position_level"))
+				.deptNo(rs.getLong("dept_no"))
 				.empPositionNo(rs.getInt("emp_position_no"))
-				.deptNo(rs.getInt("dept_no"))
 				.deptName(rs.getString("dept_name"))
+				.deptEmpId(rs.getString("dept_emp_id"))
 			.build();
 	}
 }
