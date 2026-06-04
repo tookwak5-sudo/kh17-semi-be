@@ -52,7 +52,7 @@ public class BoardReadInterceptor implements HandlerInterceptor{
 		String loginId = (String)session.getAttribute("loginId");
 		
 		//[4] DB에 조회이력이 있으면 제거
-		int count = boardReadDao.count(loginId, boardNo);
+		long count = boardReadDao.count(loginId, boardNo);
 		if(count > 0 ) {//기록이 1개 이상이라면
 			return true;//지나가세요!
 		}

@@ -45,9 +45,22 @@
 			success: function(response){
 				//response에 action, count가 있을 것으로 기대
 				//- action은 좋아요 여부, count는 좋아요 개수
-				$(".fa-heart").removeClass("fa-regular fa-solid")
+				$(".fa-thumbs-up").removeClass("fa-regular fa-solid")
 					.addClass(response.action ? "fa-solid" : "fa-regular");
-				$(".fa-heart").next(".heart-count").text(response.count);
+				$(".fa-thumbs-up").next(".thumbs-up-count").text(response.count);
+			}
+		});
+		
+		$.ajax({
+			url: "/rest/board/dislike-check",
+			method: "post",
+			data: { boardNo : boardNo },
+			success: function(response){
+				//response에 action, count가 있을 것으로 기대
+				//- action은 좋아요 여부, count는 좋아요 개수
+				$(".fa-thumbs-down").removeClass("fa-regular fa-solid")
+					.addClass(response.action ? "fa-solid" : "fa-regular");
+				$(".fa-thumbs-down").next(".thumbs-down-count").text(response.count);
 			}
 		});
 	});
@@ -57,44 +70,75 @@
 <!-- 좋아요 토글 자바스크립트(회원만 가능) -->
 <script type="text/javascript">
 	$(function(){
-		//주소창에 있는 파라미터 중 boardNo를 꺼내는 코드
 		var params = new URLSearchParams(window.location.search);
 		var boardNo = params.get("boardNo");
-		//하트를 클릭하면 좋아요 토글이 발생하도록 처리
-		$(".fa-heart").on("click", function(){
-			
-			if($(this).hasClass("fa-solid")) {
-				return;
-			}
-			
-			$.ajax({
-				url:"/rest/board/like-action",
-				method:"post",
-				data:{boardNo : boardNo},
-				success:function(response){
-					$(".fa-heart").removeClass("fa-regular fa-solid")
-						.addClass(response.action ? "fa-solid" : "fa-regular");
-					$(".fa-heart").next(".heart-count").text(response.count);
-				}
-			});
-			
-			$(".fa-thumbs-down").on("click", function(){
-				
-				if($(this).hasClass("fa-regular")) {
-					return;
-				}
-				
+		
+		// 1. 좋아요 하트를 클릭했을 때
+		$(".fa-thumbs-up").on("click", function(){
+			// 만약 싫어요가 칠해져있다면 싫어요 먼저 취소 요청
+			if($(".fa-thumbs-down").hasClass("fa-solid")) {
 				$.ajax({
-					url:"/rest/board/like-action",
-					method:"post",
-					data:{boardNo : boardNo},
-					success:function(response){
-						$(".fa-heart").removeClass("fa-regular fa-solid")
-							.addClass(response.action ? "fa-solid" : "fa-regular");
-						$(".fa-heart").next(".heart-count").text(response.count);
+					url: "/rest/board/dislike-action",
+					method: "post",
+					data: {boardNo : boardNo},
+					success: function(response){
+						$(".fa-thumbs-down").removeClass("fa-solid").addClass("fa-regular");
+						$(".fa-thumbs-down").next(".thumbs-down-count").text(response.count);
+						toggleLike(); // 싫어요 취소 후 좋아요 실행
 					}
 				});
+			} else {
+				toggleLike();
+			}
 		});
+		
+		// 2. 싫어요 하트를 클릭했을 때
+		$(".fa-thumbs-down").on("click", function(){
+			// 만약 좋아요가 칠해져있다면 좋아요 먼저 취소 요청
+			if($(".fa-thumbs-up").hasClass("fa-solid")) {
+				$.ajax({
+					url: "/rest/board/like-action",
+					method: "post",
+					data: {boardNo : boardNo},
+					success: function(response){
+						$(".fa-thumbs-up").removeClass("fa-solid").addClass("fa-regular");
+						$(".fa-thumbs-up").next(".thumbs-up-count").text(response.count); 
+						toggleDislike(); // 좋아요 취소 후 싫어요 실행
+					}
+				});
+			} else {
+				toggleDislike();
+			}
+		});
+
+		//좋아요 ajax 통신
+		function toggleLike() {
+			$.ajax({
+				url: "/rest/board/like-action",
+				method: "post",
+				data: {boardNo : boardNo},
+				success: function(response){
+					$(".fa-thumbs-up").removeClass("fa-regular fa-solid")
+						.addClass(response.action ? "fa-solid" : "fa-regular");
+					// heart-count 오타를 html에 맞게 thumbs-up-count로 수정
+					$(".fa-thumbs-up").next(".thumbs-up-count").text(response.count);
+				}
+			});
+		}
+
+		//싫어요 ajax 통신
+		function toggleDislike() {
+			$.ajax({
+				url: "/rest/board/dislike-action",
+				method: "post",
+				data: {boardNo : boardNo},
+				success: function(response){
+					$(".fa-thumbs-down").removeClass("fa-regular fa-solid")
+						.addClass(response.action ? "fa-solid" : "fa-regular");
+					$(".fa-thumbs-down").next(".thumbs-down-count").text(response.count);
+				}
+			});
+		}
 	});
 </script>
 </c:if>
@@ -117,6 +161,7 @@
 				method: "post",
 				data: {replyOrigin : boardNo},
 				success: function(response) {
+					$(".reply-count-text").text(response.length);
 					//response는 백엔드에서의 List<ReplyDto>이다
 					//반복을 통해 템플릿을 배치하고 정보를 갈아끼운다
 					for(var i=0; i < response.length; i++) {
@@ -356,15 +401,17 @@
 		-->
 		<div>
 			좋아요 
-			<i class="fa-solid fa-heart red"></i>
-			<span class="heart-count">?</span>
+			<i class="fa-solid fa-thumbs-up red"></i>
+			<span class="thumbs-up-count">?</span>
 		</div>
 		<div>
 			싫어요 
 			<i class="fa-regular fa-thumbs-down blue"></i>
-			<span class="heart-count">?</span>
+			<span class="thumbs-down-count">?</span>
 		</div>
-		<div class="ms-20">댓글 ${boardDto.boardReplycount}</div>
+		<div class="ms-20">댓글 
+		<span class="reply-count-text">
+		${boardDto.boardReplycount}</span></div>
 	</div>
 	
 	<!-- 댓글 관련 정보가 표시될 자리 -->

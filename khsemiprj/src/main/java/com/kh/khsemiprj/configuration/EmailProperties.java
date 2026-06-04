@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "custon.email")
+@ConfigurationProperties(prefix = "custom.email")
 public class EmailProperties {
 	private String host;//접두사 + host라는 항목을 읽어서 여기에 저장해!
 	private int port;//접두사 + port라는 항목을 읽어서 여기에 저장해!

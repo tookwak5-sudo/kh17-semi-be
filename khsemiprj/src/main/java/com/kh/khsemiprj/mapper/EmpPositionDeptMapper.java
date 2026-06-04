@@ -21,6 +21,7 @@ public class EmpPositionDeptMapper implements RowMapper<EmpPositionDeptDto> {
 				.empPositionName(empPositionName)
 				.empPositionLevel(rs.getInt("emp_position_level"))
 				.deptNo(rs.getLong("dept_no"))
+				.empPositionNo(rs.getInt("emp_position_no"))
 				.deptName(rs.getString("dept_name"))
 				.deptEmpId(rs.getString("dept_emp_id"))
 			.build();
