@@ -67,10 +67,12 @@
 	            <input type="hidden" name="empId" value="${empDto.empId}">
 	            
 	            <select name="empPositionNo" class="field">
-	            	<option value="10" ${empPositionDeptDto.empPositionNo == 10 ? 'selected' : ''}>사원</option>
-				    <option value="20" ${empPositionDeptDto.empPositionNo == 20 ? 'selected' : ''}>대리</option>
-				    <option value="30" ${empPositionDeptDto.empPositionNo == 30 ? 'selected' : ''}>과장</option>
-				    <option value="40" ${empPositionDeptDto.empPositionNo == 40 ? 'selected' : ''}>부장</option>
+	            	<option value="">선택</option>
+	            	<c:forEach var="position" items="${positionList}">
+	            	<option value="${position.empPositionNo}" ${empPositionDto.empPositionNo == position.empPositionNo ? 'selected' : ''}>
+                            ${position.empPositionName}
+                        </option>
+	            	</c:forEach>
 	            </select>
 	            
 	            <button type="submit" class="btn btn-positive">직책 변경</button>
