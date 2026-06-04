@@ -65,6 +65,31 @@ public class EmpDao {
 		 * jdbcTemplate.query(sql, empMapper, params); }
 		 */
 		
+		//승인 대기 목록 조회
+		public List<EmpDto> selectEmpByStatus(String empValid) {
+			String sql = "select * from emp where emp_valid = 'W'order by emp_hire_date desc";
+			
+			return jdbcTemplate.query(sql, empMapper);
+		}
+		
+		//승인 거부 메소드
+		public boolean rejectEmp(String empId) {
+			String sql = "update emp set emp_valid = 'N' where emp_id = ?";
+			Object[] params = {empId};
+			
+			return jdbcTemplate.update(sql, params) > 0;
+		}
+		
+		//승인 메소드
+		public boolean approveEmp(String empId, String empHireDate, int empPositionNo) {
+			String sql = "UPDATE emp "
+					+ "SET emp_valid = 'Y', emp_hire_date = ?, "
+					+ "emp_position_no = ?, emp_valid_date = SYSTIMESTAMP "
+					+ "WHERE emp_id = ?";
+			
+			Object[] params = {empHireDate, empPositionNo, empId};
+			return jdbcTemplate.update(sql, params) > 0;
+		}
 		
 
 	//아이디찾기
