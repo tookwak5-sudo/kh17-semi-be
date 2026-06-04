@@ -61,7 +61,7 @@ public class DeptRestController {
 					//부서장 사원 아이디 확인
 					String deptEmpId = empPositionDeptDao.checkDeptEmpId(fromDeptNoLong);
 					//부서장이라면
-					if(deptEmpId.equals(empId)) {
+					if(empId.equals(deptEmpId)) {
 						//부서장 리셋
 						empPositionDeptDao.deptEmpIdReset(fromDeptNoLong);
 						//부서장 권한 강등

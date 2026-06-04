@@ -30,8 +30,7 @@ public class DeptMapper implements RowMapper<DeptDto> {
 				.deptDepth(rs.getInt("dept_depth"))
 				.deptUseYn(rs.getString("dept_use_yn"))
 				.deptEmpId(rs.getString("dept_emp_id"))
-				//.emp(new ArrayList<>())
-				.emp(list)
+				.empList(list)
 				.children(new ArrayList<>())
 			.build();
 	}
