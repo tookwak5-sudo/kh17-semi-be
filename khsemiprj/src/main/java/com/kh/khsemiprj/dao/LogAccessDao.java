@@ -6,8 +6,10 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.ui.Model;
 
 import com.kh.khsemiprj.dto.LogAccessDto;
+import com.kh.khsemiprj.mapper.EmpMapper;
 import com.kh.khsemiprj.mapper.LogAccessMapper;
 import com.kh.khsemiprj.vo.PageVO;
 
@@ -32,36 +34,60 @@ public class LogAccessDao {
 	
 	//조회 메소드
 	public List<LogAccessDto> selectList(int beginRownum, int endRownum){
-		String sql = "select * from ("
-				+ "select rownum rn, TMP.* from("
-				+ "select * from log_Access order by access_no desc"
-			+ ") Tmp"
-		+ "	)where rn between ? and ?";
-		Object[] params = { beginRownum, endRownum };
-		return jdbcTemplate.query(sql, logAccessMapper,  params);
+	    String sql = "select * from ("
+	            + "select rownum rn, TMP.* from ("
+	            + "  select l.*, e.emp_name, d.dept_name "
+	            + "  from log_access l "
+	            + "  left outer join emp e on l.access_emp_id = e.emp_id "
+	            + "  left outer join emp_dept_relation r on e.emp_id = r.emp_id "
+	            + "  left outer join dept d on r.dept_no = d.dept_no "
+	            + "  order by l.access_no desc"
+	            + ") TMP"
+	        + ") where rn between ? and ?";
+	    Object[] params = { beginRownum, endRownum };
+	    return jdbcTemplate.query(sql, logAccessMapper, params);
 	}
 	
+	//검색목록조회 메소드
 	public List<LogAccessDto> selectList(PageVO pageVO){
-		if(pageVO.isList())
-			return selectList(pageVO.getBeginRownum(), pageVO.getEndRownum());//검색항목이 없으면 목록 반환
-		
-		Set<String> allowList = Set.of("access_emp_id", "access_url");
-		if(allowList.contains(pageVO.getColumn()) == false)
-			return List.of();//허용되는 검색항목이 아니면 비어있는 결과
-			
-		String sql = "select * from ("
-				+ "select rownum rn, TMP.* from("
-				+ "select * from log_access "
-				+ "where instr ("+pageVO.getColumn()+", ?)>0"
-				+ "order by access_no desc"
-				+ ") Tmp"
-			+ "	)where rn between ? and ?";
-		Object [] params = {
-				pageVO.getKeyword(),
-				pageVO.getBeginRownum(),
-				pageVO.getEndRownum()
-				};
-		return jdbcTemplate.query(sql, logAccessMapper , params);
+	    if(pageVO.isList())
+	        return selectList(pageVO.getBeginRownum(), pageVO.getEndRownum());
+	    
+	    Set<String> allowList = Set.of("access_emp_id", "access_url");
+	    if(allowList.contains(pageVO.getColumn()) == false)
+	        return List.of();
+	        
+	    String sql = "select * from ("
+	            + "select rownum rn, TMP.* from ("
+	            + "  select l.*, e.emp_name, d.dept_name "
+	            + "  from log_access l "
+	            + "  left outer join emp e on l.access_emp_id = e.emp_id "
+	            + "  left outer join emp_dept_relation r on e.emp_id = r.emp_id "
+	            + "  left outer join dept d on r.dept_no = d.dept_no "
+	            + "  where instr (l." + pageVO.getColumn() + ", ?) > 0 "
+	            + "  order by l.access_no desc"
+	            + ") TMP"
+	        + ") where rn between ? and ?";
+	    Object [] params = {
+	            pageVO.getKeyword(),
+	            pageVO.getBeginRownum(),
+	            pageVO.getEndRownum()
+	            };
+	    return jdbcTemplate.query(sql, logAccessMapper , params);
 	}
+	
+	//목록과 검색의 상황별 카운트 메소드
+	public int count() {
+		String sql = "select count(*) from log_access";
+		return jdbcTemplate.queryForObject(sql, int.class);
+	}
+	public int count(PageVO pageVO) {
+		if(pageVO.isList()) return count();
+		
+		String sql = "select count(*) from log_access where instr("+pageVO.getColumn()+", ?) > 0";
+		Object[] params = { pageVO.getKeyword() };
+		return jdbcTemplate.queryForObject(sql, int.class, params);	
+	}
+	
 
 }

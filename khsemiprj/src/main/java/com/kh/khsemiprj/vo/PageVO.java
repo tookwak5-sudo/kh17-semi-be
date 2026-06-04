@@ -17,7 +17,7 @@ public class PageVO {
 	//- 목록 : 컬럼과 키워드 중 하나라도 없는 경우
 	//- 검색 : 컬럼과 키워드 모두 있는 경우
 	public boolean isList() {
-		return column == null || keyword == null;
+		return column == null || keyword == null || keyword.trim().isEmpty();
 	}
 	public boolean isSearch() {
 		return !isList();
@@ -59,7 +59,7 @@ public class PageVO {
 	}
 	//현재 페이지 기준 마지막 블록을 계산하여 반환하는 메소드(endBlock)
 	public int getEndBlock() {
-		int endBlock = getBeginBlock() + 19;
+		int endBlock = getBeginBlock() + 9;
 		return Math.min(getPageCount(), endBlock);
 	}
 	//다음이 존재하는지 판정하여 반환하는 메소드
