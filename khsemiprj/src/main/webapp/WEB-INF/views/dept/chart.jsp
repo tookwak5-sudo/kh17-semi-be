@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
-	<h1>조직도</h1>
-	
+
 	<style>
         body {
             font-family: 'Malgun Gothic', dotum, sans-serif;
@@ -59,7 +58,7 @@
             background-color: #ffffff;
             box-shadow: 0 4px 10px rgba(0,0,0,0.06);
             display: inline-block;
-            min-width: 180px;
+            min-width: 150px;
             overflow: hidden;
             text-align: left;
             transition: transform 0.2s;
@@ -131,10 +130,11 @@
 		/* 📦 조직도 외곽 컨테이너 (화면 중앙 정렬 및 여백 공간 확보) */
 		.dept-chart-wrapper {
 		    width: 100%;
-		    max-width: 1400px; /* 화면이 너무 퍼지지 않도록 최대 너비 제한 (자유롭게 조절 가능) */
+		    max-width: 1200px; /* 화면이 너무 퍼지지 않도록 최대 너비 제한 (자유롭게 조절 가능) */
 		    margin: 0 auto;
-		    padding: 0 20px;
+		    /* padding: 0 20px; */
 		    box-sizing: border-box;
+		    position: relative; /* 📌 줌 컨트롤러의 절대 위치 기준점이 됨 */
 		}
 		
 		/* 🖼️ [수정/추가] 외곽 테두리가 들어간 실질적인 조직도 영역 박스 */
@@ -160,7 +160,7 @@
 		
 		/* 💡 스크롤바 디자인을 기존 테두리와 어울리게 깔끔하게 다듬기 (Chrome, Safari, Edge 지원) */
 		.dept-chart-container::-webkit-scrollbar {
-		    height: 8px; /* 스크롤바 두께 */
+		    height: 24px; /* 스크롤바 두께 */
 		}
 		.dept-chart-container::-webkit-scrollbar-track {
 		    background: #f1f5f9; /* 스크롤바 뒷배경 */
@@ -182,12 +182,12 @@
 		
 		.zoom-controls {
 		    position: absolute;
-		    top: 20px;
-		    right: 20px;
+		    top: 10px;
+		    right: 30px;
 		    display: flex;
 		    gap: 5px;
 		    z-index: 10; /* 조직도 선보다 위에 오도록 설정 */
-		    background: rgba(255, 255, 255, 0.9);
+		    background: rgba(255, 255, 255, 0.95);
 		    padding: 6px;
 		    border-radius: 8px;
 		    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -236,16 +236,20 @@
 		}
     </style>
 
-    <div class="dept-chart-container" style="justify-content: flex-start;">
-    	<div class="zoom-controls">
+	<h1>조직도</h1>
+	
+	<div class="dept-chart-wrapper">
+		<div class="zoom-controls">
             <button class="zoom-btn" onclick="zoomOut()">-</button>
             <div class="zoom-text" id="zoomLevel">100%</div>
             <button class="zoom-btn" onclick="zoomIn()">+</button>
             <button class="zoom-btn" onclick="zoomReset()" style="font-size: 11px;"><i class="fa-solid fa-arrow-rotate-left"></i></button>
         </div>
-        <div class="tree" id="deptChart">
-            <!-- JavaScript로 트리 구조가 생성됩니다. -->
-        </div>
+	    <div class="dept-chart-container" style="justify-content: flex-start;">
+	        <div class="tree" id="deptChart">
+	            <!-- JavaScript로 트리 구조가 생성됩니다. -->
+	        </div>
+	    </div>
     </div>
 <script>
     // 1. 변경된 데이터 구조: 부서 정보와 그 부서에 속한 멤버 리스트(members)를 분리
@@ -273,10 +277,18 @@
             node.empList.forEach(emp => {
                 const item = document.createElement('div');
                 item.className = 'emp-item';
-                item.innerHTML = `
-                    <span class="emp-name">\${emp.empName}</span>
-                    <span class="emp-position">\${emp.empPositionName}</span>
-                `;
+                if(node.deptEmpId == emp.empId) {
+                	item.innerHTML = `
+	                    <span class="emp-name">\${emp.empName}</span>
+	                    <span><i class="fa-solid fa-crown gold"></i></span>
+	                    <span class="emp-position">\${emp.empPositionName}</span>
+	                `;
+                } else {
+	                item.innerHTML = `
+	                    <span class="emp-name">\${emp.empName}</span>
+	                    <span class="emp-position">\${emp.empPositionName}</span>
+	                `;
+                }
                 empListDiv.appendChild(item);
             });
         } else {

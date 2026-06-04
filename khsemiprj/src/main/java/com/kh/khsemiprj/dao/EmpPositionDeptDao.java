@@ -19,18 +19,19 @@ public class EmpPositionDeptDao {
 			
 	// 사원아이디를 통해 사원의 직책, 부서 조회 //  부서가 입력되면  그 부서에 해당되는 사원 출력
 	public List<EmpPositionDeptDto> selectDepthEmp(Long deptNo) {
-		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
-				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ?";
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ? "
+				+ "order by e.emp_grade desc, p.emp_position_no asc, e.emp_name asc";
 		Object[] params = {deptNo};
 		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
 	}
 	
 	//부서 없는 사원 목록 조회
 	public List<EmpPositionDeptDto> selectDepthEmpByNull() {
-		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "

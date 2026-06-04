@@ -368,70 +368,68 @@
     
     </script>
 	
-	<div class="container w-1200 mt-50 mb-50">
-		<div class="flex-area">
-			<h1>부서관리</h1>
-			
+	
+	<div class="cell flex-area">
+		<h1>부서관리</h1>
+	</div>
+	<div class="cell flex-area">
+		<div class="cell w-25">
+			<div class="cell">
+				<span>부서 목록</span>
+				<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
+			</div>
+			<div id="deptList" class="dept-tree border">
+				<ul>
+					<li class="dept-item">
+						<div class="dept-row">
+							<span class="toggle-btn">▼</span>
+							<input type="checkbox" name="dept" class="dept-checkbox" id="dept1_" value="">
+							<label for="dept1_" class="dept-name">부서없음</label>
+						</div>
+					</li>
+				</ul>
+			</div>
 		</div>
-		<div class="cell flex-area">
-			<div class="cell w-25">
+		<div class="cell w-50 ms-10 me-10">
+			<div class="cell">
 				<div class="cell">
-					<span>부서 목록</span>
-					<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
-				</div>
-				<div id="deptList" class="dept-tree border">
-					<ul>
-						<li class="dept-item">
-							<div class="dept-row">
-								<span class="toggle-btn">▼</span>
-								<input type="checkbox" name="dept" class="dept-checkbox" id="dept1_" value="">
-								<label for="dept1_" class="dept-name">부서없음</label>
-							</div>
-						</li>
-					</ul>
+					<span>부서별 사원 목록</span>
+					<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
+					<a class="btn btn-positive dept-emp-demotion" style="display:none;">부서장 해제</a>
 				</div>
 			</div>
-			<div class="cell w-50 ms-10 me-10">
-				<div class="cell">
-					<div class="cell">
-						<span>부서별 사원 목록</span>
-						<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
-						<a class="btn btn-positive dept-emp-demotion" style="display:none;">부서장 해제</a>
-					</div>
-				</div>
-				<!-- 테이블 -->
-				<div class="cell center" style="width:580px;">
-					<table class="table">
-						<thead>
-							<tr>
-								<th><input type="checkbox" name="emp" class="emp-checkbox check-emp-all"></th>
-								<th>부서</th>
-								<th>사원아이디</th>
-								<th>이름</th>
-								<th>직급</th>
-							</tr>
-						</thead>
-						<tbody id="empList">
-						</tbody>
-					</table>
-				</div>
+			<!-- 테이블 -->
+			<div class="cell center" style="width:580px;">
+				<table class="table">
+					<thead>
+						<tr>
+							<th><input type="checkbox" name="emp" class="emp-checkbox check-emp-all"></th>
+							<th>부서</th>
+							<th>사원아이디</th>
+							<th>이름</th>
+							<th>직급</th>
+						</tr>
+					</thead>
+					<tbody id="empList">
+					</tbody>
+				</table>
 			</div>
-			<div class="cell w-25 dept-change-list">
-				<div class="cell">
-					<span>이동할 부서 목록</span>
-					<a class="btn btn-positive dept-change">변경</a>
-				</div>
-				<div id="deptList2" class="dept-tree border">
-					<ul>
-						<li class="dept-item">
-							<div class="dept-row">
-								<span class="toggle-btn">▼</span>
-								<input type="checkbox" name="dept" class="dept-checkbox" id="dept2_" value="">
-								<label for="dept2_" class="dept-name">부서없음</label>
-							</div>
-						</li>
-					</ul>
-				</div>
+		</div>
+		<div class="cell w-25 dept-change-list">
+			<div class="cell">
+				<span>이동할 부서 목록</span>
+				<a class="btn btn-positive dept-change">변경</a>
+			</div>
+			<div id="deptList2" class="dept-tree border">
+				<ul>
+					<li class="dept-item">
+						<div class="dept-row">
+							<span class="toggle-btn">▼</span>
+							<input type="checkbox" name="dept" class="dept-checkbox" id="dept2_" value="">
+							<label for="dept2_" class="dept-name">부서없음</label>
+						</div>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>
