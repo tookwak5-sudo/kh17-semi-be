@@ -28,6 +28,7 @@ public class EmpPositionDeptDao {
 		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
 	}
 	
+	//부서 없는 사원 목록 조회
 	public List<EmpPositionDeptDto> selectDepthEmpByNull() {
 		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
 				+ "FROM emp e "
@@ -38,38 +39,58 @@ public class EmpPositionDeptDao {
 		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
 	}
 	
+	//해당 부서 부서장 아이디 조회
 	public String checkDeptEmpId(long deptNo) {
 		String sql = "select dept_emp_id from dept where dept_no = ?";
 		Object[] params = { deptNo };
 		return jdbcTemplate.queryForObject(sql, String.class, params);
 	}
 	
+	//사원의 소속 부서 등록
+	public boolean empPositionDeptInsert(String empId, long deptNo) {
+		String sql = "insert into emp_dept_relation(emp_id, dept_no) values(?, ?)";
+		Object[] params = { empId, deptNo };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	//사원의 소속 부서 변경
 	public boolean empPositionDeptUpdate(String empId, long deptNo) {
 		String sql = "update emp_dept_relation set dept_no = ? where emp_id = ?";
 		Object[] params = { deptNo, empId };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
+	//사원의 소속 부서 삭제
+	public boolean empPositionDeptDelete(String empId) {
+		String sql = "delete emp_dept_relation where emp_id = ?";
+		Object[] params = { empId };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	//해당 부서 부서장 제거
 	public boolean deptEmpIdReset(long deptNo) {
-		String sql = "update emp set emp_grade = 0 where emp_id = (select dept_emp_id from dept where dept_no = ?) and emp_grade <= 1";
+		String sql = "update dept set dept_emp_id = null where dept_no = ?";
 		Object[] params = { deptNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
+	//해당 부서 부서장 변경
 	public boolean deptEmpIdUpdate(long deptNo, String empId) {
 		String sql = "update dept set dept_emp_id = ? where dept_no = ?";
 		Object[] params = { empId, deptNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
+	//사원의 권한 상승
 	public boolean empGradePromotion(String empId) {
-		String sql = "update emp set emp_grade = 1 where emp_id = ?";
+		String sql = "update emp set emp_grade = 1 where emp_id = ? and emp_grade <= 1";
 		Object[] params = { empId };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
+	//사원의 권한 강등
 	public boolean empGradeDemotion(String empId) {
-		String sql = "update emp set emp_grade = 0 where emp_id = ?";
+		String sql = "update emp set emp_grade = 0 where emp_id = ? and emp_grade <= 1";
 		Object[] params = { empId };
 		return jdbcTemplate.update(sql, params) > 0;
 	}

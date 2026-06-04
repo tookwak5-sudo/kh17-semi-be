@@ -45,26 +45,40 @@ public class DeptRestController {
 	
 	//부서 변경
 	@PostMapping("/empPositionDeptUpdate")
-	public boolean empPositionDeptUpdate(@RequestParam List<String> empIdList
-										, @RequestParam long fromDeptNo
-										, @RequestParam long toDeptNo) {
+	public boolean empPositionDeptUpdate(@RequestParam(value = "empIdList[]") List<String> empIdList
+										, @RequestParam String fromDeptNo
+										, @RequestParam String toDeptNo) {
 		
 		try {
+			Long fromDeptNoLong = fromDeptNo == "" ? null : Long.parseLong(fromDeptNo);
+			Long toDeptNoLong = toDeptNo == "" ? null : Long.parseLong(toDeptNo);
 			for(int i = 0; i < empIdList.size(); i++) {
 				String empId = empIdList.get(i);
-				//부서장 사원 아이디 확인
-				String deptEmpId = empPositionDeptDao.checkDeptEmpId(fromDeptNo);
-				//부서장이라면
-				if(deptEmpId == empId) {
-					//부서장 리셋
-					empPositionDeptDao.deptEmpIdReset(fromDeptNo);
-					//부서장 권한 강등
-					empPositionDeptDao.empGradeDemotion(deptEmpId);
+				if(fromDeptNoLong == null) {//부서없는 사원일 경우
+					//부서 등록
+					empPositionDeptDao.empPositionDeptInsert(empId, toDeptNoLong);
+				} else {//기존 부서가 있는 사원일 경우
+					//부서장 사원 아이디 확인
+					String deptEmpId = empPositionDeptDao.checkDeptEmpId(fromDeptNoLong);
+					//부서장이라면
+					if(deptEmpId.equals(empId)) {
+						//부서장 리셋
+						empPositionDeptDao.deptEmpIdReset(fromDeptNoLong);
+						//부서장 권한 강등
+						empPositionDeptDao.empGradeDemotion(deptEmpId);
+					}
+					//부서 변경
+					if(toDeptNoLong == null) {
+						empPositionDeptDao.empPositionDeptDelete(empId);
+					} else {
+						empPositionDeptDao.empPositionDeptUpdate(empId, toDeptNoLong);
+					}
 				}
 			}
 		
 			return true;
 		} catch(Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -88,6 +102,25 @@ public class DeptRestController {
 			
 			return true;
 		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	//부서장 해제
+	@PostMapping("/deptEmpIdDemotion")
+	public boolean deptEmpIdDemotion(@RequestParam long deptNo)
+	{
+		try {
+			//부서장 사원 아이디 확인
+			String deptEmpId = empPositionDeptDao.checkDeptEmpId(deptNo);
+			//부서 부서장 해제
+			empPositionDeptDao.deptEmpIdReset(deptNo);
+			//부서장 권한 강등
+			empPositionDeptDao.empGradeDemotion(deptEmpId);
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

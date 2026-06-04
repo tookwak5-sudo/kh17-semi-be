@@ -198,13 +198,17 @@
 		    		//변경할 부서 목록 숨기기
 		    		resetDeptList2();
 					//부서장변경 버튼 보여주기 여부
-					if($(this).val() != "") $(".dept-emp-change").show();
+					if($(this).val() != "") {
+						$(".dept-emp-change").show();
+						$(".dept-emp-demotion").show();
+					}
+					
 		    		//부서원 목록 가져오기
 		    		getEmpPositionDeptList(deptNo);
 		    		//기존 선택된 비활성화 해제
 		    		$("#deptList2 input[type=checkbox][name=dept]").prop("disabled", false);
 		    		//이동할 부서에서 내 부서 비활성화 시키기
-		    		$("#deptList2 input[type=checkbox][name=dept][value=" + deptNo + "]").prop("disabled", true);
+		    		$("#deptList2 input[type=checkbox][name=dept][value='" + deptNo + "']").prop("disabled", true);
 		    	}
 		    });
 		    
@@ -215,7 +219,7 @@
 		    	}
 		    });
 		    
-		    $(document).on("click", "#empList input[type=checkbox][name=emp]", function () {
+		    $(document).on("click", "input[type=checkbox][name=emp]", function () {
 		    	if($(this).prop("checked")) {
 		    		//변경할 부서 목록 보이기
 		    		$(".dept-change-list").addClass("active");
@@ -230,7 +234,8 @@
 		    function resetDeptList2() {
 		    	$(".dept-change-list").removeClass("active");
 				$(".dept-emp-change").hide();
-		    	$(".emp-checkbox").prop("checked", false);
+				$(".dept-emp-demotion").hide();	
+				$(".emp-checkbox").prop("checked", false);
 		    	$("#deptList2 input[type=checkbox][name=dept]").prop("checked", false);
 		    }
 		    
@@ -280,7 +285,7 @@
 		    	var fromDeptNo = $("#deptList input[type=checkbox]:checked").val();
 		    	var deptNo = $("#deptList2 input[type=checkbox]:checked").val();
 		    	
-		    	if(toDeptNo == undefined) {
+		    	if(deptNo == undefined) {
 		    		alert("이동할 부서를 선택하세요");
 		    		return false;
 		    	}
@@ -331,7 +336,29 @@
 		                		//부서원 목록 다시 가져오기
 		                		getEmpPositionDeptList(deptNo);
 		                	} else {
-		                		alert("부서 변경 중 오류가 발생했습니다.");
+		                		alert("부서장 변경 중 오류가 발생했습니다.");
+		                	}
+		                }
+		            });
+		    	}
+			});
+			
+			$(".dept-emp-demotion").click(function () {
+				var deptNo = $("#deptList input[type=checkbox]:checked").val();
+				
+				if(confirm("해당 부서의 부서장을 해제하시겠습니까?")) {
+		    		$.ajax({
+		                url : "/rest/dept/deptEmpIdDemotion",
+		                method:"post",
+		                data: { 
+		                	deptNo : deptNo
+		                	},
+		                success : function(response) {
+		                	if(response) {
+		                		//부서원 목록 다시 가져오기
+		                		getEmpPositionDeptList(deptNo);
+		                	} else {
+		                		alert("부서장 해제 중 오류가 발생했습니다.");
 		                	}
 		                }
 		            });
@@ -369,6 +396,7 @@
 					<div class="cell">
 						<span>부서별 사원 목록</span>
 						<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
+						<a class="btn btn-positive dept-emp-demotion" style="display:none;">부서장 해제</a>
 					</div>
 				</div>
 				<!-- 테이블 -->
@@ -376,7 +404,7 @@
 					<table class="table">
 						<thead>
 							<tr>
-								<th><input type="checkbox" class="emp-checkbox check-emp-all"></th>
+								<th><input type="checkbox" name="emp" class="emp-checkbox check-emp-all"></th>
 								<th>부서</th>
 								<th>사원아이디</th>
 								<th>이름</th>
@@ -398,8 +426,8 @@
 						<li class="dept-item">
 							<div class="dept-row">
 								<span class="toggle-btn">▼</span>
-								<input type="checkbox" name="dept" class="dept-checkbox" id="dept1_" value="">
-								<label for="dept1_" class="dept-name">부서없음</label>
+								<input type="checkbox" name="dept" class="dept-checkbox" id="dept2_" value="">
+								<label for="dept2_" class="dept-name">부서없음</label>
 							</div>
 						</li>
 					</ul>
