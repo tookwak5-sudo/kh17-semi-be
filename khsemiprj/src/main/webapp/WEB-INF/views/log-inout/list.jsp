@@ -17,7 +17,7 @@
                     <option value="log_inout_emp_id">사원아이디</option>
                     <option value="log_inout_type">분류</option>
                 </select>
-                <input type="text" name="keyword" required
+                <input type="text" name="keyword"
                     class="field" placeholder="검색어 입력">
                 <button type="submit" class="btn btn-positive">
                     <i class="fa-solid fa-magnifying-glass"></i>

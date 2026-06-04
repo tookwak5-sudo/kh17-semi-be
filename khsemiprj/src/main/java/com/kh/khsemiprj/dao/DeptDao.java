@@ -42,7 +42,7 @@ public class DeptDao {
 	}
 	
 	public List<DeptDto> selectListAll() {
-		String sql = "select * from dept where dept_use_yn = 'Y'";
+		String sql = "select * from dept where dept_use_yn = 'Y' order by dept_name asc";
 		Object[] params = {  };
 		return jdbcTemplate.query(sql, deptMapper, params);
 	}

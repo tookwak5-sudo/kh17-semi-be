@@ -22,7 +22,7 @@ public class LogInoutDao {
 	//검색 허용할 컬럼
 	Set<String> allowColumns = Set.of("log_inout_emp_id", "log_inout_type");
 	
-	//상세 조회
+	//상세 조회 
 	public LogInoutDto selectOne(String loginId) {
 		String sql = "select * from log_inout where loginId = ?";
 		Object[] params = { loginId };
@@ -33,16 +33,15 @@ public class LogInoutDao {
 	// 촐퇴근 목록 조회
 	public List<LogInoutDto> selectList(int page, int size) {
 		String sql = "SELECT * FROM ("
-	               + "    SELECT ROWNUM RN, TMP.* FROM ("
-	               + "        SELECT * FROM log_inout ORDER BY log_inout_no DESC"
-	               + "    ) TMP"
+	               + "    SELECT ROWNUM RN, A.* FROM ("
+	               + "        SELECT log_inout_no, log_inout_emp_id, log_inout_time, log_inout_type FROM log_inout ORDER BY log_inout_no DESC"
+	               + "    ) A"
 	               + ") WHERE RN BETWEEN ? AND ?";
 		int beginRow = page * size - (size - 1);
 		int endRow = page * size;
 		Object[] params = {beginRow, endRow};
 		return jdbcTemplate.query(sql, logInoutMapper, params);
 	}
-	
 	// 출퇴근 검색
 	public List<LogInoutDto> selectList(PageVO pageVO){
 		if(pageVO.isList())
@@ -65,22 +64,24 @@ public class LogInoutDao {
 			return jdbcTemplate.query(sql, logInoutMapper, params);
 	}
 	
-	// 출퇴근 등록
-	public long sequence() {
-	    String sql = "select log_inout_seq.nextval from dual";
-	    return jdbcTemplate.queryForObject(sql, long.class); //정해진 형태(null 불가)
-	    //return jdbcTemplate.queryForObject(sql, Long.class); //정해진 형태(null 허용)
-	}	
-
-
+	// 출퇴근 로그 등록
 	public void insert(LogInoutDto logInoutDto) {
 		String sql = "insert into log_inout(log_inout_no, log_inout_emp_id, log_inout_type) "
-				+ "values(?, ?, ?)";
+				+ "values(log_inout_seq.nextval, ?, ?)";
 		Object[] params = {logInoutDto.getLogInoutEmpId(), logInoutDto.getLogInoutType()};
 		jdbcTemplate.update(sql, params);
 	}
 	
 	
+	// 마지막으로 기록된 상태를 조회
+//	public String getLastType(String empId) {
+//		String sql = "select log_inout_type from ("
+//				+ "select * from log_inout where log_inout_emp_id = ? "
+//				+ "order by log_inout_time desc"
+//				+ ") where rownum = 1";
+//		
+//	}
+		
 	// 마지막 페이지 확인을 위해 필요한 데이터
 	public int count() {
 		String sql = "select count(*) from log_inout";

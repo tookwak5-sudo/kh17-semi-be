@@ -3,6 +3,13 @@
     
 	<jsp:include page="/WEB-INF/views/template/header.jsp"/>
     
+    <style>
+   		#calendar {
+	        position: relative;
+	        z-index: 1;
+	    }
+    </style>
+    
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.20/index.global.min.js'></script>
     <script type="text/javascript">
