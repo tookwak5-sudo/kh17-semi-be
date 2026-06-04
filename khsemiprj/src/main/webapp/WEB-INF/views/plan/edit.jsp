@@ -21,7 +21,7 @@
       });
 </script>
 
-<form action="./insert" autocomplete="off" method="post" class="form-check">
+<form action="./edit" autocomplete="off" method="post" class="form-check">
 <input type="hidden" name="planNo" value="${planDto.planNo}">
 	<div class="container w-600 mt-50">
 		
@@ -40,14 +40,17 @@
             </select>
         </div>
         <div class="cell">
+        	<label>일정명</label>
+        	<input type="text" name="planName" class="field w-100" value="${planDto.planName}">
+        </div>
+        <div class="cell">
             <label>일정<i class="fa-solid fa-asterisk red"></i></label>
         </div>
         <div class="cell flex-area" style="align-items: center;">
-            <input type="text" name="planName" class="field w-100 picker-8-1"value="<fmt:formatDate value='${myPlan.planSdate}' pattern='yyyy-MM-dd' />">
+            <input type="text" name="planSdate" class="field w-100 picker-8-1" value="<fmt:formatDate value='${planDto.planSdate}' pattern='yyyy-MM-dd'/>">
                 <i class="fa-solid fa-minus ms-10 me-10"></i>
-            <input type="text" class="field w-100 picker-8-2"value="<fmt:formatDate value='${myPlan.planEdate}' pattern='yyyy-MM-dd' />">
+            <input type="text" name="planEdate" class="field w-100 picker-8-2" value="<fmt:formatDate value='${planDto.planEdate}' pattern='yyyy-MM-dd'/>">
         </div>
-        
          <div class="cell">
             <label>내용</label>
             <textarea name="planExplain" class="field w-100" rows="5">${planDto.planExplain}</textarea>

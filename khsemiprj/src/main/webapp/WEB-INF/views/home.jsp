@@ -1,32 +1,80 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+
+<style>
+    /* 레이아웃 구성 */
+    .dashboard-container {
+        display: flex;
+        gap: 20px; /* 좌우 간격 */
+        width: 1200px;
+        margin: 50px auto;
+    }
+
+    /* 좌측 달력 영역 (비율 7) */
+    .left-section {
+        flex: 7;
+    }
+
+    /* 우측 리스트 영역 (비율 3) */
+    .right-section {
+        flex: 3;
+        display: flex;
+        flex-direction: column;
+        gap: 20px; /* 공지사항과 결재목록 사이 간격 */
+    }
+
+    .card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
     
-	<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+    .p-20 { padding: 20px; }
+</style>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+
+<div class="dashboard-container">
+    <div class="left-section">
+        <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
+    </div>
     
-    <style>
-   		#calendar {
-	        position: relative;
-	        z-index: 1;
-	    }
-    </style>
-    
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.20/index.global.min.js'></script>
-    <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', function() {
+    <div class="right-section">
+        <div class="card p-20" style="height: 300px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>결재사항</h3>
+                <a href="#">더보기</a>
+            </div>
+            </div>
+
+        <div class="card p-20" style="height: 300px;">
+            <h3>공지사항</h3>
+            </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
+        /* var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            // API 키와 Calendar ID는 보안상 서버 환경변수로 관리하는 것을 권장합니다.
+            googleCalendarApiKey: 'YOUR_API_KEY', 
+            events: {
+                googleCalendarId: 'YOUR_CALENDAR_ID'
+            },
+            height: '100%' // 부모 div 높이에 맞춤
+        }); */
         var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-           googleCalendarApiKey: 'AIzaSyAdaBrCDUIhIqjgduC-zUb3scUngM9hXPM',
-           events: {
-              googleCalendarId: '0caa26c9579ff8f9de81f1120f2710fdc87b12d2ea24f0c1b62816b83b775bdb@group.calendar.google.com'
-           }
+            initialView: 'dayGridMonth', 
+            /* events: {
+            	${eventList}
+            }, */
+            events: ${eventList},
+            height: '100%' // 부모 div 높이에 맞춤
         });
         calendar.render();
-      });
-    </script>
-  	<div class="container mt-50 md-50">
-    <div id='calendar'></div>
-    </div>
+    });
+</script>
 
-    <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
+<jsp:include page="/WEB-INF/views/template/footer.jsp"/>

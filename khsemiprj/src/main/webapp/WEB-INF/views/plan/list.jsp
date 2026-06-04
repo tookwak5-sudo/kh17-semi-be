@@ -10,7 +10,6 @@
 			<h1 class="mb-0">출퇴근 기록</h1>
 		</div>
 		
-		<!-- 검색창 -->
         <div class="cell center">
             <form autocomplete="off">
                 <select name="column" class="field">

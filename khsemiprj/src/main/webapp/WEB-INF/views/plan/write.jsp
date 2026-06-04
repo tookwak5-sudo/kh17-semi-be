@@ -38,12 +38,16 @@
             </select>
         </div>
         <div class="cell">
+        	<label>일정명</label>
+        	<input type="text" name="planName" class="field w-100">
+        </div>
+        <div class="cell">
             <label>일정 <i class="fa-solid fa-asterisk red"></i></label>
         </div>
         <div class="cell flex-area" style="align-items: center;">
-            <input type="text" name="planName" class="field w-100 picker-8-1">
+            <input type="text" name="planSdate" class="field w-100 picker-8-1">
                 <i class="fa-solid fa-minus ms-10 me-10"></i>
-            <input type="text" class="field w-100 picker-8-2">
+            <input type="text" name="planEdate" class="field w-100 picker-8-2">
         </div>
         
          <div class="cell">
