@@ -55,18 +55,27 @@
 	<li class="divider"></li>
 	
 	<li>
-	    <a href="/member/mypage">
+	    <a href="/emp/mypage">
 	        <i class="fa-solid fa-user"></i>
 	        <span>내정보</span>
 	    </a>
 	    <!-- 하위메뉴 -->
         <ul>
             <li>
-                <a href="/member/logout">
+                <a href="/emp/login">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>로그아웃</span>
                 </a>
             </li>
+            <li>
+                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
+                 <span>출근</span>
+            </li>
+            <li>
+                 <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
+                 <span>퇴근</span>
+            </li>
+          
         </ul>
     </li>
 </ul>

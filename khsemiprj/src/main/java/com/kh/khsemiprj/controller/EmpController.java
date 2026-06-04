@@ -18,9 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
+import com.kh.khsemiprj.dao.LogInoutDao;
 import com.kh.khsemiprj.dto.CertDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
+import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
@@ -43,6 +45,9 @@ public class EmpController {
 	
 	@Autowired
 	private AttachService attachService;
+	
+	@Autowired
+	private LogInoutDao logInoutDao;
 	
 	@GetMapping("/login")
 	public String login() {
@@ -107,10 +112,37 @@ public class EmpController {
 //			return "redirect:./notice";
 //		}
 		
+		//로그인 테이블에 저장
+		LogInoutDto logInoutDto = new LogInoutDto();
+		//아이디
+		logInoutDto.setLogInoutEmpId(findEmpDto.getEmpId());
+		//유형
+		logInoutDto.setLogInoutType("출근");
+		logInoutDao.insert(logInoutDto);
+		
 		return "redirect:/";
 	}
 	
-
+	//로그아웃(
+	@RequestMapping("/logout")
+	public String logout(HttpSession session) {
+		session.removeAttribute("loginId");
+		session.removeAttribute("empGrade");
+		
+		
+		return "redirect:/emp/login";
+	}
+	
+//	//로그아웃 및 퇴근
+//	@RequestMapping("/logoutOut")
+//	public String logoutOut(HttpSession session) {
+//		session.removeAttribute("loginId");
+//		session.removeAttribute("empGrade");
+//		
+//		LogInoutDto logInoutDto = new LogInoutDto();
+//		logInoutDto.getLogInoutType();
+//	}
+	
 	@GetMapping("/join")
 	public String join() {
 		return "emp/join";

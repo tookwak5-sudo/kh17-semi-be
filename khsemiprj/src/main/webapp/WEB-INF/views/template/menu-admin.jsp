@@ -60,15 +60,15 @@
 	
 	<li class="divider"></li>
 	
-	<li>
-	    <a href="/member/mypage">
+	<li class="menu-wrapper">
+	    <a href="/emp/mypage">
 	        <i class="fa-solid fa-user"></i>
 	        <span>내정보</span>
 	    </a>
 	    <!-- 하위메뉴 -->
         <ul>
             <li>
-                <a href="/member/logout">
+                <a href="/emp/logout">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>로그아웃</span>
                 </a>
