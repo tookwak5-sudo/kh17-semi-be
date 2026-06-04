@@ -17,6 +17,25 @@
     <link rel="stylesheet" type="text/css" href="/css/commons.css">
     <style>
         /* div { box-shadow: 0 0 0 1px gray ;} */
+        .menu { /* 실제 사용 중인 메뉴 div의 클래스명으로 변경 */
+		    position: relative;
+		    z-index: 1000; /* 달력보다 높은 값 설정 */
+		}
+		.menu-wrapper { 
+	        position: relative;
+	        z-index: 9999 !important; /* 달력보다 높은 우선순위 부여 */
+   		}
+   		.menu-wrapper ul {
+        	position: absolute;
+	        top: 100%; /* 내정보 바로 아래에 붙음 */
+	        left: 0;
+	        z-index: 5000; /* 최상위 */
+	        background: white; /* 배경색이 없으면 달력이 비쳐 보임 */
+	        border: 1px solid #ddd;
+	        padding: 0;
+	        margin: 0;
+	        display: none; /* 기본은 숨김 */
+    	}
     </style>
     
     <!-- jQuery CDN -->
@@ -33,7 +52,6 @@
     <!-- <link rel="stylesheet" type="text/css" href="/lib/multipage/multipage.css">
     <script src="/lib/multipage/multipage.js"></script> -->
 </head>
-
 
 <body>
 
@@ -62,13 +80,13 @@ empGrade : ${sessionScope.empGrade}
             </div>
 
             <!-- 메뉴 -->
-            <div> 
+            <div class="menu-container"> 
             	<%-- <jsp:include page="/WEB-INF/views/template/menu-member.jsp"></jsp:include> --%>
 				<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-					<c:if test="${sessionScope.loginLevel == '0' || sessionScope.loginLevel == null}">
+					<c:if test="${sessionScope.empGrade == '0' || sessionScope.empGrade == null}">
 						<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
 					</c:if>
-					<c:if test="${sessionScope.loginLevel == '1' || sessionScope.empGrade == '2'}">
+					<c:if test="${sessionScope.empGrade == '1' || sessionScope.empGrade == '2'}">
 						<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
 					</c:if>
 				</c:if>

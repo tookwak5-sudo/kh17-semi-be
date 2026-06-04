@@ -29,26 +29,33 @@
             <select class="field w-100" name="deptParentNo" value"${deptDto.deptParentNo}>
                 <option value="">선택하세요</option>
                 <c:forEach var="dept" items="${deptList}">
-			        <option value="${deptDto.deptNo}" 
-			            <c:if test="${deptDto.deptNo == deptDto.deptParentNo}">selected</c:if>>
+                	<c:if test="${param.deptNo != dept.deptNo}">
+			        <option value="${dept.deptNo}" 
+			            <c:if test="${dept.deptNo == deptDto.deptParentNo}">selected</c:if>>
 			            ${dept.deptName}
 			        </option>
+			        </c:if>
 			    </c:forEach>
             </select>
         </div>
         
         <div class="cell">
         	<label>부서 사용 여부</label>
-        	<input type="checkbox" name="deptUseYn" value="${deptDto.deptUseYn}">
+        	<input type="checkbox" name="deptUseYn" value="Y"
+        		<c:if test="${deptDto.deptUseYn == 'Y'}">checked</c:if>
+        	>
         </div>
+        
         <div class="cell mt-40 right">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
             <button type="submit" class="btn btn-netural">
-                수정하기
+                <i class="fa-solid fa-pen"></i>
+				<span>수정하기</span>
             </button>
-             <button type="submit" class="btn btn-negative">
-                삭제하기
-            </button>
+            <a class="btn btn-negative" href="./delete?deptNo=${deptDto.deptNo}">
+			<i class="fa-solid fa-trash"></i>
+			<span>삭제하기</span>
+			</a>
         </div>
     </div>
 </form>
