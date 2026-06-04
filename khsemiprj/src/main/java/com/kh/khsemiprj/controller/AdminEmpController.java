@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpDao;
+import com.kh.khsemiprj.dao.EmpDeptRelationDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
+import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 
@@ -23,6 +26,10 @@ public class AdminEmpController {
 	private EmpPositionDeptDao empPositionDeptDao;
 	@Autowired
 	private EmpDao empDao;
+	@Autowired
+	private DeptDao deptDao;
+	@Autowired
+	private EmpDeptRelationDao empDeptRelationDao;
 	
 	@RequestMapping("/list")
 	public String list(Model model, 
@@ -31,6 +38,12 @@ public class AdminEmpController {
 		
 		List<EmpPositionDeptDto> list = empPositionDeptDao.selectList(column, keyword);
 		model.addAttribute("list", list);
+		
+		List<EmpDto> wList = empDao.selectEmpByStatus(null);
+		model.addAttribute("wList", wList);
+		
+		List<DeptDto> deptList = deptDao.deptList();
+		model.addAttribute("deptList", deptList);
 		
 		
 		return "admin/emp/list"; 
@@ -52,5 +65,22 @@ public class AdminEmpController {
 		empPositionDeptDao.updateByMaster(empPositionDeptDto);
 		
 		return "redirect:detail?empId=" + empPositionDeptDto.getEmpId();
+	}
+	
+	@GetMapping("/reject")
+	public String reject(@RequestParam String empId) {
+		empDao.rejectEmp(empId);
+		
+		return "redirect:list";
+	}
+	
+	@PostMapping("/approve")
+	public String approve(@RequestParam String empId,
+						  @RequestParam String empHireDate,
+						  @RequestParam int deptNo) {
+		empDao.approveEmp(empId, empHireDate);
+		empDeptRelationDao.insertEmpDept(empId, deptNo);
+		
+		return "redirect:list";
 	}
 }
