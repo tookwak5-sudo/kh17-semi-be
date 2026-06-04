@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.mapper.AprvFormMapper;
+import com.kh.khsemiprj.vo.AprvFormConnectVO;
 import com.kh.khsemiprj.vo.AprvFormVO;
 import com.kh.khsemiprj.vo.PageVO;
 @Repository
@@ -57,6 +58,7 @@ public class AprvFormDao {
 		return nextNo;
 	}
 	
+	//서비스에서 번호 넣을때 훨씬 변해서 vo 반환을 택했습니다.
 	public AprvFormVO insertForm(AprvFormDto aprvFormDto) {
 	    
 		int currentNo = this.sequence();
@@ -80,16 +82,56 @@ public class AprvFormDao {
 	    
 	   
 	    AprvFormVO aprvFormVo = new AprvFormVO();
-	    aprvFormVo.setFormNo(aprvFormDto.getFormNo());
+	    aprvFormVo.setFormNo(currentNo);
 	    
 	    
 	    return aprvFormVo; 
 	}
 	
 	
-	public void connect(int formNo, int attachNo) {
+	
+	
+	public AprvFormConnectVO connect(int formNo, int attachNo) {
 		String sql = "insert into form_file(form_no,attach_no) values(?, ?)";
 		Object[] params = {formNo,attachNo};
 		jdbcTemplate.update(sql,params);
+		AprvFormConnectVO aprvFormConnectVo = new AprvFormConnectVO();
+		aprvFormConnectVo.setAttachNo(attachNo);
+		aprvFormConnectVo.setFormNo(formNo);
+		return aprvFormConnectVo;
+	}
+	
+	//양식 본문 수정
+	
+	public boolean update(AprvFormDto aprvFormDto) {
+		String sql = "update aprv_form "
+				+ "set form_name=?, "
+				+ "form_explain=?, "
+				+ "form_use_yn=?, "
+				+ "form_head=?,  "
+				+ "form_wtime=systimestamp "
+				+ "where form_no=?";
+		Object[] params={
+			aprvFormDto.getFormName(),
+			aprvFormDto.getFormExplain(),
+			aprvFormDto.getFormUseYn(),
+			aprvFormDto.getFormHead(),
+			aprvFormDto.getFormNo()
+		};
+		
+		return jdbcTemplate.update(sql,params)>0;
+	}
+	
+	public boolean delete(int formNo) {
+		String sql = "delete aprv_form where form_no=?";
+		Object[] params = { formNo};
+		return jdbcTemplate.update(sql,params)>0;
+	}
+	
+	// 파일 연결 관계 끊어 버리는 메소드
+	public boolean disconnect(int formNo, int attachNo) {
+	    String sql = "delete from form_file where form_no = ? and attach_no = ?";
+	    Object[] params = { formNo, attachNo };
+	    return jdbcTemplate.update(sql, params) > 0;
 	}
 }
