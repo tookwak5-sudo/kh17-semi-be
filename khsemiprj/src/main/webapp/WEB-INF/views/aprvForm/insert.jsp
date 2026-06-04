@@ -25,7 +25,8 @@
 	<div class="cell mt-0">
 		<select name="formHead" class="field w-100">
 			<option value="기타">기타</option>
-			<option value="휴가">휴가</option>
+			<option value="연차">연차</option>
+			<option value="병가">병가</option>
 			<option value="업무">업무</option>
 			<option value="비용">비용</option>		
 		</select>
@@ -35,10 +36,7 @@
 		<label>사용 여부</label>
 	</div>
 	<div class="cell mt-0">
-		<select name="formUseYn" class="field w-100">
-			<option value="Y">사용 (Y)</option>
-			<option value="N">미사용 (N)</option>		
-		</select>
+		<input type="checkbox" name="formUseYn" value="Y">
 	</div>
 	
 	<div class="cell mt-20">

@@ -11,7 +11,7 @@
 	import com.kh.khsemiprj.dto.AprvFormDto;
 	import com.kh.khsemiprj.dto.AttachDto;
 	import com.kh.khsemiprj.exception.TargetNotfoundException;
-	import com.kh.khsemiprj.vo.AprvFormConnectVO;
+	
 	import com.kh.khsemiprj.vo.AprvFormVO;
 	
 	@Service
@@ -51,9 +51,11 @@
 				throw new TargetNotfoundException("파일이나 양식이 존재하지 않습니다.");
 			}
 	
-			AprvFormConnectVO aprvFormConnectVo = aprvFormDao.connect(formChecker, fileChecker);
+			
 	
-			if (aprvFormConnectVo != null && attach != null && !attach.isEmpty()) {
+			if ( attach != null && !attach.isEmpty()) {
+				
+				
 				aprvFormDao.disconnect(formChecker, fileChecker);
 	
 				attachService.delete(fileChecker);
@@ -65,11 +67,13 @@
 	
 		}
 	
-		public void deleteFile(AprvFormDto aprvFormDto, AttachDto attachDto)
+		public void deleteFile(AprvFormDto aprvFormDto, Integer attachNo)
 				throws IllegalStateException, IOException {
 			int formNo = aprvFormDto.getFormNo();
-	
-			int attachNo = attachDto.getAttachNo();
+			AttachDto attachDto = new AttachDto();
+			attachNo = aprvFormDao.findAttachNo(formNo);
+			
+			attachDto.setAttachNo(attachNo);
 			
 			aprvFormDao.disconnect(formNo, attachNo);
 	

@@ -17,6 +17,7 @@ import com.kh.khsemiprj.dao.AprvFormDao;
 
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AttachDto;
+import com.kh.khsemiprj.exception.TargetNotfoundException;
 import com.kh.khsemiprj.service.AprvFormService;
 import com.kh.khsemiprj.vo.PageVO;
 
@@ -30,8 +31,6 @@ public class AprvFormController {
 	@Autowired
 	private AprvFormDao aprvFormDao;
 
-	
-
 	// 1. 결재 양식 목록 조회
 	@GetMapping("/list")
 	public String list(@ModelAttribute PageVO pageVO, Model model) {
@@ -44,7 +43,9 @@ public class AprvFormController {
 	@GetMapping("/detail")
 	public String detail(@RequestParam int formNo, Model model) {
 		AprvFormDto aprvFormDto = aprvFormDao.selectOne(formNo);
-		model.addAttribute("formDto", aprvFormDto);
+		Integer attachNo = aprvFormDao.findAttachNo(formNo);
+		model.addAttribute("attachNo", attachNo);
+		model.addAttribute("aprvFormDto", aprvFormDto);
 		return "aprvForm/detail";
 	}
 
@@ -58,19 +59,31 @@ public class AprvFormController {
 	@PostMapping("/insert")
 	public String insert(@ModelAttribute AprvFormDto aprvFormDto, @RequestParam(required = false) MultipartFile attach)
 			throws IllegalStateException, IOException {
-		
-		aprvFormDao.insertForm(aprvFormDto);
+		AprvFormDto findNameDto = aprvFormDao.selectOneByName(aprvFormDto.getFormName());
+		if (findNameDto != null) {
+			return "redirect:/aprvForm/insert?duplicate";
+		}
+		if (aprvFormDto.getFormUseYn() != null) {
+			aprvFormDto.setFormUseYn("Y");
+		}
 		aprvFormService.registerFormFile(aprvFormDto, attach);
 
-		return "redirect:aprvForm/list";
+		return "redirect:./list";
 	}
 
 	// 5. 결재 양식 수정 페이지 열기
 	@GetMapping("/edit")
 	public String edit(@RequestParam int formNo, Model model) {
-		AprvFormDto aprvFormDto = aprvFormDao.selectOne(formNo);
-		model.addAttribute("formDto", aprvFormDto);
-		return "aprvForm/edit";
+		try {
+			AprvFormDto aprvFormDto = aprvFormDao.selectOne(formNo);
+			model.addAttribute("aprvFormDto", aprvFormDto);
+			Integer attachNo = aprvFormDao.findAttachNo(formNo);
+			model.addAttribute("attachNo", attachNo);
+			return "aprvForm/edit";
+		}
+		catch (TargetNotfoundException e) {
+			return "redirect:/error/500";
+		}
 	}
 
 	// 6. 결재 양식 및 파일 수정 처리
@@ -84,23 +97,37 @@ public class AprvFormController {
 		// 2. 파일 교체 로직
 		aprvFormService.modifyFile(aprvFormDto, attachDto, attach);
 
-		return "redirect:aprvForm/detail?formNo=" + aprvFormDto.getFormNo(); // 수정 완료 후 상세 페이지로 이동
+		return "redirect:/aprvForm/detail?formNo=" + aprvFormDto.getFormNo(); // 수정 완료 후 상세 페이지로 이동
 	}
 
 	@GetMapping("/delete")
-	public String delete(@RequestParam int formNo, @RequestParam int attachNo)
-			throws IllegalStateException, IOException {
+	public String delete(@RequestParam int formNo) throws IllegalStateException, IOException {
+		try {
+			Integer attachNo = aprvFormDao.findAttachNo(formNo);
+			if (attachNo != null&& attachNo>0) {
+				AprvFormDto aprvFormDto = new AprvFormDto();
+				aprvFormDto.setFormNo(formNo);
 
-		AprvFormDto aprvFormDto = new AprvFormDto();
-		aprvFormDto.setFormNo(formNo);
+				AttachDto attachDto = new AttachDto();
+				attachDto.setAttachNo(attachNo);
 
-		AttachDto attachDto = new AttachDto();
-		attachDto.setAttachNo(attachNo);
-
-		aprvFormService.deleteFile(aprvFormDto, attachDto);
-		aprvFormDao.delete(formNo);
-
-		return "redirect:aprvForm/deleteFinish";
+				aprvFormService.deleteFile(aprvFormDto, attachNo);
+				
+			}
+			aprvFormDao.delete(formNo);
+		} 
+		
+		catch (TargetNotfoundException e) {
+			return "redirect:/error/500";
+		}
+		
+		return "redirect:/aprvForm/deleteFinish";
 	}
-
+	
+	// 8. 결재 양식 삭제 완료 페이지 열기
+	@GetMapping("/deleteFinish")
+	public String deleteFinish() {
+	   
+	    return "aprvForm/deleteFinish"; 
+	}
 }

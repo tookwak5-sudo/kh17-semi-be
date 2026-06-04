@@ -83,10 +83,12 @@ empGrade : ${sessionScope.empGrade}
             <div class="menu-container"> 
             	<%-- <jsp:include page="/WEB-INF/views/template/menu-member.jsp"></jsp:include> --%>
 				<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-					<c:if test="${sessionScope.empGrade == '0' || sessionScope.empGrade == null}">
+					<c:if test="${sessionScope.empGrade == '0' || sessionScope.empGrade == '1'}">
 						<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
 					</c:if>
-					<c:if test="${sessionScope.empGrade == '1' || sessionScope.empGrade == '2'}">
+<!-- 					sessionScope.empGrade == '1' || 이 부분 윗줄에도 있어서 중복되어 헤더가 2개 뜨는 거 같아서 뺐습니다. -->
+					
+					<c:if test="${sessionScope.empGrade == '2'}">
 						<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
 					</c:if>
 				</c:if>
