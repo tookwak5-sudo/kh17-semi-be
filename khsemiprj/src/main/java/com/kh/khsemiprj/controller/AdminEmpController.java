@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpDeptRelationDao;
+import com.kh.khsemiprj.dao.EmpPositionDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
+import com.kh.khsemiprj.dto.EmpPositionDto;
 
 @Controller
 @RequestMapping("/admin/emp")
@@ -30,6 +32,8 @@ public class AdminEmpController {
 	private DeptDao deptDao;
 	@Autowired
 	private EmpDeptRelationDao empDeptRelationDao;
+	@Autowired
+	private EmpPositionDao empPositionDao;
 	
 	@RequestMapping("/list")
 	public String list(Model model, 
@@ -45,6 +49,9 @@ public class AdminEmpController {
 		List<DeptDto> deptList = deptDao.deptList();
 		model.addAttribute("deptList", deptList);
 		
+		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
+		model.addAttribute("positionList", positionList);
+		
 		
 		return "admin/emp/list"; 
 	}
@@ -56,6 +63,9 @@ public class AdminEmpController {
 		EmpPositionDeptDto empPositionDeptDto = empPositionDeptDao.selectOne(empId);
 		model.addAttribute("empDto", empDto);
 		model.addAttribute("empPositionDeptDto", empPositionDeptDto);
+		
+		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
+		model.addAttribute("positionList", positionList);
 		
 		return "admin/emp/detail";
 	}
@@ -77,8 +87,9 @@ public class AdminEmpController {
 	@PostMapping("/approve")
 	public String approve(@RequestParam String empId,
 						  @RequestParam String empHireDate,
-						  @RequestParam int deptNo) {
-		empDao.approveEmp(empId, empHireDate);
+						  @RequestParam int deptNo,
+						  @RequestParam int empPositionNo) {
+		empDao.approveEmp(empId, empHireDate, empPositionNo);
 		empDeptRelationDao.insertEmpDept(empId, deptNo);
 		
 		return "redirect:list";

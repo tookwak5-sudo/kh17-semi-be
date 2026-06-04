@@ -81,9 +81,13 @@ public class EmpDao {
 		}
 		
 		//승인 메소드
-		public boolean approveEmp(String empId, String empHireDate) {
-			String sql = "UPDATE emp SET emp_valid = 'Y', emp_hire_date = ? WHERE emp_id = ?";
-			Object[] params = {empHireDate, empId};
+		public boolean approveEmp(String empId, String empHireDate, int empPositionNo) {
+			String sql = "UPDATE emp "
+					+ "SET emp_valid = 'Y', emp_hire_date = ?, "
+					+ "emp_position_no = ?, emp_valid_date = SYSTIMESTAMP "
+					+ "WHERE emp_id = ?";
+			
+			Object[] params = {empHireDate, empPositionNo, empId};
 			return jdbcTemplate.update(sql, params) > 0;
 		}
 		

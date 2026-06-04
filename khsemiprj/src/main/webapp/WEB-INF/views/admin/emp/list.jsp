@@ -30,7 +30,7 @@
 									<td>${waitEmp.empName}</td>
 									<td>
 										<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 4px 8px; font-size: 12px;">승인</button>
-										<a href="reject?empId=${waitEmp.empId}" class="btn btn-positive" style="padding: 4px 8px; font-size: 12px;">거절</a>
+										<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="padding: 4px 8px; font-size: 12px;">거절</a>
 									</td>
 								</tr>
 								</c:forEach>
@@ -116,6 +116,17 @@
                     <option value="${dept.deptNo}">${dept.deptName}</option>
                     </c:forEach>
                 </select>
+            </div>
+            
+             <div>
+                <label>직급 지정</label>
+                <select name="empPositionNo" class="field w-100">
+                	<option value="">선택</option>
+                	
+                	<c:forEach var="position" items="${positionList}">
+		            	<option value="${position.empPositionNo}">${position.empPositionName}</option>
+                	</c:forEach>
+	            </select>
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
