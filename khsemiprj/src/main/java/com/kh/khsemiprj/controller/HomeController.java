@@ -25,6 +25,7 @@ public class HomeController {
 	@RequestMapping("/")
 	public String home(Model model
 			, HttpSession session) {
+
 		String loginId = (String)session.getAttribute("loginId");
 		PlanDto findPlanDto = new PlanDto();
 		
