@@ -57,8 +57,12 @@
     	top: 50%;
     	left: 50%;
     	transform: translate(-50%, -50%);
-    	z-index: 10000;
+    	width: 600px;
     	background: white;
+    	padding: 20px;
+    	border: 1px solid #ccc; 
+    	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
+    	z-index: 10000;
     }
 </style>
 
@@ -303,7 +307,7 @@
 			$(".calendarModal").hide();
 			$("#modal-body").empty();
     }
-    function cloasDetailModal() {
+    function closeDetailModal() {
     	$(".calendarDetailModal").hide();
     	$("#modal-body").empty();
     }
