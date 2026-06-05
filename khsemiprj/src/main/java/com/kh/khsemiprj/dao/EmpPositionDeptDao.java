@@ -24,14 +24,15 @@ public class EmpPositionDeptDao {
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
-				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ?";
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ? "
+				+ "order by e.emp_grade desc, p.emp_position_no asc, e.emp_name asc";
 		Object[] params = {deptNo};
 		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
 	}
 	
 	//부서 없는 사원 목록 조회
 	public List<EmpPositionDeptDto> selectDepthEmpByNull() {
-		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
