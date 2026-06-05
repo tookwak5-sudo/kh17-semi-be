@@ -14,5 +14,6 @@ public class LogAccessDto {
 	private Timestamp accessDate;
 	private String accessUrl;
 	private String accessIp;
-
+	private String empName;
+	private String deptName;
 }

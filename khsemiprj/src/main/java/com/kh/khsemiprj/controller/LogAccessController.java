@@ -13,18 +13,21 @@ import com.kh.khsemiprj.dto.LogAccessDto;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
-@RequestMapping("/logAccess")
+@RequestMapping("/admin/logAccess")
 public class LogAccessController {
 	@Autowired
 	private LogAccessDao logAccessDao;
 	
-//	@RequestMapping("/list")
-//	public String list(Model model, @ModelAttribute PageVO pageVO) {
-//		List<LogAccessDto> logAccessList = logAccessDao.selectList(pageVO);
-//		
-//		model.addAttribute("logAccessList", logAccessList);
-//		
-//		
-//	}
+	@RequestMapping("/list")
+	public String list(Model model, @ModelAttribute PageVO pageVO) {
+		List<LogAccessDto> logAccessList = logAccessDao.selectList(pageVO);
+		
+		model.addAttribute("logAccessList", logAccessList);
+		
+		int count = logAccessDao.count(pageVO);
+		pageVO.setCount(count);//데이터 개수 설정
+		model.addAttribute("pageVO", pageVO);
+		return "admin/logAccess/list";
+	}
 	
 }

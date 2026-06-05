@@ -19,6 +19,8 @@ public class LogAccessMapper implements RowMapper<LogAccessDto> {
 				.accessDate(rs.getTimestamp("access_date"))
 				.accessUrl(rs.getString("access_url"))
 				.accessIp(rs.getString("access_ip"))
+				.empName(rs.getString("emp_name"))
+				.deptName(rs.getString("dept_name"))
 			.build();	
 	}
 }
