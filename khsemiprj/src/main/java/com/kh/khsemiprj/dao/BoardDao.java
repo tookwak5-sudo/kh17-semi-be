@@ -22,10 +22,12 @@ public class BoardDao {
 	private Set<String> allowColumns = Set.of("board_writer", "board_title");
 	
 	//목록 및 조회
+	//전에 코드는 공지가 리스트에 두번 출력되어 고쳤습니다. 조건절에 널 넣은 이유는 !공지 붙으면 선택 없음 항목이 사라져서 넣었습니다.
 	public List<BoardDto> selectList(int page, int size) {
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
 							+ "select * from board "
+							+ "where board_head != '공지' or board_head is null "
 							+ "order by board_no desc"
 						+ ") TMP"
 					+ ") where rn between ? and ?";
@@ -58,6 +60,13 @@ public class BoardDao {
 	public List<BoardDto> selectNoticeList() {
 		String sql = "select * from board "
 					+ "where board_head = '공지' "
+					+ "order by board_no desc";
+		return jdbcTemplate.query(sql, boardMapper);
+	}
+	//첫 주석과 같은 이유로 넣었습니다.
+	public List<BoardDto> selectNullList() {
+		String sql = "select * from board "
+					+ "where board_head is null "
 					+ "order by board_no desc";
 		return jdbcTemplate.query(sql, boardMapper);
 	}
@@ -94,6 +103,9 @@ public class BoardDao {
 		return jdbcTemplate.queryForObject(sql, long.class);
 	}
 	public void insert(BoardDto boardDto) {
+		
+		
+		
 		String sql = "insert into board("
 						+ "board_no, board_writer, board_head, "
 						+ "board_title, board_content "

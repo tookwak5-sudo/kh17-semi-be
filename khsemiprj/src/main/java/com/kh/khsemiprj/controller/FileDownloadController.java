@@ -31,6 +31,9 @@ public class FileDownloadController {
 	//레거시 다운로드 - Java EE의 객체들을 이용하여 다운로드를 설정
 	@RequestMapping("/legacy")
 	public void legacy(@RequestParam int attachNo, HttpServletResponse response) throws IOException {
+		// 파일 조회하기 직전에 진짜 절대경로가 어디 찍히는지 콘솔에 찍어보기
+		
+		
 		//목표 : 전달된 attachNo에 해당하는 정보를 불러와서 파일과 조합하여 사용자에게 전송
 		
 		//[1] 정보 조회
@@ -40,6 +43,7 @@ public class FileDownloadController {
 		//[2] 파일 조회
 		File dir = new File("D:/upload");//파일이 모여있는 폴더
 		File target = new File(dir, String.valueOf(attachNo));//다운로드 시킬 파일
+		
 		if(!target.isFile()) throw new TargetNotfoundException("존재하지 않는 파일");
 		
 		//[3] 사용자에게 알려줄 다운로드 정보(헤더) 설정 (무조건 String만 설정 가능)

@@ -23,4 +23,13 @@ public class EmpPositionDao {
 		               + "order by emp_position_level asc";
 		    return jdbcTemplate.query(sql, empPositionMapper);
 		}
+		
+	//직급 관련 인서트
+		public void insert(EmpPositionDto empPositionDto) {
+			String sql = "insert into emp_position(emp_position_no, emp_position_name, emp_position_level) "
+					+ "values(?, ?, ?)";
+			
+			Object[] params = {empPositionDto.getEmpPositionNo(),empPositionDto.getEmpPositionName(),empPositionDto.getEmpPositionLevel()};
+			jdbcTemplate.update(sql,params);
+		}
 }
