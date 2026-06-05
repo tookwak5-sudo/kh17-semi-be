@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.khsemiprj.dao.AprvFormDao;
 import com.kh.khsemiprj.dao.DeptDao;
+import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.DeptDto;
 
 @RequestMapping("/aprv")
@@ -22,6 +24,9 @@ public class AprvController {
 	
 	@Autowired
 	private DeptDao deptDao;
+	
+	@Autowired
+	private AprvFormDao aprvFormDao;
 	
 	@RequestMapping("/list")
 	public String list() {
@@ -64,6 +69,9 @@ public class AprvController {
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("deptListJson", deptListJson);
 		
+ 		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+		model.addAttribute("formList", formList);
+ 		
 		return "aprv/insert";
 	}
 }

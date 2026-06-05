@@ -32,12 +32,23 @@
 	<td></td>
 	<td></td>
 	<td></td>
+	<td></td>
 </tr>
 </script>
 <script type="text/template" id="emp-empty-template">
 <tr>
 	<td colspan="5">검색된 사원이 없습니다</td>
 </tr>
+</script>
+<script type="text/template" id="line-template">
+<tr>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+</script>
+<script type="text/template" id="aprv-form-file-template">
+<a><i class="fa-regular fa-file"></i><span>양식 파일 다운로드</span></a>
 </script>
 
 <form action="./insert" autocomplete="off" method="post" class="form-check">
@@ -51,9 +62,9 @@
             <label>양식 선택</label> 
 		</div>
 		<div class="cell mt-0">
-            <select class="field w-40" name="aprvFormNo">
+            <select class="field w-40 aprv-form-list" name="aprvFormNo">
                 <option value="">선택하세요</option>
-                <c:forEach var="aprvFormDto" items="${aprvFormList}">
+                <c:forEach var="aprvFormDto" items="${formList}">
                 <option value="${aprvFormDto.formNo}">${aprvFormDto.formName}</option>
                 </c:forEach>
             </select>
@@ -67,8 +78,8 @@
         <div class="cell mb-0">
             <label>양식 파일</label>
         </div>
-        <div class="cell mt-0">
-        	<a href=""><i class="fa-regular fa-file"></i>양식 파일 다운로드</a>
+        <div class="cell mt-0 aprv-form-file">
+        	
         </div>
         <div class="cell mb-0">
             <label>기한 <i class="fa-solid fa-asterisk red"></i></label>
@@ -100,7 +111,6 @@
 		        	<table class="table">
 		        		<thead>
 		        			<tr>
-			        			<th>순서</th>
 			        			<th>결재자</th>
 			        			<th>부서</th>
 			        			<th>직책</th>
@@ -112,7 +122,7 @@
 		        	</table>
 		        </div>
 		        <div class="cell w-100 right">
-		        	<a onclick="openModal();" class="btn btn-positive aprv-line-1">결재자 추가</a>
+		        	<a onclick="openModal('1');" class="btn btn-positive aprv-line-1">결재자 추가</a>
 		        </div>
 		    </div>
 		    <div class="cell flex-vertical w-50 ms-10">
@@ -123,7 +133,6 @@
 		        	<table class="table">
 		        		<thead>
 		        			<tr>
-			        			<th>순서</th>
 			        			<th>결재자</th>
 			        			<th>부서</th>
 			        			<th>직책</th>
@@ -135,7 +144,7 @@
 		        	</table>
 		        </div>
 		        <div class="cell w-100 right">
-		        	<a href="" class="btn btn-positive aprv-line-2">결재자 추가</a>
+		        	<a onclick="openModal('2');" class="btn btn-positive aprv-line-2">결재자 추가</a>
 		        </div>
 			</div>
         </div>
@@ -151,14 +160,14 @@
     </div>
 </form>
 
-<div class="modal-overlay" id="modalOverlay">
+<div class="modal-overlay" id="modalOverlay1">
     <div class="modal-box">
-        <div class="modal-header">결재 라인 선택</div>
+        <div class="modal-header">1차 결재 라인 선택</div>
         
         <div class="modal-body">
-            <form id="popupForm" action="" method="post" class="flex-area">
+            <form id="popupForm1" action="" method="post" class="flex-area">
             	<div class="cell w-25">
-	                <div id="deptList" class="dept-tree border">
+	                <div id="deptList1" class="dept-tree border">
 						<ul>
 						</ul>
 					</div>
@@ -169,14 +178,15 @@
 						<table class="table" style="margin-top: 15px;">
 							<thead>
 								<tr>
-									<th><input type="checkbox" name="emp" class="emp-checkbox check-emp-all"></th>
-									<th>부서</th>
-									<th>사원아이디</th>
-									<th>이름</th>
-									<th>직급</th>
+									<th width="10%"><input type="checkbox" name="emp" class="emp-checkbox check-emp-all-1"></th>
+									<th width="20%">부서</th>
+									<th width="25%">사원아이디</th>
+									<th width="15%">이름</th>
+									<th width="15%">직급</th>
+									<th width="15%">상태</th>
 								</tr>
 							</thead>
-							<tbody id="empList">
+							<tbody id="empList1">
 							</tbody>
 						</table>
 					</div>
@@ -185,8 +195,49 @@
         </div>
         
         <div class="modal-footer">
-            <button type="button" class="btn btn-positive" onclick="submitData()">확인</button>
-            <button type="button" class="btn btn-neutral" onclick="closeModal()">취소</button>
+            <button type="button" class="btn btn-positive" onclick="addEmp('1')">확인</button>
+            <button type="button" class="btn btn-neutral" onclick="closeModal('1')">취소</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay2">
+    <div class="modal-box">
+        <div class="modal-header">2차 결재 라인 선택</div>
+        
+        <div class="modal-body">
+            <form id="popupForm2" action="" method="post" class="flex-area">
+            	<div class="cell w-25">
+	                <div id="deptList2" class="dept-tree border">
+						<ul>
+						</ul>
+					</div>
+				</div>
+				<div class="cell w-75">
+					<!-- 테이블 -->
+					<div class="cell center">
+						<table class="table" style="margin-top: 15px;">
+							<thead>
+								<tr>
+									<th width="10%"><input type="checkbox" name="emp" class="emp-checkbox check-emp-all-2"></th>
+									<th width="20%">부서</th>
+									<th width="25%">사원아이디</th>
+									<th width="15%">이름</th>
+									<th width="15%">직급</th>
+									<th width="15%">상태</th>
+								</tr>
+							</thead>
+							<tbody id="empList2">
+							</tbody>
+						</table>
+					</div>
+				</div>
+            </form>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn btn-positive" onclick="addEmp('2')">확인</button>
+            <button type="button" class="btn btn-neutral" onclick="closeModal('2')">취소</button>
         </div>
     </div>
 </div>

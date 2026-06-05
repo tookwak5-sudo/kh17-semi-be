@@ -53,6 +53,16 @@ public class AprvFormDao {
 		Object[] params = { pageVO.getKeyword(), pageVO.getBeginRownum(), pageVO.getEndRownum() };
 		return jdbcTemplate.query(sql, aprvFormMapper, params);
 	}
+	
+	public List<AprvFormDto> selectListForInsert() {
+		String sql = "select * from ("
+						+ "select rownum rn, TMP.* from ("
+							+ "select * from aprv_form where form_use_yn = 'Y' order by form_no asc"
+						+ ") TMP"
+					+ ")";
+		Object[] params = { };
+		return jdbcTemplate.query(sql, aprvFormMapper, params);
+	}
 
 	public AprvFormDto selectOneByName(String formName) {
 		String sql = "select * from aprv_form where form_name = ?";
