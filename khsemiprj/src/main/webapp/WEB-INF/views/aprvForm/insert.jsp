@@ -1,66 +1,64 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
 <form action="./insert" method="post" enctype="multipart/form-data">
 
-<div class="container w-950 mt-50 mb-50">
-	<div class="cell">
-		<h1 class="mt-0 mb-0">결재 양식 신규 등록</h1>
-	</div>
-	<div class="cell">
-		전자결재 기안 시 직원들이 사용할 새로운 양식을 등록합니다.
-	</div>
-	
-	<div class="cell mt-40">
-		<label>양식명 <i class="fa-solid fa-asterisk red"></i></label>
-		<input type="text" name="formName" required class="field w-100" placeholder="예: 연차 신청서">
-	</div>
-	
-	<div class="cell mb-0 mt-20">
-		<label>구분</label>
-	</div>
-	<div class="cell mt-0">
-		<select name="formHead" class="field w-100">
-			<option value="기타">기타</option>
-			<option value="연차">연차</option>
-			<option value="병가">병가</option>
-			<option value="업무">업무</option>
-			<option value="비용">비용</option>		
-		</select>
+	<div class="container w-950 mt-50 mb-50">
+		<div class="cell">
+			<h1 class="mt-0 mb-0">결재 양식 신규 등록</h1>
+		</div>
+		<div class="cell">전자결재 기안 시 직원들이 사용할 새로운 양식을 등록합니다.</div>
+
+		<div class="cell mt-40">
+			<label>양식명 <i class="fa-solid fa-asterisk red"></i></label> <input
+				type="text" name="formName" required class="field w-100"
+				placeholder="예: 연차 신청서">
+		</div>
+
+		<div class="cell mb-0 mt-20">
+			<label>구분</label>
+		</div>
+		<div class="cell mt-0">
+			<select name="formHead" class="field w-100">
+				<option value="기타">기타</option>
+				<option value="연차">연차</option>
+				<option value="병가">병가</option>
+				<option value="업무">업무</option>
+				<option value="비용">비용</option>
+			</select>
+		</div>
+
+		<div class="cell mb-0 mt-20">
+			<label>사용 여부</label>
+		</div>
+		<div class="cell mt-0">
+			<input type="checkbox" name="formUseYn" value="Y">
+		</div>
+
+		<div class="cell mt-20">
+			<label>양식 설명 <i class="fa-solid fa-asterisk red"></i></label>
+			<textarea name="formExplain" rows="10" required class="field w-100"
+				placeholder="양식에 대한 구체적인 설명을 입력하세요"></textarea>
+		</div>
+
+		<div class="cell mt-20">
+			<label>양식 파일 첨부 (hwp, docx 등)</label> <input type="file"
+				name="attach" class="field w-100">
+		</div>
+
+		<div class="cell mt-50 right">
+			<a href="./list" class="btn btn-neutral"> <i
+				class="fa-solid fa-list"></i> <span>목록으로 이동</span>
+			</a>
+			<button type="submit" class="btn btn-positive">
+				<i class="fa-solid fa-floppy-disk"></i> <span>양식 등록하기</span>
+			</button>
+		</div>
 	</div>
 
-	<div class="cell mb-0 mt-20">
-		<label>사용 여부</label>
-	</div>
-	<div class="cell mt-0">
-		<input type="checkbox" name="formUseYn" value="Y">
-	</div>
-	
-	<div class="cell mt-20">
-		<label>양식 설명 <i class="fa-solid fa-asterisk red"></i></label>
-		<textarea name="formExplain" rows="10" required class="field w-100" placeholder="양식에 대한 구체적인 설명을 입력하세요"></textarea>
-	</div>
-
-	<div class="cell mt-20">
-		<label>양식 파일 첨부 (hwp, docx 등)</label>
-		<input type="file" name="attach" class="field w-100">
-	</div>
-	
-	<div class="cell mt-50 right">
-		<a href="./list" class="btn btn-neutral">
-			<i class="fa-solid fa-list"></i>
-			<span>목록으로 이동</span>
-		</a>
-		<button type="submit" class="btn btn-positive">
-			<i class="fa-solid fa-floppy-disk"></i>
-			<span>양식 등록하기</span>
-		</button>
-	</div>
-</div>
-	
 </form>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
