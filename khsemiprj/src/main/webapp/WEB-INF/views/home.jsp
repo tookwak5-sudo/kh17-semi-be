@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/views/template/header.jsp"/>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
 <style>
     /* 레이아웃 구성 */
@@ -31,63 +32,164 @@
         border-radius: 8px;
     }
     
+    .lightpick {
+    z-index: 20000 !important;
+	}
+	
     .p-20 { padding: 20px; }
 </style>
 
+<script type="text/template" id="write-template">
+ <form action="./write" autocomplete="off" method="post" class="form-check">
+		<div class="container w-500 mt-50">
+			
+	        <div class="cell">
+	        	<label>유형</label>
+	        	<select class="field w-100" name="planType">
+	                <option value="">선택하세요</option>
+	                <c:forEach var="planDto" items="${list}">
+	                <option value="${planDto.planNo}">${planDto.planType}</option>
+	                </c:forEach>
+	            </select>
+	        </div>
+	        <div class="cell">
+	        	<label>일정명</label>
+	        	<input type="text" name="planName" class="field w-100">
+	        </div>
+	        <div class="cell">
+	            <label>일정 <i class="fa-solid fa-asterisk red"></i></label>
+	        </div>
+	        <div class="cell flex-area" style="align-items: center;">
+	            <input type="text" name="planSdate" class="field w-100 picker-8-1">
+	                <i class="fa-solid fa-minus ms-10 me-10"></i>
+	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
+	        </div>
+	        
+	         <div class="cell">
+	            <label>내용</label>
+	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
+	        </div>
+	        <div class="cell mt-40 right">
+	            <button class="btn btn-positive">
+	                등록하기
+	            </button>
+	       </div>
+    	</div>
+		</form>
+</script>
+
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
 <!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
-<div class="dashboard-container">
-    <div class="left-section">
-        <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
-    </div>
-    
-    <div class="right-section">
-        <div class="card p-20" style="height: 300px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3>결재사항</h3>
-                <a href="#">더보기</a>
-            </div>
-            </div>
 
-        <div 
-        class="card p-20" style="height: 300px;">
-            <h3>공지사항</h3>
-            </div>
-    </div>
+<div id="calendarModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); z-index: 10000;">
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+	        <h3 class= "mt-50">일정 등록</h3>
+	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	    </div>
+<!-- 	   		planwrite들어가는자리		 -->
+				<div id="modal-body"></div>
 </div>
 
-<script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-           
-        	slotMinTime: '09:00',
-        	slotMaxTime: '19:00',
-        	
-        	headerToolbar: {
-        	    left: 'prev,next today',
-        	    center: 'title', 
-        	    right: 'btnAll,btnDept,btnPersonal' 
-        	},
- 			
-        	selectable: true,
-        	
+<div class="dashboard-container">
+	    <div class="left-section">
+	        <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
+	    </div>
+	    
+	    <div class="right-section">
+	        <div class="card p-20" style="height: 300px;">
+	            <div style="display: flex; justify-content: space-between; align-items: center;">
+	                <h3>결재사항</h3>
+	                <a href="#">더보기</a>
+	            </div>
+	            </div>
+	
+	        <div 
+	        class="card p-20" style="height: 300px;">
+	            <h3>공지사항</h3>
+	            </div>
+	    </div>
+	</div>
+	
+	<script type="text/javascript">
+	    document.addEventListener('DOMContentLoaded', function() {
+	        var calendarEl = document.getElementById('calendar');
+	        var calendar = new FullCalendar.Calendar(calendarEl, {
+	           
+	        	slotMinTime: '09:00',
+	        	slotMaxTime: '19:00',
+	        	
+	        	headerToolbar: {
+	        	    left: 'prev,next today',
+	        	    center: 'title', 
+	        	    right: 'btnAll,btnDept,btnPersonal' 
+	        	},
+	        	
+	        	selectable: true,
+	        	
+	        	select: function(info) {
+	                // info.startStr에는 클릭한 날짜(예: "2026-06-05")가 들어있습니다.
+	//                 console.log('선택된 날짜: ' + info.startStr);
+	            // 1. 템플릿을 가져와 모달에 주입
+	            var template = $("#write-template").text();
+	            $("#modal-body").html(template);
+	            
+	            // 2. 날짜 자동 입력 (info.startStr은 YYYY-MM-DD형식)
+	            var $startDate = $("#modal-body [name=planSdate]");
+	            var $endDate = $("#modal-body [name=planEdate]");
+	            
+	            $startDate.val(info.startStr);
+	            // 종료일 보정 (FullCalendar의 end는 익일이므로 하루 차감)
+	            var end = new Date(info.endStr);
+	            end.setDate(end.getDate() - 1);
+	            $endDate.val(end.toISOString().substring(0, 10));
+	            
+	            //3. 모달 표시
+	            $("#calendarModal").show();
+	            
+	            //4. 모달 내부의 input에 Lightpick 다ㅣㅅ 적용
+	            new Lightpick({
+	            	field: $startDate[0],
+	                secondField: $endDate[0],
+	                singleDate: false,
+	                format: "YYYY-MM-DD",
+	                firstDay: 7,
+	                numberOfMonths: 2,
+	                numberOfColumns: 2,
+	                selectForward: true,
+	                minDays: 1
+	            })
+// 	                // 팝업창 띄우기
+//                 var modal = document.getElementById('calendarModal');
+//                 if (modal) {
+//                     modal.style.display = 'block'; // none에서 block으로 변경하여 표시
+//                 }
+                
+//                 /* (선택사항) 팝업창 안의 날짜 입력란에 클릭한 날짜를 자동으로 넣어주고 싶다면?
+//                   document.getElementById('planSdate').value = info.startStr;
+//                 */
+            },
+            
+            
+            
  			customButtons: {
  			    btnAll: {
  			        text: '회사',
  			        click: function() {
+ 			        	currentPlanType = "회사";
  			            filterCalendarEvents("회사"); // 함수에게 "전체"를 전달!
  			        }
  			    },
  			    btnDept: {
  			        text: '부서',
  			        click: function() {
+ 			        	currentPlanType = "부서";
  			            filterCalendarEvents("부서"); // 함수에게 "부서"를 전달!
  			        }
  			    },
  			    btnPersonal: {
  			        text: '개인',
  			        click: function() {
+ 			        	currentPlanType = "개인";
  			            filterCalendarEvents("개인"); // 함수에게 "개인"를 전달!
  			        }
  			    }
@@ -98,12 +200,14 @@
             height: '100%', // 부모 div 높이에 맞춤
             displayEventTime: false, 
             locale: 'ko'
+            
         });
         //날짜 클릭시 클릭한 날짜와 함께 
         
         calendar.render();
         //처음 로드 될때 회사 디폴트
         filterCalendarEvents("회사");
+
         //함수 정의
         function filterCalendarEvents(type) {
             var allEvents = calendar.getEvents(); // 달력의 모든 일정 가져오기
@@ -120,30 +224,14 @@
             });
         }
     });
-
-// $(document).ready(function() {
-//             // 1. 요소 선택 (jQuery 문법 사용 가능)
-//             var calendarEl = $('#calendar')[0]; 
-        
-//             // 2. FullCalendar 초기화 (기존 방식 유지)
-//             var calendar = new FullCalendar.Calendar(calendarEl, {
-//                 slotMinTime: '09:00',
-//                 slotMaxTime: '19:00',
-                
-//                 headerToolbar: {
-//                     left: 'prev,next today',
-//                     center: 'title',
-//                     right: 'dayGridMonth,timeGridWeek,timeGridDay' // 이 부분이 버튼을 생성합니다
-//                   },
-                  
-//                  selectable: true,
-                 
-//                 events: ${eventList},
-//                 initialView: 'dayGridMonth', 
-//                 height: '100%' // 부모 div 높이에 맞춤
-//             });
-//             calendar.render();
-// });
-
+    
+    function closeCalendarModal() {
+//         var modal = document.getElementById('calendarModal');
+//         if (modal) {
+//             modal.style.display = 'none';
+			$("#calendarModal").hide();
+			$("#modal-body").empty();
+    }
+    
 </script>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
