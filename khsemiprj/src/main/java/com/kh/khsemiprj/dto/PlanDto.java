@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 public class PlanDto {
 	private int planNo;
 	private String planEmpId;
-	private int planAprvNo;
-	private long planDeptNo;
+	private Integer planAprvNo;
+	private Long planDeptNo;
 	private String planName;
 	private String planType;
 	private String planExplain;
-	private Timestamp planSdate;
-	private Timestamp planEdate;
+	private String planSdate;
+	private String planEdate;
 	private Timestamp planWtime;
 
 }
