@@ -58,10 +58,12 @@ public class BoardDao {
 	}
 	//공지사항 조회
 	public List<BoardDto> selectNoticeList() {
-		String sql = "select * from board "
-					+ "where board_head = '공지' "
-					+ "order by board_no desc";
-		return jdbcTemplate.query(sql, boardMapper);
+	    String sql = "select * from ("
+	                    + "select * from board "
+	                    + "where board_head = '공지' "
+	                    + "order by board_no desc" // 최신순 정렬
+	                + ") where rownum <= 5"; // 상위 5개만
+	    return jdbcTemplate.query(sql, boardMapper);
 	}
 	//첫 주석과 같은 이유로 넣었습니다.
 	public List<BoardDto> selectNullList() {
