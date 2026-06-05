@@ -88,6 +88,19 @@ public class AprvFormDao {
 
 		return aprvFormVo;
 	}
+	
+	public void insert(AprvFormDto aprvFormDto) {
+		int currentNo = this.sequence();
+		
+		String sql = "insert into aprv_form( " + "form_no, form_name, form_explain, form_use_yn, "
+				+ "form_wtime, form_head) " + "values(?, ?, ?, ?, systimestamp, ?)";
+
+		Object[] params = { currentNo, // 컨트롤러에서 다음번호를 받아주는게 아닌 인서트 구문에서 받아주도록 만들었습니다.
+				aprvFormDto.getFormName(), aprvFormDto.getFormExplain(), aprvFormDto.getFormUseYn(),
+				aprvFormDto.getFormHead() };
+
+		jdbcTemplate.update(sql, params);
+	}
 
 	public AprvFormConnectVO connect(int formNo, int attachNo) {
 		String sql = "insert into form_file(form_no,attach_no) values(?, ?)";
