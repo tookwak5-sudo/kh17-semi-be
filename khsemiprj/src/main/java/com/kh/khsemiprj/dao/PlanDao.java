@@ -60,7 +60,7 @@ public class PlanDao {
 		Object[] params = { planNo };
 		List<PlanDto> list = jdbcTemplate.query(sql,  planMapper, params);
 		return list.isEmpty() ? null : list.get(0);
-	} 
+	}
 	
 	//전체 일정 조회
     public List<PlanDto> selectListByMine(Long deptNo, String empId) {
