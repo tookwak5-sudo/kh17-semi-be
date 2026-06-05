@@ -32,16 +32,15 @@ public class BoardController {
 		//공지사항 게시글
 		//List<BoardDto> noticeList = boardDao.selectList("board_head", "공지");
 		List<BoardDto> noticeList = boardDao.selectNoticeList();
-		
+		model.addAttribute("noticeList", noticeList);
 		//일반 게시글 (공지사항도 포함되어 있음)
 		List<BoardDto> boardList = boardDao.selectList(pageVO);
+		model.addAttribute("boardList", boardList);
 		
-		//두 개를 합쳐서 전달
-		List<BoardDto> list = new ArrayList<>();
-		list.addAll(noticeList);//공지사항 먼저
-		list.addAll(boardList);//게시글은 나중에
+		//게시글 범주안에 공지가 포함 되어 있어서 공지 글을 올릴시 공지가 같은 번호로 두개가 올라가는 현상이 생겨서 수정했습니다.
 		
-		model.addAttribute("list", list);
+		
+
 		model.addAttribute("noticeCount", noticeList.size());//공지사항 개수 전달
 		
 		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
@@ -78,8 +77,8 @@ public class BoardController {
 //		
 		//작성한 글이 "공지"라면 관리자인지를 반드시 확인
 		if(boardDto.getBoardHead() != null && boardDto.getBoardHead().equals("공지")) {
-			String loginLevel = (String)session.getAttribute("loginLevel");
-			if(loginLevel.equals("0")) {//loginLevel이 0이라면 (관리자가 아니라면)
+			Integer empGrade = (Integer)session.getAttribute("empGrade");
+			if(empGrade==0) {//empGrade이 0이라면 (관리자가 아니라면)
 				throw new GetOutException();
 			}
 		}
@@ -91,7 +90,7 @@ public class BoardController {
 		
 		boardDao.insert(boardDto);
 		// 상세페이지로 리다이렉트
-		return "redirect:./detail?boardNo="+boardNo;
+		return "redirect:/board/detail?boardNo="+boardNo;
 	}
 	
 	//삭제 매핑

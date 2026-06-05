@@ -80,18 +80,21 @@ empGrade : ${sessionScope.empGrade}
             </div>
 
             <!-- 메뉴 -->
-            <div class="menu-container"> 
+           <div> 
             	<%-- <jsp:include page="/WEB-INF/views/template/menu-member.jsp"></jsp:include> --%>
-				<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-					<c:if test="${sessionScope.empGrade == '0' || sessionScope.empGrade == '1'}">
+
+<%-- 				<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}"> --%>
+<%-- 					<c:if test="${sessionScope.empGrade == '0' || sessionScope.empGrade == null}"> --%>
+
 						<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
-					</c:if>
-<!-- 					sessionScope.empGrade == '1' || 이 부분 윗줄에도 있어서 중복되어 헤더가 2개 뜨는 거 같아서 뺐습니다. -->
-					
-					<c:if test="${sessionScope.empGrade == '2'}">
-						<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
-					</c:if>
-				</c:if>
+
+<%-- 					</c:if> --%>
+<%-- 					<c:if test="${sessionScope.loginLevel == '1' || sessionScope.loginLevel == '2'}"> --%>
+<%-- 						<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include> --%>
+<%-- 					</c:if> --%>
+<%-- 				</c:if> --%>
+
+
             </div>
 
             <!-- 사이드바 및 컨텐츠 -->

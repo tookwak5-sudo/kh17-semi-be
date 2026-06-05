@@ -53,6 +53,16 @@ public class AprvFormDao {
 		Object[] params = { pageVO.getKeyword(), pageVO.getBeginRownum(), pageVO.getEndRownum() };
 		return jdbcTemplate.query(sql, aprvFormMapper, params);
 	}
+	
+	public List<AprvFormDto> selectListForInsert() {
+		String sql = "select * from ("
+						+ "select rownum rn, TMP.* from ("
+							+ "select * from aprv_form where form_use_yn = 'Y' order by form_no asc"
+						+ ") TMP"
+					+ ")";
+		Object[] params = { };
+		return jdbcTemplate.query(sql, aprvFormMapper, params);
+	}
 
 	public AprvFormDto selectOneByName(String formName) {
 		String sql = "select * from aprv_form where form_name = ?";
@@ -87,6 +97,19 @@ public class AprvFormDao {
 		aprvFormVo.setFormNo(currentNo);
 
 		return aprvFormVo;
+	}
+	
+	public void insert(AprvFormDto aprvFormDto) {
+		int currentNo = this.sequence();
+		
+		String sql = "insert into aprv_form( " + "form_no, form_name, form_explain, form_use_yn, "
+				+ "form_wtime, form_head) " + "values(?, ?, ?, ?, systimestamp, ?)";
+
+		Object[] params = { currentNo, // 컨트롤러에서 다음번호를 받아주는게 아닌 인서트 구문에서 받아주도록 만들었습니다.
+				aprvFormDto.getFormName(), aprvFormDto.getFormExplain(), aprvFormDto.getFormUseYn(),
+				aprvFormDto.getFormHead() };
+
+		jdbcTemplate.update(sql, params);
 	}
 
 	public AprvFormConnectVO connect(int formNo, int attachNo) {
