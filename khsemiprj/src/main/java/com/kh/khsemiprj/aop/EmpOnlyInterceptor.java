@@ -24,6 +24,6 @@ public class EmpOnlyInterceptor implements HandlerInterceptor {
 			throw new WhoAreYouException();
 		}
 		
-		return true;//통과!
+		return true;
 	}
 }
