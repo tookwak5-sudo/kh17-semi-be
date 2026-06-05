@@ -25,15 +25,19 @@ public class HomeController {
 	@RequestMapping("/")
 	public String home(Model model
 			, HttpSession session) {
-		String loginId = (String)session.getAttribute("loginId"); 
+
+		String loginId = (String)session.getAttribute("loginId");
 		PlanDto findPlanDto = new PlanDto();
 		
 		List<PlanDto> planList = planDao.selectListByMine(findPlanDto.getPlanDeptNo(), loginId);
 		
-		List<Map<String, String>> eventList = new ArrayList<>();
+		List<Map<String, Object>> eventList = new ArrayList<>();
 		for(PlanDto planDto : planList) {
-			Map<String, String> event = new HashMap<>();
+			Map<String, Object> event = new HashMap<>();
 			event.put("title", planDto.getPlanName());
+			Map<String, String> extendedProps = new HashMap<>();
+			extendedProps.put("planType", planDto.getPlanType());
+			event.put("extendedProps", extendedProps);
 	        event.put("start", planDto.getPlanSdate());
 	        event.put("end", planDto.getPlanEdate() + "T23:59:59");
 	        

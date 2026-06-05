@@ -63,13 +63,12 @@ public class PlanDao {
 	}
 	
 	//전체 일정 조회
-	public List<PlanDto> selectListByMine(Long deptNo, String empId) {
-		String sql = "SELECT * FROM plan "
-				+ "WHERE (PLAN_TYPE = '회사') "
-				+ "or (PLAN_TYPE = '부서' AND PLAN_DEPT_NO = ?) "
-				+ "or (plan_type = '개인' AND PLAN_EMP_ID = ?)";
-		Object[] params = { deptNo, empId };
-		return jdbcTemplate.query(sql,  planMapper, params);
-	}
-
+    public List<PlanDto> selectListByMine(Long deptNo, String empId) {
+        String sql = "SELECT * FROM plan "
+                + "WHERE (PLAN_TYPE = '회사') "
+                + "or (PLAN_TYPE = '부서' AND PLAN_DEPT_NO = ?) "
+                + "or (plan_type = '개인' AND PLAN_EMP_ID = ?)";
+        Object[] params = { deptNo, empId };
+        return jdbcTemplate.query(sql,  planMapper, params);
+    }
 }

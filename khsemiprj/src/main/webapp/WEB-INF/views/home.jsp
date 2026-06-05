@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <style>
     /* 레이아웃 구성 */
@@ -47,7 +49,8 @@
             </div>
             </div>
 
-        <div class="card p-20" style="height: 300px;">
+        <div 
+        class="card p-20" style="height: 300px;">
             <h3>공지사항</h3>
             </div>
     </div>
@@ -66,7 +69,9 @@
         	    center: 'title', 
         	    right: 'btnAll,btnDept,btnPersonal' 
         	},
- 			 
+ 			
+        	selectable: true,
+        	
  			customButtons: {
  			    btnAll: {
  			        text: '회사',
@@ -91,13 +96,14 @@
 			events: ${eventList},
         	initialView: 'dayGridMonth', 
             height: '100%', // 부모 div 높이에 맞춤
-            displayEventTime: false,
+            displayEventTime: false, 
             locale: 'ko'
         });
         //날짜 클릭시 클릭한 날짜와 함께 
         
         calendar.render();
-        
+        //처음 로드 될때 회사 디폴트
+        filterCalendarEvents("회사");
         //함수 정의
         function filterCalendarEvents(type) {
             var allEvents = calendar.getEvents(); // 달력의 모든 일정 가져오기
@@ -115,4 +121,29 @@
         }
     });
 
+// $(document).ready(function() {
+//             // 1. 요소 선택 (jQuery 문법 사용 가능)
+//             var calendarEl = $('#calendar')[0]; 
+        
+//             // 2. FullCalendar 초기화 (기존 방식 유지)
+//             var calendar = new FullCalendar.Calendar(calendarEl, {
+//                 slotMinTime: '09:00',
+//                 slotMaxTime: '19:00',
+                
+//                 headerToolbar: {
+//                     left: 'prev,next today',
+//                     center: 'title',
+//                     right: 'dayGridMonth,timeGridWeek,timeGridDay' // 이 부분이 버튼을 생성합니다
+//                   },
+                  
+//                  selectable: true,
+                 
+//                 events: ${eventList},
+//                 initialView: 'dayGridMonth', 
+//                 height: '100%' // 부모 div 높이에 맞춤
+//             });
+//             calendar.render();
+// });
+
+</script>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
