@@ -25,8 +25,10 @@ public class HomeController {
 	@RequestMapping("/")
 	public String home(Model model
 			, HttpSession session) {
-		String loginId = (String)session.getAttribute("loginId");
-		List<PlanDto> planList = planDao.selectListByMine(loginId);
+		String loginId = (String)session.getAttribute("loginId"); 
+		PlanDto findPlanDto = new PlanDto();
+		
+		List<PlanDto> planList = planDao.selectListByMine(findPlanDto.getPlanDeptNo(), loginId);
 		
 		List<Map<String, String>> eventList = new ArrayList<>();
 		for(PlanDto planDto : planList) {
