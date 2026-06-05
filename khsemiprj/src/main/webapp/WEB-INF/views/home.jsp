@@ -201,6 +201,28 @@
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
                 
+                var sdateObj = new Date(planSdate);
+                var edateObj = new Date(planEdate);
+                
+                var sYear = sdateObj.getFullYear();
+                var sMonth = sdateObj.getMonth()+1;
+                var sDay = sdateObj.getDate();
+                
+                if(sMonth < 10) sMonth = '0'+ sMonth;
+                if(sDay < 10) sDay = '0'+ sDay;
+                
+                var sResult = sYear + '-' + sMonth + '-' + sDay;
+                           
+                var eYear = edateObj.getFullYear();
+                var eMonth = edateObj.getMonth()+1;
+                var eDay = edateObj.getDate();
+                
+                if(eMonth < 10) eMonth = '0'+ eMonth;
+                if(eDay < 10) eDay = '0'+ eDay;
+                
+                var eResult = eYear + '-' + eMonth + '-' + eDay;
+                
+                
             	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
@@ -209,8 +231,8 @@
                 document.getElementById('detailType').innerText = planType;
                 
                 // ★ 시작일과 종료일을 각각 매핑 (필드명은 Dto와 일치시켜주세요)
-                document.getElementById('detailSdate').innerText = planSdate; 
-                document.getElementById('detailEdate').innerText = planEdate; 
+                document.getElementById('detailSdate').innerText = sResult; 
+                document.getElementById('detailEdate').innerText = eResult; 
                 document.getElementById('detailExplain').innerText = planExplain || "등록된 내용이 없습니다.";
                 
              	// 2. 클래스로 선택하여 보여줌
