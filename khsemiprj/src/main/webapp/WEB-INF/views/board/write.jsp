@@ -19,7 +19,7 @@
 		<label>제목 <i class="fa-solid fa-asterisk red"></i></label>
 		<input type="text" name="boardTitle" required class="field w-100">
 	</div>
-	<c:if test="${sessionScope.loginLevel != '0'}">
+	<c:if test="${sessionScope.empGrade != '0'}">
 		<div class="cell mb-0">
 			<label>구분</label>
 		</div>

@@ -11,7 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
+import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.PlanDao;
+import com.kh.khsemiprj.dto.BoardDto;
 import com.kh.khsemiprj.dto.PlanDto;
 
 import jakarta.servlet.http.HttpSession;
@@ -21,7 +23,8 @@ public class HomeController {
 	
 	@Autowired
 	private PlanDao planDao;
-	
+	@Autowired
+	private BoardDao boardDao;
 	@RequestMapping("/")
 	public String home(Model model
 			, HttpSession session) {
@@ -45,6 +48,21 @@ public class HomeController {
 		}
 		
 		model.addAttribute("eventList", new Gson().toJson(eventList));
+		
+		List<BoardDto> grabNoticeList = boardDao.selectNoticeList();
+		
+		List<Map<String,Object>> noticeList = new ArrayList<>();
+		for(BoardDto boardDto:grabNoticeList) {
+			Map<String,Object>notice=new HashMap<>();
+			notice.put("boardNo", boardDto.getBoardNo());
+			notice.put("boardWriter", boardDto.getBoardWriter());
+			notice.put("boardTitle", boardDto.getBoardTitle());
+		
+			
+			noticeList.add(notice);
+		}
+		
+		model.addAttribute("noticeList", noticeList);
 		
 		return "home";
 	}
