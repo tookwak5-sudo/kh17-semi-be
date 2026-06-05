@@ -1,62 +1,84 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/views/template/header.jsp"/>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<jsp:include page="/WEB-INF/views/template/header.jsp" />
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <style>
-    /* 레이아웃 구성 */
-    .dashboard-container {
-        display: flex;
-        gap: 20px; /* 좌우 간격 */
-        width: 1200px;
-        margin: 50px auto;
-    }
+/* 레이아웃 구성 */
+.dashboard-container {
+	display: flex;
+	gap: 20px; /* 좌우 간격 */
+	width: 1200px;
+	margin: 50px auto;
+}
 
-    /* 좌측 달력 영역 (비율 7) */
-    .left-section {
-        flex: 7;
-    }
+/* 좌측 달력 영역 (비율 7) */
+.left-section {
+	flex: 7;
+}
 
-    /* 우측 리스트 영역 (비율 3) */
-    .right-section {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        gap: 20px; /* 공지사항과 결재목록 사이 간격 */
-    }
+/* 우측 리스트 영역 (비율 3) */
+.right-section {
+	flex: 3;
+	display: flex;
+	flex-direction: column;
+	gap: 20px; /* 공지사항과 결재목록 사이 간격 */
+}
 
-    .card {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
-    
-    .p-20 { padding: 20px; }
+.card {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+}
+
+.p-20 {
+	padding: 20px;
+}
 </style>
 
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
 <!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 <div class="dashboard-container">
-    <div class="left-section">
-        <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
-    </div>
-    
-    <div class="right-section">
-        <div class="card p-20" style="height: 300px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3>결재사항</h3>
-                <a href="#">더보기</a>
-            </div>
-            </div>
+	<div class="left-section">
+		<div id='calendar' class="card p-20" style="min-height: 620px;"></div>
+	</div>
 
-        <div 
-        class="card p-20" style="height: 300px;">
-            <h3>공지사항</h3>
-            </div>
-    </div>
-</div>
+	<div class="right-section">
+		<div class="card p-20" style="height: 300px;">
+			<div
+				style="display: flex; justify-content: space-between; align-items: center;">
+				<h3>결재사항</h3>
+				<a href="#">더보기</a>
+			</div>
+		</div>
 
-<script type="text/javascript">
+		<div class="card p-20" style="height: 300px; overflow-y: auto;">
+			<h3>공지사항</h3>
+			<hr>
+
+			<c:forEach var="notice" items="${noticeList}">
+				<div
+					style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+					<a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+                    ${notice.boardTitle}
+                </a>
+
+					
+					<p style="color: #999; font-size: 12px;">작성자:
+						${notice.boardWriter}</p>
+				</div>
+			</c:forEach>
+
+			<c:if test="${empty noticeList}">
+				<div>등록된 공지사항이 없습니다.</div>
+			</c:if>
+		</div>
+	</div>
+</div>	
+
+	<script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -144,4 +166,4 @@
 
 </script>
 
-<jsp:include page="/WEB-INF/views/template/footer.jsp"/>
+	<jsp:include page="/WEB-INF/views/template/footer.jsp" />
