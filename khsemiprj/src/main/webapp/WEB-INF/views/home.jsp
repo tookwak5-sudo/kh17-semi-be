@@ -33,7 +33,7 @@
 </style>
 
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
-
+<!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 <div class="dashboard-container">
     <div class="left-section">
         <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
@@ -56,21 +56,18 @@
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
-        /* var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            // API 키와 Calendar ID는 보안상 서버 환경변수로 관리하는 것을 권장합니다.
-            googleCalendarApiKey: 'YOUR_API_KEY', 
-            events: {
-                googleCalendarId: 'YOUR_CALENDAR_ID'
-            },
-            height: '100%' // 부모 div 높이에 맞춤
-        }); */
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth', 
-            /* events: {
-            	${eventList}
-            }, */
-            events: ${eventList},
+           
+        	slotMinTime: '09:00',
+        	slotMaxTime: '19:00',
+        	
+        	headerToolbar: {
+			    left: 'prev,next today',
+			    center: 'title',
+			    right: 'dayGridMonth,timeGridWeek,timeGridDay' // 이 부분이 버튼을 생성합니다
+ 			 },
+			    events: ${eventList},
+        	initialView: 'dayGridMonth', 
             height: '100%' // 부모 div 높이에 맞춤
         });
         calendar.render();
