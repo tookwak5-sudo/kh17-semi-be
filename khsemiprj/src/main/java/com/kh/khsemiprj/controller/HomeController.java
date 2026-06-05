@@ -38,8 +38,10 @@ public class HomeController {
 		for(PlanDto planDto : planList) {
 			Map<String, Object> event = new HashMap<>();
 			event.put("title", planDto.getPlanName());
-			Map<String, String> extendedProps = new HashMap<>();
+			Map<String, Object> extendedProps = new HashMap<>();
 			extendedProps.put("planType", planDto.getPlanType());
+			extendedProps.put("planNo", planDto.getPlanNo());
+			extendedProps.put("planExplain", planDto.getPlanExplain());
 			event.put("extendedProps", extendedProps);
 	        event.put("start", planDto.getPlanSdate());
 	        event.put("end", planDto.getPlanEdate() + "T23:59:59");
