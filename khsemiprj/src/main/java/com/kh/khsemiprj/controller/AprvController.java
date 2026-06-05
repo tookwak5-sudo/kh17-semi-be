@@ -1,5 +1,6 @@
 package com.kh.khsemiprj.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +34,10 @@ public class AprvController {
 	private AprvFormDao aprvFormDao;
 	
 	@RequestMapping("/list")
-	public String list() {
+	public String list(Model model) {
+		
+		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+		model.addAttribute("formList", formList);
 		
 		return "aprv/list";
 	}
@@ -73,5 +81,20 @@ public class AprvController {
 		model.addAttribute("formList", formList);
  		
 		return "aprv/insert";
+	}
+	
+	@PostMapping("/insert")
+	public String insert(@ModelAttribute AprvFormDto aprvFormDto, @RequestParam(required = false) MultipartFile attach)
+			throws IllegalStateException, IOException {
+		AprvFormDto findNameDto = aprvFormDao.selectOneByName(aprvFormDto.getFormName());
+		if (findNameDto != null) {
+			return "redirect:/aprvForm/insert?duplicate";
+		}
+		if (aprvFormDto.getFormUseYn() != null) {
+			aprvFormDto.setFormUseYn("Y");
+		}
+		//aprvFormService.registerFormFile(aprvFormDto, attach);
+
+		return "redirect:./list";
 	}
 }

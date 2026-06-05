@@ -11,6 +11,92 @@
 
 <script>
 	const deptList = JSON.parse('${deptListJson}');
+	
+	$(function () {
+		var formNo = '${param.formNo}';
+		getAprmFormAttach(formNo);
+		var formName = $(".aprv-form-list option:selected").attr("data-name");
+		var formHead = $(".aprv-form-list option:selected").attr("data-head");
+		
+		switch(formHead) {
+			case "연차":
+			case "병가":
+			case "기타":
+			default:
+				$(".date-title").text("기한");
+				$(".timeTilde").show();
+				$(".picker-edate").show();
+				var picker1 = new Lightpick({ 
+				    field : $(".picker-sdate")[0],
+					secondField : $(".picker-edate")[0],
+					singleDate : true, //단일 날짜 선택 불가(범위 선택 가능)
+				    format : "YYYY-MM-DD",
+					firstDay : 7,
+					disableWeekends: true,
+					onSelect: function(start, end){
+				        // 날짜 선택 시 실행될 코드
+						var formHead = $(".aprv-form-list:selected").attr("data-head");
+						var sDate = $(".picker-sdate").val();
+						var eDate = $(".picker-edate").val();
+						if(formHead == "연차" && sDate != "" && eDate != "") {
+					        if(sDate == eDate) {
+								$(".vacationType").show();
+								var template = $("#vacation-type-template").text();
+								const div = $.parseHTML(template)[1];
+								$(".vacationType").append(div);
+							} else {
+								$(".vacationType").hide();
+								$(".vacationType").empty();
+							}
+						} else {
+							$(".vacationType").hide();
+							$(".vacationType").empty();
+						}
+				    }
+				});
+			
+				break;
+			case "비용":
+				$(".date-title").text("지출일자");
+				$(".picker-sdate").attr("placeholder", "지출일");
+				$(".timeTilde").hide();
+				$(".picker-edate").hide();
+				var picker1 = new Lightpick({ 
+				    field : $(".picker-sdate")[0],
+				    format : "YYYY-MM-DD",
+					firstDay : 7,
+					disableWeekends: true,
+					onSelect: function(start, end){
+				        // 날짜 선택 시 실행될 코드
+				        $(".picker-edate").val($(".picker-sdate").val());//시작일만 선택 가능하므로 종료일도 동일하게 설정
+				    }
+				});
+				break;
+		}
+		
+		var state = {
+				aprvFormNoValid: true,
+				aprvTitleValid: true,
+				aprvContentValid: true,
+				aprvSdateValid: true,
+				aprvEdateValid: true,
+				attachFileValid: true,
+				aprvLineNo1Valid: true,
+				aprvLineNo2Valid: true,
+				ok: function(){
+					return Object.values(this)
+					.filter(v => typeof v==="boolean")
+					.every(v => v === true);
+				}
+		};
+		
+		//폼검사
+		$(".form-check").on("submit", function(){
+        	$(this).find("select[name]").trigger("input");
+            $(this).find("input[name], textarea[name]").trigger("blur");
+           	return state.ok();
+        });
+	});
 </script>
 
 <!-- 화면에 나오지 않으면서 언제든지 불러서 쓸 수 있는 화면 조각(템플릿) -->
@@ -45,11 +131,32 @@
 	<td></td>
 	<td></td>
 	<td></td>
+	<td><a class="btn btn-negative line-delete">삭제</a></td>
 </tr>
 </script>
 <script type="text/template" id="aprv-form-file-template">
-<a><i class="fa-regular fa-file"></i><span>양식 파일 다운로드</span></a>
+<a style="display: inline-block; border: 1px solid #333; background: white; color: black; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-size: 14px;"><i class="fa-regular fa-file"></i><span>양식 파일 다운로드</span></a>
 </script>
+<script type="text/template" id="aprv-form-file-empty-template">
+<a style="display: inline-block; border: 1px solid #333; background: white; color: black; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-size: 14px;"><span>양식 파일 없음</span></a>
+</script>
+<script type="text/template" id="vacation-type-template">
+<div>
+	<div class="cell">
+		<label>휴가 분류</label>
+	</div>
+	<div class="cell">
+		<input type="radio" name="vacationType" value="연차" id="vacationType1">
+		<label for="vacationType1">연차</label>
+		<input type="radio" name="vacationType" value="반차" id="vacationType2">
+		<label for="vacationType2">반차</label>
+	</div>
+</div>
+</script>
+
+<style>
+	.cell { min-height: 32px; }
+</style>
 
 <form action="./insert" autocomplete="off" method="post" class="form-check">
 
@@ -58,16 +165,17 @@
     	<div class="cell center">
             <h1>결재 등록</h1>
         </div>
-        <div class="cell mb-0">
+        <div class="cell mb-0" style="display:none;">
             <label>양식 선택</label> 
 		</div>
-		<div class="cell mt-0">
+		<div class="cell mt-0" style="display:none;">
             <select class="field w-40 aprv-form-list" name="aprvFormNo">
                 <option value="">선택하세요</option>
                 <c:forEach var="aprvFormDto" items="${formList}">
-                <option value="${aprvFormDto.formNo}">${aprvFormDto.formName}</option>
+                <option value="${aprvFormDto.formNo}" data-head="${aprvFormDto.formHead}" data-name="${aprvFormDto.formName}" <c:if test="${aprvFormDto.formNo == param.formNo}">selected</c:if>>[${aprvFormDto.formHead}] ${aprvFormDto.formName}</option>
                 </c:forEach>
             </select>
+            <input type="hidden" class="">
         </div>
         <div class="cell mb-0">
             <label>제목 <i class="fa-solid fa-asterisk red"></i></label>
@@ -81,17 +189,24 @@
         <div class="cell mt-0 aprv-form-file">
         	
         </div>
-        <div class="cell mb-0">
-            <label>기한 <i class="fa-solid fa-asterisk red"></i></label>
-        </div>
-        <div class="cell mt-0">
-        	<input type="text" name="aprvStime" class="field picker-sdate" size="4" placeholder="시작일">
-        	~
-        	<input type="text" name="aprvEtime" class="field picker-edate" size="4" placeholder="종료일">
+        <div class="flex-area">
+	        <div class="w-33">
+		        <div class="cell mb-0">
+		            <label><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i></label>
+		        </div>
+		        <div class="cell mt-0">
+		        	<input type="text" name="aprvStime" class="field picker-sdate" size="4" placeholder="시작일">
+		        	<span class="timeTilde">~</span>
+		        	<input type="text" name="aprvEtime" class="field picker-edate" size="4" placeholder="종료일">
+		        </div>
+	        </div>
+	        <div class="w-66 vacationType">
+	        	
+	        </div>
         </div>
         <div class="cell">
         	<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-        	<input type="text" inputmode="numeric" name="aprvContent" class="field w-100">
+        	<input type="text" name="aprvContent" class="field w-100">
         </div>
         <div class="cell mb-0">
             <label>첨부 파일</label>
@@ -99,7 +214,8 @@
         <div class="cell mt-0">
 			<label>
 				<i class="fa-regular fa-file"></i>
-				<span>클릭해서 첨부파일을 선택하세요</span> <input type="file" name="attach" class="field w-100 preview-input" accept=".png, .jpg" style="display: none;">
+				<span>클릭해서 첨부파일을 선택하세요</span>
+				<input type="file" name="attach" class="field w-100 preview-input" style="display: none;">
 			</label>
 		</div>
 		<div class="cell flex-area">
@@ -114,9 +230,10 @@
 			        			<th>결재자</th>
 			        			<th>부서</th>
 			        			<th>직책</th>
+			        			<th>처리</th>
 		        			</tr>
 		        		</thead>
-		        		<tbody>
+		        		<tbody id="line1List" class="lineList">
 		        			
 		        		</tbody>
 		        	</table>
@@ -136,9 +253,10 @@
 			        			<th>결재자</th>
 			        			<th>부서</th>
 			        			<th>직책</th>
+			        			<th>처리</th>
 		        			</tr>
 		        		</thead>
-		        		<tbody>
+		        		<tbody id="line2List" class="lineList">
 		        			
 		        		</tbody>
 		        	</table>
@@ -165,7 +283,7 @@
         <div class="modal-header">1차 결재 라인 선택</div>
         
         <div class="modal-body">
-            <form id="popupForm1" action="" method="post" class="flex-area">
+            <form id="popupForm1" class="flex-area">
             	<div class="cell w-25">
 	                <div id="deptList1" class="dept-tree border">
 						<ul>
@@ -206,7 +324,7 @@
         <div class="modal-header">2차 결재 라인 선택</div>
         
         <div class="modal-body">
-            <form id="popupForm2" action="" method="post" class="flex-area">
+            <form id="popupForm2" class="flex-area">
             	<div class="cell w-25">
 	                <div id="deptList2" class="dept-tree border">
 						<ul>
