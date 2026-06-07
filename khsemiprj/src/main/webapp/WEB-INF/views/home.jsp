@@ -122,10 +122,13 @@
 </script>
 
 <script type="text/template" id="detail-template">
-<div class="calendarDetailModal" class="container w-600 mt-50">
-    <h2 class="mb-30">일정 상세 조회</h2>
+<div class="calendarModal" class="container w-600 mt-50">
+    <div class="flex-area flex-center mb-10">
+	        <h3 class= "mt-50">일정 상세</h3>
+	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	</div>
 
-    <div class="card p-20 mb-30" style="border: 1px solid #ddd; border-radius: 8px;">
+    <div class="container w-500 mt-50">
         <div class="cell">
             <h1 class="mb-10">
                 <span id="detailType"></span>
@@ -256,18 +259,50 @@
 	            })
             },
             
-            eventClick: function(info) { // evnetClick은 click이벤트 때 사용
-            	// info.event 객체에 저장된 데이터를 가져오기
-            	var planOrigin = info.event; 
+            eventClick: function(info) { // evnetClick은 click이벤트 때 사용 : 상세
+            	var planNo = info.event.extendedProps.planNo;
+                var planExplain = info.event.extendedProps.planExplain;
+                var planTitle = info.event.title;
+                var planSdate = info.event.start;
+                var planEdate = info.event.end;
+                var planType = info.event.extendedProps.planType;
                 
-            	// 1. 상세조회 템플릿을 불러와 #modal-body에 주입
+                var sdateObj = new Date(planSdate);
+                var edateObj = new Date(planEdate);
+                
+                var sYear = sdateObj.getFullYear();
+                var sMonth = sdateObj.getMonth()+1;
+                var sDay = sdateObj.getDate();
+                
+                if(sMonth < 10) sMonth = '0'+ sMonth;
+                if(sDay < 10) sDay = '0'+ sDay;
+                
+                var sResult = sYear + '-' + sMonth + '-' + sDay;
+                           
+                var eYear = edateObj.getFullYear();
+                var eMonth = edateObj.getMonth()+1;
+                var eDay = edateObj.getDate();
+                
+                if(eMonth < 10) eMonth = '0'+ eMonth;
+                if(eDay < 10) eDay = '0'+ eDay;
+                
+                var eResult = eYear + '-' + eMonth + '-' + eDay;
+                
+                
+            	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
-            
-               // 2. 모달 열기
-               $(".calendarDetailModal").show();
-               
-               // 3. 기존 데이터 채우기
+            	
+            	document.getElementById('detailTitle').innerText = planTitle;
+                document.getElementById('detailType').innerText = planType;
+                
+                // ★ 시작일과 종료일을 각각 매핑 (필드명은 Dto와 일치시켜주세요)
+                document.getElementById('detailSdate').innerText = sResult; 
+                document.getElementById('detailEdate').innerText = eResult; 
+                document.getElementById('detailExplain').innerText = planExplain || "등록된 내용이 없습니다.";
+                
+             	// 2. 클래스로 선택하여 보여줌
+            	$(".calendarModal").show(); 
             },
             
  			customButtons: {
@@ -302,7 +337,6 @@
             
         });
         //날짜 클릭시 클릭한 날짜와 함께 
-        
         calendar.render();
         //처음 로드 될때 회사 디폴트
         filterCalendarEvents("회사");
