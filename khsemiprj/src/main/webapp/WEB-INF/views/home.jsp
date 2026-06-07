@@ -66,6 +66,9 @@
     }
 </style>
 
+<!-- fullcalendar cdn -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+<!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 
 <script type="text/template" id="write-template">
 <div class="calendarModal">
@@ -73,21 +76,28 @@
 	        <h3 class= "mt-50">일정 등록</h3>
 	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
 	</div>
- <form action="./write" autocomplete="off" method="post" class="form-check">
 		<div class="container w-500 mt-50">
-			
+			<div class="cell">
+	        	<label>일정명</label>
+	        	<input type="text" name="planName" class="field w-100">
+	        </div>
 	        <div class="cell">
 	        	<label>유형</label>
 	        	<select class="field w-100" name="planType">
-	                <option value="">선택하세요</option>
+	                <option value="회사">선택하세요</option>
 	                <c:forEach var="planDto" items="${list}">
 	                <option value="${planDto.planNo}">${planDto.planType}</option>
 	                </c:forEach>
 	            </select>
 	        </div>
-	        <div class="cell">
-	        	<label>일정명</label>
-	        	<input type="text" name="planName" class="field w-100">
+			<div class="cell">
+	        	<label>종류(헤더)</label>
+	        	<select class="field w-100" name="planHeader">
+	                <option value="">선택하세요</option>
+	                <c:forEach var="planDto" items="${list}">
+	                <option value="${planDto.planNo}">${planDto.planHeader}</option>
+	                </c:forEach>
+	            </select>
 	        </div>
 	        <div class="cell">
 	            <label>일정 <i class="fa-solid fa-asterisk red"></i></label>
@@ -103,12 +113,11 @@
 	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
 	        </div>
 	        <div class="cell mt-40 right">
-	            <button class="btn btn-positive">
+	            <button type="submit" class="btn btn-positive btn-plan">
 	                등록하기
 	            </button>
 	       </div>
     	</div>
-		</form>
 </div>
 </script>
 
@@ -143,32 +152,57 @@
 </div>
 </script>
 
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
-<!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
+<script type="text/javascript">
+	$(function(){
+		
+// 		//상태객체
+//         var state = {
+//             planNameValid : false,
+//             planTypeValid : false,
+//             planHeaderValid : true,
+//             planSdateValid : true,
+//             planEdateValid : true,
+//             planExplainValid : true, // 선택항목
+//             ok : function() {
+//                 return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
+//                 .filter(v => typeof v == "boolean") // boolean값만 추출해서
+//                 .every(v => v === true); //모두 true인지 확인해서 반환해라;
+//             }
+//         };
+		//등록 버튼을 누르면 발생하는 등록 작업
+		$(document).on("click",".btn-plan", function(){
+			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
+				planType : $("[name=planType]").val(),
+				planHeader : $("[name=planHeader]").val(),
+				planName : $("[name=planName]").val(),
+				planSdate : $("[name=planSdate]").val(),
+				planEdate : $("[name=planEdate]").val(),
+				planExplain : $("[name=planExplain]").val()
+			};
+			
+			console.log(data);
+			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
+// 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
+// 			if(check) return;
+			
+			//[1]결재문서
+			//planType(개인, 부서, 회사)이 부서이고, planAprvNo가 null이 아닌 경우
+			
+			//[2]결재문서가 아닌 경우 planAprvNo가 null인 경우
+			$.ajax({
+				url: "/rest/plan/write",
+				method: "post",
+				data: data,
+				success : function(response) {
+					closeCalendarModal();
+					//홈 화면 새로고침
+					location.reload();
+				}
+			});
+		});
+	});
+</script>
 
-<!-- 	   		planwrite들어가는 자리		 -->
-		<div id="modal-body"></div>
-
-<div class="dashboard-container">
-	    <div class="left-section">
-	        <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
-	    </div>
-	    
-	    <div class="right-section">
-	        <div class="card p-20" style="height: 300px;">
-	            <div style="display: flex; justify-content: space-between; align-items: center;">
-	                <h3>결재사항</h3>
-	                <a href="#">더보기</a>
-	            </div>
-	            </div>
-	
-	        <div 
-	        class="card p-20" style="height: 300px;">
-	            <h3>공지사항</h3>
-	            </div>
-	    </div>
-</div>
-	
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
 			
@@ -179,6 +213,7 @@
 	           
 	        	slotMinTime: '09:00',
 	        	slotMaxTime: '19:00',
+	        	slotDuration: '02:00:00',
 	        	
 	        	headerToolbar: {
 	        	    left: 'prev,next today',
@@ -189,6 +224,7 @@
 	        	selectable: true,
 	        	
 	        select: function(info) { // select : 날짜 시간을 선택할 때 사용
+	        	//console.log("선택된 info 객체: ", info);
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
@@ -221,32 +257,17 @@
             },
             
             eventClick: function(info) { // evnetClick은 click이벤트 때 사용
-            	var planNo = info.event.extendedProps.planNo; 
+            	// info.event 객체에 저장된 데이터를 가져오기
+            	var planOrigin = info.event; 
                 
-            	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
+            	// 1. 상세조회 템플릿을 불러와 #modal-body에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
             
-                fetch("/getDetailJson?planNo=" + planNo)
-                    .then(response => response.json())
-                    .then(planDto => {
-                    	
-                    	// 2. 클래스로 선택하여 보여줌
-                    	$(".calendarDetailModal").show(); 
-                    	
-                       // document.getElementById('calendarDetailModal').style.display = 'block';
-                        
-                        document.getElementById('detailTitle').innerText = planDto.planName;
-                        document.getElementById('detailType').innerText = planDto.planType;
-                        
-                        // ★ 시작일과 종료일을 각각 매핑 (필드명은 Dto와 일치시켜주세요)
-                        document.getElementById('detailSdate').innerText = planDto.planSdate; 
-                        document.getElementById('detailEdate').innerText = planDto.planEdate; 
-                        document.getElementById('detailExplain').innerText = planDto.planExplain || "등록된 내용이 없습니다.";
-                    })
-                    .catch(error => {
-                        alert("일정 정보를 가져오는 데 실패했습니다.");
-                    });
+               // 2. 모달 열기
+               $(".calendarDetailModal").show();
+               
+               // 3. 기존 데이터 채우기
             },
             
  			customButtons: {
@@ -312,5 +333,29 @@
     	$("#modal-body").empty();
     }
 </script>
+
+<!-- 	   		planWrite, planDetail들어가는 자리		 -->
+<div id="modal-body"></div>
+
+<!--  결재, 공지 보여주는 화면 -->
+<div class="dashboard-container">
+	    <div class="left-section">
+	        <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
+	    </div>
+	    
+	    <div class="right-section">
+	        <div class="card p-20" style="height: 300px;">
+	            <div style="display: flex; justify-content: space-between; align-items: center;">
+	                <h3>결재사항</h3>
+	                <a href="#">더보기</a>
+	            </div>
+	            </div>
+	
+	        <div 
+	        class="card p-20" style="height: 300px;">
+	            <h3>공지사항</h3>
+	            </div>
+	    </div>
+</div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
