@@ -4,7 +4,7 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
-<form action="./write" method="post">
+<form action="./write" method="post" onsubmit="return checkContent()">
 
 <div class="container w-950 mt-50 mb-50">
 	<div class="cell">
@@ -36,7 +36,7 @@
 	
 	<div class="cell">
 		<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-		<textarea name="boardContent" rows="10" required class="field w-100"></textarea>
+		<textarea id="summernote" name="boardContent" rows="10" required class="field w-100"></textarea>
 	</div>
 	
 	<div class="cell mt-50 right">
@@ -52,6 +52,87 @@
 </div>
 	
 </form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#summernote').summernote({
+        height: 400,                 
+        minHeight: 400,              
+        maxHeight: null,             
+        focus: false,                
+        lang: "ko-KR",               
+        placeholder: '내용을 입력해주세요.', 
+        toolbar: [
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+            ['color', ['forecolor','color']],
+            ['table', ['table']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert',['picture','link']],
+            ['view', ['codeview', 'help']]
+        ],
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+        fontNamesIgnoreCheck: ['맑은 고딕'],
+        fontSizes: ['1','3','5','8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72'],
+        
+        callbacks: {
+            onImageUpload: function(files) {
+                for (var i = 0; i < files.length; i++) {
+                    sendImageFile(files[i], this);
+                }
+            }
+        }
+    });
+    $('#summernote').summernote('code', '');
+});
+
+function sendImageFile(file, editor) {
+    var data = new FormData();
+    data.append("uploadFile", file);
+
+    $.ajax({
+        url: "${pageContext.request.contextPath}/board/uploadImage",
+        type: "POST",
+        data: data,
+        contentType: false,    
+        processData: false,    
+        dataType: "text",   
+        success: function(url) {
+            $('#summernote').summernote('focus');
+            
+            var imgNode = document.createElement('img');
+            imgNode.src = url;
+            imgNode.style.maxWidth = "100%";
+            $('#summernote').summernote('insertNode', imgNode);
+        },
+        error: function(err) {
+            alert("이미지 업로드 중 통신 오류가 발생했습니다.");
+            console.error(err);
+        }
+    });
+}
+
+//글 등록 버튼을 누를 때 내용이 비어있는지 검사하는 함수
+function checkContent() {
+    var content = $('#summernote').summernote('code');
+    
+    if (content === '' || content === '<p><br></p>') {
+        alert("내용을 입력해주세요!");
+        $('#summernote').summernote('focus');
+        return false;
+    }
+    
+    return true;
+}
+</script>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
