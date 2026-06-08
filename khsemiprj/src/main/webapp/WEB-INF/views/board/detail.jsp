@@ -167,15 +167,34 @@
 					for(var i=0; i < response.length; i++) {
 						var template = $("#reply-viewer-template").text();//템플릿 불러와서 
 						var html = $.parseHTML(template);//HTML로 변환하고
+						$(html).attr("data-key", response[i].replyNo);
+						
+						if (response[i].replyParent) { 
+						    // 1. 대댓글 전체 영역 들여쓰기
+						    $(html).css("margin-left", "50px"); 
+						    // 2. 프로필 이미지 왼쪽에 ㄴ 모양의 꺾인 화살표 아이콘 추가
+						    $(html).find(".profile-wrapper").before(
+						        $('<div class="ms-10 me-10" style="display:flex; padding-top:15px;"><i class="fa-solid fa-turn-up fa-rotate-90 gray"></i></div>')
+						    );
+						    //3. 대댓글에는 대댓글쓰기 지우기
+						     $(html).find(".btn-nested-reply").remove(); 
+						}
 						
 						//html에서 필요한 정보를 찾아서 변경
 						//- (중요) 수정, 삭제등을 위해서 기본키를 영역에 설정해야함
 						//- html은 .reply-wrapper이다.
-						$(html).attr("data-key", response[i].replyNo);
+						if(response[i].replyStatus=='Y'){
+							$(html).find(".reply-writer").text("(알수없음)");
+							$(html).find(".reply-content").text("(삭제된 댓글입니다)").addClass("gray");
+							$(html).find(".button-wrapper").remove();
+							$(html).find(".board-writer").remove();
+							$(html).find(".button-writer").remove();
+						} else {
 						$(html).find(".image-profile")
 							.attr("src", "/member/profile?memberId="+response[i].replyWriter);
 						$(html).find(".reply-writer").text(response[i].replyWriter);
 						$(html).find(".reply-content").text(response[i].replyContent);
+						}
 						
 						//$(html).find(".reply-wtime").text(response[i].replyWtime);
 						//var wtime = moment(response[i].replyWtime).format("YYYY-MM-DD HH:mm");
@@ -189,11 +208,16 @@
 						//상황에 따른 화면 제거
 						//[1] owner가 false면 수정삭제 버튼 영역을 지운다
 						if(response[i].owner == false) {//소유자가 아닐 때
-							$(html).find(".button-wrapper").remove();
+							$(html).find(".btn-reply-edit").remove();
+							$(html).find(".btn-reply-delete").remove();
 						}
 						//[2] writer가 false면 작성자라는 글자 영역을 지운다
 						if(response[i].writer == false) {
 							$(html).find(".board-writer").remove();
+						}
+						//[3] loginId가 null이면 대댓글 등록 버튼을 지운다
+						if(${sessionScope.loginId == null}){
+							$(html).find(".btn-nested-reply").remove();
 						}
 						
 						$(".reply-area").append(html);//화면에 추가
@@ -220,6 +244,60 @@
 					loadList();
 				}
 			});
+		});
+		
+		
+		
+			//대댓글 등록 버튼을 누르면 그 댓글 아래에 대댓글 입력창을 띄운다
+		$(".reply-area").on("click", ".btn-nested-reply", function() {
+		    // 1. 기존에 열려있는 다른 대댓글 입력창이 있다면 닫기(선택사항)
+		    $(".nested-reply-editor").remove();
+		    
+		    // 2. 내가 누른 원댓글의 번호(부모 번호)를 가져오기
+		    var parentNo = $(this).closest(".reply-viewer").data("key");
+		    
+		    // 3. 동적으로 띄울 대댓글 입력창 HTML 생성
+		    var html = `
+		        <div class="nested-reply-editor mt-10" style="margin-left: 50px; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
+		            <i class="fa-solid fa-turn-up fa-rotate-90 gray"></i> 대댓글 작성
+		            <textarea class="field w-100 field-nested-reply mt-10" rows="2" placeholder="답글을 남겨주세요"></textarea>
+		            <div class="right mt-10">
+		                <button type="button" class="btn btn-neutral btn-nested-cancel">취소</button>
+		                <button type="button" class="btn btn-positive btn-nested-save" data-parent="`+parentNo+`">등록</button>
+		            </div>
+		        </div>
+		    `;
+		    
+		    // 4. 현재 원댓글 영역 바로 아래에 입력창 추가
+		    $(this).closest(".reply-viewer").after(html);
+		});
+		
+		// 취소 버튼 누르면 입력창 지우기
+		$(".reply-area").on("click", ".btn-nested-cancel", function() {
+		    $(this).closest(".nested-reply-editor").remove();
+		});
+		
+		// 목표: 대댓글 등록 버튼 누르면 AJAX로 전송
+		$(".reply-area").on("click", ".btn-nested-save", function() {
+		    // 1. 숨겨뒀던 부모 번호(parentNo)와 입력한 내용을 가져옴
+		    var parentNo = $(this).data("parent");
+		    var replyContent = $(this).closest(".nested-reply-editor").find(".field-nested-reply").val();
+		    
+		    if(replyContent.length == 0) return;
+		    
+		    // 2. AJAX 전송 
+		    $.ajax({
+		        url: "/rest/reply/write",
+		        method: "post",
+		        data: {
+		            replyContent : replyContent,
+		            replyOrigin : boardNo,
+		            replyParent : parentNo
+		        },
+		        success: function() {
+		            loadList(); // 등록 성공하면 목록 전체 새로고침
+		        }
+		    });
 		});
 		
 		//삭제 버튼을 누르면 확인창을 띄우고 ajax요청을 보내 삭제가 이루어지도록 처리
@@ -319,6 +397,7 @@
 					<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
 				</div>
 				<div class="button-wrapper right w-50">
+					<i class="fa-solid fa-reply blue btn-nested-reply"></i>
 					<i class="fa-solid fa-edit orange btn-reply-edit"></i>
 					<i class="fa-solid fa-trash red btn-reply-delete"></i>
 				</div>
@@ -428,10 +507,13 @@
 					<div class="w-50">
 						<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
 					</div>
-					<div class="button-wrapper right w-50">
-						<i class="fa-solid fa-edit orange btn-reply-edit"></i>
-						<i class="fa-solid fa-trash red btn-reply-delete"></i>
-					</div>
+					<div class="button-writer right w-50">
+					<i class="fa-solid fa-reply blue btn-nested-reply"></i>
+				</div>
+				<div class="button-wrapper right w-20">
+					<i class="fa-solid fa-edit orange btn-reply-edit"></i>
+					<i class="fa-solid fa-trash red btn-reply-delete"></i>
+				</div>
 				</div>
 			</div>
 		</div>

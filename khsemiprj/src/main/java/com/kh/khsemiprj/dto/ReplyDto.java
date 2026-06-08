@@ -15,4 +15,6 @@ public class ReplyDto {
 	private String replyContent;
 	private Timestamp replyWtime;
 	private Timestamp replyEtime;
+	private Long replyParent;
+	private String replyStatus;
 }
