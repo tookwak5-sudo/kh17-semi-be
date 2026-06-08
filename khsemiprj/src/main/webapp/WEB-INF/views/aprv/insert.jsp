@@ -23,7 +23,8 @@
 			case "병가":
 			case "기타":
 			default:
-				$(".date-title").text("기한");
+				if(formHead == "연차") $(".date-title").text("기한 [잔여휴가일수 : ${leaveRemain}일]");
+				else $(".date-title").text("기한");
 				$(".timeTilde").show();
 				$(".picker-edate").show();
 				var picker1 = new Lightpick({ 
@@ -33,6 +34,43 @@
 				    format : "YYYY-MM-DD",
 					firstDay : 7,
 					disableWeekends: true,
+					// 1. 달력이 화면에 열렸을 때 마우스 움직임 감지 셋팅
+				    onOpen: function() {
+				        // Lightpick 달력의 날짜 칸(td)들에 마우스가 올라갈 때 이벤트 리스너 추가
+				        const calendarEl = document.querySelector('.lightpick__months');
+				        
+				        calendarEl.addEventListener('mouseenter', function(e) {
+				            // 마우스가 올라간 날짜 엘리먼트가 실제 날짜(day) 칸인지 확인
+				            if (e.target.classList.contains('lightpick__day') && !e.target.classList.contains('is-disabled')) {
+				                
+				                // Lightpick이 내부적으로 계산을 마친 직후(아주 잠깐의 뒤)에 가로채기 위해 setTimeout 사용
+				                setTimeout(function() {
+				                    // 시작일은 선택되었고 종료일은 아직 마우스만 올라가 있는 상태(is-in-range 상태)일 때
+				                    const start = picker1.getStartDate();
+				                    
+				                    // 마우스가 올라가 있는 칸의 timestamp 데이터를 가져와 moment 객체로 변환
+				                    const hoverTimestamp = parseInt(e.target.getAttribute('data-time'));
+				                    
+				                    if (start && hoverTimestamp) {
+				                        const hoverDate = moment(hoverTimestamp);
+				                        
+				                        // 시작일과 마우스가 올라간 날짜 사이의 평일 수 계산
+				                        // (시작일이 호버일보다 미래일 경우를 대비해 순서 정렬)
+				                        const firstDate = start.isBefore(hoverDate) ? start : hoverDate;
+				                        const secondDate = start.isBefore(hoverDate) ? hoverDate : start;
+				                        
+				                        const weekdaysCount = getWeekdaysCount(firstDate, secondDate);
+				                        
+				                        // 툴팁 텍스트 강제 변경
+				                        const tooltip = document.querySelector('.lightpick__tooltip');
+				                        if (tooltip) {
+				                            tooltip.innerText = weekdaysCount + ' 일 (평일 기준)';
+				                        }
+				                    }
+				                }, 5);
+				            }
+				        }, true); // 이벤트 캡처링 사용으로 개별 td의 이벤트를 부모에서 감지
+				    },
 					onSelect: function(start, end){
 				        // 날짜 선택 시 실행될 코드
 						var formHead = $(".aprv-form-list:selected").attr("data-head");
@@ -51,6 +89,16 @@
 						} else {
 							$(".vacationType").hide();
 							$(".vacationType").empty();
+						}
+						
+						if(formHead == "연차") {
+							var count = getWeekdaysCount(moment(sDate), moment(eDate));
+							if(count > ${leaveRemain}) {
+								alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+								picker1.setDateRange(null, null);
+								$(".picker-sdate").val("");
+								$(".picker-edate").val("");
+							}
 						}
 				    }
 				});
@@ -91,11 +139,39 @@
 		};
 		
 		//폼검사
-		$(".form-check").on("submit", function(){
+		$(".form-check").on("submit", function(e){
         	$(this).find("select[name]").trigger("input");
             $(this).find("input[name], textarea[name]").trigger("blur");
+            
+         	// submit을 유발한 버튼 객체 가져오기
+            var clickedButton = e.originalEvent.submitter; 
+
+            // 특정 버튼일 때만 다르게 처리하고 싶다면?
+            if ($(clickedButton).hasClass("aprv-insert")) {
+            	$(".aprv-status").val("대기");
+            } else {
+            	$(".aprv-status").val("임시저장");
+            }
            	return state.ok();
         });
+		
+		function getWeekdaysCount(startDate, endDate) {
+		    let count = 0;
+		    // Moment.js를 활용하여 시작일부터 종료일까지 1일씩 증가
+		    let current = startDate.clone(); 
+		    
+		    while (current.isSameOrBefore(endDate, 'day')) {
+		        // 요일 확인: 0(일요일) ~ 6(토요일)
+		        let dayOfWeek = current.day(); 
+		        
+		        // 일요일(0)도 토요일(6)도 아닌 경우에만 카운트 증가
+		        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+		            count++;
+		        }
+		        current.add(1, 'day');
+		    }
+		    return count;
+		}
 	});
 </script>
 
@@ -159,7 +235,7 @@
 	.cell { min-height: 32px; }
 </style>
 
-<form action="./insert" autocomplete="off" method="post" class="form-check">
+<form action="./insert" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
 
 	<div class="container w-1200 mt-50">
 		
@@ -268,11 +344,12 @@
 			</div>
         </div>
         <div class="cell mt-40 mb-50 right">
+        	<input type="hidden" name="aprvStatus" class="aprv-status" value="">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
-        	<button class="btn" style="background-color:#fdcb6e;">
+        	<button class="btn aprv-temp-insert" style="background-color:#fdcb6e;">
                 임시저장
             </button>
-            <button class="btn btn-positive">
+            <button class="btn btn-positive aprv-insert">
                 등록하기
             </button>
         </div>

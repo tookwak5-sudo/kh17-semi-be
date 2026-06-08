@@ -22,10 +22,12 @@ import com.kh.khsemiprj.dao.AprvDao;
 import com.kh.khsemiprj.dao.AprvFormDao;
 import com.kh.khsemiprj.dao.AprvLineDao;
 import com.kh.khsemiprj.dao.DeptDao;
+import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.DeptDto;
+import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.service.AttachService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +36,9 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/aprv")
 @Controller
 public class AprvController {
+	
+	@Autowired
+	private EmpLeaveDao empLeaveDao;
 	
 	@Autowired
 	private DeptDao deptDao;
@@ -64,6 +69,9 @@ public class AprvController {
 		
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpLeaveDto empLeaveDto = empLeaveDao.selectOne(loginId);
+		model.addAttribute("leaveRemain", empLeaveDto.getLeaveRemain());
 		
 		// 1. 부서 목록 가져오기
  		//List<DeptDto> list = deptDao.selectListAll();
@@ -107,8 +115,13 @@ public class AprvController {
 	@PostMapping("/insert")
 	public String insert(@ModelAttribute AprvDto aprvDto, @RequestParam(required = false) MultipartFile attach
 						, @RequestParam(value = "aprvLine1IdList") List<String> aprvLine1IdList
-						, @RequestParam(value = "aprvLine2IdList") List<String> aprvLine2IdList)
-			throws IllegalStateException, IOException {
+						, @RequestParam(value = "aprvLine2IdList", required = false) List<String> aprvLine2IdList
+						, HttpServletRequest request) throws IllegalStateException, IOException {
+		
+		HttpSession session = request.getSession();
+		String loginId = (String)session.getAttribute("loginId");
+		
+		aprvDto.setAprvWriter(loginId);
 		
 		int aprvNo = aprvDao.sequence();
 		aprvDto.setAprvNo(aprvNo);
@@ -131,20 +144,24 @@ public class AprvController {
 				AprvLineDto aprvLineDto = new AprvLineDto();
 				aprvLineDto.setAprvLineNo(aprvLineNo);
 				aprvLineDto.setAprvDocumentNo(aprvNo);
+				aprvLineDto.setEmpId(aprvLine1IdList.get(i));
 				aprvLineDto.setAprvLineCurrentSeq(1);
 				aprvLineDto.setAprvLineStatus("대기");
 				aprvLineDao.insertAprvLine(aprvLineDto);
 			}
 			
 			//결재라인2 등록
-			for(int i = 0; i < aprvLine2IdList.size(); i++) {
-				int aprvLineNo = aprvLineDao.sequence();
-				AprvLineDto aprvLineDto = new AprvLineDto();
-				aprvLineDto.setAprvLineNo(aprvLineNo);
-				aprvLineDto.setAprvDocumentNo(aprvNo);
-				aprvLineDto.setAprvLineCurrentSeq(2);
-				aprvLineDto.setAprvLineStatus("대기");
-				aprvLineDao.insertAprvLine(aprvLineDto);
+			if(aprvLine2IdList != null) {
+				for(int i = 0; i < aprvLine2IdList.size(); i++) {
+					int aprvLineNo = aprvLineDao.sequence();
+					AprvLineDto aprvLineDto = new AprvLineDto();
+					aprvLineDto.setAprvLineNo(aprvLineNo);
+					aprvLineDto.setAprvDocumentNo(aprvNo);
+					aprvLineDto.setEmpId(aprvLine2IdList.get(i));
+					aprvLineDto.setAprvLineCurrentSeq(2);
+					aprvLineDto.setAprvLineStatus("대기");
+					aprvLineDao.insertAprvLine(aprvLineDto);
+				}
 			}
 		}
 		

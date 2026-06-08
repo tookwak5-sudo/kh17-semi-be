@@ -16,7 +16,7 @@ public class AprvFormMapper implements RowMapper<AprvFormDto>{
 		try {
 			headName = rs.getString("head_name");
 		} catch(Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return AprvFormDto.builder()
                 .formNo(rs.getInt("form_no"))

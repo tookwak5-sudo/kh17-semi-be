@@ -21,9 +21,10 @@ public class AprvLineDao {
 	}
 	
 	public boolean insertAprvLine(AprvLineDto aprvLineDto) {
-		String sql = "insert into aprv_line(aprv_line_no, aprv_document_no, aprv_line_current_seq, aprv_line_status) "
-				+ "values(?, ?, ?, ?)";
-		Object[] params = {};
+		String sql = "insert into aprv_line(aprv_line_no, aprv_document_no, aprv_line_current_seq, aprv_line_status, emp_id) "
+				+ "values(?, ?, ?, ?, ?)";
+		Object[] params = { aprvLineDto.getAprvLineNo(), aprvLineDto.getAprvDocumentNo()
+							, aprvLineDto.getAprvLineCurrentSeq(), aprvLineDto.getAprvLineStatus(), aprvLineDto.getEmpId() };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 }
