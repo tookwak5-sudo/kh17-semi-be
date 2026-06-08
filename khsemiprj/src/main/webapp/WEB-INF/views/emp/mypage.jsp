@@ -11,6 +11,8 @@
 
 		<h1>${findEmpDto.empName}님의정보</h1>
 
+
+
 	</div>
 
 	<div class="cell">
@@ -50,44 +52,69 @@
 		</div>
 
 
-		
-		
-		<!-- 		로그인 이력은 dto dao 구현 해야합니다 -->
-		<div class="flex-area">
-			<div class="w-25">로그인 이력</div>
-			<div class="w-75 blue">2026.06.01</div>
+
+
+		<div class="mt-40 mb-20">
+			<table class="table">
+				<thead>
+					<tr>
+						<th class="center black">최종로그인</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="center"><c:if test="${lastAccess != null}">
+                                ${lastAccess.accessDate} republic of korea, seoul ${lastAccess.accessIp}
+                            </c:if> <c:if test="${lastAccess == null}">
+                                접속 기록이 존재하지 않습니다.
+                            </c:if></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
+		<div class="right">
+			<a href="/emp/checkPassword" class="btn btn-neutral">정보 수정</a>
+		</div>
+		
+		<div class="right">
+			<a href="/emp/changePassword" class="btn btn-neutral">비밀번호 수정</a>
+		</div>
+		
 		
 	</div>
 
+</div>
 
-	<div class="cell">
 
-		<h1>${findEmpDto.empName}님의휴가 정보</h1>
+<div class="cell">
 
-	</div>
-	
-	
-	<table border="1">
-    <thead>
-        <tr>
-            <th>연도</th>
-            <th>총 연차</th>
-            <th>사용 연차</th>
-            <th>잔여 연차</th>
-        </tr>
-    </thead>
-    <tbody>
-        <c:forEach var="leave" items="${empLeaveList}">
-            <tr>
-                <td>${leave.leaveYear}년</td>
-                <td>${leave.leaveTotal}일</td>
-                <td>${leave.leaveUsed}일</td>
-                <td>${leave.leaveRemain}일</td>
-            </tr>
-        </c:forEach>
-    </tbody>
+	<h1>${findEmpDto.empName}님의휴가정보</h1>
+
+</div>
+
+
+<table border="1">
+	<thead>
+		<tr>
+			<th>연도</th>
+			<th>총 연차</th>
+			<th>사용 연차</th>
+			<th>잔여 연차</th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:forEach var="leave" items="${empLeaveList}">
+			<tr>
+				<td>${leave.leaveYear}년</td>
+				<td>${leave.leaveTotal}일</td>
+				<td>${leave.leaveUsed}일</td>
+				<td>${leave.leaveRemain}일</td>
+			</tr>
+		</c:forEach>
+	</tbody>
 </table>
 
 </div>
+
+<jsp:include page="/WEB-INF/views/template/footer.jsp" />

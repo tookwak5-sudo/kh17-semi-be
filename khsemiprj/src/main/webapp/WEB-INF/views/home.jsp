@@ -304,6 +304,8 @@
 	            </div>
 	
 	       <div class="card p-20" style="height: 300px; overflow-y: auto;">
+			
+			
 			<h3>공지사항</h3>
 			<hr>
 
