@@ -13,7 +13,7 @@ import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
-@RequestMapping("/log-inout")
+@RequestMapping("/admin/log-inout")
 public class LogInoutController {
 	@Autowired
 	private LogInoutDao logInoutDao;
@@ -31,6 +31,6 @@ public class LogInoutController {
 		int count = logInoutDao.count(pageVO);
 		pageVO.setCount(count);//데이터 개수 설정
 		model.addAttribute("pageVO", pageVO);
-		return "log-inout/list";
+		return "admin/log-inout/list";
 	}
 }

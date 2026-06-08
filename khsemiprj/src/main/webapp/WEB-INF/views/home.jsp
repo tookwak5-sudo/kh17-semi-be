@@ -51,19 +51,6 @@
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
     	z-index: 10000;
     }
-    .calendarDetailModal {
-    	display: none;
-    	position: fixed;
-    	top: 50%;
-    	left: 50%;
-    	transform: translate(-50%, -50%);
-    	width: 600px;
-    	background: white;
-    	padding: 20px;
-    	border: 1px solid #ccc; 
-    	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
-    	z-index: 10000;
-    }
 </style>
 
 <!-- fullcalendar cdn -->
@@ -148,8 +135,7 @@
 
     <div class="cell text-right">
         <a href="#" id="modalEditBtn" class="btn btn-positive">수정하기</a>
-        <a href="#" id="modalDeleteBtn" class="btn btn-negative" 
-           onclick="return confirm('정말 삭제하시겠습니까?');">삭제하기</a>
+        <a href="#" id="modalDeleteBtn" class="btn btn-negative">삭제하기</a>
         <button type="button" onclick="closeDetailModal()" class="btn btn-netural">닫기</button>
     </div>
 </div>
@@ -203,6 +189,29 @@
 				}
 			});
 		});
+	
+	
+		//삭제 버튼 클릭시
+	    $(document).on("click", "#modalDeleteBtn", function(){
+	        var choice = window.confirm("정말 삭제하시겠습니까?");
+	        if(choice == false) return;
+	
+	        //댓글 영역 최상단에 data-key라는 이름으로 작성된 번호를 가져온다
+	        var planNo = $(this).data("key");
+	
+	        $.ajax({
+	            url: "/rest/plan/delete",
+	            method: "post",
+	            data: { planNo : planNo },
+	            success: function(response){
+	                alert("삭제되었습니다.");
+	                closeCalendarModal();
+	                //홈 화면 새로고침
+	                location.reload();
+	            }
+	        });
+	    });
+	
 	});
 </script>
 
@@ -293,6 +302,17 @@
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
             	
+            	// 상세 모달이 열릴때 삭제 버튼을 찾아 data-key에 planNo를 심어줌
+                $("#modal-body").find("#modalDeleteBtn").data("key", planNo);
+                // 상세 모달이 열릴때 수정 버튼을 찾아 data-key에 planNo를 심어줌
+                $("#modal-body").find("#modalEditBtn").data("key", planNo);
+                // 상세 모달이 열릴때 상세 값들을 수정 버튼에 심어줌
+                $("#modalEditBtn").data("plan-title", planTitle);
+                $("#modalEditBtn").data("plan-type", planType);
+                $("#modalEditBtn").data("plan-sdate", sResult);
+                $("#modalEditBtn").data("plan-edate", eResult);
+                $("#modalEditBtn").data("plan-explain", planExplain);
+            	
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
                 
@@ -329,12 +349,11 @@
  			    }
  			},
  			
-			events: ${eventList},
+ 			events: ${eventList},
         	initialView: 'dayGridMonth', 
             height: '100%', // 부모 div 높이에 맞춤
             displayEventTime: false, 
             locale: 'ko'
-            
         });
         //날짜 클릭시 클릭한 날짜와 함께 
         calendar.render();
@@ -344,7 +363,9 @@
         //함수 정의
         function filterCalendarEvents(type) {
             var allEvents = calendar.getEvents(); // 달력의 모든 일정 가져오기
-            
+            console.log("▶ [내가 클릭한 버튼 타입]:", type);
+            // 2. 전체 가져온 일정 개수가 몇 개인지 확인
+            console.log("▶ [달력이 불러온 총 일정 개수]:", allEvents.length, "개");
             allEvents.forEach(function(event) {
                 // DB의 plan_type 컬럼값 (extendedProps에서 꺼내옴)
                 var eventType = event.extendedProps.planType; 
@@ -361,10 +382,6 @@
     function closeCalendarModal() {
 			$(".calendarModal").hide();
 			$("#modal-body").empty();
-    }
-    function closeDetailModal() {
-    	$(".calendarDetailModal").hide();
-    	$("#modal-body").empty();
     }
 </script>
 
