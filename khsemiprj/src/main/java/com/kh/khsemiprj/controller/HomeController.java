@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.PlanDao;
+import com.kh.khsemiprj.dto.BoardDto;
 import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.PlanDto;
 
@@ -24,7 +26,8 @@ public class HomeController {
 	
 	@Autowired
 	private PlanDao planDao;
-	
+	@Autowired
+	private BoardDao boardDao;
 	@RequestMapping("/")
 	public String home(Model model
 			, HttpSession session) throws JsonProcessingException {
@@ -62,6 +65,21 @@ public class HomeController {
  	    
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("planHeadJson", planHeadJson);
+		
+		List<BoardDto> grabNoticeList = boardDao.selectNoticeList();
+		
+		List<Map<String,Object>> noticeList = new ArrayList<>();
+		for(BoardDto boardDto:grabNoticeList) {
+			Map<String,Object>notice=new HashMap<>();
+			notice.put("boardNo", boardDto.getBoardNo());
+			notice.put("boardWriter", boardDto.getBoardWriter());
+			notice.put("boardTitle", boardDto.getBoardTitle());
+		
+			
+			noticeList.add(notice);
+		}
+		
+		model.addAttribute("noticeList", noticeList);
 		
 		return "home";
 	}
