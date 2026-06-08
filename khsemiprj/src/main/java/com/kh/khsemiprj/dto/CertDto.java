@@ -17,4 +17,5 @@ public class CertDto {
 	public boolean isComplete() {
 		return certYn != null && certYn.equals("Y");
 	}
+	
 }
