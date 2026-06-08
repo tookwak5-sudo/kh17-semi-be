@@ -128,10 +128,11 @@
 </script>
 <script type="text/template" id="line-template">
 <tr>
+	<input type="hidden" />
 	<td></td>
 	<td></td>
 	<td></td>
-	<td><a class="btn btn-negative line-delete">삭제</a></td>
+	<td><button type="button" class="btn btn-negative line-delete">삭제</button></td>
 </tr>
 </script>
 <script type="text/template" id="aprv-form-file-template">
@@ -163,7 +164,7 @@
 	<div class="container w-1200 mt-50">
 		
     	<div class="cell center">
-            <h1>결재 등록</h1>
+            <h1 class="h1-title">결재 등록</h1>
         </div>
         <div class="cell mb-0" style="display:none;">
             <label>양식 선택</label> 
@@ -195,9 +196,9 @@
 		            <label><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i></label>
 		        </div>
 		        <div class="cell mt-0">
-		        	<input type="text" name="aprvStime" class="field picker-sdate" size="4" placeholder="시작일">
+		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일">
 		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEtime" class="field picker-edate" size="4" placeholder="종료일">
+		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일">
 		        </div>
 	        </div>
 	        <div class="w-66 vacationType">

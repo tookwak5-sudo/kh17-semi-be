@@ -18,10 +18,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.khsemiprj.dao.AprvDao;
 import com.kh.khsemiprj.dao.AprvFormDao;
+import com.kh.khsemiprj.dao.AprvLineDao;
 import com.kh.khsemiprj.dao.DeptDao;
+import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.AprvFormDto;
+import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.DeptDto;
+import com.kh.khsemiprj.service.AttachService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RequestMapping("/aprv")
 @Controller
@@ -31,7 +39,16 @@ public class AprvController {
 	private DeptDao deptDao;
 	
 	@Autowired
+	private AprvDao aprvDao;
+	
+	@Autowired
+	private AprvLineDao aprvLineDao;
+	
+	@Autowired
 	private AprvFormDao aprvFormDao;
+	
+	@Autowired
+	private AttachService attachService;
 	
 	@RequestMapping("/list")
 	public String list(Model model) {
@@ -43,10 +60,14 @@ public class AprvController {
 	}
 	
 	@GetMapping("/insert")
-	public String insert(Model model) throws JsonProcessingException {
+	public String insert(HttpServletRequest request, Model model) throws JsonProcessingException {
+		
+		HttpSession session = request.getSession();
+		String loginId = (String)session.getAttribute("loginId");
 		
 		// 1. 부서 목록 가져오기
- 		List<DeptDto> list = deptDao.selectListAll();
+ 		//List<DeptDto> list = deptDao.selectListAll();
+		List<DeptDto> list = deptDao.selectListMyDept(loginId);
  		
  		// 2. 부서 목록 트리구조로 변경
  		List<DeptDto> rootList = new ArrayList<>();
@@ -84,17 +105,50 @@ public class AprvController {
 	}
 	
 	@PostMapping("/insert")
-	public String insert(@ModelAttribute AprvFormDto aprvFormDto, @RequestParam(required = false) MultipartFile attach)
+	public String insert(@ModelAttribute AprvDto aprvDto, @RequestParam(required = false) MultipartFile attach
+						, @RequestParam(value = "aprvLine1IdList") List<String> aprvLine1IdList
+						, @RequestParam(value = "aprvLine2IdList") List<String> aprvLine2IdList)
 			throws IllegalStateException, IOException {
-		AprvFormDto findNameDto = aprvFormDao.selectOneByName(aprvFormDto.getFormName());
-		if (findNameDto != null) {
-			return "redirect:/aprvForm/insert?duplicate";
+		
+		int aprvNo = aprvDao.sequence();
+		aprvDto.setAprvNo(aprvNo);
+		if(aprvLine1IdList.size() > 0) {
+			aprvDto.setAprvCurrentSeq(1);
+		} else {
+			aprvDto.setAprvCurrentSeq(0);
 		}
-		if (aprvFormDto.getFormUseYn() != null) {
-			aprvFormDto.setFormUseYn("Y");
+		boolean result = aprvDao.insertAprv(aprvDto);
+		if(result) {
+			//첨부파일 연결
+			if(!attach.isEmpty()) {
+				int attachNo = attachService.save(attach);
+				aprvDao.connect(aprvDto.getAprvNo(), attachNo);
+			}
+			
+			//결재라인1 등록
+			for(int i = 0; i < aprvLine1IdList.size(); i++) {
+				int aprvLineNo = aprvLineDao.sequence();
+				AprvLineDto aprvLineDto = new AprvLineDto();
+				aprvLineDto.setAprvLineNo(aprvLineNo);
+				aprvLineDto.setAprvDocumentNo(aprvNo);
+				aprvLineDto.setAprvLineCurrentSeq(1);
+				aprvLineDto.setAprvLineStatus("대기");
+				aprvLineDao.insertAprvLine(aprvLineDto);
+			}
+			
+			//결재라인2 등록
+			for(int i = 0; i < aprvLine2IdList.size(); i++) {
+				int aprvLineNo = aprvLineDao.sequence();
+				AprvLineDto aprvLineDto = new AprvLineDto();
+				aprvLineDto.setAprvLineNo(aprvLineNo);
+				aprvLineDto.setAprvDocumentNo(aprvNo);
+				aprvLineDto.setAprvLineCurrentSeq(2);
+				aprvLineDto.setAprvLineStatus("대기");
+				aprvLineDao.insertAprvLine(aprvLineDto);
+			}
 		}
-		//aprvFormService.registerFormFile(aprvFormDto, attach);
-
+		
+		
 		return "redirect:./list";
 	}
 }

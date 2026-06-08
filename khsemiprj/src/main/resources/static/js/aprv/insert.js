@@ -157,6 +157,9 @@ function addEmp(no) {
 			const tr = $.parseHTML(template)[1];
 			$(tr).attr("name", "line1EmpId");
 			$(tr).attr("data-id", $(this).val());//아이디
+			var empId = $(this).val();
+			$(tr).find("input[type=hidden]").attr("name", "aprvLine1IdList");
+			$(tr).find("input[type=hidden]").val(empId);
 			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
 			$(tr).find("td:eq(0)").text(empName);//이름
 			var deptName = $(this).closest("tr").find("td:eq(1)").text();
@@ -171,6 +174,9 @@ function addEmp(no) {
 			const tr = $.parseHTML(template)[1];
 			$(tr).attr("name", "line2EmpId");
 			$(tr).attr("data-id", $(this).val());//아이디
+			var empId = $(this).val();
+			$(tr).find("input[type=hidden]").attr("name", "aprvLine2IdList");
+			$(tr).find("input[type=hidden]").val(empId);
 			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
 			$(tr).find("td:eq(0)").text(empName);//이름
 			var deptName = $(this).closest("tr").find("td:eq(1)").text();
@@ -217,6 +223,8 @@ function createTree(node, no) {
 }
 
 function getAprmFormAttach(formNo) {
+	var title = $(".aprv-form-list option:selected").attr("data-name");
+	$(".h1-title").text(title);
 	$.ajax({
 		url : "/rest/aprv/getAprvFormFile",
 		method: "post",
@@ -251,7 +259,7 @@ function getAprmFormAttach(formNo) {
 function getEmpPositionDeptList(deptNo, No) {
 	if(deptNo == "") deptNo = null;
 	$.ajax({
-        url : "/rest/dept/empPositionDeptList",
+        url : "/rest/dept/empPositionDeptListForAprv",
         method:"post",
         data: { deptNo : deptNo },
         success : function(response) {

@@ -10,22 +10,54 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kh.khsemiprj.dao.DeptDao;
+import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
+import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.vo.EmpPositionDeptVO;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/rest/dept")
 public class DeptRestController {
 	@Autowired
+	private EmpDao empDao;
+	@Autowired
 	private DeptDao deptDao;
 	@Autowired
 	private EmpPositionDeptDao empPositionDeptDao;
 	
+	//부서별 사원목록
 	@PostMapping("/empPositionDeptList")
 	public List<EmpPositionDeptVO> empPositionDeptList(@RequestParam String deptNo) {
 		Long longDeptNo = deptNo == "" ? null : Long.parseLong(deptNo);
 		List<EmpPositionDeptDto> list = longDeptNo == null ? empPositionDeptDao.selectDepthEmpByNull() : empPositionDeptDao.selectDepthEmp(longDeptNo);
+		List<EmpPositionDeptVO> newList = new ArrayList<>();
+		
+		for(EmpPositionDeptDto empPositionDeptDto : list) {
+			newList.add(EmpPositionDeptVO.builder()
+						.empId(empPositionDeptDto.getEmpId())
+						.deptNo(empPositionDeptDto.getDeptNo())
+						.deptName(empPositionDeptDto.getDeptName())
+						.empId(empPositionDeptDto.getEmpId())
+						.empName(empPositionDeptDto.getEmpName())
+						.empPositionName(empPositionDeptDto.getEmpPositionName())
+						.deptEmpId(empPositionDeptDto.getDeptEmpId())
+					.build());
+		}
+		
+		return newList;
+	};
+	
+	//결재용 부서별 사원목록(내 직급보다 높은 사원만)
+	@PostMapping("/empPositionDeptListForAprv")
+	public List<EmpPositionDeptVO> empPositionDeptListForAprv(@RequestParam long deptNo, HttpSession session) {
+		String loginId = (String)session.getAttribute("loginId");
+		EmpDto findEmpDto = empDao.selectOne(loginId);
+		
+		List<EmpPositionDeptDto> list = empPositionDeptDao.selectDepthEmpForAprv(deptNo, findEmpDto.getEmpPositionNo());
 		List<EmpPositionDeptVO> newList = new ArrayList<>();
 		
 		for(EmpPositionDeptDto empPositionDeptDto : list) {

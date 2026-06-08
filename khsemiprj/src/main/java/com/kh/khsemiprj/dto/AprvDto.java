@@ -18,8 +18,8 @@ public class AprvDto {
 	private int aprvCurrentSeq;
 	private Timestamp aprvTempWtime;
 	private Timestamp aprvTempUtime;
-	private Timestamp aprvSdate;
-	private Timestamp aprvEdate;
+	private String aprvSdate;
+	private String aprvEdate;
 	private Timestamp aprvWtime;
 	private Timestamp aprvEtime;
 }
