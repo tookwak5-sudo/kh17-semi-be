@@ -79,7 +79,7 @@
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="planHeader">
+	        	<select class="field w-100" name="planHeadNo">
 	                <option value="">선택하세요</option>
 	            </select>
 	        </div>
@@ -145,7 +145,7 @@
 //         var state = {
 //             planNameValid : false,
 //             planTypeValid : false,
-//             planHeaderValid : true,
+//             planHeadNoValid : true,
 //             planSdateValid : true,
 //             planEdateValid : true,
 //             planExplainValid : true, // 선택항목
@@ -159,7 +159,7 @@
 		$(document).on("click",".btn-plan", function(){
 			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
 				planType : $("[name=planType]").val(),
-				planHeader : $("[name=planHeader]").val(),
+				planHeadNo : $("[name=planHeadNo]").val(),
 				planName : $("[name=planName]").val(),
 				planSdate : $("[name=planSdate]").val(),
 				planEdate : $("[name=planEdate]").val(),
