@@ -1,0 +1,78 @@
+@charset "UTF-8";
+
+/* 기본 스타일 초기화 */
+.dept-tree, .dept-tree ul {
+    list-style: none;
+    padding-left: 24px;
+    font-family: 'Malgun Gothic', sans-serif;
+    color: #333;
+}
+.dept-tree > ul {
+    padding-left: 0;
+}
+
+/* 각 부서 항목 스타일 */
+.dept-item {
+    margin: 6px 0;
+}
+
+.dept-row {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.dept-row:hover {
+    background-color: #f0f4f9;
+}
+
+/* 토글 화살표 */
+.toggle-btn {
+    display: inline-block;
+    width: 16px;
+    font-size: 10px;
+    color: #888;
+    user-select: none;
+    margin-right: 4px;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* 체크박스 스타일 커스텀 */
+.dept-checkbox, .emp-checkbox {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* 부서명 */
+.dept-name {
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* 하위 부서가 없는 최하단 팀은 화살표를 숨김 처리 */
+.no-children .toggle-btn {
+    visibility: hidden;
+    cursor: default;
+}
+
+/* [핵심] 하위 메뉴를 숨기기 위한 클래스 */
+.collapsed > ul {
+    display: none;
+}
+
+
+.dept-change-list.active {
+	display: block;
+}
+.dept-change-list {
+	display: none;
+}
+.border {
+	box-shadow: 0 0 0 1px #2d3436;
+}

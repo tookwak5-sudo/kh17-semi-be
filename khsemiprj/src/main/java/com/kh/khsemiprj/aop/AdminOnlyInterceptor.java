@@ -24,7 +24,7 @@ public class AdminOnlyInterceptor implements HandlerInterceptor{
 		if(empGrade == null) throw new WhoAreYouException();
 		
 		//부서장 이상인지
-		if(empGrade > 1) throw new GetOutException();
+		if(empGrade < 1) throw new GetOutException();
 		
 		return true;
 	}
