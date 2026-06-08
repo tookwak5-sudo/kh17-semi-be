@@ -13,7 +13,7 @@ import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
-@RequestMapping("/log-inout")
+@RequestMapping("/admin/log-inout")
 public class LogInoutController {
 	@Autowired
 	private LogInoutDao logInoutDao;

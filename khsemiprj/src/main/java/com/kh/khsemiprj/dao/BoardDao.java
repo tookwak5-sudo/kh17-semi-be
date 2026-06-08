@@ -22,12 +22,16 @@ public class BoardDao {
 	private Set<String> allowColumns = Set.of("board_writer", "board_title", "board_head");
 
 	// 목록 및 조회
-	// 전에 코드는 공지가 리스트에 두번 출력되어 고쳤습니다. 조건절에 널 넣은 이유는 !공지 붙으면 선택 없음 항목이 사라져서 넣었습니다.
 	public List<BoardDto> selectList(int page, int size) {
-		String sql = "select * from (" + "select rownum rn, TMP.* from (" + "select * from board "
-				+ "where board_head != '공지' or board_head is null " + "order by board_no desc" + ") TMP"
-				+ ") where rn between ? and ?";
-		int beginRow = page * size - (size - 1);
+
+		String sql = "select * from ("
+						+ "select rownum rn, TMP.* from ("
+							+ "select * from board_list "
+							+ "order by board_no desc"
+						+ ") TMP"
+					+ ") where rn between ? and ?";
+		int beginRow = page * size - (size-1);
+
 		int endRow = page * size;
 		Object[] params = { beginRow, endRow };
 		return jdbcTemplate.query(sql, boardMapper, params);
@@ -40,26 +44,39 @@ public class BoardDao {
 
 		if (!allowColumns.contains(pageVO.getColumn()))
 			return selectList(pageVO.getPage(), pageVO.getSize());
-	
-		String sql = "select * from (" + "select rownum rn, TMP.* from (" + "select * from board " + "where instr("
-				+ pageVO.getColumn() + ", ?) > 0 " + "order by board_no asc" + ") TMP" + ") where rn between ? and ?";
-		Object[] params = { pageVO.getKeyword(), pageVO.getBeginRownum(), pageVO.getEndRownum() };
+		
+		String sql = "select * from ("
+						+ "select rownum rn, TMP.* from ("
+							+ "select * from board_list "
+							+ "where instr("+pageVO.getColumn()+", ?) > 0 "
+							+ "order by board_no asc"
+						+ ") TMP"
+					+ ") where rn between ? and ?";
+		Object[] params = { 
+			pageVO.getKeyword(), 
+			pageVO.getBeginRownum(),
+			pageVO.getEndRownum()
+		};
 		return jdbcTemplate.query(sql, boardMapper, params);
 	}
 
 	// 공지사항 조회
 	public List<BoardDto> selectNoticeList() {
-		String sql = "select * from (" + "select * from board " + "where board_head = '공지' " + "order by board_no desc" // 최신순
-																														// 정렬
-				+ ") where rownum <= 5"; // 상위 5개만
+	    String sql = "select * from ("
+	                    + "select * from board_list "
+	                    + "where board_head = '공지' "
+	                    + "order by board_no desc" // 최신순 정렬
+	                + ") where rownum <= 5"; // 상위 5개만
+	    return jdbcTemplate.query(sql, boardMapper);
+	}
+	//첫 주석과 같은 이유로 넣었습니다.
+	public List<BoardDto> selectNullList() {
+		String sql = "select * from board_list "
+					+ "where board_head is null "
+					+ "order by board_no desc";
 		return jdbcTemplate.query(sql, boardMapper);
 	}
 
-	// 첫 주석과 같은 이유로 넣었습니다.
-	public List<BoardDto> selectNullList() {
-		String sql = "select * from board " + "where board_head is null " + "order by board_no desc";
-		return jdbcTemplate.query(sql, boardMapper);
-	}
 
 	// 상세
 	public BoardDto selectOne(long boardNo) {

@@ -32,7 +32,7 @@
 					<th>작성일</th>
 					<th>조회수</th>
 					<th>좋아요</th>
-					<th>싫어요</th>
+				<!-- 	<th>싫어요</th> -->
 				</tr>
 			</thead>
 			<tbody>
@@ -54,7 +54,7 @@
 						<td>${boardDto.boardWtimeString}</td>
 						<td>${boardDto.boardReadcount}</td>
 						<td>${boardDto.boardLikecount}</td>
-						<td>${boardDto.boardDislikecount}</td>
+						<%-- <td>${boardDto.boardDislikecount}</td> --%>
 					</tr>
 				</c:forEach>
 
@@ -76,7 +76,7 @@
 						<td>${boardDto.boardWtimeString}</td>
 						<td>${boardDto.boardReadcount}</td>
 						<td>${boardDto.boardLikecount}</td>
-						<td>${boardDto.boardDislikecount}</td>
+						<%-- <td>${boardDto.boardDislikecount}</td> --%>
 					</tr>
 				</c:forEach>
 			</tbody>
