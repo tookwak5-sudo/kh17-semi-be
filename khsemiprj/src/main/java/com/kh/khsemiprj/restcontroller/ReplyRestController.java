@@ -58,6 +58,8 @@ public class ReplyRestController {
 						.replyOrigin(replyDto.getReplyOrigin())//소속글번호를 옮겨담는다
 						.replyWtime(replyDto.getReplyWtime())//작성일을 옮겨담는다
 						.replyEtime(replyDto.getReplyEtime())//수정일을 옮겨담는다
+						.replyParent(replyDto.getReplyParent())//소속댓글번호를 옮겨담는다
+						.replyStatus(replyDto.getReplyStatus())//논리적 삭제여부를 옮겨담는다
 						.writer(writer)//작성자 여부를 계산해서 넣는다
 						.owner(owner)//소유자 여부를 계산해서 넣는다
 					.build());
