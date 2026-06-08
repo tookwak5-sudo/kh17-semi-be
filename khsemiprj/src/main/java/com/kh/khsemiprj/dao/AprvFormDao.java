@@ -22,7 +22,7 @@ public class AprvFormDao {
 	@Autowired
 	AprvFormMapper aprvFormMapper;
 
-	private Set<String> allowColumns = Set.of("form_name", "form_head");
+	private Set<String> allowColumns = Set.of("form_name", "form_head_no");
 
 	// 개별 파일 필요시
 	public AprvFormDto selectOne(int formNo) {
@@ -57,7 +57,10 @@ public class AprvFormDao {
 	public List<AprvFormDto> selectListForInsert() {
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
-							+ "select * from aprv_form where form_use_yn = 'Y' order by form_no asc"
+							+ "select * from aprv_form af "
+							+ "inner join aprv_head ah on ah.head_no = af.form_head_no "
+							+ "where form_use_yn = 'Y' "
+							+ "order by form_no asc "
 						+ ") TMP"
 					+ ")";
 		Object[] params = { };
@@ -83,11 +86,11 @@ public class AprvFormDao {
 		int currentNo = this.sequence();
 
 		String sql = "insert into aprv_form( " + "form_no, form_name, form_explain, form_use_yn, "
-				+ "form_wtime, form_head) " + "values(?, ?, ?, ?, systimestamp, ?)";
+				+ "form_wtime, form_head_no) " + "values(?, ?, ?, ?, systimestamp, ?)";
 
 		Object[] params = { currentNo, // 컨트롤러에서 다음번호를 받아주는게 아닌 인서트 구문에서 받아주도록 만들었습니다.
 				aprvFormDto.getFormName(), aprvFormDto.getFormExplain(), aprvFormDto.getFormUseYn(),
-				aprvFormDto.getFormHead() };
+				aprvFormDto.getFormHeadNo() };
 
 		jdbcTemplate.update(sql, params);
 
@@ -103,11 +106,11 @@ public class AprvFormDao {
 		int currentNo = this.sequence();
 		
 		String sql = "insert into aprv_form( " + "form_no, form_name, form_explain, form_use_yn, "
-				+ "form_wtime, form_head) " + "values(?, ?, ?, ?, systimestamp, ?)";
+				+ "form_wtime, form_head_no) " + "values(?, ?, ?, ?, systimestamp, ?)";
 
 		Object[] params = { currentNo, // 컨트롤러에서 다음번호를 받아주는게 아닌 인서트 구문에서 받아주도록 만들었습니다.
 				aprvFormDto.getFormName(), aprvFormDto.getFormExplain(), aprvFormDto.getFormUseYn(),
-				aprvFormDto.getFormHead() };
+				aprvFormDto.getFormHeadNo() };
 
 		jdbcTemplate.update(sql, params);
 	}
@@ -126,9 +129,9 @@ public class AprvFormDao {
 
 	public boolean update(AprvFormDto aprvFormDto) {
 		String sql = "update aprv_form " + "set form_name=?, " + "form_explain=?, " + "form_use_yn=?, "
-				+ "form_head=?,  " + "form_wtime=systimestamp " + "where form_no=?";
+				+ "form_head_no=?,  " + "form_wtime=systimestamp " + "where form_no=?";
 		Object[] params = { aprvFormDto.getFormName(), aprvFormDto.getFormExplain(), aprvFormDto.getFormUseYn(),
-				aprvFormDto.getFormHead(), aprvFormDto.getFormNo() };
+				aprvFormDto.getFormHeadNo(), aprvFormDto.getFormNo() };
 
 		return jdbcTemplate.update(sql, params) > 0;
 	}

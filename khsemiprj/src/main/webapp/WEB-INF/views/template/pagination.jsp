@@ -4,6 +4,12 @@
 
 <!-- 페이지네이션 -->
 <div class="pagination">
+	<!-- 맨 첫 페이지 -->
+	<c:if test="${pageVO.hasPrevious()}">
+	<a href="./list?page=1&${pageVo.getSearchParams()}">
+		<i class="fa-solid fa-backward-step"></i>
+	</a>
+	</c:if>
 	<!-- 이전 -->
 	<c:if test="${pageVO.hasPrevious()}">
 	<a href="./list?page=${pageVO.getPreviousBlock()}&${pageVO.getSearchParams()}">
@@ -28,5 +34,12 @@
 		<a href="./list?page=${pageVO.getNextBlock()}&${pageVO.getSearchParams()}">
 			<i class="fa-solid fa-chevron-right"></i>
 		</a>
+	</c:if>
+	
+	 <!-- 맨 끝 페이지 -->
+	<c:if test="${pageVO.hasNext()}">
+	<a href="./list?page=${pageVO.getPageCount()}&${pageVO.getSearchParams()}">
+		<i class="fa-solid fa-forward-step"></i></i>
+	</a>
 	</c:if>
 </div>

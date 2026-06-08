@@ -9,8 +9,8 @@ import lombok.Data;
 public class PageVO {
 	private String column;//파라미터에 있는 검색항목
 	private String keyword;//파라미터에 있는 검색키워드
-	private int page = 1;//파라미터에 있는 페이지번호 (없으면 1페이지)
-	private int size = 10;//파라미터에 있는 페이지규격 (없으면 10개)
+	private Integer page = 1;//파라미터에 있는 페이지번호 (없으면 1페이지)
+	private Integer size = 10;//파라미터에 있는 페이지규격 (없으면 5개)
 	private int count; //총 데이터 개수 (DB에서 조회해서 채워줘야함)
 	
 	//목록인지 검색인지 판정하는 메소드

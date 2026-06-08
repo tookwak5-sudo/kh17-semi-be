@@ -173,7 +173,7 @@
             <select class="field w-40 aprv-form-list" name="aprvFormNo">
                 <option value="">선택하세요</option>
                 <c:forEach var="aprvFormDto" items="${formList}">
-                <option value="${aprvFormDto.formNo}" data-head="${aprvFormDto.formHead}" data-name="${aprvFormDto.formName}" <c:if test="${aprvFormDto.formNo == param.formNo}">selected</c:if>>[${aprvFormDto.formHead}] ${aprvFormDto.formName}</option>
+                <option value="${aprvFormDto.formNo}" data-head="${aprvFormDto.headName}" data-name="${aprvFormDto.formName}" <c:if test="${aprvFormDto.formNo == param.formNo}">selected</c:if>>[${aprvFormDto.headName}] ${aprvFormDto.formName}</option>
                 </c:forEach>
             </select>
             <input type="hidden" class="">

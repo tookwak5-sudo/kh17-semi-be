@@ -25,7 +25,7 @@
             	<div class="cell w-100">
             		<c:forEach var="aprvFormDto" items="${formList}">
             		<div class="cell">
-            			<a href="/aprv/insert?formNo=${aprvFormDto.formNo}" class="btn btn-neutral w-100" style="text-align:left;"><span>[${aprvFormDto.formHead}] ${aprvFormDto.formName}</span></a>
+            			<a href="/aprv/insert?formNo=${aprvFormDto.formNo}" class="btn btn-neutral w-100" style="text-align:left;"><span>[${aprvFormDto.headName}] ${aprvFormDto.formName}</span></a>
             		</div>
 	                </c:forEach>
 				</div>

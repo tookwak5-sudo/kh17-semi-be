@@ -191,12 +191,13 @@ a.btn {
     color: white;
 }
 .btn.btn-neutral {/* 중립버튼 */
-    background-color: #FFFFFF;
-    color: #2d3436;
+    background-color: #AAB7C9;
+    border-color: #AAB7C9;
+    color: white;
 }
 .btn.btn-negative {/* 부정버튼 */
-    background-color: #d63031;
-    border-color: #d63031;
+    background-color: #E86A7A;
+    border-color: #E86A7A;
     color: white;
 }
 
