@@ -31,6 +31,6 @@ public class LogInoutController {
 		int count = logInoutDao.count(pageVO);
 		pageVO.setCount(count);//데이터 개수 설정
 		model.addAttribute("pageVO", pageVO);
-		return "log-inout/list";
+		return "admin/log-inout/list";
 	}
 }

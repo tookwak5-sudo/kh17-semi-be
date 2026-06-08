@@ -41,6 +41,18 @@ public class EmpPositionDeptDao {
 		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
 	}
 	
+	//결재라인 사원목록 가져오기(조회사원의 직급보다 상급자만 가져오도록)
+	public List<EmpPositionDeptDto> selectDepthEmpForAprv(Long deptNo, Integer empPosition) {
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
+				+ "FROM emp e "
+				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no and e.emp_position_no IS NOT NULL "
+				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ? and e.emp_position_no >= ?"
+				+ "order by e.emp_grade desc, p.emp_position_no desc, e.emp_name asc";
+		Object[] params = {deptNo,empPosition};
+		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+	}
+	
 	//해당 부서 부서장 아이디 조회
 	public String checkDeptEmpId(long deptNo) {
 		String sql = "select dept_emp_id from dept where dept_no = ?";

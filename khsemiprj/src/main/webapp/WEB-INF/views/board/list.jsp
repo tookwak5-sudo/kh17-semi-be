@@ -4,6 +4,19 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
+<!-- <style>
+	table, tr, th, td { border: none !important; border-bottom: 1px solid #ebebeb !important;}
+	tr:hover { background-color: #f6f5f5 }
+	th,td { height: 37px;}
+	th { 
+	background-color: #739BED;
+	color: white;
+	}
+	td a { text-decoration: none; }
+	td:hover a { text-decoration: underline; }
+</style> -->
+
+
 <div class="container w-1200 mt-50 mb-50">
 
 	<div class="cell center mb-0">
@@ -37,7 +50,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="boardDto" items="${noticeList}">
-					<tr bgcolor="#ffeaa7" style="font-weight: bold;">
+					<tr bgcolor="#f6f5f5" style="font-weight: bold;">
 						<td>${boardDto.boardNo}</td>
 						<td align="left"><c:if test="${boardDto.boardHead != null}">
                     (${boardDto.boardHead})

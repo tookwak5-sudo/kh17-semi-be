@@ -8,15 +8,6 @@ var form1;
 var form2;
 
 $(function () {
-	var picker1 = new Lightpick({ 
-	    field : $(".picker-sdate")[0] ,
-	    format : "YYYY-MM-DD" ,
-	});
-
-	var picker2 = new Lightpick({ 
-	    field : $(".picker-edate")[0] ,
-	    format : "YYYY-MM-DD" ,
-	});
 	
 	$(document).on("input", ".aprv-form-list", function () {
 		var formNo = $(this).val();
@@ -30,7 +21,7 @@ $(function () {
 	modal2 = document.getElementById('modalOverlay2');
 	//const form = document.getElementById('popupForm');
 	form1 = document.getElementById('popupForm1');
-	form2 = document.getElementById('popupForm1');
+	form2 = document.getElementById('popupForm2');
 	
 	// 배경(어두운 부분) 클릭 시에도 팝업 닫히게 설정
 	modal1.addEventListener('click', (e) => {
@@ -110,7 +101,7 @@ $(function () {
 	
 	$(document).on("click", ".check-emp-all-1", function () {
     	var checked = $(this).prop("checked");
-    	$("#empList1 input[type=checkbox][name=emp]").prop("checked", checked);
+    	$("#empList1 input[type=checkbox][name=emp][disabled!=disabled]").prop("checked", checked);
     });
 	
 	$(document).on("click", "#empList1 input[type=checkbox][name=emp]", function () {
@@ -122,8 +113,12 @@ $(function () {
 	
 	$(document).on("click", ".check-emp-all-2", function () {
     	var checked = $(this).prop("checked");
-    	$("#empList2 input[type=checkbox][name=emp]").prop("checked", checked);
+    	$("#empList2 input[type=checkbox][name=emp][disabled!=disabled]").prop("checked", checked);
     });
+	
+	$(document).on("click", ".line-delete", function () {
+		$(this).closest("tr").remove();
+	});
 });
 
 // 팝업 열기
@@ -156,22 +151,43 @@ function closeModal(no) {
 
 // 입력값 처리 (서버 전송 또는 데이터 추출)
 function addEmp(no) {
-    const name = document.getElementById('userName').value.trim();
-    const email = document.getElementById('userEmail').value.trim();
-
-    // 간단한 유효성 검사
-    if(!name || !email) {
-        alert("모든 필드를 입력해주세요.");
-        return;
-    }
-
-    // 1. 만약 순수 JavaScript / Ajax로 처리하고 싶다면?
-    document.getElementById('resultView').innerText = `입력된 결과 -> 이름: ${name}, 이메일: ${email}`;
+	if(no == '1') {
+		$("#empList1 input[type=checkbox]:checked").each(function () {
+			var template = $("#line-template").text();
+			const tr = $.parseHTML(template)[1];
+			$(tr).attr("name", "line1EmpId");
+			$(tr).attr("data-id", $(this).val());//아이디
+			var empId = $(this).val();
+			$(tr).find("input[type=hidden]").attr("name", "aprvLine1IdList");
+			$(tr).find("input[type=hidden]").val(empId);
+			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
+			$(tr).find("td:eq(0)").text(empName);//이름
+			var deptName = $(this).closest("tr").find("td:eq(1)").text();
+			$(tr).find("td:eq(1)").text(deptName);//부서
+			var positionName = $(this).closest("tr").find("td:eq(4)").text();
+			$(tr).find("td:eq(2)").text(positionName);//직책
+			$("#line1List").append(tr);	
+		});
+	} else if (no == '2') {
+		$("#empList2 input[type=checkbox]:checked").each(function () {
+			var template = $("#line-template").text();
+			const tr = $.parseHTML(template)[1];
+			$(tr).attr("name", "line2EmpId");
+			$(tr).attr("data-id", $(this).val());//아이디
+			var empId = $(this).val();
+			$(tr).find("input[type=hidden]").attr("name", "aprvLine2IdList");
+			$(tr).find("input[type=hidden]").val(empId);
+			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
+			$(tr).find("td:eq(0)").text(empName);//이름
+			var deptName = $(this).closest("tr").find("td:eq(1)").text();
+			$(tr).find("td:eq(1)").text(deptName);//부서
+			var positionName = $(this).closest("tr").find("td:eq(4)").text();
+			$(tr).find("td:eq(2)").text(positionName);//직책
+			$("#line2List").append(tr);	
+		});
+	}
+	
     closeModal(no);
-    
-    // 2. 만약 서블릿(Controller)이나 다른 JSP로 form을 전송하고 싶다면?
-    // form.action = "registerAction.jsp"; // 전송할 URL
-    // form.submit();
 }
 
 function createTree(node, no) {
@@ -207,12 +223,35 @@ function createTree(node, no) {
 }
 
 function getAprmFormAttach(formNo) {
+	var title = $(".aprv-form-list option:selected").attr("data-name");
+	$(".h1-title").text(title);
 	$.ajax({
 		url : "/rest/aprv/getAprvFormFile",
 		method: "post",
 		data: { formNo : formNo },
 		success : function(response) {
+			$(".aprv-form-file").empty();
 			
+			var attachNo = response.attachNo;
+			var attachName = response.attachName;
+			var result = response.result;
+			
+			if(result == "success") {
+				var template = $("#aprv-form-file-template").text();
+				const a = $.parseHTML(template)[1];
+				$(a).find("span").text(attachName);
+				$(a).attr("href", "/download/legacy?attachNo=" + attachNo);
+				$(".aprv-form-file").append(a);
+			} else if(result == "empty") {
+				var template = $("#aprv-form-file-empty-template").text();
+				const a = $.parseHTML(template)[1];
+				$(".aprv-form-file").append(a);
+			} else if(result == "error") {
+				var template = $("#aprv-form-file-empty-template").text();
+				const a = $.parseHTML(template)[1];
+				$(a).find("span").text("파일을 찾을 수 없습니다.");
+				$(".aprv-form-file").append(a);
+			}
 		}
 	});
 }
@@ -220,10 +259,13 @@ function getAprmFormAttach(formNo) {
 function getEmpPositionDeptList(deptNo, No) {
 	if(deptNo == "") deptNo = null;
 	$.ajax({
-        url : "/rest/dept/empPositionDeptList",
+        url : "/rest/dept/empPositionDeptListForAprv",
         method:"post",
         data: { deptNo : deptNo },
         success : function(response) {
+			var lineIdList = $(".lineList tr").map(function () {
+	    		return $(this).attr("data-id");
+	    	}).get();
 			if(No == '1') {
 	        	$("#empList1").empty();
 	        	if(response.length > 0) {
@@ -238,6 +280,9 @@ function getEmpPositionDeptList(deptNo, No) {
 	                	var template = $("#emp-template").text();
 	                	const tr = $.parseHTML(template)[1];
 	                	$(tr).find(".emp-checkbox").attr("value", empId);
+						if(lineIdList.includes(empId)) {
+							$(tr).find(".emp-checkbox").attr("disabled", true);
+						}
 	                	$(tr).find("td:eq(1)").text(deptName);
 	                	$(tr).find("td:eq(2)").text(empId);
 	                	if(empId == deptEmpId) {
@@ -267,6 +312,9 @@ function getEmpPositionDeptList(deptNo, No) {
 	                	var template = $("#emp-template").text();
 	                	const tr = $.parseHTML(template)[1];
 	                	$(tr).find(".emp-checkbox").attr("value", empId);
+						if(lineIdList.includes(empId)) {
+							$(tr).find(".emp-checkbox").attr("disabled", true);
+						}
 	                	$(tr).find("td:eq(1)").text(deptName);
 	                	$(tr).find("td:eq(2)").text(empId);
 	                	if(empId == deptEmpId) {
