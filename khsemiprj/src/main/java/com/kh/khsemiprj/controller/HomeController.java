@@ -32,7 +32,6 @@ public class HomeController {
 		String loginId = (String)session.getAttribute("loginId");
 		
 		List<PlanDto> planList = planDao.selectList(loginId);
-		System.out.println(planList);
 		List<Map<String, Object>> eventList = new ArrayList<>();
 		for(PlanDto planDto : planList) {
 			Map<String, Object> event = new HashMap<>();

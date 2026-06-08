@@ -133,7 +133,6 @@
     <div class="cell text-right">
         <a href="#" id="modalEditBtn" class="btn btn-positive">수정하기</a>
         <a href="#" id="modalDeleteBtn" class="btn btn-negative">삭제하기</a>
-        <button type="button" onclick="closeDetailModal()" class="btn btn-netural">닫기</button>
     </div>
 </div>
 </script>
@@ -219,7 +218,6 @@
 	    	
 	        var calendarEl = document.getElementById('calendar');
 	        var calendar = new FullCalendar.Calendar(calendarEl, {
-	           
 	        	slotMinTime: '09:00',
 	        	slotMaxTime: '19:00',
 	        	slotDuration: '02:00:00',
@@ -230,10 +228,11 @@
 	        	    right: 'btnAll,btnDept,btnPersonal' 
 	        	},
 	        	
-	        	selectable: true,
 	        	
-	        select: function(info) { // select : 날짜 시간을 선택할 때 사용
-	        	//console.log("선택된 info 객체: ", info);
+	            dayMaxEvents: 3, 
+
+	            selectable: true,
+	       		select: function(info) { // select : 날짜 시간을 선택할 때 사용
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
@@ -364,7 +363,19 @@
         calendar.render();
         //처음 로드 될때 회사 디폴트
         filterCalendarEvents("회사");
-
+		
+        document.addEventListener('click', function(e) {
+            // 클릭된 요소가 '+더보기' 링크인지 확인
+            if (e.target.matches('.fc-daygrid-more-link')) {
+                e.preventDefault(); // 기본 줌인 동작 방지
+                
+                // 클릭한 날짜 정보 가져오기 (가까운 날짜 셀에서 data-date 속성 추출)
+                var dateStr = e.target.closest('.fc-daygrid-day').getAttribute('data-date');
+                // 여기에 모달을 띄우는 로직(예: openCalendarModal) 호출
+                // 또는 상세 조회 화면을 모달로 보여주는 로직 실행
+            }
+        });
+        
         //함수 정의
         function filterCalendarEvents(type) {
             var allEvents = calendar.getEvents(); // 달력의 모든 일정 가져오기
