@@ -18,11 +18,11 @@ public class PlanController {
 	@Autowired
 	private PlanDao planDao;
 	
-	@GetMapping("/write")
-	public String write(Model model) {
-        // DB에서 리스트를 조회하여 JSP로 전달
-        List<PlanDto> list = planDao.selectListType(); 
-        model.addAttribute("list", list);
-        return "/home";
-    }
+//	@GetMapping("/write")
+//	public String write(Model model) {
+//        // DB에서 리스트를 조회하여 JSP로 전달
+//        List<PlanDto> list = planDao.selectListType(); 
+//        model.addAttribute("list", list);
+//        return "/home";
+//    }
 }
