@@ -18,7 +18,7 @@ public class AprvFormMapper implements RowMapper<AprvFormDto>{
                 .formExplain(rs.getString("form_explain"))
                 .formUseYn(rs.getString("form_use_yn"))
                 .formWtime(rs.getTimestamp("form_wtime"))
-                .formHead(rs.getString("form_head"))
+                .formHeadNo(rs.getInt("form_head_no"))
                
                 .build();
 	}

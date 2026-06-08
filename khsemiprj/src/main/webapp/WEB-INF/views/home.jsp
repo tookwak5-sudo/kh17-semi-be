@@ -71,19 +71,16 @@
 	        <div class="cell">
 	        	<label>유형</label>
 	        	<select class="field w-100" name="planType">
-	                <option value="회사">선택하세요</option>
-	                <c:forEach var="planDto" items="${list}">
-	                <option value="${planDto.planNo}">${planDto.planType}</option>
-	                </c:forEach>
+	                <option value="">선택하세요</option>
+	                <option value="개인">개인</option>
+					<option value="부서">부서</option>
+					<option value="회사">회사</option>
 	            </select>
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
 	        	<select class="field w-100" name="planHeader">
 	                <option value="">선택하세요</option>
-	                <c:forEach var="planDto" items="${list}">
-	                <option value="${planDto.planNo}">${planDto.planHeader}</option>
-	                </c:forEach>
 	            </select>
 	        </div>
 	        <div class="cell">
@@ -240,6 +237,14 @@
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
+	            
+	            var headList = ${planHeadJson};
+	            var options = "";
+	            for(var i = 0; i < headList.length; i++) {
+            		options = "<option value='" + headList.planNo + "'>" + headList.plan + "</option>";
+	            }
+	            
+	            //가져온 option을 헤더 select 아래에 append 
 	            
 	            // 2. 날짜 자동 입력 (info.startStr은 YYYY-MM-DD형식)
 	            var $startDate = $("#modal-body [name=planSdate]");

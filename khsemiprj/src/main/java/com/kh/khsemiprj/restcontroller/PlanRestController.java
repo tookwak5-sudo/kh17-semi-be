@@ -1,6 +1,9 @@
 package com.kh.khsemiprj.restcontroller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +21,14 @@ import jakarta.servlet.http.HttpSession;
 public class PlanRestController {
 	@Autowired
 	private PlanDao planDao;
+	
 	// 등록
+	// 유형 및 헤더 목록을 가져오는 메서드 추가
+    @GetMapping("/write")
+    public List<PlanDto> getPlanList() {
+        return planDao.selectListType();
+    }
+    
 	@PostMapping("/write")
 	public void write(@ModelAttribute PlanDto planDto, HttpSession session) {
 	
