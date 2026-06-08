@@ -25,11 +25,12 @@ public class ReplyDao {
 	public void insert(ReplyDto replyDto) {
 		String sql = "insert into reply("
 						+ "reply_no, reply_writer, "
-						+ "reply_origin, reply_content"
-					+ ") values(?, ?, ?, ?)";
+						+ "reply_origin, reply_content, reply_parent"
+					+ ") values(?, ?, ?, ?, ?)";
 		Object[] params = {
 			replyDto.getReplyNo(), replyDto.getReplyWriter(),
-			replyDto.getReplyOrigin(), replyDto.getReplyContent()
+			replyDto.getReplyOrigin(), replyDto.getReplyContent(), 
+			replyDto.getReplyParent()
 		};
 		jdbcTemplate.update(sql, params);
 	}
@@ -37,13 +38,13 @@ public class ReplyDao {
 	public List<ReplyDto> selectList(long replyOrigin) {
 		String sql = "select * from reply "
 						+ "where reply_origin = ? "
-						+ "order by reply_no asc";
+						+ "order by NVL(reply_parent, reply_no) asc, reply_no asc";
 		Object[] params = { replyOrigin };
 		return jdbcTemplate.query(sql, replyMapper, params);
 	}
 	//삭제
 	public boolean delete(long replyNo) {
-		String sql = "delete reply where reply_no = ?";
+		String sql = "update reply set reply_status='Y' where reply_no = ?";
 		Object[] params = { replyNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
