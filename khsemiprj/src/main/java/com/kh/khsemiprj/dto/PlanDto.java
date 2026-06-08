@@ -14,7 +14,7 @@ public class PlanDto {
 	private Integer planAprvNo;
 	private Long planDeptNo;
 	private String planName;
-	private String planHeader;
+	private Integer planHeadNo;
 	private String planExplain;
 	private String planSdate;
 	private String planEdate;

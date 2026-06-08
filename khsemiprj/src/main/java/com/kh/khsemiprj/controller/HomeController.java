@@ -40,7 +40,7 @@ public class HomeController {
 			event.put("title", planDto.getPlanName());
 			Map<String, Object> extendedProps = new HashMap<>();
 			extendedProps.put("planNo", planDto.getPlanNo());
-			extendedProps.put("planHeader", planDto.getPlanHeader());
+			extendedProps.put("planHeadNo", planDto.getPlanHeadNo());
 			extendedProps.put("planType", planDto.getPlanType());
 			extendedProps.put("planExplain", planDto.getPlanExplain());
 			event.put("extendedProps", extendedProps);

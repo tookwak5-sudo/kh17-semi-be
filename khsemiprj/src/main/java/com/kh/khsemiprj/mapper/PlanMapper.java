@@ -18,7 +18,7 @@ public class PlanMapper implements RowMapper<PlanDto> {
 				.planAprvNo(rs.getObject("plan_aprv_no", Integer.class))
 				.planDeptNo(rs.getObject("plan_dept_no", Long.class))
 				.planName(rs.getString("plan_name"))
-				.planHeader(rs.getString("plan_header"))
+				.planHeadNo(rs.getObject("plan_head_no", Integer.class))
 				.planExplain(rs.getNString("plan_explain"))
 				.planSdate(rs.getString("plan_sdate"))
 				.planEdate(rs.getString("plan_edate"))

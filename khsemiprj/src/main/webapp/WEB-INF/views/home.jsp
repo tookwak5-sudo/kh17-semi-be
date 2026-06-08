@@ -81,7 +81,7 @@
 		</div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="planHeader">
+	        	<select class="field w-100" name="planHeadNo">
 	                <option value="">선택하세요</option>
 	                <c:forEach var="planDto" items="${list}">
 	                <option value="${planDto.planNo}">${planDto.planHeader}</option>
@@ -164,7 +164,7 @@
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="planHeader">
+	        	<select class="field w-100" name="planHeadNo">
 	                <option value="">선택하세요</option>
 	                <c:forEach var="planDto" items="${list}">
 	                	<option value="${planDto.planNo}">${planDto.planHeader}</option>
@@ -214,7 +214,7 @@
 		$(document).on("click",".btn-plan", function(){
 			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
 				planType : $("[name=planType]").val(),
-				planHeader : $("[name=planHeader]").val(),
+				planHeadNo : $("[name=planHeadNo]").val(),
 				planName : $("[name=planName]").val(),
 				planSdate : $("[name=planSdate]").val(),
 				planEdate : $("[name=planEdate]").val(),
@@ -274,7 +274,7 @@
 		    var planSdate = $(this).data("plan-sdate");
 		    var planEdate = $(this).data("plan-edate");
 		    var planExplain = $(this).data("plan-explain");
-		    var planHeader = $(this).data("plan-header");
+		    var planHeadNo = $(this).data("plan-head_no");
 			
 // 			현재 수정하려는 수정 화면에 대한 처리			
 			var template = $("#edit-template").text();
@@ -284,7 +284,7 @@
             
 			$("#modal-body").find("[name=planName]").val(planTitle);
 			$("#modal-body").find("[name=planType]").val(planType);
-			$("#modal-body").find("[name=planHeader]").val(planHeader);
+			$("#modal-body").find("[name=planHead_no]").val(planHeadNo);
 		    $("#modal-body").find("[name=planSdate]").val(planSdate);
 		    $("#modal-body").find("[name=planEdate]").val(planEdate);
 		    $("#modal-body").find("[name=planExplain]").val(planExplain);
@@ -303,7 +303,7 @@
 			        planNo : planNo, // 어떤 일정을 수정할지 알아야 하므로 무조건 필수!
 			        planName : $("#modal-body [name=planName]").val(),
 			        planType : $("#modal-body [name=planType]").val(),
-			        planHeader : $("#modal-body [name=planHeader]").val(),
+			        planHeader : $("#modal-body [name=planHeadNo]").val(),
 			        planSdate : $("#modal-body [name=planSdate]").val(),
 			        planEdate : $("#modal-body [name=planEdate]").val(),
 			        planExplain : $("#modal-body [name=planExplain]").val()
@@ -384,7 +384,7 @@
                 var planSdate = info.event.start;
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
-                var planHeader = info.event.extendedProps.planHeader;
+                var planHeadNo = info.event.extendedProps.planHeadNo;
                 
                 var sdateObj = new Date(planSdate);
                 var edateObj = new Date(planEdate);
@@ -422,7 +422,7 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
-                $("#modalEditBtn").data("plan-header", planHeader);
+                $("#modalEditBtn").data("plan-head-no", planHeadNo);
             	
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
