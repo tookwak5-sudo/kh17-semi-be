@@ -53,14 +53,19 @@ public class BoardController {
 	
 	//상세 매핑
 	@RequestMapping("/detail")
-	public String detail(@RequestParam long boardNo, Model model) {
+	public String detail(@RequestParam long boardNo, Model model, @ModelAttribute PageVO pageVO) {
 		BoardDto boardDto = boardDao.selectOne(boardNo);
 		if(boardDto == null) throw new TargetNotfoundException("존재하지 않는 게시글");
 		model.addAttribute("boardDto", boardDto);
 		
 		//이전글과 다음글을 조회하여 첨부
-		model.addAttribute("prevBoardDto", boardDao.selectPreviousOne(boardNo));
-		model.addAttribute("nextBoardDto", boardDao.selectNextOne(boardNo));
+		if(pageVO.isList()) {
+			model.addAttribute("prevBoardDto", boardDao.selectPreviousOne(boardNo));
+			model.addAttribute("nextBoardDto", boardDao.selectNextOne(boardNo));
+		} else {
+			model.addAttribute("prevBoardDto", boardDao.selectPreviousOne(boardNo,pageVO));
+			model.addAttribute("nextBoardDto", boardDao.selectNextOne(boardNo,pageVO));
+		}
 		
 		return "board/detail";
 	}

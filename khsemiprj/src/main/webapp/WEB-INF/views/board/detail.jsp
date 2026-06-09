@@ -27,7 +27,59 @@
 	{
 		flex-grow: 1;
 	}
+	
+	#user-context-menu {
+    		position: absolute;
+    		background-color: white;
+    		border: 1px solid #ccc;
+    		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    		border-radius: 3px;
+    		padding: 5px 0;
+    		z-index: 1000; 
+		}
+
+		#user-context-menu a {
+    		display: block;
+    		padding: 8px 15px;
+    		color: #333;
+    		text-decoration: none;
+    		font-size: 14px;
+		}
+
+		#user-context-menu a:hover {
+    		background-color: #f1f3f5; 
+		}
 </style>
+
+<!-- 작성글 보기 자바스크립트(비회원 가능) -->
+<script type="text/javascript">
+	$(function(){
+    	// 1. 닉네임 클릭 시 메뉴 띄우기
+    	// 동적으로 생성된 댓글 닉네임도 클릭 가능하도록 document 영역 감시
+    	$(document).on("click", ".writer-name", function(e) {
+	        e.stopPropagation(); //클릭 이벤트가 문서 전체로 퍼지는 것을 막음 (바로 닫히는 현상 방지)
+
+    	    var memberId = $(this).data("id");
+
+        	if(!memberId) return; // 탈퇴한 사용자 등 아이디가 없으면 무시
+
+        // 2) 작성 글 보기 링크의 href 주소를 변경
+        	var searchUrl = "/board/list?column=board_writer&keyword=" + memberId;
+        	$("#link-view-posts").attr("href", searchUrl);
+
+        // 3) 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
+        	$("#user-context-menu").css({
+            	top: e.pageY + 10 + "px", // 마우스 포인터보다 살짝 아래
+            	left: e.pageX + "px"      // 마우스 포인터 위치
+        	}).show();
+    	});
+
+    // 2. 메뉴 밖의 다른 빈 공간을 클릭하면 메뉴 숨기기
+    	$(document).on("click", function() {
+        	$("#user-context-menu").hide();
+    	});
+	});
+</script>
 
 <!-- 좋아요 처리 관련 자바스크립트 (비회원도 가능) -->
 <script type="text/javascript">
@@ -161,7 +213,12 @@
 				method: "post",
 				data: {replyOrigin : boardNo},
 				success: function(response) {
-					$(".reply-count-text").text(response.length);
+					//삭제된 댓글을 제외하고 댓글갯수 카운트
+					var validCount = response.filter(function(reply) {
+					    return reply.replyStatus !== 'Y';
+					}).length;
+				
+					$(".reply-count-text").text(validCount);
 					//response는 백엔드에서의 List<ReplyDto>이다
 					//반복을 통해 템플릿을 배치하고 정보를 갈아끼운다
 					for(var i=0; i < response.length; i++) {
@@ -184,7 +241,7 @@
 						//- (중요) 수정, 삭제등을 위해서 기본키를 영역에 설정해야함
 						//- html은 .reply-wrapper이다.
 						if(response[i].replyStatus=='Y'){
-							$(html).find(".reply-writer").text("(알수없음)");
+							$(html).find(".reply-writer").text("(알수없음)").removeClass("writer-name").css("cursor", "default");
 							$(html).find(".reply-content").text("(삭제된 댓글입니다)").addClass("gray");
 							$(html).find(".button-wrapper").remove();
 							$(html).find(".board-writer").remove();
@@ -192,7 +249,8 @@
 						} else {
 						$(html).find(".image-profile")
 							.attr("src", "/member/profile?memberId="+response[i].replyWriter);
-						$(html).find(".reply-writer").text(response[i].replyWriter);
+						$(html).find(".reply-writer").text(response[i].replyWriter)
+							.attr("data-id", response[i].replyWriter);
 						$(html).find(".reply-content").text(response[i].replyContent);
 						}
 						
@@ -388,7 +446,7 @@
 		</div>
 		<div class="content-wrapper ms-20">
 			<h3 class="mt-0 mb-0">
-				<span class="reply-writer">아이디</span>
+				<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
 				<span class="board-writer red">(작성자)</span>
 			</h3>
 			<pre class="mt-10 mb-0 reply-content">내용 샘플</pre>
@@ -448,10 +506,10 @@
 					(탈퇴한사용자)
 				</c:if>
 				<c:if test="${boardDto.boardWriter != null}">
-					<!-- 누르면 이동하도록 링크 구현 -->
-					<a href="/member/detail?memberId=${boardDto.boardWriter}" class="link">
-						${boardDto.boardWriter}
-					</a>
+					<!-- 누르면 팝업나오게 링크 구현 -->
+					<span class="writer-name" data-id="${boardDto.boardWriter}" style="cursor: pointer; font-weight: bold;">
+  						  	${boardDto.boardWriter}
+						</span>
 				</c:if>
 			</div>
 		</div>
@@ -560,12 +618,22 @@
 	
 	<!-- 이전글/다음글 출력 -->
 	<div class="cell">
-		<span class="badge blue me-20">이전글</span> 
-		<a href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>	
+		<span class="badge blue me-20">다음글</span>
+		<c:if test="${param.column!=null}">
+		<a href="./detail?boardNo=${nextBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${nextBoardDto.boardTitle}</a>
+		</c:if>
+		<c:if test="${param.column==null}">
+		<a href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>
+		</c:if>
 	</div>
 	<div class="cell">
-		<span class="badge blue me-20">다음글</span>
-		<a href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>	
+		<span class="badge blue me-20">이전글</span> 
+		<c:if test="${param.column!=null}">
+		<a href="./detail?boardNo=${prevBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${prevBoardDto.boardTitle}</a>
+		</c:if>
+		<c:if test="${param.column==null}">
+		<a href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>
+		</c:if>
 	</div>
 	
 	<hr>
@@ -577,13 +645,24 @@
 		
 		<c:if test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
 		<a class="btn btn-negative" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
-		<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}">삭제</a>
+		<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}"  onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
 		</c:if>
 		
+		<c:if test="${param.column==null}">
 		<a class="btn btn-neutral" href="./list">목록으로</a>
+		</c:if>
+		<c:if test="${param.column!=null}">
+		<a class="btn btn-neutral" href="./list?column=${param.column}&keyword=${param.keyword}">목록으로</a>
+		</c:if>
 	</div>
 </div>
 
+<!-- 닉네임 클릭 시 나타날 창 -->
+<div id="user-context-menu" style="display: none;">
+    <a href="#" id="link-view-posts">
+        <i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
+    </a>
+</div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
