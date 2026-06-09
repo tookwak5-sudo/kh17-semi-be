@@ -518,7 +518,7 @@
             
             <h3>공지사항</h3>
             <hr>
-
+			
             <c:forEach var="notice" items="${noticeList}">
                 <div
                     style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
@@ -537,7 +537,6 @@
             </c:if>
         </div>
 </div>
-
-<jsp:include page="/WEB-INF/views/template/footer.jsp" />
+</div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

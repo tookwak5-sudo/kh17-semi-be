@@ -5,7 +5,7 @@
 
  <!-- jQuery CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="./preview.js"></script>
+<!--     <script src="./preview.js"></script> -->
 
 
 
@@ -14,6 +14,8 @@
 
 <script>
 	$(function() {
+		var certFailCount = 0;
+		
 		var state = {
 				empIdValid: false,
 // 				empNameValid: false,
@@ -137,6 +139,18 @@
                     else {
                         state.empEmailCertValid = false;
                         $(".field-cert").addClass("fail");
+                        certFailCount++;
+                        
+                        if(certFailCount>= 5){
+                        	$(".cert-message").text("인증번호를 5회 이상 틀렸습니다. 다시 인증번호를 전송 후 시도해주세요.")
+                            .css("color", "red");
+					        $(".field-cert").prop("disabled", true); // 입력창 막기
+					        $(".btn-cert-check").prop("disabled", true); // 검사 버튼 막기
+                        }
+                        else{
+                        	$(".cert-message").text("인증번호가 일치하지 않습니다. (" + certFailCount + "/5회 오류)")
+                            .css("color", "red");
+                        	}
                         }
                     }
                 });
@@ -150,6 +164,9 @@
 	                                 .prop("readonly", false).val("");
 	         state.empEmailValid = true;
 	         state.empEmailCertValid = false;
+	         
+	         certFailCount = 0;//0으로 초기화
+	         $(".cert-message").text(""); // 메시지 비우기
 	
 	         $("[name=empEmail]").trigger("focus");//커서 옮김
 	     });
@@ -172,6 +189,7 @@
                 <i class="fa-solid fa-lock"></i>
                 <span>인증번호 확인</span>
             </button>
+			<div class="cert-message w-100"></div>
             <div class="fail-feedback w-100">인증번호를 다시 확인해주세요</div>
         </div>
      </script>
