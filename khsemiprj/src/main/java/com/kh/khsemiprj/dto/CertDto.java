@@ -13,9 +13,9 @@ public class CertDto {
 	private String certNumber;
 	private Timestamp certTime;
 	private String certYn;
-	
+	private int certFailCnt;
 	public boolean isComplete() {
-		return certYn != null && certYn.equals("Y");
+		return certYn != null && certYn.equals("Y") && certFailCnt<5;
 	}
 	
 }
