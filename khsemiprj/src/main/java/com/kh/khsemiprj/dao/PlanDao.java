@@ -26,7 +26,8 @@ public class PlanDao {
 		String sql = "insert into plan "
 				+ "(plan_no, plan_emp_id, plan_aprv_no, plan_dept_no, plan_head_no, plan_name, "
 				+ "plan_type, plan_explain, plan_sdate, plan_edate) "
-				+ "values(?, ?, ?, ?, ?, ? ,?, ? ,? ,?)";
+				+ "values(?, ?, ?, ?, ?, ? ,? ,? ,? ,?)";
+
 		Object[] params = { planDto.getPlanNo(), 
 				planDto.getPlanEmpId(), planDto.getPlanAprvNo(), planDto.getPlanDeptNo(), planDto.getPlanHeadNo(),
 				planDto.getPlanName(), planDto.getPlanType(), planDto.getPlanExplain(), 
@@ -38,10 +39,10 @@ public class PlanDao {
 	//일정 수정
 	public boolean update(PlanDto planDto) {
 		String sql = "update plan set "
-				+ "plan_name=?, plan_type=?, plan_explain=?, plan_sdate=?, plan_edate=? "
+				+ "plan_name=?, plan_type=?, plan_head_no =?,  plan_explain=?, plan_sdate=?, plan_edate=? "
 				+ "where plan_no = ?";
 		Object[] params = {
-				planDto.getPlanName(), planDto.getPlanType(), planDto.getPlanExplain(), 
+				planDto.getPlanName(), planDto.getPlanType(), planDto.getPlanExplain(), planDto.getPlanHeadNo(),
 				planDto.getPlanSdate(), planDto.getPlanEdate(), planDto.getPlanNo()
 		};
 		return jdbcTemplate.update(sql, params)> 0;
@@ -62,13 +63,21 @@ public class PlanDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 	
+	//type 조회
+	public List<PlanDto> selectListType() {
+		String sql = "select * from plan order by plan_no desc";
+		return jdbcTemplate.query(sql, planMapper);
+	}
+	
 	//전체 일정 조회
-    public List<PlanDto> selectListByMine(Long deptNo, String empId) {
-        String sql = "SELECT * FROM plan "
-                + "WHERE (PLAN_TYPE = '회사') "
-                + "or (PLAN_TYPE = '부서' AND PLAN_DEPT_NO = ?) "
-                + "or (plan_type = '개인' AND PLAN_EMP_ID = ?)";
-        Object[] params = { deptNo, empId };
+    public List<PlanDto> selectList(String empId) {
+    	String sql = "(SELECT * FROM PLAN p WHERE p.PLAN_EMP_ID = ? and p.PLAN_TYPE = '개인') "
+    			+ "UNION "
+    			+ "(SELECT * FROM plan p WHERE p.PLAN_DEPT_NO = (SELECT edr.DEPT_NO FROM EMP_DEPT_RELATION edr WHERE edr.EMP_ID = ?) and p.PLAN_TYPE = '부서') "
+    			+ "UNION "
+    			+ "(SELECT * FROM plan p WHERE p.PLAN_TYPE = '회사')";
+        Object[] params = { empId, empId };
+        System.out.println(sql);
         return jdbcTemplate.query(sql,  planMapper, params);
     }
 }

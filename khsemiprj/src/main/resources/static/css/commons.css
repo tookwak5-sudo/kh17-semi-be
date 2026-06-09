@@ -184,17 +184,18 @@ a.btn {
     filter: brightness(0.95);
 }
 .btn.btn-positive {/* 긍정버튼 */
-    background-color: #0984e3;
-    border-color: #0984e3;
+    background-color: #739BED;
+    border-color: #739BED;
     color: white;
 }
 .btn.btn-neutral {/* 중립버튼 */
-    background-color: #FFFFFF;
-    color: #2d3436;
+    background-color: #AAB7C9;
+    border-color: #AAB7C9;
+    color: white;
 }
 .btn.btn-negative {/* 부정버튼 */
-    background-color: #d63031;
-    border-color: #d63031;
+    background-color: #E86A7A;
+    border-color: #E86A7A;
     color: white;
 }
 

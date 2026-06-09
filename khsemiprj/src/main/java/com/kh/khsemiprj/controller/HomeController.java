@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.PlanDao;
@@ -27,13 +29,11 @@ public class HomeController {
 	private BoardDao boardDao;
 	@RequestMapping("/")
 	public String home(Model model
-			, HttpSession session) {
+			, HttpSession session) throws JsonProcessingException {
 
 		String loginId = (String)session.getAttribute("loginId");
-		PlanDto findPlanDto = new PlanDto();
 		
-		List<PlanDto> planList = planDao.selectListByMine(findPlanDto.getPlanDeptNo(), loginId);
-		
+		List<PlanDto> planList = planDao.selectList(loginId);
 		List<Map<String, Object>> eventList = new ArrayList<>();
 		for(PlanDto planDto : planList) {
 			Map<String, Object> event = new HashMap<>();
@@ -51,6 +51,19 @@ public class HomeController {
 		}
 		
 		model.addAttribute("eventList", new Gson().toJson(eventList));
+	
+		Map<Integer, PlanDto> dtoMap = new HashMap<>();
+		List<PlanDto> list = planDao.selectListType();
+		for (PlanDto dto : list) {
+ 	        dtoMap.put(dto.getPlanNo(), dto);
+ 	    }
+ 		
+ 	    // 3. 자바 객체를 JSP의 JavaScript가 인식할 수 있도록 JSON 문자열로 변환
+ 	    ObjectMapper objectMapper = new ObjectMapper();
+ 	    String planHeadJson = objectMapper.writeValueAsString(list);
+ 	    
+ 	    // 4. Model에 담아서 jsp로 전달
+ 		model.addAttribute("planHeadJson", planHeadJson);
 		
 		List<BoardDto> grabNoticeList = boardDao.selectNoticeList();
 		
