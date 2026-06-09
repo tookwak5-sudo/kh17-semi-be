@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <h1>마이 페이지</h1>
@@ -253,3 +254,5 @@
 </script>
 
 </div>
+
+<jsp:include page="/WEB-INF/views/template/footer.jsp"/>
