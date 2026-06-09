@@ -68,7 +68,6 @@ public class HomeController {
  		model.addAttribute("planHeadJson", planHeadJson);
  		
  		// 홈에서 board 공지사항 전달하는 코드
- 		
  		List<BoardDto> grabNoticeList = boardDao.selectNoticeList();
 		
 		List<Map<String,Object>> noticeList = new ArrayList<>();
