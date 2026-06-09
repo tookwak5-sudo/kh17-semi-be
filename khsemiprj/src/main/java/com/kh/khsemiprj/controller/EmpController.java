@@ -26,6 +26,7 @@ import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
+import com.kh.khsemiprj.service.EmpLeaveService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -49,6 +50,8 @@ public class EmpController {
 	@Autowired
 	private LogInoutDao logInoutDao;
 	
+	@Autowired
+	private EmpLeaveService empLeaveService;
 	
 	//로그인
 	@GetMapping("/login")
@@ -62,12 +65,13 @@ public class EmpController {
 							, HttpServletRequest request//요청 정보를 모두 가져오기
 							) {
 		
-		//로그인 시도
+		//[1] 사용자가 입력한 아이디를 이용하여 DB에 대상이 있는 지를 조회
 		EmpDto findEmpDto = empDao.selectOne(empDto.getEmpId());
 		if(findEmpDto == null) {
 			return "redirect:./login?error";
 		}
 		
+		//[2] 비밀번호 확인
 		if(!findEmpDto.getEmpPassword().equals(empDto.getEmpPassword())) {
 			return "redirect:./login?error";
 		}
@@ -114,14 +118,13 @@ public class EmpController {
 //			return "redirect:./notice";
 //		}
 		
-		//로그인 테이블에 저장
-		LogInoutDto logInoutDto = new LogInoutDto();
-		//아이디
-		logInoutDto.setLogInoutEmpId(findEmpDto.getEmpId());
-		//유형
+		//목표: 로그인과 동시에 직원 출근처리 
+		//[1] 사용자가 입력한 아이디를 이용하여 loginout 테이블 조회
+		LogInoutDto logInoutDto = logInoutDao.getLastType(empDto.getEmpId());
+		
+		//[2] 퇴근 상태라면 출근상태로 변경하고 DB에 저장
 		logInoutDto.setLogInoutType("출근");
 		logInoutDao.insert(logInoutDto);
-		
 		return "redirect:/";
 	}
 	
@@ -133,15 +136,68 @@ public class EmpController {
 		return "redirect:/emp/login";
 	}
 	
-//	//로그아웃 및 퇴근
-//	@RequestMapping("/logoutOut")
-//	public String logoutOut(HttpSession session) {
-//		session.removeAttribute("loginId");
-//		session.removeAttribute("empGrade");
-//		
-//		LogInoutDto logInoutDto = new LogInoutDto();
-//		logInoutDto.getLogInoutType();
-//	}
+	//목표 출근버튼을 누르면 출근 처리
+	@PostMapping("/work-in")
+	public String workIn(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+		
+		// 아이디를 조회해서 출퇴근 여부 확인
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		
+		// 출근 상태라면 상태변화x 
+		if(logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workIn";
+		}
+		
+		// 퇴근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutEmpId(loginId);
+		newDto.setLogInoutType("출근");
+		System.out.println("출근" + newDto);
+		logInoutDao.insert(newDto);
+		return "redirect:/";
+	}
+	
+	//목표 퇴근 버튼을 누르면 퇴근 처리
+	@PostMapping("/work-out")
+	public String workOut(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+		
+		// 아이디를 조회해서 출퇴근 여부 확인
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		// 퇴근 상태라면 상태변화x 
+		if(logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workOut";
+		}
+		// 출근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutEmpId(loginId);
+		newDto.setLogInoutType("퇴근");
+		logInoutDao.insert(newDto);
+		System.out.println("퇴근" + newDto);
+		return "redirect:/";
+	} 
+	
+	//로그아웃 및 퇴근
+	@RequestMapping("/logoutOut")
+	public String logoutOut(HttpSession session) {
+		session.removeAttribute("loginId");
+		session.removeAttribute("empGrade");
+		
+		// 아이디를 조회해서 출퇴근 여부 확인
+		String loginId = (String) session.getAttribute("loginId");
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		// 퇴근 상태라면 상태변화x 로그아웃 안됨
+		if("퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workOut";
+		}
+		
+		// 출근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutType("퇴근");
+		logInoutDao.insert(logInoutDto);
+		return "redirect:/emp/login";
+	}
 	
 	//회원가입
 	@GetMapping("/join")
@@ -150,7 +206,13 @@ public class EmpController {
 	}
 	@PostMapping("/join")
 	public String join(@ModelAttribute EmpDto empDto, @RequestParam MultipartFile attach)throws IllegalStateException, IOException {
+		
+		//회원가입 정보 등록
 		empDao.join(empDto);
+		
+		//휴가 DB에 정보 등록
+		empLeaveService.leaveInsert(empDto.getEmpId());
+		
 		//프로필이 있으면 추가 등록 및 연결
 				if(!attach.isEmpty()) {
 					int attachNo = attachService.save(attach);
@@ -258,12 +320,7 @@ public class EmpController {
 		
 		List<EmpLeaveDto> empLeaveList =empLeaveDao.selectList(loginId);
 		
-		
-		
-		
 		model.addAttribute("empLeaveList", empLeaveList);
-		
-		
 		
 		return "emp/mypage";
 	}

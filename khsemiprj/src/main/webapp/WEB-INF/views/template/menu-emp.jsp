@@ -62,18 +62,22 @@
 	    <!-- 하위메뉴 -->
         <ul>
             <li>
+            	<form action="/emp/work-in" method="post">
+	                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
+	                 <button type="submit">출근</button>
+                 </form>
+            </li>
+            <li>
+            	<form action="/emp/work-out" method="post">
+	                <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
+	                <button type="submit">퇴근</button>
+                </form>
+            </li>
+            <li>
                 <a href="/emp/logout">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>로그아웃</span>
                 </a>
-            </li>
-            <li>
-                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
-                 <span>출근</span>
-            </li>
-            <li>
-                 <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
-                 <span>퇴근</span>
             </li>
         </ul>
     </li>
