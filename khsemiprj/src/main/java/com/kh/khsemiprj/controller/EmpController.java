@@ -49,6 +49,8 @@ public class EmpController {
 	@Autowired
 	private LogInoutDao logInoutDao;
 	
+	
+	//로그인
 	@GetMapping("/login")
 	public String login() {
 		return "emp/login";
@@ -141,6 +143,7 @@ public class EmpController {
 //		logInoutDto.getLogInoutType();
 //	}
 	
+	//회원가입
 	@GetMapping("/join")
 	public String join() {
 		return "emp/join";
