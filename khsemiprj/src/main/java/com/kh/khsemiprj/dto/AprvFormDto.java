@@ -14,5 +14,7 @@ public class AprvFormDto {
     private String formExplain;  
     private String formUseYn;    
     private Timestamp formWtime; 
-    private int formHeadNo;     
+    private int formHeadNo;
+    
+    private String headName;
 }

@@ -4,6 +4,19 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
+<!-- <style>
+	table, tr, th, td { border: none !important; border-bottom: 1px solid #ebebeb !important;}
+	tr:hover { background-color: #f6f5f5 }
+	th,td { height: 37px;}
+	th { 
+	background-color: #739BED;
+	color: white;
+	}
+	td a { text-decoration: none; }
+	td:hover a { text-decoration: underline; }
+</style> -->
+
+
 <div class="container w-1200 mt-50 mb-50">
 
 	<div class="cell center mb-0">
@@ -32,12 +45,12 @@
 					<th>작성일</th>
 					<th>조회수</th>
 					<th>좋아요</th>
-					<th>싫어요</th>
+				<!-- 	<th>싫어요</th> -->
 				</tr>
 			</thead>
 			<tbody>
 				<c:forEach var="boardDto" items="${noticeList}">
-					<tr bgcolor="#ffeaa7" style="font-weight: bold;">
+					<tr bgcolor="#f6f5f5" style="font-weight: bold;">
 						<td>${boardDto.boardNo}</td>
 						<td align="left"><c:if test="${boardDto.boardHead != null}">
                     (${boardDto.boardHead})
@@ -54,7 +67,7 @@
 						<td>${boardDto.boardWtimeString}</td>
 						<td>${boardDto.boardReadcount}</td>
 						<td>${boardDto.boardLikecount}</td>
-						<td>${boardDto.boardDislikecount}</td>
+						<%-- <td>${boardDto.boardDislikecount}</td> --%>
 					</tr>
 				</c:forEach>
 
@@ -76,7 +89,7 @@
 						<td>${boardDto.boardWtimeString}</td>
 						<td>${boardDto.boardReadcount}</td>
 						<td>${boardDto.boardLikecount}</td>
-						<td>${boardDto.boardDislikecount}</td>
+						<%-- <td>${boardDto.boardDislikecount}</td> --%>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -102,8 +115,9 @@
 	</div>
 </div>
 
-
-
 <!-- 페이지네이션 -->
+<div class="cell">    
+	<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+</div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

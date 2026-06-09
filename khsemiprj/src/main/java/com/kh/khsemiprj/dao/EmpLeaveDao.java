@@ -17,7 +17,16 @@ public class EmpLeaveDao {
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private EmpLeaveMapper empLeaveMapper;
-
+	
+	
+	//회원가입이 되면 자동으로 휴가DB에 등록
+	public void insert(EmpLeaveDto empLeaveDto) {
+		String sql = "insert into emp_leave(leave_emp_id, leave_year) "
+				+ "values(?, sysdate)";
+		Object[] params = {empLeaveDto.getLeaveEmpId()};
+		jdbcTemplate.update(sql, params);
+	}
+	
 	public List<EmpLeaveDto> selectList(String leaveEmpId) {
 		if (leaveEmpId == null)
 			return null;
@@ -26,6 +35,13 @@ public class EmpLeaveDao {
 
 		return jdbcTemplate.query(sql, empLeaveMapper, params);
 
+	}
+	
+	public EmpLeaveDto selectOne(String empId) {
+		String sql = "select * from emp_leave where leave_emp_id = ?";
+		Object[] params = { empId};
+		List<EmpLeaveDto> list = jdbcTemplate.query(sql,  empLeaveMapper, params);
+		return list.isEmpty() ? null : list.get(0);
 	}
 
 }

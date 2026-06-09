@@ -16,6 +16,8 @@ public class ReplyVO {
 	private String replyContent;
 	private Timestamp replyWtime;
 	private Timestamp replyEtime;
+	private Long replyParent;
+	private String replyStatus;
 	//+작성자여부
 	private boolean writer;//이 값이 true면 작성자가 쓴 댓글이라는 의미(작성자라는 표시가 추가됨)
 	//+소유자여부

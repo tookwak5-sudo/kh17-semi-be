@@ -49,6 +49,8 @@ public class EmpController {
 	@Autowired
 	private LogInoutDao logInoutDao;
 	
+	
+	//로그인
 	@GetMapping("/login")
 	public String login() {
 		return "emp/login";
@@ -128,8 +130,6 @@ public class EmpController {
 	public String logout(HttpSession session) {
 		session.removeAttribute("loginId");
 		session.removeAttribute("empGrade");
-		
-		
 		return "redirect:/emp/login";
 	}
 	
@@ -143,6 +143,7 @@ public class EmpController {
 //		logInoutDto.getLogInoutType();
 //	}
 	
+	//회원가입
 	@GetMapping("/join")
 	public String join() {
 		return "emp/join";
@@ -244,7 +245,7 @@ public class EmpController {
 		
 		String loginId =(String) session.getAttribute("loginId");
 		if(loginId==null) { 
-			System.out.println("현재 세션: "+loginId);
+			//System.out.println("현재 세션: "+loginId);
 			return "redirect:./login";
 		
 		}

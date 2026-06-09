@@ -47,6 +47,30 @@ public class DeptDao {
 		return jdbcTemplate.query(sql, deptMapper, params);
 	}
 	
+	//내 부서와 관련된 부서만 조회
+	public List<DeptDto> selectListMyDept(String empId) {
+		String sql = 
+				"WITH TargetDept AS ( "
+				+ "    SELECT dept_no "
+				+ "    FROM emp_dept_relation "
+				+ "    WHERE emp_id = ? "//파라미터를 가장 위로 올림
+				+ ") "
+				+ "SELECT * FROM ("
+				+ "SELECT dept_no, dept_parent_no, dept_name, dept_depth, dept_use_yn, dept_emp_id "
+				+ "FROM dept "
+				+ "START WITH dept_no = (SELECT dept_no FROM TargetDept) "
+				+ "CONNECT BY PRIOR dept_parent_no = dept_no "//부모 쪽으로 거슬러 올라감
+				+ "UNION "
+				+ "SELECT dept_no, dept_parent_no, dept_name, dept_depth, dept_use_yn, dept_emp_id "
+				+ "FROM dept "
+				+ "START WITH dept_no = (SELECT dept_no FROM TargetDept) "
+				+ "CONNECT BY PRIOR dept_no = dept_parent_no "//자식 쪽으로 내려감
+				+ ") "
+				+ "ORDER BY dept_depth ASC";
+		Object[] params = { empId };
+		return jdbcTemplate.query(sql, deptMapper, params);
+	}
+	
 	// 부서 상세 조회
 	public DeptDto selectOne(long deptNo) {
 		String sql = "select * from dept where dept_no = ?";

@@ -81,7 +81,7 @@
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="planHeadNo">
+	        	<select class="field w-100" name="headNo">
 	                <option value="">선택하세요</option>
 	            </select>
 	        </div>
@@ -152,20 +152,20 @@
 	        </div>
 	        <div class="cell">
 	        	<label>유형</label>
+	        	<div class="cell">
+	        	<label>유형</label>
 	        	<select class="field w-100" name="planType">
-	                <option value="회사">선택하세요</option>
-	                <c:forEach var="planDto" items="${list}">
-	                	<option value="${planDto.planNo}">${planDto.planType}</option>
-	                </c:forEach>
+	                <option value="">선택하세요</option>
+	                <option value="개인">개인</option>
+					<option value="부서">부서</option>
+					<option value="회사">회사</option>
 	            </select>
+	        </div>
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="planHeadNo">
+	        	<select class="field w-100" name="headNo">
 	                <option value="">선택하세요</option>
-	                <c:forEach var="planDto" items="${list}">
-	                	<option value="${planDto.planNo}">${planDto.planHeader}</option>
-	                </c:forEach>
 	            </select>
 	        </div>
 	        <div class="cell">
@@ -218,7 +218,7 @@
 				planExplain : $("[name=planExplain]").val()
 			};
 			
-			console.log(data);
+			//console.log(data);
 			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
 // 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
 // 			if(check) return;
@@ -273,12 +273,11 @@
 		    var planExplain = $(this).data("plan-explain");
 		    var planHeadNo = $(this).data("plan-head_no");
 			
-// 			현재 수정하려는 수정 화면에 대한 처리			
+// 			현재 수정하려는 수정 화면에 대한 처리		
+
+			// 수정 화면 가져오기
 			var template = $("#edit-template").text();
             $("#modal-body").html(template);
-            
-            
-            
 			$("#modal-body").find("[name=planName]").val(planTitle);
 			$("#modal-body").find("[name=planType]").val(planType);
 			$("#modal-body").find("[name=planHead_no]").val(planHeadNo);
@@ -288,6 +287,14 @@
 			
 		    //수정 눌렀을때 고유키 심어주기
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
+			
+		    var headList = ${planHeadJson};
+            var options = "";
+            for(var i = 0; i < headList.length; i++) {
+        		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+            }
+            //가져온 option을 헤더 select 아래에 append 
+            $("select[name='headNo']").append(options);
 		    
 		    $(".calendarModal").show();
 		});
@@ -324,7 +331,7 @@
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
 			
-	    	var currentPlanType = "회사"
+	    	//var currentPlanType = "회사"
 	    	
 	        var calendarEl = document.getElementById('calendar');
 	        var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -339,10 +346,12 @@
 	        	},
 	        	
 	        	
-	            dayMaxEvents: 3, 
+
+	            dayMaxEvents: 1, 
 
 	            selectable: true,
 	       		select: function(info) { // select : 날짜 시간을 선택할 때 사용
+	       			
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
@@ -350,10 +359,11 @@
 	            var headList = ${planHeadJson};
 	            var options = "";
 	            for(var i = 0; i < headList.length; i++) {
-            		options = "<option value='" + headList.planNo + "'>" + headList.plan + "</option>";
+            		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
 	            }
-	            
 	            //가져온 option을 헤더 select 아래에 append 
+	            $("select[name='headNo']").append(options);
+	            
 	            
 	            // 2. 날짜 자동 입력 (info.startStr은 YYYY-MM-DD형식)
 	            var $startDate = $("#modal-body [name=planSdate]");
@@ -521,7 +531,7 @@
         <div class="left-section">
             <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
         </div>
-        
+
         <div class="right-section">
             <div class="card p-20" style="height: 300px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -529,13 +539,12 @@
                     <a href="#">더보기</a>
                 </div>
                 </div>
-    
+
            <div class="card p-20" style="height: 300px; overflow-y: auto;">
-            
-            
+
+
             <h3>공지사항</h3>
             <hr>
-			
             <c:forEach var="notice" items="${noticeList}">
                 <div
                     style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
@@ -543,7 +552,7 @@
                     ${notice.boardTitle}
                 </a>
 
-                    
+
                     <p style="color: #999; font-size: 12px;">작성자:
                         ${notice.boardWriter}</p>
                 </div>
@@ -556,4 +565,5 @@
 </div>
 </div>
 
-<jsp:include page="/WEB-INF/views/template/footer.jsp"/>
+<jsp:include page="/WEB-INF/views/template/footer.jsp" />
+
