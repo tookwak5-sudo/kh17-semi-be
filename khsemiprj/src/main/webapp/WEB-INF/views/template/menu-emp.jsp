@@ -18,7 +18,7 @@
         <ul>
             <li>
                 <a href="/aprv/list">
-                    <i class="fa-solid fa-flag"></i>
+                    <i class="fa-solid fa-clipboard-list"></i>
                     <span>결재 목록</span>
                 </a>
             </li>
@@ -26,20 +26,20 @@
 	</li>
 	<li>
 	    <a href="#">
-	        <i class="fa-solid fa-database"></i>
+	        <i class="fa-solid fa-building"></i>
 	        <span>부서관리</span>
 		</a>
         <!-- 하위 메뉴 -->
         <ul>
             <li>
                 <a href="/dept/list">
-                    <i class="fa-solid fa-flag"></i>
+                    <i class="fa-solid fa-table-list"></i>
                     <span>부서 목록</span>
                 </a>
             </li>
             <li>
                 <a href="/dept/chart">
-                    <i class="fa-solid fa-flag"></i>
+                    <i class="fa-solid fa-people-group"></i>
                     <span>조직도</span>
                 </a>
             </li>
@@ -75,7 +75,6 @@
                  <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
                  <span>퇴근</span>
             </li>
-          
         </ul>
     </li>
 </ul>
