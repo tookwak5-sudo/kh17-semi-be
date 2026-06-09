@@ -31,7 +31,7 @@
         </ul>
 	</li>
 	<li>
-	    <a href="/emp/list">
+	    <a href="/admin/emp/list">
 	        <i class="fa-solid fa-comments"></i>
 	        <span>사원관리</span>
 	    </a>
