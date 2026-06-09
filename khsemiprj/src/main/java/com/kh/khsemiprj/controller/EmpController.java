@@ -128,8 +128,6 @@ public class EmpController {
 	public String logout(HttpSession session) {
 		session.removeAttribute("loginId");
 		session.removeAttribute("empGrade");
-		
-		
 		return "redirect:/emp/login";
 	}
 	

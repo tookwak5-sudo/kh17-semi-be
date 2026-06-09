@@ -66,7 +66,24 @@ public class HomeController {
  	    
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("planHeadJson", planHeadJson);
- 		System.out.println(planHeadJson);
+ 		
+ 		// 홈에서 board 공지사항 전달하는 코드
+ 		
+ 		List<BoardDto> grabNoticeList = boardDao.selectNoticeList();
+		
+		List<Map<String,Object>> noticeList = new ArrayList<>();
+		for(BoardDto boardDto:grabNoticeList) {
+			Map<String,Object>notice=new HashMap<>();
+			notice.put("boardNo", boardDto.getBoardNo());
+			notice.put("boardWriter", boardDto.getBoardWriter());
+			notice.put("boardTitle", boardDto.getBoardTitle());
+		
+			
+			noticeList.add(notice);
+		}
+		
+		model.addAttribute("noticeList", noticeList);
+		
 		return "home";
 	}
 }

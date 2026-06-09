@@ -62,7 +62,7 @@
 	    <!-- 하위메뉴 -->
         <ul>
             <li>
-                <a href="/emp/login">
+                <a href="/emp/logout">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>로그아웃</span>
                 </a>

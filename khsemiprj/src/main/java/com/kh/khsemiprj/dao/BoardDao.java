@@ -64,6 +64,7 @@ public class BoardDao {
 	                + ") where rownum <= 5"; // 상위 5개만
 	    return jdbcTemplate.query(sql, boardMapper);
 	}
+	
 	//첫 주석과 같은 이유로 넣었습니다.
 	public List<BoardDto> selectNullList() {
 		String sql = "select * from board_list "

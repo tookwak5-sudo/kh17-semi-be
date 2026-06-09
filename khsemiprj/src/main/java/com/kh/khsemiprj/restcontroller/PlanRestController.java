@@ -64,12 +64,14 @@ public class PlanRestController {
 	//삭제
 	@PostMapping("/delete")
 	public void delete(@RequestParam int planNo) {
+		
 		planDao.delete(planNo);
 	}
 		
 	// 수정
 	@PostMapping("/edit")
 	public void edit(@ModelAttribute PlanDto planDto) {
+		
 		planDao.update(planDto);
 	}
 

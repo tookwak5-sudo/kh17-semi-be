@@ -28,7 +28,7 @@
 		
 		<div class="cell right mt-0">
 	      <!-- 페이지접근로그목록 목록 -->
-			<span>${pageVo.beginRownum}-${pageVo.endRownum} / 총 ${pageVo.count}개 로그</span>
+			<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총 ${pageVO.count}개 로그</span>
 	   </div>
 	   
 	   <div class="cell">

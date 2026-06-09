@@ -24,7 +24,7 @@
             </li>
             <li>
                 <a href="/aprvForm/list">
-                    <i class="fa-solid fa-flag"></i>
+					<i class="fa-solid fa-file"></i>
                     <span>결재 양식</span>
                 </a>
             </li>

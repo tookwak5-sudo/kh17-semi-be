@@ -30,7 +30,7 @@ public class PlanDao {
 		String sql = "insert into plan "
 				+ "(plan_no, plan_emp_id, plan_aprv_no, plan_dept_no, plan_head_no, plan_name, "
 				+ "plan_type, plan_explain, plan_sdate, plan_edate) "
-				+ "values(?, ?, ?, ?, ?, ?, ?, ? ,?, ?)";
+				+ "values(?, ?, ?, ?, ?, ? ,?, ? ,? ,?)";
 		Object[] params = { planDto.getPlanNo(), 
 				planDto.getPlanEmpId(), planDto.getPlanAprvNo(), planDto.getPlanDeptNo(), planDto.getPlanHeadNo(),
 				planDto.getPlanName(), planDto.getPlanType(), planDto.getPlanExplain(), 
