@@ -244,7 +244,7 @@ public class EmpController {
 		
 		String loginId =(String) session.getAttribute("loginId");
 		if(loginId==null) { 
-			System.out.println("현재 세션: "+loginId);
+			//System.out.println("현재 세션: "+loginId);
 			return "redirect:./login";
 		
 		}

@@ -16,7 +16,7 @@ import com.google.gson.Gson;
 import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.PlanDao;
 import com.kh.khsemiprj.dto.BoardDto;
-import com.kh.khsemiprj.dto.DeptDto;
+import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
 
 import jakarta.servlet.http.HttpSession;
@@ -52,35 +52,21 @@ public class HomeController {
 		}
 		
 		model.addAttribute("eventList", new Gson().toJson(eventList));
-	
-		Map<Integer, PlanDto> dtoMap = new HashMap<>();
-		List<PlanDto> list = planDao.selectListType();
-		for (PlanDto dto : list) {
- 	        dtoMap.put(dto.getPlanNo(), dto);
+		
+		
+		//목표: DB에 저장된 Head의 정보를 가져오기
+		Map<Integer, HeadDto> dtoMap = new HashMap<>();
+		List<HeadDto> list = planDao.selectListHeader();
+		for (HeadDto dto : list) {
+ 	        dtoMap.put(dto.getHeadNo(), dto);
  	    }
- 		
  	    // 3. 자바 객체를 JSP의 JavaScript가 인식할 수 있도록 JSON 문자열로 변환
  	    ObjectMapper objectMapper = new ObjectMapper();
  	    String planHeadJson = objectMapper.writeValueAsString(list);
  	    
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("planHeadJson", planHeadJson);
-		
-		List<BoardDto> grabNoticeList = boardDao.selectNoticeList();
-		
-		List<Map<String,Object>> noticeList = new ArrayList<>();
-		for(BoardDto boardDto:grabNoticeList) {
-			Map<String,Object>notice=new HashMap<>();
-			notice.put("boardNo", boardDto.getBoardNo());
-			notice.put("boardWriter", boardDto.getBoardWriter());
-			notice.put("boardTitle", boardDto.getBoardTitle());
-		
-			
-			noticeList.add(notice);
-		}
-		
-		model.addAttribute("noticeList", noticeList);
-		
+ 		System.out.println(planHeadJson);
 		return "home";
 	}
 }

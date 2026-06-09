@@ -37,6 +37,7 @@ public class PlanRestController {
 		String loginId = (String) session.getAttribute("loginId");
 		
 		planDto.setPlanNo(planNo);
+		
 		planDto.setPlanEmpId(loginId);
 		
 		planDao.insert(planDto);
