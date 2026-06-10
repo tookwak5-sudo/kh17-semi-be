@@ -119,7 +119,7 @@ public class EmpController {
 //		}
 		
 		// 목표: 관리자가 로그인을 하면 전 직원의 연별 휴가 기록 갱신
-		if(findEmpDto.getEmpGrade() == 2) {
+		if(findEmpDto.getEmpGrade() == 2) { // 등급이 관리자 이면
 			
 		}
 		
