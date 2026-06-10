@@ -28,7 +28,7 @@
 		
 		<div class="cell right mt-0">
 	      <!-- 출퇴근 목록 -->
-			<span>${pageVo.beginRownum}-${pageVo.endRownum} / 총 ${pageVo.count}개</span>
+			<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총 ${pageVO.count}개</span>
 	   </div>
 	   
 	   <div class="cell">

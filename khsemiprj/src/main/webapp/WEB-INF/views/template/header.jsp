@@ -55,8 +55,8 @@
 
 <body>
 
-세션ID : ${pageContext.session.id},
-loginId : ${sessionScope.loginId},
+세션ID : ${pageContext.session.id}
+loginId : ${sessionScope.loginId}
 empGrade : ${sessionScope.empGrade}
 
 
@@ -81,20 +81,17 @@ empGrade : ${sessionScope.empGrade}
 
             <!-- 메뉴 -->
            <div> 
-            	<%-- <jsp:include page="/WEB-INF/views/template/menu-member.jsp"></jsp:include> --%>
-
-<%-- 				<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}"> --%>
-<%-- 					<c:if test="${sessionScope.empGrade == '0' || sessionScope.empGrade == null}"> --%>
-
-						<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
-
-<%-- 					</c:if> --%>
-<%-- 					<c:if test="${sessionScope.loginLevel == '1' || sessionScope.loginLevel == '2'}"> --%>
-<%-- 						<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include> --%>
-<%-- 					</c:if> --%>
-<%-- 				</c:if> --%>
-
-
+           		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+	            	<c:if test="${sessionScope.empGrade == '2'}">
+	            	<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
+					</c:if>
+					<c:if test="${sessionScope.empGrade == '1'}">
+						<jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
+					</c:if>
+					<c:if test="${sessionScope.empGrade == '0'}">           	
+					<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
+					</c:if>
+				</c:if>
             </div>
 
             <!-- 사이드바 및 컨텐츠 -->

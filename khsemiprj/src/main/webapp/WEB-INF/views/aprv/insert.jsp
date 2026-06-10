@@ -354,7 +354,7 @@
         <div class="cell mt-40 mb-50 right">
         	<input type="hidden" name="aprvStatus" class="aprv-status" value="">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
-        	<button class="btn aprv-temp-insert" style="background-color:#fdcb6e;">
+        	<button class="btn aprv-temp-insert" style="background-color:#93A8AC;">
                 임시저장
             </button>
             <button class="btn btn-positive aprv-insert">

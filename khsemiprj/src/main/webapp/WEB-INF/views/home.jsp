@@ -59,15 +59,18 @@
 
 <script type="text/template" id="write-template">
 <div class="calendarModal">
-	<div class="flex-area flex-center mb-10">
-	        <h3 class= "mt-50">일정 등록</h3>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	<div class="flex-area flex-center mb-10 w-100">
+		<h1 class= "mt-40 flex-fill ms-20">일정 등록</h1>
+	    <button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
 	        </div>
+			<input type="hidden" name="planDeptNo" value="${deptNo}" class="field w-100">
 	        <div class="cell">
 	        	<label>유형</label>
 	        	<select class="field w-100" name="planType">
@@ -79,7 +82,7 @@
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="planHeadNo">
+	        	<select class="field w-100" name="headNo">
 	                <option value="">선택하세요</option>
 	            </select>
 	        </div>
@@ -98,7 +101,7 @@
 	        </div>
 	        <div class="cell mt-40 right">
 	            <button type="submit" class="btn btn-positive btn-plan">
-	                등록하기
+	                <i class="fa-solid fa-plus"></i>등록하기
 	            </button>
 	       </div>
     	</div>
@@ -108,10 +111,9 @@
 <script type="text/template" id="detail-template">
 <div class="calendarModal" class="container w-600 mt-50">
     <div class="flex-area flex-center mb-10">
-	        <h3 class= "mt-50">일정 상세</h3>
+	        <h1 class= "mt-40 flex-fill ms-20">일정 상세</h1>
 	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
 	</div>
-
     <div class="container w-500 mt-50">
         <div class="cell">
             <h1 class="mb-10">
@@ -137,6 +139,57 @@
 </div>
 </script>
 
+<script type="text/template" id="edit-template">
+<div class="calendarModal">
+	<div class="flex-area flex-center mb-10">
+	        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
+	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	</div>
+		<div class="container w-500 mt-50">
+			<div class="cell">
+	        	<label>일정명</label>
+	        	<input type="text" name="planName" class="field w-100">
+	        </div>
+	        <div class="cell">
+	        	<label>유형</label>
+	        	<div class="cell">
+	        	<label>유형</label>
+	        	<select class="field w-100" name="planType">
+	                <option value="">선택하세요</option>
+	                <option value="개인">개인</option>
+					<option value="부서">부서</option>
+					<option value="회사">회사</option>
+	            </select>
+	        </div>
+	        </div>
+			<div class="cell">
+	        	<label>종류(헤더)</label>
+	        	<select class="field w-100" name="planHeadNo">
+	                <option value="">선택하세요</option>
+	            </select>
+	        </div>
+	        <div class="cell">
+	            <label>일정 <i class="fa-solid fa-asterisk red"></i></label>
+	        </div>
+	        <div class="cell flex-area" style="align-items: center;">
+	            <input type="text" name="planSdate" class="field w-100 picker-8-1">
+	                <i class="fa-solid fa-minus ms-10 me-10"></i>
+	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
+	        </div>
+	        
+	         <div class="cell">
+	            <label>내용</label>
+	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
+	        </div>
+	        <div class="cell mt-40 right">
+	            <button type="submit" class="btn btn-positive btn-plan-edit">
+	                수정하기
+	            </button>
+	       </div>
+    	</div>
+</div>
+</script>
+
 <script type="text/javascript">
 	$(function(){
 		
@@ -156,16 +209,20 @@
 //         };
 		//등록 버튼을 누르면 발생하는 등록 작업
 		$(document).on("click",".btn-plan", function(){
+			
+			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
+			var planDeptNo = $("[name=planDeptNo]").val();
+			
 			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
 				planType : $("[name=planType]").val(),
 				planHeadNo : $("[name=planHeadNo]").val(),
 				planName : $("[name=planName]").val(),
 				planSdate : $("[name=planSdate]").val(),
 				planEdate : $("[name=planEdate]").val(),
-				planExplain : $("[name=planExplain]").val()
+				planExplain : $("[name=planExplain]").val(),
 			};
 			
-			console.log(data);
+			//console.log(data);
 			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
 // 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
 // 			if(check) return;
@@ -207,6 +264,70 @@
 	            }
 	        });
 	    });
+		
+	  //목표 : 수정버튼을 누르면 수정화면을 보여주도록 처리
+		$(document).on("click", "#modalEditBtn", function(){//영역 감시
+
+// 			기존 reply-viewer의 정보를 불러온다
+			var planNo = $(this).data("key");
+			var planTitle = $(this).data("plan-title");
+		    var planType = $(this).data("plan-type");
+		    var planSdate = $(this).data("plan-sdate");
+		    var planEdate = $(this).data("plan-edate");
+		    var planExplain = $(this).data("plan-explain");
+		    var planHeadNo = $(this).data("plan-head_no");
+			
+// 			현재 수정하려는 수정 화면에 대한 처리		
+
+			// 수정 화면 가져오기
+			var template = $("#edit-template").text();
+            $("#modal-body").html(template);
+			$("#modal-body").find("[name=planName]").val(planTitle);
+			$("#modal-body").find("[name=planType]").val(planType);
+			$("#modal-body").find("[name=planHead_no]").val(planHeadNo);
+		    $("#modal-body").find("[name=planSdate]").val(planSdate);
+		    $("#modal-body").find("[name=planEdate]").val(planEdate);
+		    $("#modal-body").find("[name=planExplain]").val(planExplain);
+			
+		    //수정 눌렀을때 고유키 심어주기
+		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
+			
+		    var headList = JSON.parse('${planHeadJson}');
+            var options = "";
+            for(var i = 0; i < headList.length; i++) {
+        		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+            }
+            //가져온 option을 헤더 select 아래에 append 
+            $("select[name='planHeadNo']").empty().append(options);
+		    
+		    $(".calendarModal").show();
+		});
+		
+		//목표 : 수정완료버튼을 누르면 ajax통신을 이용해 수정요청을 한 뒤 목록 갱신
+		$(document).on("click", ".btn-plan-edit", function(){
+			var planNo = $(this).data("key");
+			
+			var data = {
+			        planNo : planNo, // 어떤 일정을 수정할지 알아야 하므로 무조건 필수!
+			        planName : $("#modal-body [name=planName]").val(),
+			        planType : $("#modal-body [name=planType]").val(),
+			        planHeader : $("#modal-body [name=planHeadNo]").val(),
+			        planSdate : $("#modal-body [name=planSdate]").val(),
+			        planEdate : $("#modal-body [name=planEdate]").val(),
+			        planExplain : $("#modal-body [name=planExplain]").val()
+			    };
+			
+			$.ajax({
+				url:"/rest/plan/edit",
+				method:"post",
+				data: data,
+				success: function(response){
+					closeCalendarModal();
+					//홈 화면 새로고침
+					location.reload();
+				}
+			});
+		});
 	
 	});
 </script>
@@ -214,7 +335,7 @@
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
 			
-	    	var currentPlanType = "회사"
+	    	//var currentPlanType = "회사"
 	    	
 	        var calendarEl = document.getElementById('calendar');
 	        var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -228,22 +349,24 @@
 	        	    right: 'btnAll,btnDept,btnPersonal' 
 	        	},
 	        	
-	        	
-	            dayMaxEvents: 3, 
+	            dayMaxEvents: 1, 
 
 	            selectable: true,
 	       		select: function(info) { // select : 날짜 시간을 선택할 때 사용
+	       			
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
 	            
-	            var headList = ${planHeadJson};
-	            var options = "";
+	            // 부서 번호 넣기
+	            var headList = JSON.parse('${planHeadJson}');
+	            var options = "<option value=''>선택하세요</option>";
 	            for(var i = 0; i < headList.length; i++) {
-            		options = "<option value='" + headList.planNo + "'>" + headList.plan + "</option>";
+            		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
 	            }
-	            
 	            //가져온 option을 헤더 select 아래에 append 
+	            $("select[name='headNo']").empty().append(options);
+	            
 	            
 	            // 2. 날짜 자동 입력 (info.startStr은 YYYY-MM-DD형식)
 	            var $startDate = $("#modal-body [name=planSdate]");
@@ -279,6 +402,7 @@
                 var planSdate = info.event.start;
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
+                var planHeadNo = info.event.extendedProps.planHeadNo;
                 
                 var sdateObj = new Date(planSdate);
                 var edateObj = new Date(planEdate);
@@ -305,7 +429,20 @@
             	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
-            	
+            	 // 2. 로그인 아이디
+            	var data = info.event.extendedProps;
+	            var loginId = "${loginId}";
+	            
+	            // 4. 작성자와 로그인 아이디를 비교하여 버튼 제어
+	            if(data.planEmpId === loginId) {
+	            	$("#modalEditBtn").show();
+	            	$("#modalDeleteBtn").show();
+	            }
+	            else {
+	            	$("#modalEditBtn").hide();
+	            	$("#modalDeleteBtn").hide();
+	            }
+	            
             	// 상세 모달이 열릴때 삭제 버튼을 찾아 data-key에 planNo를 심어줌
                 $("#modal-body").find("#modalDeleteBtn").data("key", planNo);
                 // 상세 모달이 열릴때 수정 버튼을 찾아 data-key에 planNo를 심어줌
@@ -316,6 +453,7 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
+                $("#modalEditBtn").data("plan-head-no", planHeadNo);
             	
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
@@ -406,23 +544,39 @@
 
 <!--  결재, 공지 보여주는 화면 -->
 <div class="dashboard-container">
-	    <div class="left-section">
-	        <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
-	    </div>
-	    
-	    <div class="right-section">
-	        <div class="card p-20" style="height: 300px;">
-	            <div style="display: flex; justify-content: space-between; align-items: center;">
-	                <h3>결재사항</h3>
-	                <a href="#">더보기</a>
-	            </div>
-	            </div>
-	
-	        <div 
-	        class="card p-20" style="height: 300px;">
+        <div class="left-section">
+            <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
+        </div>
+
+        <div class="right-section">
+            <div class="card p-20" style="height: 300px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>결재사항</h3>
+                    <a href="#">더보기</a>
+                </div>
+                </div>
+
+           <div class="card p-20" style="height: 300px; overflow-y: auto;">
 	            <h3>공지사항</h3>
-	            </div>
-	    </div>
+	            <hr>
+	            <c:forEach var="notice" items="${noticeList}">
+	                <div
+	                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+	                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+	                    ${notice.boardTitle}
+	                </a>
+	
+	
+	                    <p style="color: #999; font-size: 12px;">작성자:
+	                        ${notice.boardWriter}</p>
+	                </div>
+	            </c:forEach>
+	
+	            <c:if test="${empty noticeList}">
+	                <div>등록된 공지사항이 없습니다.</div>
+	            </c:if>
+       		</div>
+		</div>
 </div>
 
-<jsp:include page="/WEB-INF/views/template/footer.jsp"/>
+<jsp:include page="/WEB-INF/views/template/footer.jsp" />
