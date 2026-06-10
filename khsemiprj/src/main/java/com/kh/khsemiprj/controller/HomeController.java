@@ -14,8 +14,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.kh.khsemiprj.dao.BoardDao;
+import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dao.PlanDao;
 import com.kh.khsemiprj.dto.BoardDto;
+import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
 
@@ -28,13 +30,20 @@ public class HomeController {
 	private PlanDao planDao;
 	@Autowired
 	private BoardDao boardDao;
+	@Autowired
+	private EmpPositionDeptDao empPositionDeptDao;
+	
 	@RequestMapping("/")
 	public String home(Model model
 			, HttpSession session) throws JsonProcessingException {
 
 		String loginId = (String)session.getAttribute("loginId");
+		// 목표 아이디를 통해 일정에 부서번호 등록하기
+		// [1] 아이디 입력을 통해 부서번호 조회
+		Long deptNo = empPositionDeptDao.selectDeptbyId(loginId);  
 		
 		List<PlanDto> planList = planDao.selectList(loginId);
+		
 		List<Map<String, Object>> eventList = new ArrayList<>();
 		for(PlanDto planDto : planList) {
 			Map<String, Object> event = new HashMap<>();
@@ -44,22 +53,25 @@ public class HomeController {
 			extendedProps.put("planHeadNo", planDto.getPlanHeadNo());
 			extendedProps.put("planType", planDto.getPlanType());
 			extendedProps.put("planExplain", planDto.getPlanExplain());
+			extendedProps.put("planDeptNo", planDto.getPlanDeptNo());
+			extendedProps.put("planEmpId", planDto.getPlanEmpId());
 			event.put("extendedProps", extendedProps);
 	        event.put("start", planDto.getPlanSdate());
 	        event.put("end", planDto.getPlanEdate() + "T23:59:59");
-	        
 	        eventList.add(event);
 		}
 		
+		model.addAttribute("loginId", loginId);
+		model.addAttribute("deptNo", deptNo);
 		model.addAttribute("eventList", new Gson().toJson(eventList));
 		
 		
 		//목표: DB에 저장된 Head의 정보를 가져오기
-		Map<Integer, HeadDto> dtoMap = new HashMap<>();
+		//Map<Integer, HeadDto> DtoMap = new HashMap<>();
 		List<HeadDto> list = planDao.selectListHeader();
-		for (HeadDto dto : list) {
- 	        dtoMap.put(dto.getHeadNo(), dto);
- 	    }
+//		for (HeadDto dto : list) {
+//			DtoMap.put(dto.getHeadNo(), dto);
+// 	    }
  	    // 3. 자바 객체를 JSP의 JavaScript가 인식할 수 있도록 JSON 문자열로 변환
  	    ObjectMapper objectMapper = new ObjectMapper();
  	    String planHeadJson = objectMapper.writeValueAsString(list);

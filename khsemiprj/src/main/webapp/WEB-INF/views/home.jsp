@@ -70,6 +70,7 @@
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
 	        </div>
+			<input type="hidden" name="planDeptNo" value="${deptNo}" class="field w-100">
 	        <div class="cell">
 	        	<label>유형</label>
 	        	<select class="field w-100" name="planType">
@@ -113,7 +114,6 @@
 	        <h1 class= "mt-40 flex-fill ms-20">일정 상세</h1>
 	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
 	</div>
-
     <div class="container w-500 mt-50">
         <div class="cell">
             <h1 class="mb-10">
@@ -164,7 +164,7 @@
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="headNo">
+	        	<select class="field w-100" name="planHeadNo">
 	                <option value="">선택하세요</option>
 	            </select>
 	        </div>
@@ -209,13 +209,17 @@
 //         };
 		//등록 버튼을 누르면 발생하는 등록 작업
 		$(document).on("click",".btn-plan", function(){
+			
+			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
+			var planDeptNo = $("[name=planDeptNo]").val();
+			
 			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
 				planType : $("[name=planType]").val(),
 				planHeadNo : $("[name=planHeadNo]").val(),
 				planName : $("[name=planName]").val(),
 				planSdate : $("[name=planSdate]").val(),
 				planEdate : $("[name=planEdate]").val(),
-				planExplain : $("[name=planExplain]").val()
+				planExplain : $("[name=planExplain]").val(),
 			};
 			
 			//console.log(data);
@@ -288,13 +292,13 @@
 		    //수정 눌렀을때 고유키 심어주기
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
 			
-		    var headList = ${planHeadJson};
+		    var headList = JSON.parse('${planHeadJson}');
             var options = "";
             for(var i = 0; i < headList.length; i++) {
         		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
             }
             //가져온 option을 헤더 select 아래에 append 
-            $("select[name='headNo']").append(options);
+            $("select[name='planHeadNo']").empty().append(options);
 		    
 		    $(".calendarModal").show();
 		});
@@ -345,8 +349,6 @@
 	        	    right: 'btnAll,btnDept,btnPersonal' 
 	        	},
 	        	
-	        	
-
 	            dayMaxEvents: 1, 
 
 	            selectable: true,
@@ -356,13 +358,14 @@
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
 	            
-	            var headList = ${planHeadJson};
-	            var options = "";
+	            // 부서 번호 넣기
+	            var headList = JSON.parse('${planHeadJson}');
+	            var options = "<option value=''>선택하세요</option>";
 	            for(var i = 0; i < headList.length; i++) {
             		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
 	            }
 	            //가져온 option을 헤더 select 아래에 append 
-	            $("select[name='headNo']").append(options);
+	            $("select[name='headNo']").empty().append(options);
 	            
 	            
 	            // 2. 날짜 자동 입력 (info.startStr은 YYYY-MM-DD형식)
@@ -426,7 +429,20 @@
             	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
-            	
+            	 // 2. 로그인 아이디
+            	var data = info.event.extendedProps;
+	            var loginId = "${loginId}";
+	            
+	            // 4. 작성자와 로그인 아이디를 비교하여 버튼 제어
+	            if(data.planEmpId === loginId) {
+	            	$("#modalEditBtn").show();
+	            	$("#modalDeleteBtn").show();
+	            }
+	            else {
+	            	$("#modalEditBtn").hide();
+	            	$("#modalDeleteBtn").hide();
+	            }
+	            
             	// 상세 모달이 열릴때 삭제 버튼을 찾아 data-key에 planNo를 심어줌
                 $("#modal-body").find("#modalDeleteBtn").data("key", planNo);
                 // 상세 모달이 열릴때 수정 버튼을 찾아 data-key에 planNo를 심어줌
@@ -541,28 +557,26 @@
                 </div>
 
            <div class="card p-20" style="height: 300px; overflow-y: auto;">
-
-
-            <h3>공지사항</h3>
-            <hr>
-            <c:forEach var="notice" items="${noticeList}">
-                <div
-                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
-                    ${notice.boardTitle}
-                </a>
-
-
-                    <p style="color: #999; font-size: 12px;">작성자:
-                        ${notice.boardWriter}</p>
-                </div>
-            </c:forEach>
-
-            <c:if test="${empty noticeList}">
-                <div>등록된 공지사항이 없습니다.</div>
-            </c:if>
-        </div>
-</div>
+	            <h3>공지사항</h3>
+	            <hr>
+	            <c:forEach var="notice" items="${noticeList}">
+	                <div
+	                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+	                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+	                    ${notice.boardTitle}
+	                </a>
+	
+	
+	                    <p style="color: #999; font-size: 12px;">작성자:
+	                        ${notice.boardWriter}</p>
+	                </div>
+	            </c:forEach>
+	
+	            <c:if test="${empty noticeList}">
+	                <div>등록된 공지사항이 없습니다.</div>
+	            </c:if>
+       		</div>
+		</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />

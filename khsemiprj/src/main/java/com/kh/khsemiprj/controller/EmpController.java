@@ -118,6 +118,11 @@ public class EmpController {
 //			return "redirect:./notice";
 //		}
 		
+		// 목표: 관리자가 로그인을 하면 전 직원의 연별 휴가 기록 갱신
+		if(findEmpDto.getEmpGrade() == 2) {
+			
+		}
+		
 		//목표: 로그인과 동시에 직원 출근처리 
 		//[1] 사용자가 입력한 아이디를 이용하여 loginout 테이블 조회
 		LogInoutDto logInoutDto = logInoutDao.getLastType(empDto.getEmpId());
