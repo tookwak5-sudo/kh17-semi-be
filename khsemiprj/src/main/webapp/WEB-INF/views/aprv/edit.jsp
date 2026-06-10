@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-    
-<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>    
 
+<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+    
 <!-- 결재 디자인 css -->
 <link rel="stylesheet" type="text/css" href="/css/aprv/insert.css">
 <!-- 부서 목록 디자인 css -->
@@ -13,7 +14,7 @@
 	const deptList = JSON.parse('${deptListJson}');
 	
 	$(function () {
-		var formNo = '${param.formNo}';
+		var formNo = '${aprvDto.aprvFormNo}';
 		getAprmFormAttach(formNo);
 		var formName = $(".aprv-form-list option:selected").attr("data-name");
 		var formHead = $(".aprv-form-list option:selected").attr("data-head");
@@ -30,6 +31,8 @@
 				var picker1 = new Lightpick({ 
 				    field : $(".picker-sdate")[0],
 					secondField : $(".picker-edate")[0],
+					startDate : '${aprvDto.aprvSdate}',
+					endDate : '${aprvDto.aprvEdate}',
 					singleDate : true, //단일 날짜 선택 불가(범위 선택 가능)
 				    format : "YYYY-MM-DD",
 					firstDay : 7,
@@ -112,6 +115,7 @@
 				$(".picker-edate").hide();
 				var picker1 = new Lightpick({ 
 				    field : $(".picker-sdate")[0],
+				    startDate : '${aprvDto.aprvSdate}',
 				    format : "YYYY-MM-DD",
 					firstDay : 7,
 					disableWeekends: true,
@@ -148,7 +152,7 @@
             var clickedButton = e.originalEvent.submitter; 
 
             // 특정 버튼일 때만 다르게 처리하고 싶다면?
-            if ($(clickedButton).hasClass("aprv-insert")) {
+            if ($(clickedButton).hasClass("aprv-update")) {
             	$(".aprv-status").val("대기");
             } else {
             	$(".aprv-status").val("임시저장");
@@ -241,8 +245,8 @@
 	.cell { min-height: 32px; }
 </style>
 
-<form action="./insert" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
-
+<form action="./edit" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
+	<input type="hidden" name="aprvNo" value="${aprvDto.aprvNo}">
 	<div class="container w-1200 mt-50">
 		
     	<div class="cell center">
@@ -255,7 +259,7 @@
             <select class="field w-40 aprv-form-list" name="aprvFormNo">
                 <option value="">선택하세요</option>
                 <c:forEach var="aprvFormDto" items="${formList}">
-                <option value="${aprvFormDto.formNo}" data-head="${aprvFormDto.headName}" data-name="${aprvFormDto.formName}" <c:if test="${aprvFormDto.formNo == param.formNo}">selected</c:if>>[${aprvFormDto.headName}] ${aprvFormDto.formName}</option>
+                <option value="${aprvFormDto.formNo}" data-head="${aprvFormDto.headName}" data-name="${aprvFormDto.formName}" <c:if test="${aprvFormDto.formNo == aprvDto.aprvFormNo}">selected</c:if>>[${aprvFormDto.headName}] ${aprvFormDto.formName}</option>
                 </c:forEach>
             </select>
             <input type="hidden" class="">
@@ -264,7 +268,7 @@
             <label>제목 <i class="fa-solid fa-asterisk red"></i></label>
         </div>
         <div class="cell mt-0">
-        	<input type="text" name="aprvTitle" class="field w-40">
+        	<input type="text" name="aprvTitle" class="field w-40" value="${aprvDto.aprvTitle}">
         </div>
         <div class="cell mb-0">
             <label>양식 파일</label>
@@ -280,7 +284,7 @@
 		        <div class="cell mt-0">
 		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일">
 		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일">
+		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvSdate}">
 		        </div>
 	        </div>
 	        <div class="w-66 vacationType">
@@ -289,7 +293,7 @@
         </div>
         <div class="cell">
         	<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-        	<input type="text" name="aprvContent" class="field w-100">
+        	<input type="text" name="aprvContent" class="field w-100" value="${aprvDto.aprvContent}">
         </div>
         <div class="cell mb-0">
             <label>첨부 파일</label>
@@ -298,11 +302,20 @@
 			<label>
 				<i class="fa-regular fa-file"></i>
 				<span>클릭해서 첨부파일을 선택하세요</span>
-				<input type="file" name="attach" class="field w-100 attach-input" style="display: none;">
+				<input type="file" name="attach" class="field w-100 attach-input" style="display: none;" >
 			</label>
+			<input type="hidden" name="deleteFileNo" value="" />
 		</div>
 		<div class="cell aprv-form-file-down">
-		</div>
+			<c:if test="${not empty attachDto}">
+	  		<a style="display: inline-block; border: 1px solid #333; background: white; color: black; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-size: 14px;">
+			<i class="fa-regular fa-file"></i><span>${attachDto.attachName}</span>
+    		</a>
+    		<button type="button" class="btn-delete-file" data-no="${attachDto.attachNo}" onclick="removeFile(this)" style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid #dc3545; background: #fff; color: #dc3545; border-radius: 3px; cursor: pointer; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.background='#dc3545'; this.style.color='#fff';" onmouseout="this.style.background='#fff'; this.style.color='#dc3545';">
+		        <i class="fa-solid fa-xmark"></i>
+		    </button>
+		    </c:if>
+    	</div>
 		<div class="cell flex-area">
 			<div class="cell flex-vertical w-50 me-10">
 		        <div class="cell mb-0">
@@ -319,7 +332,15 @@
 		        			</tr>
 		        		</thead>
 		        		<tbody id="line1List" class="lineList">
-		        			
+		        			<c:forEach var="aprvLineList" items="${aprvLine1List}">
+		        			<tr name="line1EmpId" data-id="${aprvLineList.empId}">
+		        				<input type="hidden" name="aprvLine1IdList" value="${aprvLineList.empId}"/>
+		        				<td>${aprvLineList.deptName}</td>
+		        				<td>${aprvLineList.empName}</td>
+		        				<td>${aprvLineList.empPositionName}</td>
+		        				<td><button type="button" class="btn btn-negative line-delete">삭제</button></td>
+		        			</tr>
+		        			</c:forEach>
 		        		</tbody>
 		        	</table>
 		        </div>
@@ -342,7 +363,15 @@
 		        			</tr>
 		        		</thead>
 		        		<tbody id="line2List" class="lineList">
-		        			
+		        			<c:forEach var="aprvLineList" items="${aprvLine2List}">
+		        			<tr name="line2EmpId" data-id="${aprvLineList.empId}">
+		        				<input type="hidden" name="aprvLine2IdList" value="${aprvLineList.empId}"/>
+		        				<td>${aprvLineList.deptName}</td>
+		        				<td>${aprvLineList.empName}</td>
+		        				<td>${aprvLineList.empPositionName}</td>
+		        				<td><button type="button" class="btn btn-negative line-delete">삭제</button></td>
+		        			</tr>
+		        			</c:forEach>
 		        		</tbody>
 		        	</table>
 		        </div>
@@ -354,10 +383,10 @@
         <div class="cell mt-40 mb-50 right">
         	<input type="hidden" name="aprvStatus" class="aprv-status" value="">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
-        	<button class="btn aprv-temp-insert" style="background-color:#fdcb6e;">
+        	<button class="btn aprv-temp-update" style="background-color:#fdcb6e;">
                 임시저장
             </button>
-            <button class="btn btn-positive aprv-insert">
+            <button class="btn btn-positive aprv-update">
                 기안하기
             </button>
         </div>
@@ -448,5 +477,5 @@
 
 <!-- 결재 동작 스크립트 -->
 <script src="/js/aprv/insert.js"></script>
-
+    
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
