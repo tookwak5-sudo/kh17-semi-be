@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.khsemiprj.dao.AprvHeadDao;
+import com.kh.khsemiprj.dao.EmpPositionDao;
 import com.kh.khsemiprj.dto.AprvHeadDto;
+import com.kh.khsemiprj.dto.EmpPositionDto;
 import com.kh.khsemiprj.vo.PageVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -21,35 +23,58 @@ import jakarta.servlet.http.HttpSession;
 public class AdminController {
 	@Autowired
 	AprvHeadDao aprvHeadDao;
+	@Autowired
+	EmpPositionDao empPositionDao;
 	
 	@RequestMapping("/manage")
 	public String list(Model model, HttpSession session ,PageVO pageVO ) {
-
-		List<AprvHeadDto> aprvList = aprvHeadDao.selectList(pageVO.getBeginRownum(), pageVO.getEndRownum());
+		//헤드 리스트 
+		List<AprvHeadDto> aprvList = aprvHeadDao.selectList();
 		model.addAttribute("aprvHeadList", aprvList);
-		int count = aprvHeadDao.count();
-		pageVO.setCount(count);
-		model.addAttribute("AprvHeadPageVO", pageVO);
+		
+		//직급 리스트
+		List<EmpPositionDto> empPositionList = empPositionDao.positionSelectList();
+		model.addAttribute("empPositionList", empPositionList);
 		
 		return "admin/manage";
 	}
 	
-	//등록
-		@PostMapping("/write")
-		public String write(@ModelAttribute AprvHeadDto aprvHeadDto) {
-			int headNo = aprvHeadDao.sequence();
-			aprvHeadDto.setHeadNo(headNo);
-			aprvHeadDao.insert(aprvHeadDto);
-			
-			return "redirect:manage";
-		}
+	//헤더 등록
+	@PostMapping("/headWrite")
+	public String headWrite(@ModelAttribute AprvHeadDto aprvHeadDto) {
+		int headNo = aprvHeadDao.sequence();
+		aprvHeadDto.setHeadNo(headNo);
+		aprvHeadDao.insert(aprvHeadDto);
 		
-		//삭제
-		@PostMapping("/delete")
-		public String delete(@RequestParam int headNo) {
-			aprvHeadDao.delete(headNo);
-			
-			return "redirect:manage";
-		}
+		return "redirect:manage";
+	}
+	
+	//헤더 삭제
+	@PostMapping("/headDelete")
+	public String headDelete(@RequestParam int headNo) {
+		aprvHeadDao.delete(headNo);
+		
+		return "redirect:manage";
+	}
+	
+	//직급 등록
+	@PostMapping("/empPositionWrite")
+	public String empPositionWrite(@ModelAttribute EmpPositionDto empPositionDto) {
+		int empPositionNo = empPositionDao.sequence();
+		empPositionDto.setEmpPositionNo(empPositionNo);
+		empPositionDao.insert(empPositionDto);
+		
+		return "redirect:manage";
+	}
+	
+	//직급 삭제
+	@PostMapping("/empPositionDelete")
+	public String empPositionDelete(@RequestParam int empPositionNo) {
+		empPositionDao.delete(empPositionNo);
+		
+		return "redirect:manage";
+	}
+		
+		
 	
 }

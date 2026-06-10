@@ -538,7 +538,7 @@
                     <h3>결재사항</h3>
                     <a href="#">더보기</a>
                 </div>
-                </div>
+               </div>
 
            <div class="card p-20" style="height: 300px; overflow-y: auto;">
 

@@ -41,19 +41,9 @@ public class AprvHeadDao {
 	}
 	
 	//헤더 목록 조회
-	public List<AprvHeadDto> selectList(int beginRownum, int endRownum){
-		String sql = "select * from ("
-				+ "select rownum rn, TMP.* from("
-				+ "select * from aprv_head order by head_no asc"
-			+ ") Tmp"
-		+ "	)where rn between ? and ?";
-		Object[] params = { beginRownum , endRownum };
-		return jdbcTemplate.query(sql, aprvHeadMapper, params);
-	}
-	
-	public int count() {
-		String sql = "select count(*) from aprv_head";
-		return jdbcTemplate.queryForObject(sql, int.class);
+	public List<AprvHeadDto> selectList(){
+		String sql = "select * from aprv_head order by head_no asc";
+		return jdbcTemplate.query(sql, aprvHeadMapper);
 	}
 	
 }
