@@ -8,7 +8,6 @@
 <link rel="stylesheet" type="text/css" href="/css/aprv/insert.css">
 <!-- 부서 목록 디자인 css -->
 <link rel="stylesheet" type="text/css" href="/css/dept/list.css">
-
 <script>
 	const deptList = JSON.parse('${deptListJson}');
 	
