@@ -38,9 +38,6 @@ public class BoardController {
 		model.addAttribute("boardList", boardList);
 		
 		//게시글 범주안에 공지가 포함 되어 있어서 공지 글을 올릴시 공지가 같은 번호로 두개가 올라가는 현상이 생겨서 수정했습니다.
-		
-		
-
 		model.addAttribute("noticeCount", noticeList.size());//공지사항 개수 전달
 		
 		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다

@@ -148,7 +148,7 @@
 	         $(".btn-cert-send").show();
 	         $("[name=empEmail]").removeClass("success fail")
 	                                 .prop("readonly", false).val("");
-	         state.empEmailValid = false;
+	         state.empEmailValid = true;
 	         state.empEmailCertValid = false;
 	
 	         $("[name=empEmail]").trigger("focus");//커서 옮김

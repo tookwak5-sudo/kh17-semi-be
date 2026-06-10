@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
+import com.kh.khsemiprj.mapper.HeadMapper;
+import com.kh.khsemiprj.mapper.PlanHeadMapper;
 import com.kh.khsemiprj.mapper.PlanMapper;
+import com.kh.khsemiprj.vo.PlanHeadVO;
 
 @Repository
 public class PlanDao {
@@ -15,6 +19,10 @@ public class PlanDao {
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private PlanMapper planMapper;
+	@Autowired
+	private HeadMapper headMapper;
+	@Autowired
+	private PlanHeadMapper planHeadMapper;
 	
 	public int sequence() {
 	    String sql = "select plan_seq.nextval from dual";
@@ -26,7 +34,7 @@ public class PlanDao {
 		String sql = "insert into plan "
 				+ "(plan_no, plan_emp_id, plan_aprv_no, plan_dept_no, plan_head_no, plan_name, "
 				+ "plan_type, plan_explain, plan_sdate, plan_edate) "
-				+ "values(?, ?, ?, ?, ?, ?, ?, ? ,?, ?)";
+				+ "values(?, ?, ?, ?, ?, ? ,?, ? ,? ,?)";
 		Object[] params = { planDto.getPlanNo(), 
 				planDto.getPlanEmpId(), planDto.getPlanAprvNo(), planDto.getPlanDeptNo(), planDto.getPlanHeadNo(),
 				planDto.getPlanName(), planDto.getPlanType(), planDto.getPlanExplain(), 
@@ -38,11 +46,11 @@ public class PlanDao {
 	//일정 수정
 	public boolean update(PlanDto planDto) {
 		String sql = "update plan set "
-				+ "plan_name=?, plan_type=?, plan_head_no =?,  plan_explain=?, plan_sdate=?, plan_edate=? "
+				+ "plan_head_no =?, plan_name=?, plan_explain=?, plan_sdate=?, plan_edate=?, plan_type=? "
 				+ "where plan_no = ?";
 		Object[] params = {
-				planDto.getPlanName(), planDto.getPlanType(), planDto.getPlanExplain(), planDto.getPlanHeadNo(),
-				planDto.getPlanSdate(), planDto.getPlanEdate(), planDto.getPlanNo()
+				planDto.getPlanHeadNo(), planDto.getPlanName(), planDto.getPlanExplain(), 
+				planDto.getPlanSdate(), planDto.getPlanEdate(),  planDto.getPlanType(), planDto.getPlanNo()
 		};
 		return jdbcTemplate.update(sql, params)> 0;
 	}
@@ -68,6 +76,19 @@ public class PlanDao {
 		return jdbcTemplate.query(sql, planMapper);
 	}
 	
+	// head 조회 
+	public List<HeadDto> selectListHeader() {
+		String sql = "select * from aprv_head order by head_no asc";
+		return jdbcTemplate.query(sql, headMapper);
+	}
+	//plan head 조인 조회
+	public List<PlanHeadVO> selectListPlanHeader() {
+		String sql = "select * from plan p "
+				+ "left join aprv_head h on p.plan_head_no = h.HEAD_NO "
+				+ "order by p.plan_no desc";
+		return jdbcTemplate.query(sql, planHeadMapper);
+	}
+	
 	//전체 일정 조회
     public List<PlanDto> selectList(String empId) {
     	String sql = "(SELECT * FROM PLAN p WHERE p.PLAN_EMP_ID = ? and p.PLAN_TYPE = '개인') "
@@ -76,7 +97,6 @@ public class PlanDao {
     			+ "UNION "
     			+ "(SELECT * FROM plan p WHERE p.PLAN_TYPE = '회사')";
         Object[] params = { empId, empId };
-        System.out.println(sql);
         return jdbcTemplate.query(sql,  planMapper, params);
     }
 }
