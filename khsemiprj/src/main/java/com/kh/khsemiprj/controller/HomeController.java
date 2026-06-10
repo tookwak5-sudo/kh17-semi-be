@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.kh.khsemiprj.dao.AprvDao;
 import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.PlanDao;
+import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.BoardDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
+import com.kh.khsemiprj.vo.EmpAprvLineVO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,6 +31,9 @@ public class HomeController {
 	private PlanDao planDao;
 	@Autowired
 	private BoardDao boardDao;
+	@Autowired
+	private AprvDao aprvDao;
+	
 	@RequestMapping("/")
 	public String home(Model model
 			, HttpSession session) throws JsonProcessingException {
@@ -68,7 +74,6 @@ public class HomeController {
  		model.addAttribute("planHeadJson", planHeadJson);
  		
  		// 홈에서 board 공지사항 전달하는 코드
- 		
  		List<BoardDto> grabNoticeList = boardDao.selectNoticeList();
 		
 		List<Map<String,Object>> noticeList = new ArrayList<>();
@@ -83,6 +88,19 @@ public class HomeController {
 		}
 		
 		model.addAttribute("noticeList", noticeList);
+		
+		if (loginId != null) {
+			//내가 쓴 글 결재 목록
+			List<EmpAprvLineVO> myAprvList = aprvDao.selectMyList(loginId);
+			model.addAttribute("myAprvList", myAprvList);
+			
+			//내가 승인해야 할 결재 목록
+			List<EmpAprvLineVO> receivedAprvList = aprvDao.selectReceivedList(loginId);
+			model.addAttribute("receivedAprvList", receivedAprvList);
+		}
+		
+		
+		
 		
 		return "home";
 	}
