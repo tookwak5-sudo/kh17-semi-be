@@ -68,7 +68,8 @@ h2 { color: #333; margin-bottom: 30px; }
 
 /* 부서 헤더 (이름 부분) */
 .dept-header {
-    background-color: #4a90e2;
+    /* background-color: #4a90e2; */
+    background-color: #739BED;
     color: white;
     padding: 10px 14px;
     font-size: 14px;
@@ -80,7 +81,8 @@ h2 { color: #333; margin-bottom: 30px; }
 
 /* 최상위노드(대표이사 등)인 경우 헤더 색상 다르게 */
 .dept-card.root-node .dept-header {
-    background-color: #2c3e50;
+    /* background-color: #2c3e50; */
+    background-color: #3D527D;
 }
 
 /* 👥 부서원 목록 컨테이너 */

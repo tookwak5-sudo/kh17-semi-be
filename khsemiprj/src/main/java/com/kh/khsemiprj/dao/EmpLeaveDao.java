@@ -27,5 +27,12 @@ public class EmpLeaveDao {
 		return jdbcTemplate.query(sql, empLeaveMapper, params);
 
 	}
+	
+	public EmpLeaveDto selectOne(String empId) {
+		String sql = "select * from emp_leave where leave_emp_id = ?";
+		Object[] params = { empId};
+		List<EmpLeaveDto> list = jdbcTemplate.query(sql,  empLeaveMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
 
 }

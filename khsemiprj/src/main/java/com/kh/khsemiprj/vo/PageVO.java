@@ -7,15 +7,13 @@ import lombok.Data;
 //- 자바에서 배웠던 클래스와 가장 유사한 형태
 @Data
 public class PageVO {
-	private String column;// 파라미터에 있는 검색항목
-	private String keyword;// 파라미터에 있는 검색키워드
-	private int page = 1;// 파라미터에 있는 페이지번호 (없으면 1페이지)
-	private int size = 10;// 파라미터에 있는 페이지규격 (없으면 10개)
-	private int count; // 총 데이터 개수 (DB에서 조회해서 채워줘야함)
 
-	// 목록인지 검색인지 판정하는 메소드
-	// - 목록 : 컬럼과 키워드 중 하나라도 없는 경우
-	// - 검색 : 컬럼과 키워드 모두 있는 경우
+	private String column;//파라미터에 있는 검색항목
+	private String keyword;//파라미터에 있는 검색키워드
+	private Integer page = 1;//파라미터에 있는 페이지번호 (없으면 1페이지)
+	private Integer size = 10;//파라미터에 있는 페이지규격 (없으면 5개)
+	private int count; //총 데이터 개수 (DB에서 조회해서 채워줘야함)
+	
 	public boolean isList() {
 		return column == null || keyword == null || keyword.trim().isEmpty();
 	}

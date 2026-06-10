@@ -13,12 +13,11 @@ public class PlanDto {
 	private String planEmpId;
 	private Integer planAprvNo;
 	private Long planDeptNo;
+	private Integer planHeadNo;
 	private String planName;
-	private String planHeader;
 	private String planExplain;
 	private String planSdate;
 	private String planEdate;
 	private Timestamp planWtime;
 	private String planType;
-
 }
