@@ -35,21 +35,21 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 		
 		
 		//비회원이 들어갈수 있는 페이지 설정
-		registry.addInterceptor(empOnlyInterceptor)
-			    .addPathPatterns(
-			        "/**"
-			    )
-			    .excludePathPatterns(
-			        "/emp/login"
-			        ,"/emp/join"         
-			        ,"/emp/joinFinish"
-			        ,"/emp/findId"
-			        ,"/emp/findPassword"
-			        
-			        ,"/css/**"  
-			        ,"/js/**"   
-			        ,"/images/**"
-			    );	
+//		registry.addInterceptor(empOnlyInterceptor)
+//			    .addPathPatterns(
+//			        "/**"
+//			    )
+//			    .excludePathPatterns(
+//			        "/emp/login"
+//			        ,"/emp/join"         
+//			        ,"/emp/joinFinish"
+//			        ,"/emp/findId"
+//			        ,"/emp/findPassword"
+//			        
+//			        ,"/css/**"  
+//			        ,"/js/**"   
+//			        ,"/images/**"
+//			    );	
 				
 //				//부서장 이상만 갈 수 있는 페이지 설정
 //				registry.addInterceptor(adminOnlyInterceptor)

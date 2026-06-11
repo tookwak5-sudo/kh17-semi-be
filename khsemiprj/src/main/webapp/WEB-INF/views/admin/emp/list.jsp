@@ -5,6 +5,26 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
+<style>
+	.table-hover tbody tr:hover {
+			background-color : #f8f9fa;
+			transition: background-color 0.2s ease;
+	}
+	
+	.field {
+	    border: 1px solid #ced4da; 
+	    border-radius: 6px; 
+	    padding: 5px 10px; 
+	    outline: none;
+	    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+	
+	.field:focus {
+	    border-color: #739BED;
+	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2);
+	}
+</style>
+
 <div class="container w-950 mt-50 mb-50">
 	<div class="cell">
 			<h1 class="mt-0 mb-0">회원 관리</h1>
@@ -13,44 +33,46 @@
 			
 				<%-- <c:if test="${sessionScope.loginLevel >= 0 && wList.size() > 0}"> --%>
 				<div class="cell">
-						<h3 class="mt-0 black">승인 대기 사원 목록</h3>
+						<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3>
 						
-						<table class="table" style="background-color: white;">
-							<thead>
-								<tr>
-									<th></th>
-									<th></th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody align="center">
-								<c:forEach var="waitEmp" items="${wList}">
-								<tr>
-									<td>${waitEmp.empId}</td>
-									<td>${waitEmp.empName}</td>
-									<td>
-										<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 4px 8px; font-size: 12px;">승인</button>
-										<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="padding: 4px 8px; font-size: 12px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
-									</td>
-								</tr>
-								</c:forEach>
-							</tbody>
-						</table>
+						<div style="border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">
+							<table class="table" style="background-color: white; margin-bottom: 0;">
+								<thead>
+									<tr style="border-bottom: 2px solid #e9ecef;">
+										<th style="padding: 10px;">아이디</th>
+										<th style="padding: 10px;">이름</th>
+										<th style="padding: 10px;">관리</th>
+									</tr>
+								</thead>
+								<tbody align="center">
+									<c:forEach var="waitEmp" items="${wList}">
+									<tr>
+										<td style="padding: 12px 0;">${waitEmp.empId}</td>
+										<td style="padding: 12px 0;">${waitEmp.empName}</td>
+										<td>
+											<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
+											<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="padding: 6px 12px; font-size: 18px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
+										</td>
+									</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
 				</div>
 				<hr class="mt-30 mb-30">
 				<%-- </c:if> --%>
 				
 				
 		<div class="cell" style="display: flex; justify-content: flex-end;">
-			<form action="./list" method="get" style="margin-left:auto;">
-				<select name="column" class="field">
+			<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
+				<select name="column" class="field" style="padding: 8px 18px; font-size: 16px;">
 					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
 					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>이름</option>
 					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
 					<option value="emp_position_name" ${param.column == 'emp_position_name' ? 'selected' : ''}>직급</option>
 				</select>
-				<input type="text" name="keyword" class="field" value="${param.keyword}">
-				<button class="btn btn-positive">
+				<input type="text" name="keyword" class="field" value="${param.keyword}" style="padding: 8px 18px; font-size: 16px;">
+				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
 					<i class="fa-solid fa-magnifying-glass"></i>
 					<span>검색</span>
 				</button>
@@ -67,43 +89,40 @@
 	
 	<c:if test="${list.size() > 0}">
 	<div class="cell">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>사원 아이디</th>
-					<th>이름</th>
-					<th>부서</th>
-					<th>직급</th>
-				</tr>
-			</thead>
-			<tbody align="center">
-				<c:forEach var="empPositionDto" items="${list}">
-				<tr>
-					<td>
-					<a href="detail?empId=${empPositionDto.empId}">
-					${empPositionDto.empId}
-					</a>
-					</td>
-					<td>${empPositionDto.empName}</td>
-					<td>${empPositionDto.deptName}</td>
-					<td>${empPositionDto.empPositionName}</td>
-				</tr>
-				</c:forEach>
-			</tbody>
-		</table>
+		<div style="border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>사원 아이디</th>
+						<th>이름</th>
+						<th>부서</th>
+						<th>직급</th>
+					</tr>
+				</thead>
+				<tbody align="center">
+					<c:forEach var="empPositionDto" items="${list}">
+					
+					<tr onclick="location.href='detail?empId=${empPositionDto.empId}'">
+						<td>${empPositionDto.empId}</td>
+						<td>${empPositionDto.empName}</td>
+						<td>${empPositionDto.deptName}</td>
+						<td>${empPositionDto.empPositionName}</td>
+					</tr>
+					
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	</c:if>
-	<div class="cell mt-40">
-		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
-	</div>	
 </div>
 
 
 <div id="popUp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;">
-    <div style="background-color: white; width: 400px; margin: 15% auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    <div style="background-color: white; width: 400px; margin: 15% auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h3 class="mt-0 blue">사원 가입 승인</h3>
         
-        <div style="background-color: #f5f6fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-weight: bold;">
+        <div style="background-color: #f5f6fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold;">
             사원 ID : <span id="targetEmpId" class="blue"></span>
         </div>
         
@@ -145,9 +164,9 @@
 </div>
 
 <div class="cell">    
-		<!-- 페이지네이션 -->
-		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
-</div>
+	<!-- 페이지네이션 -->
+	<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+	</div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
