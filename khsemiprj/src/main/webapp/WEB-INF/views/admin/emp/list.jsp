@@ -23,6 +23,12 @@
 	    border-color: #739BED;
 	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2);
 	}
+	
+	input[type="date"].field.fail,
+	input[type="date"].field.success {
+	    background-image: none !important; 
+	    padding-right: 10px !important; 
+	}
 </style>
 
 <div class="container w-950 mt-50 mb-50">
@@ -126,33 +132,38 @@
             사원 ID : <span id="targetEmpId" class="blue"></span>
         </div>
         
-        <form action="approve" method="post" style="display: flex; flex-direction: column; gap: 15px;">
+        <form action="approve" method="post" style="display: flex; flex-direction: column; gap: 15px;" onsubmit="return checkApproveForm();">
             <input type="hidden" name="empId" id="postEmpId">
             
             <div>
                 <label>입사일 지정</label>
-                <input type="date" name="empHireDate" class="field w-100" required>
+                <input type="date" name="empHireDate" class="field w-100">
+                <div class="success-feedback"></div>
+                <div class="fail-feedback">필수 입력 항목입니다</div>
             </div>
             
             <div>
                 <label>부서 배치</label>
-                <select name="deptNo" class="field w-100" required>
+                <select name="deptNo" class="field w-100">
                     <option value="">부서를 선택하세요</option>
                     <c:forEach var="dept" items="${deptList}">
                     <option value="${dept.deptNo}">${dept.deptName}</option>
                     </c:forEach>
                 </select>
+                <div class="success-feedback"></div>
+                <div class="fail-feedback">필수 입력 항목입니다</div>
             </div>
             
              <div>
                 <label>직급 지정</label>
                 <select name="empPositionNo" class="field w-100">
                 	<option value="">선택</option>
-                	
                 	<c:forEach var="position" items="${positionList}">
 		            	<option value="${position.empPositionNo}">${position.empPositionName}</option>
                 	</c:forEach>
 	            </select>
+	            <div class="success-feedback"></div>
+	            <div class="fail-feedback">필수 입력 항목입니다</div>
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -181,10 +192,53 @@
 
     function closePopUp() {
         document.getElementById('popUp').style.display = 'none';
+        
+        var fields = document.querySelectorAll('#popUp .field:not([type="hidden"])');
+        fields.forEach(function(el) {
+            el.value = ''; 
+            el.classList.remove('fail', 'success');
+        });
     }
     
     function confirmReject(empId) {
         return confirm("정말 " + empId + "님의 승인 요청을 거절하시겠습니까?");
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        var fields = document.querySelectorAll('#popUp select.field, #popUp input[type="date"].field');
+        
+        fields.forEach(function(el) {
+            el.addEventListener('change', function() {
+                if (!this.value) {
+                    this.classList.remove('success');
+                    this.classList.add('fail');
+                } else {
+                    this.classList.remove('fail');
+                    this.classList.add('success');
+                }
+            });
+        });
+    });
+    
+    function checkApproveForm() {
+        var hireDate = document.querySelector('[name="empHireDate"]');
+        var deptNo = document.querySelector('[name="deptNo"]');
+        var positionNo = document.querySelector('[name="empPositionNo"]');
+        
+        var isValid = true; 
+
+        [hireDate, deptNo, positionNo].forEach(function(el) {
+            if (!el.value) {
+                el.classList.remove('success');
+                el.classList.add('fail');
+                isValid = false;
+            } else {
+                el.classList.remove('fail');
+                el.classList.add('success');
+            }
+        });
+
+        return isValid;
     }
 </script>
 
