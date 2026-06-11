@@ -69,11 +69,15 @@
 	<div class="cell mt-20">
 		<div>기안일 : <fmt:formatDate value="${aprvDto.aprvWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
 	</div>
+	<hr>
 	</c:if>
+	<div class="cell mt-20">
+	기한 : ${aprvDto.aprvSdate} ~ ${aprvDto.aprvEdate}
+	</div>
+	<hr>
 	<div class="cell mt-20">
 		<div>상태 : ${aprvDto.aprvStatus}</div>
 	</div>
-	
 	<hr>
 	<div class="cell" style="min-height:50px">
 		<!-- 있는 그대로의 출력을 수행하는 태그(엔터, 스페이스 등을 인정) -->
@@ -112,17 +116,17 @@
 	        				<td>${aprvLineList.deptName}</td>
 	        				<td>${aprvLineList.empName}</td>
 	        				<td>${aprvLineList.empPositionName}</td>
+        					<td data-no="${aprvLineList.aprvLineNo}">
 	        				<c:choose>
 		        				<c:when test="${aprvDto.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvLineList.empId == sessionScope.loginId}">
-        					<td>
-        						<button type="button" class="btn btn-positive line-accept" onclick="openModal('승인')">승인</button>
-        						<button type="button" class="btn btn-negative line-deny" onclick="openModal('반려')">반려</button>
-        					</td>
+        						<button type="button" class="btn btn-positive line-accept" onclick="openModal('${aprvLineList.aprvLineNo}', '승인')">승인</button>
+        						<button type="button" class="btn btn-negative line-deny" onclick="openModal('${aprvLineList.aprvLineNo}', '반려')">반려</button>
 		        				</c:when>
 		        				<c:otherwise>
-	        				<td>${aprvLineList.aprvLineStatus}</td>
+	        					${aprvLineList.aprvLineStatus}
 		        				</c:otherwise>
 	        				</c:choose>
+        					</td>
 	        			</tr>
 	        			</c:forEach>
 	        		</tbody>
@@ -151,7 +155,17 @@
 	        				<td>${aprvLineList.deptName}</td>
 	        				<td>${aprvLineList.empName}</td>
 	        				<td>${aprvLineList.empPositionName}</td>
-	        				<td>${aprvLineList.aprvLineStatus}</td>
+		        			<td data-no="${aprvLineList.aprvLineNo}">
+	        				<c:choose>
+		        				<c:when test="${aprvDto.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvDto.aprvCurrentSeq == '2' && aprvLineList.empId == sessionScope.loginId}">
+        						<button type="button" class="btn btn-positive line-accept" onclick="openModal('${aprvLineList.aprvLineNo}', '승인')">승인</button>
+        						<button type="button" class="btn btn-negative line-deny" onclick="openModal('${aprvLineList.aprvLineNo}', '반려')">반려</button>
+		        				</c:when>
+		        				<c:otherwise>
+		        				${aprvLineList.aprvLineStatus}
+		        				</c:otherwise>
+		        			</c:choose>
+        					</td>
 	        			</tr>
 	        			</c:forEach>
 	        			</c:when>
@@ -186,7 +200,8 @@
         <div class="modal-body">
             <form id="popupForm" class="flex-area">
             	<div class="cell w-100">
-            		<input type="hidden" name="aprvLineStatus" value="대기" /> 
+            		<input type="hidden" name="aprvLineNo" value="" />
+            		<input type="hidden" name="aprvLineStatus" value="대기" />
             		<input type="text" name="aprvLineComment" class="field w-100" placeholder="결재 코멘트" />
 				</div>
             </form>

@@ -102,6 +102,9 @@
 								picker1.setDateRange(null, null);
 								$(".picker-sdate").val("");
 								$(".picker-edate").val("");
+								$('input[name=aprvLeave]').val("");
+							} else {
+								$('input[name=aprvLeave]').val(count);
 							}
 						}
 				    }
@@ -282,9 +285,10 @@
 		            <label><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i></label>
 		        </div>
 		        <div class="cell mt-0">
+					<input type="hidden" name="aprvLeave" value="${aprvDto.aprvLeave}" />
 		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일">
 		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvSdate}">
+		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvEdate}">
 		        </div>
 	        </div>
 	        <div class="w-66 vacationType">
