@@ -46,6 +46,9 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // 1. 하나만 선택되게 제한하는 로직(헤더 체크박스)
     aprvHeadCheckboxes.forEach(function (cb) {
+    	// 잠긴 체크박스면 건너뛰기
+    	if(cb.disabled) return;
+    	
         cb.addEventListener("change", function () {
             if (this.checked) {
                 aprvHeadCheckboxes.forEach(function (otherCb) {
@@ -155,9 +158,11 @@ document.addEventListener("DOMContentLoaded", function () {
 					               <input type="checkbox" 
 			                              name="headNo" 
 			                              class="aprvHead-checkbox" 
-			                              value="${aprvHead.headNo}">
+			                              value="${aprvHead.headNo}"
+			                              <c:if test="${aprvHead.headNo<=5}">disabled</c:if>
+			                              >
 				               </td>
-				               <td>${aprvHead.headName}</td>
+				               <td>${aprvHead.headName}<c:if test="${aprvHead.headNo <= 5}"><small>(삭제 불가)</small></c:if></td>
 				               <td>${aprvHead.headType}</td>
 				           </tr>
 				       </c:forEach>
