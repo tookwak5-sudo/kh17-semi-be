@@ -54,6 +54,19 @@
 	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 	z-index: 10000;
 }
+
+.list-area{
+		height:190px;
+	    overflow-y:auto;
+}
+	
+.list-area thead th{
+   position: sticky;
+   top: 0;
+   background: white;
+   z-index: 10;
+}
+	
 </style>
 
 <!-- fullcalendar cdn -->
@@ -565,7 +578,7 @@
                     	<span><i class="fa-solid fa-list black"></i></span>
                     </a>     
                 </div>
-                <div class="cell">
+                <div class="cell list-area">
                  	<table class="table">
                   		<thead>
 			               <tr> 
@@ -597,7 +610,7 @@
                     	<span><i class="fa-solid fa-list black"></i></span>
                     </a>   
                 </div>
-                <div class="cell">
+                <div class="cell list-area">
                  	<table class="table">
                   		<thead>
 			               <tr> 
