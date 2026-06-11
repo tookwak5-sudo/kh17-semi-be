@@ -41,15 +41,12 @@ public class BoardReadInterceptor implements HandlerInterceptor{
 			throw new TargetNotfoundException("존재하지 않는 게시글");
 		}
 		
-//		//[3] 비회원인 경우 제거
-//		HttpSession session = request.getSession();
-//		String loginId = (String)session.getAttribute("loginId");
-//		if(loginId == null) {
-//			return true;
-//		}
-		
+		//[3] 비회원인 경우 제거
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
+		if(loginId == null) {
+			return true;
+		}
 		
 		//[4] DB에 조회이력이 있으면 제거
 		long count = boardReadDao.count(loginId, boardNo);

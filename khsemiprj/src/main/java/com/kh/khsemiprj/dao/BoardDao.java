@@ -22,7 +22,6 @@ public class BoardDao {
 	private Set<String> allowColumns = Set.of("board_writer", "board_title");
 	
 	//목록 및 조회
-	//전에 코드는 공지가 리스트에 두번 출력되어 고쳤습니다. 조건절에 널 넣은 이유는 !공지 붙으면 선택 없음 항목이 사라져서 넣었습니다.
 	public List<BoardDto> selectList(int page, int size) {
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
@@ -45,7 +44,7 @@ public class BoardDao {
 						+ "select rownum rn, TMP.* from ("
 							+ "select * from board_list "
 							+ "where instr("+pageVO.getColumn()+", ?) > 0 "
-							+ "order by board_no asc"
+							+ "order by board_no desc"
 						+ ") TMP"
 					+ ") where rn between ? and ?";
 		Object[] params = { 
@@ -64,7 +63,6 @@ public class BoardDao {
 	                + ") where rownum <= 5"; // 상위 5개만
 	    return jdbcTemplate.query(sql, boardMapper);
 	}
-	
 	//첫 주석과 같은 이유로 넣었습니다.
 	public List<BoardDto> selectNullList() {
 		String sql = "select * from board_list "
@@ -83,22 +81,42 @@ public class BoardDao {
 	
 	//[변형] 이전글 정보
 	public BoardDto selectPreviousOne(long boardNo) {
-		String sql = "select * from board where board_no = ("
-						+ "select max(board_no) from board where board_no < ?"
+		String sql = "select * from board_list where board_no = ("
+						+ "select max(board_no) from board_list where board_no < ?"
 					+ ")";
 		Object[] params = { boardNo };
 		List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
+	//[변형] 이전글 정보(검색어 있을 때)
+		public BoardDto selectPreviousOne(long boardNo, PageVO pageVO) {
+			String sql = "select * from board_list where board_no = ("
+							+ "select max(board_no) from board_list "
+							+ "where board_no < ? and instr("+pageVO.getColumn()+", ?)>0 "
+						+ ")";
+			Object[] params = { boardNo, pageVO.getKeyword() };
+			List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
+			return list.isEmpty() ? null : list.get(0);
+		}
 	//[변형] 다음글 정보
 	public BoardDto selectNextOne(long boardNo) {
-		String sql = "select * from board where board_no = ("
-						+ "select min(board_no) from board where board_no > ?"
+		String sql = "select * from board_list where board_no = ("
+						+ "select min(board_no) from board_list where board_no > ?"
 					+ ")";
 		Object[] params = { boardNo };
 		List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
+	//[변형] 다음글 정보(검색어 있을 때)
+		public BoardDto selectNextOne(long boardNo, PageVO pageVO) {
+			String sql = "select * from board_list where board_no = ("
+							+ "select min(board_no) from board_list "
+							+ "where board_no > ? and instr("+pageVO.getColumn()+", ?) > 0"
+						+ ")";
+			Object[] params = { boardNo, pageVO.getKeyword() };
+			List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
+			return list.isEmpty() ? null : list.get(0);
+		}
 	
 	public long sequence() {
 		String sql = "select board_seq.nextval from dual";
@@ -194,10 +212,9 @@ public class BoardDao {
 	
 	public boolean updateBoardReplycount(long boardNo) {
 		String sql="update board set board_replycount = ("
-				+ "select count(*) from reply where reply_origin = ?"
-				+ ") where board_no = ?";
+				+ "select count(*) from reply where reply_origin = ? "
+				+ "and reply_status='N') where board_no = ?";
 		Object[] params = { boardNo, boardNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 }
-

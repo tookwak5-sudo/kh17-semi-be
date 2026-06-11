@@ -7,12 +7,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.kh.khsemiprj.dto.ReplyDto;
+import com.kh.khsemiprj.vo.ReplyVO;
 
 @Component
-public class ReplyMapper implements RowMapper<ReplyDto>{
+public class ReplyVOMapper implements RowMapper<ReplyVO>{
 	@Override
-	public ReplyDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return ReplyDto.builder()
+	public ReplyVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		return ReplyVO.builder()
 					.replyNo(rs.getLong("reply_no"))
 					.replyWriter(rs.getString("reply_writer"))
 					.replyOrigin(rs.getLong("reply_origin"))
@@ -23,6 +24,8 @@ public class ReplyMapper implements RowMapper<ReplyDto>{
 					.replyStatus(rs.getString("reply_status"))
 					.replyLikecount(rs.getLong("reply_likecount"))
 					.replyDislikecount(rs.getLong("reply_dislikecount"))
+					.empLiked(rs.getString("emp_liked"))
+					.empDisliked(rs.getString("emp_disliked"))
 				.build();
 	}
 }
