@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
-public class EmpPositionDto {
-	private int empPositionNo;
-	private String empPositionName;
-	private int empPositionLevel;
+public class AprvHeadDto {
+	private int HeadNo;
+	private String HeadName;
+	private String HeadType;
 }

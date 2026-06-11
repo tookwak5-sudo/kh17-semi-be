@@ -550,33 +550,95 @@
 
         <div class="right-section">
             <div class="card p-20" style="height: 300px;">
+            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+            	<div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>결재 대기 목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>     
+                </div>
+                <div class="cell">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>기안자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+			  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+				  				<tr>
+				  					<td>
+						                <a href="/aprv/detail?aprvNo=${rArvList.aprvNo}">
+						                	${rAprvList.aprvTitle}
+						                </a>
+		                            </td>
+				  					<td>${rAprvList.empName}</td>
+				  					<td>${rAprvList.aprvStatus}</td>
+				  				</tr>
+			  				</c:forEach>
+			  			</tbody>
+                 	</table>
+                </div>
+            </c:if>
+            <c:if test="${sessionScope.empGrade == 0}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>결재사항</h3>
-                    <a href="#">더보기</a>
+                    <h3>내 결재목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>   
                 </div>
+                <div class="cell">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>작성자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+			  				<c:forEach var="myList" items="${myAprvList}">
+				  				<tr>
+				  					<td>
+						                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+						                	${myList.aprvTitle}
+						                </a>
+		                            </td>
+				  					<td>${myList.empName}</td>
+				  					<td>${myList.aprvStatus}</td>
+				  				</tr>
+			  				</c:forEach>
+			  			</tbody>
+                 	</table>
                 </div>
+            </c:if>
+            
+			</div>
 
            <div class="card p-20" style="height: 300px; overflow-y: auto;">
-	            <h3>공지사항</h3>
-	            <hr>
-	            <c:forEach var="notice" items="${noticeList}">
-	                <div
-	                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-	                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
-	                    ${notice.boardTitle}
-	                </a>
-	
-	
-	                    <p style="color: #999; font-size: 12px;">작성자:
-	                        ${notice.boardWriter}</p>
-	                </div>
-	            </c:forEach>
-	
-	            <c:if test="${empty noticeList}">
-	                <div>등록된 공지사항이 없습니다.</div>
-	            </c:if>
-       		</div>
-		</div>
+            <h3>공지사항</h3>
+            <hr>
+            <c:forEach var="notice" items="${noticeList}">
+                <div
+                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+                    ${notice.boardTitle}
+                </a>
+
+
+                    <p style="color: #999; font-size: 12px;">작성자:
+                        ${notice.boardWriter}</p>
+                </div>
+            </c:forEach>
+
+            <c:if test="${empty noticeList}">
+                <div>등록된 공지사항이 없습니다.</div>
+            </c:if>
+        </div>
+</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />
+

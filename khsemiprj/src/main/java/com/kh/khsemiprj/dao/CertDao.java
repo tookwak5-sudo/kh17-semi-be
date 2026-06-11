@@ -26,7 +26,7 @@ public class CertDao {
 	//수정
 	public boolean update(CertDto certDto) {
 		String sql = "update cert "
-				+ "set cert_number=?, cert_time=systimestamp, cert_yn='N', cert_fail_cnt=0, "
+				+ "set cert_number=?, cert_time=systimestamp, cert_yn='N', cert_fail_cnt=0 "
 				+ "where cert_email=?";
 		Object[] params = { certDto.getCertNumber(), certDto.getCertEmail() };
 		return jdbcTemplate.update(sql, params) > 0;
@@ -55,7 +55,7 @@ public class CertDao {
 	
 	//인증번호 틀렸을때 실패횟수 1 늘어나는 
 	public boolean failUpdate(String certEmail) {
-		String sql = "update cert set cert_fail_cnt = cert_fail_cnt+1 where cert_emial=?";
+		String sql = "update cert set cert_fail_cnt = cert_fail_cnt+1 where cert_email=?";
 		Object[] params = { certEmail };
 		return jdbcTemplate.update(sql, params) >0;
 	}
