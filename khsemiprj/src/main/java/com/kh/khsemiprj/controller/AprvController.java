@@ -26,7 +26,6 @@ import com.kh.khsemiprj.dao.AttachDao;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dto.AprvDto;
-import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.dto.DeptDto;
