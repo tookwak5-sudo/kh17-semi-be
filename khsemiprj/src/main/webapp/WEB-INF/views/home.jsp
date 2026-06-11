@@ -588,17 +588,28 @@
 			               </tr> 
 		  				</thead>
 			  			<tbody>
-			  				<c:forEach var="rAprvList" items="${receivedAprvList}">
-				  				<tr>
-				  					<td>
-						                <a href="/aprv/detail?aprvNo=${rArvList.aprvNo}">
-						                	${rAprvList.aprvTitle}
-						                </a>
-		                            </td>
-				  					<td>${rAprvList.empName}</td>
-				  					<td>${rAprvList.aprvStatus}</td>
-				  				</tr>
-			  				</c:forEach>
+							<!--리스트가 비어있지 않을때 -->
+			  				<c:if test="${not emptyReceivedList}">
+				  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${rAprvList.aprvNo}">
+							                	${rAprvList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${rAprvList.empName}</td>
+					  					<td>${rAprvList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+			  				</c:if>
+							<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyReceivedList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					결재 대기 중인 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
 			  			</tbody>
                  	</table>
                 </div>
@@ -620,17 +631,28 @@
 			               </tr> 
 		  				</thead>
 			  			<tbody>
-			  				<c:forEach var="myList" items="${myAprvList}">
-				  				<tr>
-				  					<td>
-						                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
-						                	${myList.aprvTitle}
-						                </a>
-		                            </td>
-				  					<td>${myList.empName}</td>
-				  					<td>${myList.aprvStatus}</td>
-				  				</tr>
-			  				</c:forEach>
+							<!--내가쓴 결재가 있을때 -->
+				  			<c:if test="${not emptyMyList}">
+				  				<c:forEach var="myList" items="${myAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+							                	${myList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${myList.empName}</td>
+					  					<td>${myList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+				  			</c:if>
+				  			<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyMyList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					상신한 결재 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
 			  			</tbody>
                  	</table>
                 </div>

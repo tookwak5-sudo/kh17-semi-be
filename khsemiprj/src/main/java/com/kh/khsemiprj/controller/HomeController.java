@@ -104,10 +104,20 @@ public class HomeController {
 		if (loginId != null) {
 			//내가 쓴 글 결재 목록
 			List<EmpAprvLineVO> myAprvList = aprvDao.selectMyList(loginId);
+			if(myAprvList == null || myAprvList.isEmpty()) {
+		        model.addAttribute("emptyMyList", true);
+		    } else {
+		        model.addAttribute("emptyMyList", false); // 데이터가 있다면 false
+		    }
 			model.addAttribute("myAprvList", myAprvList);
 			
 			//내가 승인해야 할 결재 목록
 			List<EmpAprvLineVO> receivedAprvList = aprvDao.selectReceivedList(loginId);
+			if(receivedAprvList == null || receivedAprvList.isEmpty()) {
+		        model.addAttribute("emptyReceivedList", true);
+		    } else {
+		        model.addAttribute("emptyReceivedList", false); // 데이터가 있다면 false
+		    }
 			model.addAttribute("receivedAprvList", receivedAprvList);
 		}
 		
