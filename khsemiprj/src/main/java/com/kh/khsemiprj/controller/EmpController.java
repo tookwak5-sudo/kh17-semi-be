@@ -28,6 +28,7 @@ import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
+import com.kh.khsemiprj.service.EmpLeaveService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -54,23 +55,30 @@ public class EmpController {
 	@Autowired
 	private LogAccessDao logAccessDao;
 
+	@Autowired
+	private EmpLeaveService empLeaveService;
+
 	@GetMapping("/login")
 	public String login() {
 		return "emp/login";
 	}
 
 	@PostMapping("/login")
+
 	public String login(@ModelAttribute EmpDto empDto, HttpSession session// 세션을 사용하겠다고 요청
 			, HttpServletRequest request// 요청 정보를 모두 가져오기
 	) {
 
-		// 로그인 시도
+		// [1] 사용자가 입력한 아이디를 이용하여 DB에 대상이 있는 지를 조회
+
 		EmpDto findEmpDto = empDao.selectOne(empDto.getEmpId());
 		if (findEmpDto == null) {
 			return "redirect:./login?error";
 		}
 
+		// [2] 비밀번호 확인
 		if (!findEmpDto.getEmpPassword().equals(empDto.getEmpPassword())) {
+
 			return "redirect:./login?error";
 		}
 
@@ -116,11 +124,12 @@ public class EmpController {
 //			return "redirect:./notice";
 //		}
 
-		// 로그인 테이블에 저장
-		LogInoutDto logInoutDto = new LogInoutDto();
-		// 아이디
-		logInoutDto.setLogInoutEmpId(findEmpDto.getEmpId());
-		// 유형
+		// 목표: 로그인과 동시에 직원 출근처리
+		// [1] 사용자가 입력한 아이디를 이용하여 loginout 테이블 조회
+		LogInoutDto logInoutDto = logInoutDao.getLastType(empDto.getEmpId());
+
+		// [2] 퇴근 상태라면 출근상태로 변경하고 DB에 저장
+
 		logInoutDto.setLogInoutType("출근");
 		logInoutDao.insert(logInoutDto);
 
@@ -136,15 +145,70 @@ public class EmpController {
 		return "redirect:/emp/login";
 	}
 
-//	//로그아웃 및 퇴근
-//	@RequestMapping("/logoutOut")
-//	public String logoutOut(HttpSession session) {
-//		session.removeAttribute("loginId");
-//		session.removeAttribute("empGrade");
-//		
-//		LogInoutDto logInoutDto = new LogInoutDto();
-//		logInoutDto.getLogInoutType();
-//	}
+	// 목표 출근버튼을 누르면 출근 처리
+	@PostMapping("/work-in")
+	public String workIn(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		// 아이디를 조회해서 출퇴근 여부 확인
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+
+		// 출근 상태라면 상태변화x
+		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workIn";
+		}
+
+		// 퇴근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutEmpId(loginId);
+		newDto.setLogInoutType("출근");
+		System.out.println("출근" + newDto);
+		logInoutDao.insert(newDto);
+		return "redirect:/";
+	}
+
+	// 목표 퇴근 버튼을 누르면 퇴근 처리
+	@PostMapping("/work-out")
+	public String workOut(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		// 아이디를 조회해서 출퇴근 여부 확인
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		// 퇴근 상태라면 상태변화x
+		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workOut";
+		}
+		// 출근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutEmpId(loginId);
+		newDto.setLogInoutType("퇴근");
+		logInoutDao.insert(newDto);
+		System.out.println("퇴근" + newDto);
+		return "redirect:/";
+	}
+
+	// 로그아웃 및 퇴근
+	@RequestMapping("/logoutOut")
+	public String logoutOut(HttpSession session) {
+		session.removeAttribute("loginId");
+		session.removeAttribute("empGrade");
+
+		// 아이디를 조회해서 출퇴근 여부 확인
+		String loginId = (String) session.getAttribute("loginId");
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		// 퇴근 상태라면 상태변화x 로그아웃 안됨
+		if ("퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workOut";
+		}
+
+		// 출근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutType("퇴근");
+		logInoutDao.insert(logInoutDto);
+		return "redirect:/emp/login";
+	}
+
+	// 회원가입
 
 	@GetMapping("/join")
 	public String join() {
@@ -152,9 +216,17 @@ public class EmpController {
 	}
 
 	@PostMapping("/join")
+
 	public String join(@ModelAttribute EmpDto empDto, @RequestParam MultipartFile attach)
 			throws IllegalStateException, IOException {
+
+		// 회원가입 정보 등록
+
 		empDao.join(empDto);
+
+		// 휴가 DB에 정보 등록
+		empLeaveService.leaveInsert(empDto.getEmpId());
+
 		// 프로필이 있으면 추가 등록 및 연결
 		if (!attach.isEmpty()) {
 			int attachNo = attachService.save(attach);
@@ -162,6 +234,7 @@ public class EmpController {
 		}
 
 		return "redirect:./joinFinish";
+
 	}
 
 	@RequestMapping("/joinFinish")
@@ -242,11 +315,12 @@ public class EmpController {
 	}
 
 	@RequestMapping("/mypage")
+
 	public String mypage(HttpSession session, Model model) {
 
 		String loginId = (String) session.getAttribute("loginId");
 		if (loginId == null) {
-			
+
 			return "redirect:./login";
 
 		}
@@ -257,7 +331,8 @@ public class EmpController {
 		model.addAttribute("findEmpDto", findEmpDto);
 
 		// 근태 로그 및 로그인 로그 필요.
-		
+
+		// 근태 로그 및 로그인 로그 필요.
 
 		List<EmpLeaveDto> empLeaveList = empLeaveDao.selectList(loginId);
 
@@ -269,27 +344,26 @@ public class EmpController {
 		LogInoutDto lastLogIn = logInoutDao.getLastLogin(loginId);
 		model.addAttribute("lastLogIn", lastLogIn);
 
-
 		return "emp/mypage";
 	}
 
 	@GetMapping("/checkPassword")
 	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto) {
 		String loginId = (String) session.getAttribute("loginId");
-		
-		if(loginId == null) {
+
+		if (loginId == null) {
 			return "redirect:./login";
 		}
-		
+
 		EmpDto findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null) {
+		if (findEmpDto == null) {
 			return "redirect:./login";
-			
+
 		}
 		return "emp/checkPassword";
-	
+
 	}
-	
+
 	// 내 정보 수정 전 비밀번호 확인 페이지
 	@PostMapping("/checkPassword")
 	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto, @RequestParam String empPassword) {
@@ -311,25 +385,25 @@ public class EmpController {
 		return "redirect:/emp/edit";
 
 	}
-	
-	//비밀번호 바꾸는 페이지 겟매핑
+
+	// 비밀번호 바꾸는 페이지 겟매핑
 	@GetMapping("/changePassword")
 	public String changePassword(HttpSession session, @ModelAttribute EmpDto empDto) {
 		String loginId = (String) session.getAttribute("loginId");
-		
-		if(loginId == null) {
+
+		if (loginId == null) {
 			return "redirect:./login";
 		}
-		
+
 		EmpDto findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null) {
+		if (findEmpDto == null) {
 			return "redirect:./login";
-			
+
 		}
 		return "emp/changePassword";
-	
+
 	}
-	
+
 	// 비밀번호 바꾸는 페이지
 	@PostMapping("/changePassword")
 	public String changePassword(HttpSession session, @ModelAttribute EmpDto empDto, @RequestParam String newPassword) {
@@ -347,11 +421,11 @@ public class EmpController {
 		if (!isValid) {
 			return "redirect:./changePassword?error";
 		}
-		
+
 		empDto.setEmpId(loginId);
 		empDto.setEmpPassword(newPassword);
 		empDao.changePassword(empDto);
-		
+
 		return "redirect:emp/mypage";
 
 	}
@@ -367,9 +441,9 @@ public class EmpController {
 		model.addAttribute("empDto", empDto);
 		return "emp/edit";
 	}
-	
-	//edit 포스트 매핑
-	
+
+	// edit 포스트 매핑
+
 	@PostMapping("/edit")
 	public String edit(HttpSession session, @ModelAttribute EmpDto empDto,
 			@RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
@@ -379,7 +453,7 @@ public class EmpController {
 		}
 
 		EmpDto findEmpDto = empDao.selectOne(loginId);
- //빈 칸 입력시 세터로 팅기는거 막아줬습니다.
+		// 빈 칸 입력시 세터로 팅기는거 막아줬습니다.
 		if (empDto.getEmpEmail() == null || empDto.getEmpEmail().isEmpty()) {
 
 			empDto.setEmpEmail(findEmpDto.getEmpEmail());
@@ -389,32 +463,31 @@ public class EmpController {
 
 			empDto.setEmpContact(findEmpDto.getEmpContact());
 		}
-		
+
 		if (empDto.getEmpBirth() == null || empDto.getEmpBirth().isEmpty()) {
 
 			empDto.setEmpBirth(findEmpDto.getEmpBirth());
 		}
-		
+
 		if (empDto.getEmpBirth() == null || empDto.getEmpBirth().isEmpty()) {
 
 			empDto.setEmpBirth(findEmpDto.getEmpBirth());
 		}
-		
+
 		if (empDto.getEmpPost() == null || empDto.getEmpPost().isEmpty()) {
 
 			empDto.setEmpPost(findEmpDto.getEmpPost());
 		}
-		
+
 		if (empDto.getEmpAddress1() == null || empDto.getEmpAddress1().isEmpty()) {
 
 			empDto.setEmpAddress1(findEmpDto.getEmpAddress1());
 		}
-		
+
 		if (empDto.getEmpAddress2() == null || empDto.getEmpAddress2().isEmpty()) {
 
 			empDto.setEmpAddress2(findEmpDto.getEmpAddress2());
 		}
-		
 
 		empDto.setEmpId(loginId);
 		empDao.update(empDto);
@@ -445,8 +518,6 @@ public class EmpController {
 		} catch (Exception e) {
 			return "redirect:/images/no_image.png";
 		}
-	}	
-	
-	
-	
+	}
+
 }

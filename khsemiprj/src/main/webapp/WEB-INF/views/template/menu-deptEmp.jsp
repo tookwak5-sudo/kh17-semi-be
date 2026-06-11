@@ -11,7 +11,7 @@
 	</li>
 	<li>
 	    <a href="#">
-	        <i class="fa-solid fa-database"></i>
+	        <i class="fa-solid fa-file-signature"></i>
 	        <span>결재</span>
 		</a>
         <!-- 하위 메뉴 -->
@@ -22,29 +22,20 @@
                     <span>결재 목록</span>
                 </a>
             </li>
+            <li>
+                <a href="/aprvForm/list">
+					<i class="fa-solid fa-box"></i>
+                    <span>결재 양식</span>
+                </a>
+            </li>
         </ul>
 	</li>
 	<li>
-	    <a href="#">
-	        <i class="fa-solid fa-building"></i>
-	        <span>부서관리</span>
-		</a>
-        <!-- 하위 메뉴 -->
-        <ul>
-            <li>
-                <a href="/dept/list">
-                    <i class="fa-solid fa-table-list"></i>
-                    <span>부서 목록</span>
-                </a>
-            </li>
-            <li>
-                <a href="/dept/chart">
-                    <i class="fa-solid fa-people-group"></i>
-                    <span>조직도</span>
-                </a>
-            </li>
-        </ul>
-	</li>
+        <a href="/dept/chart">
+            <i class="fa-solid fa-circle-nodes"></i>
+            <span>조직도</span>
+        </a>
+    </li>
 	<li>
 	    <a href="/board/list">
 	        <i class="fa-solid fa-comments"></i>
@@ -61,17 +52,25 @@
 	    </a>
 	    <!-- 하위메뉴 -->
         <ul>
-            <li>
-            	<form action="/emp/work-in" method="post">
-	                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
-	                 <button type="submit">출근</button>
-                 </form>
+        	<li>
+			    <a href="/admin/emp/list">
+			        <i class="fa-solid fa-people-group"></i>
+			        <span>사원관리</span>
+			    </a>
+			</li>
+			<li>
+			    <a href="/dept/list">
+			        <i class="fa-solid fa-building"></i>
+			        <span>부서관리</span>
+				</a>
+			</li>
+			<li>
+                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
+                 <span>출근</span>
             </li>
             <li>
-            	<form action="/emp/work-out" method="post">
-	                <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
-	                <button type="submit">퇴근</button>
-                </form>
+                 <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
+                 <span>퇴근</span>
             </li>
             <li>
                 <a href="/emp/logout">

@@ -21,14 +21,24 @@
 		<div class="cell mb-0 mt-20">
 			<label>구분</label>
 		</div>
-		<div class="cell mt-0">
-			<select name="formHead" class="field w-100">
-				<option value="기타">기타</option>
-				<option value="연차">연차</option>
-				<option value="병가">병가</option>
-				<option value="업무">업무</option>
-				<option value="비용">비용</option>
-			</select>
+		<div class="cell mb-20">
+
+				<select name="head_name" class="input w-100"
+					style="border: 1px solid #ccc; padding: 10px;">
+					<c:forEach var="headName" items="${headList}">
+						<option value="${headName}"
+							${headList.headName == headName ? 'selected' : ''}>
+							${headName}</option>
+					</c:forEach>
+				</select> <select name="head_type" class="input w-100"
+					style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+					<c:forEach var="headType" items="${typeList}">
+						<option value="${headType}"
+							${typeList.headType == headType ? 'selected' : ''}>
+							${headType}</option>
+					</c:forEach>
+				</select>
+
 		</div>
 
 		<div class="cell mb-0 mt-20">

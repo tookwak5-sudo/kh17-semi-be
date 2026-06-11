@@ -140,53 +140,51 @@ $(function() {
               if(certValid == false) {//인증번호가 형식에 맞지 않으면
                   return;
               }
-              $.ajax({
-                  url:"/rest/cert/check",
-                  method:"post",
-                  data: { certEmail : certEmail , certNumber : certNumber },
-                  success: function(response) {//response는 true 아니면 false
-                      if(response === true) {//결과가 정확히 true라면 → 이메일에 success처리, 인증화면삭제
-                          state.empEmailCertValid = true;
-                          $("[name=empEmail]").removeClass("success fail").addClass("success");
-                          $(".cert-area").empty();
-                         
-                      }
-                      else {
-                          state.empEmailCertValid = false;
-                          $(".field-cert").addClass("fail");
-                          }
-                      }
-                  });
-              });
-  		
-  	     //다시 인증하기 버튼
-  	     $(".btn-cert-retry").on("click", function(){
-  	         $(".btn-cert-retry").hide();
-  	         $(".btn-cert-send").show();
-  	         
-  	         $("[name=empEmail]").removeClass("success fail")
-  	                                 .prop("readonly", false).val("");
-  	         
-  	         $(".cert-area").empty();
-  	         state.empEmailValid = true;
-  	         state.empEmailCertValid = false;
-  	
-  	         $("[name=empEmail]").trigger("focus");//커서 옮김
-  	     });
-  
+              
+            $.ajax({
+                url:"/rest/cert/check",
+                method:"post",
+                data: { certEmail : certEmail , certNumber : certNumber },
+                success: function(response) {//response는 true 아니면 false
+                    if(response === true) {//결과가 정확히 true라면 → 이메일에 success처리, 인증화면삭제
+                        state.empEmailCertValid = true;
+                        $("[name=empEmail]").removeClass("success fail").addClass("success");
+                        $(".cert-area").empty();
+                        $(".btn-cert-send").hide();//전송버튼 숨김
+                        $(".btn-cert-retry").show();
+                    }
+                    else {
+                        state.empEmailCertValid = false;
+                        $(".field-cert").addClass("fail");
+                        }
+                    }
+                });
+            });
+		
+	     //다시 인증하기 버튼
+	     $(".btn-cert-retry").on("click", function(){
+	         $(".btn-cert-retry").hide();
+	         $(".btn-cert-send").show();
+	         $("[name=empEmail]").removeClass("success fail")
+	                                 .prop("readonly", false).val("");
+	         state.empEmailValid = true;
+	         state.empEmailCertValid = false;
+	
+	         $("[name=empEmail]").trigger("focus");//커서 옮김
+	     });
+	     
+	   //폼검사
+	       $(".form-check").on("submit", function(){
+	           $(this).find("select[name]").trigger("input");
+	           $(this).find("input[name], textarea[name]").trigger("blur");
+	           return state.ok();
+	      	 });
+	});
+	</script>
+	
+     <!-- 인증번호 입력창 템플릿 -->
+     <script type="text/template" id="cert-template">
 
-    // 폼검사
-    $(".form-check").on("submit", function(){
-        $(this).find("select[name]").trigger("input");
-        $(this).find("input[name], textarea[name]").trigger("blur");
-        return state.ok();
-    });
-    
-}); 
-</script>
-
-<!-- 인증번호 입력창 템플릿 -->
-<script type="text/template" id="cert-template">
         <div class="cert-wrapper flex-area" style="flex-wrap: wrap;">
             <input type="text" inputmode="numeric" class="field field-cert" 
                     placeholder="인증번호 입력" size="6" maxlength="6">

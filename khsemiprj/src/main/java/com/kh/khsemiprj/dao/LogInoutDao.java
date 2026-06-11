@@ -24,7 +24,7 @@ public class LogInoutDao {
 	
 	//상세 조회 
 	public LogInoutDto selectOne(String loginId) {
-		String sql = "select * from log_inout where loginId = ?";
+		String sql = "select * from log_inout where log_inout_emp_id = ?";
 		Object[] params = { loginId };
 		List<LogInoutDto> list =  jdbcTemplate.query(sql,logInoutMapper, params);
 		return list.isEmpty() ? null : list.get(0);
@@ -73,14 +73,19 @@ public class LogInoutDao {
 	}
 	
 	
-	// 마지막으로 기록된 상태를 조회
-//	public String getLastType(String empId) {
-//		String sql = "select log_inout_type from ("
-//				+ "select * from log_inout where log_inout_emp_id = ? "
-//				+ "order by log_inout_time desc"
-//				+ ") where rownum = 1";
-//		
-//	}
+	// 오늘의 최신 출퇴근 상태를 조회
+	public LogInoutDto getLastType(String empId) {
+		String sql = "select * from ("
+				+ "select * from log_inout "
+				+ "where log_inout_emp_id = ? "
+				+ "and trunc(log_inout_time) = trunc(sysdate) "
+				+ "order by log_inout_time desc"
+				+ ") "
+				+ "where rownum = 1";
+		Object[] params = {empId};
+		List<LogInoutDto> list =  jdbcTemplate.query(sql,logInoutMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
 		
 	// 마지막 페이지 확인을 위해 필요한 데이터
 	public int count() {
