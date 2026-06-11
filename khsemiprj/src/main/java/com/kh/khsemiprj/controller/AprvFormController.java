@@ -35,9 +35,6 @@ public class AprvFormController {
 	@Autowired
 	private AprvFormDao aprvFormDao;
 
-	private Set<String> excludeHeadNames = Set.of("일정","영웅");
-	private Set<String> excludeTypeNames = Set.of("일반");
-	
 	// 1. 결재 양식 목록 조회
 	@GetMapping("/list")
 	public String list(@ModelAttribute PageVO pageVO, Model model) {
@@ -59,33 +56,37 @@ public class AprvFormController {
 	// 3. 결재 양식 신규 등록 페이지 열기
 	@GetMapping("/insert")
 	public String insert(Model model) {
-		//일단 헤드네임 전부 가져오고
-//		List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
-//		List<AprvFormHeadTypeVO> filteredTypeList = aprvFormDao.selectFilteredTypeList();
-		
-//		model.addAttribute("headList", filteredHeadList);
-//		model.addAttribute("typeList", filteredTypeList);
-//		
-	
+
+		List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
+		List<AprvFormHeadTypeVO> filteredTypeList = aprvFormDao.selectFilteredTypeList();
+
+		model.addAttribute("headList", filteredHeadList);
+		model.addAttribute("typeList", filteredTypeList);
+
 		return "aprvForm/insert";
 	}
 
 	// 4. 결재 양식 신규 등록 처리 (텍스트 + 파일)
 	@PostMapping("/insert")
-	public String insert(Model model, @ModelAttribute AprvFormDto aprvFormDto, @RequestParam(required = false) MultipartFile attach)
+	public String insert(@ModelAttribute AprvFormDto aprvFormDto, @RequestParam(value = "head_name") String headName,
+			@RequestParam(value = "head_type") String headType, @RequestParam(required = false) MultipartFile attach)
 			throws IllegalStateException, IOException {
-		AprvFormDto findNameDto = aprvFormDao.selectOneByName(aprvFormDto.getFormName());
-		
-		if (findNameDto != null) {
-			return "redirect:/aprvForm/insert?duplicate";
+
+		// 1. 화면에서 넘어온 명칭과 타입으로 진짜 head_no를 DB에서 조회함
+		int headNo = aprvFormDao.findHeadNo(headName, headType);
+
+		if (headNo == 0) {
+			// DB에 없는 조합이면 강제로 인서트 막고 에러 방지용 리다이렉트 처리
+			return "redirect:/aprvForm/insert?error=invalid_head";
 		}
-		if (aprvFormDto.getFormUseYn() != null) {
-			aprvFormDto.setFormUseYn("Y");
-		}
-		
-		
-		
-	
+
+		// 2. 찾아온 번호를 DTO에 수동으로 수수료 넘기듯 꽂아넣음
+		aprvFormDto.setFormHeadNo(headNo);
+
+		// 3. 체크박스 null 처리 해주고
+		aprvFormDto.setFormUseYn(aprvFormDto.getFormUseYn() != null ? "Y" : "N");
+
+		// 4. 서비스 호출해서 인서트 진행
 		aprvFormService.registerFormFile(aprvFormDto, attach);
 
 		return "redirect:./list";
@@ -95,61 +96,57 @@ public class AprvFormController {
 	@GetMapping("/edit")
 	public String edit(@RequestParam int formNo, Model model) {
 		try {
-			
+
 			AprvFormDto aprvFormDto = aprvFormDao.selectOne(formNo);
 			model.addAttribute("aprvFormDto", aprvFormDto);
-			
+
 			AprvFormSelectVO findHeadName = aprvFormDao.selectOneUsingHead(formNo);
 			model.addAttribute("findHeadName", findHeadName);
-			
+
 			AprvFormSelectVO findHeadType = aprvFormDao.selectOneUsingType(formNo);
 			model.addAttribute("findHeadType", findHeadType);
-			
+
 			Integer attachNo = aprvFormDao.findAttachNo(formNo);
 			model.addAttribute("attachNo", attachNo);
-			
-			List<AprvFormHeadNameVO> headList = aprvFormDao.selectOnlyHeadList();
-			
-			List<AprvFormHeadTypeVO> typeList = aprvFormDao.selectOnlyTypeList();
-			
-			//필터링 된 헤드네임 바구니
-			List<AprvFormHeadNameVO> filteredHeadList = new ArrayList<>();
-			
-			//필터링 된 타입네임 바구니
-			List<AprvFormHeadTypeVO> filteredTypeList = new ArrayList<>();
-			
-			//filtered~에 위에서 제외한 이름이 아니면 때려 넣고
-				for(AprvFormHeadNameVO head : headList) {
-					if(!excludeHeadNames.contains(head.getHeadName()))filteredHeadList.add(head);
-					}
-			
-				for(AprvFormHeadTypeVO type : typeList) {
-					if(!excludeTypeNames.contains(type.getHeadType())) {
-					filteredTypeList.add(type);
-					}
-				}
+
+			List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
+			List<AprvFormHeadTypeVO> filteredTypeList = aprvFormDao.selectFilteredTypeList();
+
 			model.addAttribute("headList", filteredHeadList);
-			model.addAttribute("typeList",filteredTypeList);			
-			
+			model.addAttribute("typeList", filteredTypeList);
+
 			return "aprvForm/edit";
-		
-		
+
 		}
-		
+
 		catch (TargetNotfoundException e) {
 			return "redirect:/error/500";
 		}
-}
+	}
 
 	// 6. 결재 양식 및 파일 수정 처리
 	@PostMapping("/edit")
 	public String edit(@ModelAttribute AprvFormDto aprvFormDto, @ModelAttribute AttachDto attachDto,
+			@RequestParam(value = "head_name") String headName, @RequestParam(value = "head_type") String headType,
 			@RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
-		
-		// 1. 본문 텍스트 데이터 수정
+
+		int headNo = aprvFormDao.findHeadNo(headName, headType);
+
+		if (headNo == 0) {
+			// 이상한 조합이면 수정 안 시키고 에러 리다이렉트
+			return "redirect:/aprvForm/edit?formNo=" + aprvFormDto.getFormNo() + "&error=invalid_head";
+		}
+
+		// 2. 찾아온 외래키 번호를 세팅
+		aprvFormDto.setFormHeadNo(headNo);
+
+		// 3. 사용 여부 체크박스에 반영
+		aprvFormDto.setFormUseYn(aprvFormDto.getFormUseYn() != null ? "Y" : "N");
+
+		// 4. 본문 텍스트 데이터 수정
 		aprvFormDao.update(aprvFormDto);
 
-		// 2. 파일 교체 로직
+		// 5. 파일 교체 로직
 		aprvFormService.modifyFile(aprvFormDto, attachDto, attach);
 
 		return "redirect:/aprvForm/detail?formNo=" + aprvFormDto.getFormNo(); // 수정 완료 후 상세 페이지로 이동
@@ -159,7 +156,7 @@ public class AprvFormController {
 	public String delete(@RequestParam int formNo) throws IllegalStateException, IOException {
 		try {
 			Integer attachNo = aprvFormDao.findAttachNo(formNo);
-			if (attachNo != null&& attachNo>0) {
+			if (attachNo != null && attachNo > 0) {
 				AprvFormDto aprvFormDto = new AprvFormDto();
 				aprvFormDto.setFormNo(formNo);
 
@@ -167,22 +164,22 @@ public class AprvFormController {
 				attachDto.setAttachNo(attachNo);
 
 				aprvFormService.deleteFile(aprvFormDto, attachNo);
-				
+
 			}
 			aprvFormDao.delete(formNo);
-		} 
-		
+		}
+
 		catch (TargetNotfoundException e) {
 			return "redirect:/error/500";
 		}
-		
+
 		return "redirect:/aprvForm/deleteFinish";
 	}
-	
+
 	// 8. 결재 양식 삭제 완료 페이지 열기
 	@GetMapping("/deleteFinish")
 	public String deleteFinish() {
-	   
-	    return "aprvForm/deleteFinish"; 
+
+		return "aprvForm/deleteFinish";
 	}
 }

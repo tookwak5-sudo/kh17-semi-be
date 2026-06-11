@@ -2,162 +2,185 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<style>
+	/* 마이페이지 정보 테이블 전체 감싸는 상자 */
+	.mypage-info-box {
+		border: 1px solid #dcdcdc;
+		border-radius: 8px;
+		overflow: hidden; /* 라운드 테두리 밖으로 배경색 안 삐져나가게 */
+		margin-bottom: 40px;
+	}
 
+	/* 마이페이지 전용 가로 정렬 행 (기존 flex-area 대체) */
+	.mypage-row {
+		display: flex;
+		align-items: center;
+		min-height: 48px;
+		border: none; /* 혹시 모를 기존 border 초기화 */
+	}
+	
+	/* 행과 행 사이의 구분선 (마지막 줄은 제외) */
+	.mypage-row:not(:last-child) {
+		border-bottom: 1px solid #e9e9e9;
+	}
+	
+	/* 왼쪽 항목 이름 (아이디, 이메일 등) */
+	.mypage-label {
+		background-color: #f8fafc;
+		color: black;
+		font-weight: bold;
+		padding: 12px 20px;
+		border-right: 1px solid #e9e9e9;
+		text-align: left;
+	}
+	
+	/* 오른쪽 실제 데이터 값 */
+	.mypage-value {
+		padding: 12px 20px;
+		font-weight: 500;
+	}
+</style>
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <h1>마이 페이지</h1>
 
 <div class="container w-950 mt-50 mb-50">
 	<div class="cell">
-
 		<h1>${findEmpDto.empName}님의정보</h1>
-
-
-
 	</div>
+
+	<div class="cell mypage-info-box">
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-user"></i></span>
+				아이디
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empId}</div>
+		</div>
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-envelope"></i></span>
+				이메일
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empEmail}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-cake-candles"></i></span>
+				생년월일
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empBirth}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-phone"></i></span>
+				연락처
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empContact}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-signs-post"></i></span>
+				우편번호
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empPost}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-location-dot"></i></span>
+				주소
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empAddress1}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-house"></i></span>
+				상세주소
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empAddress2}</div>
+		</div>	
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-clock-rotate-left"></i></span>
+				로그인 이력
+			</div>
+			<div class="w-75 mypage-value">2026.06.01</div>
+		</div>
+	</div>
+	
+	<div class="right">
+			<a href="/emp/checkPassword" class="btn btn-neutral" style="width : 140px;">내 정보 수정</a>
+	</div>
+		
+	<div class="right mt-10 mb-50">
+		<a href="/emp/changePassword" class="btn btn-neutral" style="width : 140px;">비밀번호 수정</a>
+	</div>	
 
 	<div class="cell">
-		<div class="flex-area">
-			<div class="w-25">아이디</div>
-			<div class="w-75 blue">${findEmpDto.empId}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">이메일</div>
-			<div class="w-75 blue">${findEmpDto.empEmail}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">생년월일</div>
-			<div class="w-75 blue">${findEmpDto.empBirth}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">연락처</div>
-			<div class="w-75 blue">${findEmpDto.empContact}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">우편번호</div>
-			<div class="w-75 blue">${findEmpDto.empPost}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">도로명주소</div>
-			<div class="w-75 blue">${findEmpDto.empAddress1}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">상세주소</div>
-			<div class="w-75 blue">${findEmpDto.empAddress2}</div>
-		</div>
-
-
-
-
-		<div class="mt-40 mb-20">
-			<table class="table">
-				<thead>
-					<tr>
-						<th class="center black">최종로그인</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="center"><c:if test="${lastAccess != null}">
-                                ${lastAccess.accessDate} republic of korea, seoul ${lastAccess.accessIp}
-                            </c:if> <c:if test="${lastAccess == null}">
-                                접속 기록이 존재하지 않습니다.
-                            </c:if></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<div class="right">
-			<a href="/emp/checkPassword" class="btn btn-neutral">정보 수정</a>
-		</div>
-		
-		<div class="right">
-			<a href="/emp/changePassword" class="btn btn-neutral">비밀번호 수정</a>
-		</div>
-		
-		
+		<h1>${findEmpDto.empName}님의 휴가 정보</h1>
 	</div>
+	<table class="table">
+	    <thead>
+	        <tr>
+	            <th>연도</th>
+	            <th>총 연차</th>
+	            <th>사용 연차</th>
+	            <th>잔여 연차</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <c:forEach var="leave" items="${empLeaveList}">
+	            <tr>
+	                <td>${leave.leaveYear}년</td>
+	                <td>${leave.leaveTotal}일</td>
+	                <td>${leave.leaveUsed}일</td>
+	                <td>${leave.leaveRemain}일</td>
+	            </tr>
+	        </c:forEach>
+	    </tbody>
+	</table>
 
-</div>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+	<style>
+		.chart-section { width: 100%; margin-top: 50px; }
+		.chart-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 30px; user-select: none; }
+		.chart-header .btn-arrow { font-size: 24px; font-weight: bold; cursor: pointer; color: #333; transition: color 0.2s; }
+		.chart-header .btn-arrow:hover { color: #007bf6; }
+		.chart-header .period-text { font-size: 22px; font-weight: bold; color: #222; min-width: 250px; text-align: center; }
+		
+		.chart-flex-container { display: flex; gap: 30px; width: 100%; align-items: center; }
+		.chart-box-left { flex: 7; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+		.chart-box-right { flex: 3; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+		.total-info-text { margin-top: 15px; font-size: 18px; font-weight: bold; color: #333; }
+	</style>
 
-<div class="cell">
-
-	<h1>${findEmpDto.empName}님의휴가정보</h1>
-
-</div>
-
-
-<table border="1">
-	<thead>
-		<tr>
-			<th>연도</th>
-			<th>총 연차</th>
-			<th>사용 연차</th>
-			<th>잔여 연차</th>
-		</tr>
-	</thead>
-	<tbody>
-		<c:forEach var="leave" items="${empLeaveList}">
-			<tr>
-				<td>${leave.leaveYear}년</td>
-				<td>${leave.leaveTotal}일</td>
-				<td>${leave.leaveUsed}일</td>
-				<td>${leave.leaveRemain}일</td>
-			</tr>
-		</c:forEach>
-	</tbody>
-</table>
-
-
-</div>
-
-<jsp:include page="/WEB-INF/views/template/footer.jsp" />
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-	.chart-section { width: 100%; margin-top: 50px; }
-	.chart-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 30px; user-select: none; }
-	.chart-header .btn-arrow { font-size: 24px; font-weight: bold; cursor: pointer; color: #333; transition: color 0.2s; }
-	.chart-header .btn-arrow:hover { color: #007bf6; }
-	.chart-header .period-text { font-size: 22px; font-weight: bold; color: #222; min-width: 250px; text-align: center; }
+	<div class="chart-section">
+		<div class="chart-header">
+			<span class="btn-arrow" id="prevMonthBtn">&lt;</span>
+			<span class="period-text" id="periodDisplay">2026. 05 ~ 2026. 06</span>
+			<span class="btn-arrow" id="nextMonthBtn">&gt;</span>
+		</div>
 	
-	.chart-flex-container { display: flex; gap: 30px; width: 100%; align-items: center; }
-	.chart-box-left { flex: 7; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-	.chart-box-right { flex: 3; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-	.total-info-text { margin-top: 15px; font-size: 18px; font-weight: bold; color: #333; }
-</style>
-
-<div class="chart-section">
-	<div class="chart-header">
-		<span class="btn-arrow" id="prevMonthBtn">&lt;</span>
-		<span class="period-text" id="periodDisplay">2026. 05 ~ 2026. 06</span>
-		<span class="btn-arrow" id="nextMonthBtn">&gt;</span>
-	</div>
-
-	<div class="chart-flex-container">
-		<div class="chart-box-left">
-			<canvas id="weeklyBarChart"></canvas>
-		</div>
-		
-		<div class="chart-box-right">
-			<div style="width: 100%; height: 260px; position: relative;">
-				<canvas id="monthlyPieChart"></canvas>
+		<div class="chart-flex-container">
+			<div class="chart-box-left">
+				<canvas id="weeklyBarChart"></canvas>
 			</div>
-			<div class="total-info-text" id="totalHoursText">총 근무시간: 0시간</div>
+			
+			<div class="chart-box-right">
+				<div style="width: 100%; height: 260px; position: relative;">
+					<canvas id="monthlyPieChart"></canvas>
+				</div>
+				<div class="total-info-text" id="totalHoursText">총 근무시간: 0시간</div>
+			</div>
 		</div>
 	</div>
 </div>
-
 <script>
 	let currentDate = new Date();
 	let currentYear = currentDate.getFullYear();
@@ -282,8 +305,6 @@
 		});
 	}
 </script>
-
-</div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
 

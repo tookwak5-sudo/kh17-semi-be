@@ -76,24 +76,25 @@ public class AprvFormDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 
-	// 오직 헤드 타입 목록만 가져오는 메소드
-	// 컴퓨터 일반 책에서 distinct라는 중복제거 키워드를 사용하였습니다. 사용 안 하면 휴가 연차 등등이 결재로 묶여있고 총 4개인데 객체로 뽑으면 결재도 4개만큼 나와서 채택했습니다.
-	
-	public List<AprvFormHeadTypeVO> selectOnlyTypeList() {
+	// 오직 헤드 타입 목록만 가져오는 메소드 ('일반' 제외)
+	//distinct는 공시 때 봤던 컴퓨터 일반 교재에서 참고했습니다.
+		public List<AprvFormHeadTypeVO> selectFilteredTypeList() {
+			
+			String sql = "select distinct head_type from aprv_head where head_type != '일반'";
 
-		String sql = "select distinct head_type from aprv_head";
+			return jdbcTemplate.query(sql, aprvFormHeadTypeMapper);
+		}
 
-		return jdbcTemplate.query(sql,aprvFormHeadTypeMapper);
-	}
+		// 오직 head_name만 딱 뽑아오는 메소드 ('일반' 타입에 속한 이름들 제외)
+		public List<AprvFormHeadNameVO> selectFilteredHeadList() {
+			
+			String sql = "select head_name from aprv_head where head_type != '일반'";
 
-	// 오직 head_name만 개수만큼 딱 뽑아오는 메소드
-	public List<AprvFormHeadNameVO> selectOnlyHeadList() {
-
-		String sql = "select distinct head_name from aprv_head";
-
-		return jdbcTemplate.query(sql,aprvFormHeadNameMapper);
-	}
-
+			return jdbcTemplate.query(sql, aprvFormHeadNameMapper);
+		}
+		
+		
+		
 	// 목록 및 키워드로 조회
 	public List<AprvFormSelectVO> selectList(int page, int size) {
 		String sql = "select * from (" + "select rownum rn, TMP.* from (" + "select af.*, ah.head_name, ah.head_type "
@@ -160,12 +161,22 @@ public class AprvFormDao {
 
 		int currentNo = this.sequence();
 
-		String sql = "insert into aprv_form( " + "form_no, form_name, form_explain, form_use_yn, "
-				+ "form_wtime, form_head_no) " + "values(?, ?, ?, ?, systimestamp, ?)";
+		// 사용 여부 null 체크 안전장치
+		if (aprvFormDto.getFormUseYn() == null) {
+			aprvFormDto.setFormUseYn("N");
+		}
 
-		Object[] params = { currentNo, // 컨트롤러에서 다음번호를 받아주는게 아닌 인서트 구문에서 받아주도록 만들었습니다.
-				aprvFormDto.getFormName(), aprvFormDto.getFormExplain(), aprvFormDto.getFormUseYn(),
-				aprvFormDto.getFormHeadNo() };
+		// 원래 쓰던 확실한 VALUES 쿼리로 복구
+		String sql = "insert into aprv_form(form_no, form_name, form_explain, form_use_yn, form_wtime, form_head_no) "
+				+ "values(?, ?, ?, ?, systimestamp, ?)";
+
+		Object[] params = { 
+				currentNo, 
+				aprvFormDto.getFormName(), 
+				aprvFormDto.getFormExplain(), 
+				aprvFormDto.getFormUseYn(),
+				aprvFormDto.getFormHeadNo() // 여기서 진짜 번호를 받아서 넣음
+		};
 
 		jdbcTemplate.update(sql, params);
 
@@ -175,6 +186,17 @@ public class AprvFormDao {
 		aprvFormVo.setFormNo(currentNo);
 
 		return aprvFormVo;
+	}
+	
+	
+	//head_no 찾아주는 메소드
+	public int findHeadNo(String headName, String headType) {
+	    String sql = "select head_no from aprv_head where head_name = ? and head_type = ?";
+	    try {
+	        return jdbcTemplate.queryForObject(sql, Integer.class, headName, headType);
+	    } catch (Exception e) {
+	        return 0; 
+	    }
 	}
 
 	public void insert(AprvFormDto aprvFormDto) {
@@ -201,16 +223,26 @@ public class AprvFormDao {
 	}
 
 	// 양식 본문 수정
+		public boolean update(AprvFormDto aprvFormDto) {
+			
+			String sql = "update aprv_form " 
+					+ "set form_name=?, " 
+					+ "form_explain=?, " 
+					+ "form_use_yn=?, "
+					+ "form_head_no=?,  " 
+					+ "form_wtime=systimestamp " 
+					+ "where form_no=?";
+					
+			Object[] params = { 
+					aprvFormDto.getFormName(), 
+					aprvFormDto.getFormExplain(), 
+					aprvFormDto.getFormUseYn(),
+					aprvFormDto.getFormHeadNo(), // 컨트롤러가 찾아서 채워준 번호가 들어감
+					aprvFormDto.getFormNo() 
+			};
 
-	public boolean update(AprvFormDto aprvFormDto) {
-
-		String sql = "update aprv_form " + "set form_name=?, " + "form_explain=?, " + "form_use_yn=?, "
-				+ "form_head_no=?,  " + "form_wtime=systimestamp " + "where form_no=?";
-		Object[] params = { aprvFormDto.getFormName(), aprvFormDto.getFormExplain(), aprvFormDto.getFormUseYn(),
-				aprvFormDto.getFormHeadNo(), aprvFormDto.getFormNo() };
-
-		return jdbcTemplate.update(sql, params) > 0;
-	}
+			return jdbcTemplate.update(sql, params) > 0;
+		}
 
 	public boolean delete(int formNo) {
 		String sql = "delete aprv_form where form_no=?";

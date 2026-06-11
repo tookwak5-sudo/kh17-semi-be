@@ -116,7 +116,9 @@
 <div class="calendarModal" class="container w-600 mt-50">
     <div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 상세</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
     <div class="container w-500 mt-50">
         <div class="cell">
@@ -147,7 +149,9 @@
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
@@ -554,11 +558,72 @@
 
         <div class="right-section">
             <div class="card p-20" style="height: 300px;">
+            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+            	<div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>결재 대기 목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>     
+                </div>
+                <div class="cell">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>기안자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+			  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+				  				<tr>
+				  					<td>
+						                <a href="/aprv/detail?aprvNo=${rArvList.aprvNo}">
+						                	${rAprvList.aprvTitle}
+						                </a>
+		                            </td>
+				  					<td>${rAprvList.empName}</td>
+				  					<td>${rAprvList.aprvStatus}</td>
+				  				</tr>
+			  				</c:forEach>
+			  			</tbody>
+                 	</table>
+                </div>
+            </c:if>
+            <c:if test="${sessionScope.empGrade == 0}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>결재사항</h3>
-                    <a href="#">더보기</a>
+                    <h3>내 결재목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>   
                 </div>
+                <div class="cell">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>작성자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+			  				<c:forEach var="myList" items="${myAprvList}">
+				  				<tr>
+				  					<td>
+						                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+						                	${myList.aprvTitle}
+						                </a>
+		                            </td>
+				  					<td>${myList.empName}</td>
+				  					<td>${myList.aprvStatus}</td>
+				  				</tr>
+			  				</c:forEach>
+			  			</tbody>
+                 	</table>
                 </div>
+            </c:if>
+            
+			</div>
 
            <div class="card p-20" style="height: 300px; overflow-y: auto;">
 	            <h3>공지사항</h3>
@@ -582,8 +647,6 @@
        		</div>
 		</div>
 </div>
-
-
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />
 

@@ -31,7 +31,7 @@
 			</select> 
 			
 			<select name="head_type" class="input w-100"
-			style="border: 1px solid #ccc; padding: 10px;">
+				style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
 				<c:forEach var="type" items="${typeList}">
 					<option value="${type.headType}">${type.headType}</option>
 				</c:forEach>

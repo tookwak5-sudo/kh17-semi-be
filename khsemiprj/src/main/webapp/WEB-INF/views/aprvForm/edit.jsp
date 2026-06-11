@@ -22,7 +22,6 @@
 
 				<select name="head_name" class="input w-100"
 					style="border: 1px solid #ccc; padding: 10px;">
-					
 					<c:forEach var="head" items="${headList}">
 						<option value="${head.headName}"
 							${findHeadName.headName == head.headName ? 'selected' : ''}>
@@ -32,7 +31,6 @@
 				
 				<select name="head_type" class="input w-100"
 					style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
-					
 					<c:forEach var="type" items="${typeList}">
 						<option value="${type.headType}"
 							${findHeadType.headType == type.headType ? 'selected' : ''}>

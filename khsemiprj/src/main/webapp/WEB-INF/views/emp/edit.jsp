@@ -257,7 +257,7 @@ $(function() {
 			<div class="gray mb-10">
 				<b>생년월일</b>
 			</div>
-			<input type="text" name="empBirth" class="field w-100"
+			<input type="date" name="empBirth" class="field w-100"
 				placeholder="YYYY . MM . DD" value="${empDto.empBirth}">
 		</div>
 
@@ -268,15 +268,16 @@ $(function() {
 			<div class="flex-area mb-10">
 				<input type="text" id="postcode" name="empPost"
 					class="field w-200 me-10" placeholder="우편번호" readonly>
-				<button type="button" class="btn"
-					style="background-color: #353b48; color: white; border: none;"
+				<button type="button" class="btn btn-neutral"
 					onclick="searchAddress()">주소 검색</button>
 			</div>
-			<div class="flex-area">
+			<div class="flex-area mb-10">
 				<input type="text" id="basicAddress" name="empAddress1"
-					class="field flex-fill me-10" placeholder="기본주소" readonly>
+					class="field flex-fill w-100" placeholder="기본주소" readonly>
+			</div>
+			<div class="flex-area">
 				<input type="text" id="detailAddress" name="empAddress2"
-					class="field flex-fill" placeholder="상세주소">
+					class="field flex-fill w-100" placeholder="상세주소">
 			</div>
 			<div class="gray mt-10" style="font-size: 13px;">* 주소를 변경하려면
 				우편번호, 기본주소, 상세주소를 모두 입력해야 합니다.</div>
@@ -287,7 +288,7 @@ $(function() {
 				<b>연락처</b>
 			</div>
 			<div class="flex-area">
-				<input type="text" name="empContact" class="field flex-fill me-10">
+				<input type="text" name="empContact" class="field flex-fill">
 
 			</div>
 		</div>
@@ -302,8 +303,7 @@ $(function() {
 		<div class="cell preview-area"></div>
 
 		<div class="cell mt-50">
-			<button type="submit" class="btn w-100"
-				style="background-color: #353b48; color: white; border: none; padding: 0.8em; font-weight: bold;">수정하기</button>
+			<button type="submit" class="btn btn-positive w-100">수정하기</button>
 		</div>
 
 	</form>

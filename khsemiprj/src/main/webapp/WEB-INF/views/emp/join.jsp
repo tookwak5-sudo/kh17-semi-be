@@ -3,12 +3,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
-<!-- jQuery CDN -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="./preview.js"></script>
-
-
+ <!-- jQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<!--     <script src="./preview.js"></script> -->
 
 <!-- kakao postapi cdn -->
 <script
@@ -33,6 +30,7 @@ $(function() {
         }
     };
     
+    
     $("[name=empId]").on("blur",function(){
         var regex =/^[a-z][a-z0-9]{4,19}$/;
         var empId = $("[name=empId]").val();
@@ -52,7 +50,6 @@ $(function() {
         var empPost = $("[name=empPost]").val();
         var empAddress1 = $("[name=empAddress1]").val();
         var empAddress2 = $("[name=empAddress2]").val();
-
         var empty = empPost.length == 0 && empAddress1.length == 0 && empAddress2.length == 0;
         var full = empPost.length > 0 && empAddress1.length > 0 && empAddress2.length > 0;
         var valid = empty || full;
@@ -156,6 +153,18 @@ $(function() {
                     else {
                         state.empEmailCertValid = false;
                         $(".field-cert").addClass("fail");
+                        certFailCount++;
+                        
+                        if(certFailCount>= 5){
+                        	$(".cert-message").text("인증번호를 5회 이상 틀렸습니다. 다시 인증번호를 전송 후 시도해주세요.")
+                            .css("color", "red");
+					        $(".field-cert").prop("disabled", true); // 입력창 막기
+					        $(".btn-cert-check").prop("disabled", true); // 검사 버튼 막기
+                        }
+                        else{
+                        	$(".cert-message").text("인증번호가 일치하지 않습니다. (" + certFailCount + "/5회 오류)")
+                            .css("color", "red");
+                        	}
                         }
                     }
                 });
@@ -169,6 +178,9 @@ $(function() {
 	                                 .prop("readonly", false).val("");
 	         state.empEmailValid = true;
 	         state.empEmailCertValid = false;
+	         
+	         certFailCount = 0;//0으로 초기화
+	         $(".cert-message").text(""); // 메시지 비우기
 	
 	         $("[name=empEmail]").trigger("focus");//커서 옮김
 	     });
@@ -192,6 +204,7 @@ $(function() {
                 <i class="fa-solid fa-lock"></i>
                 <span>인증번호 확인</span>
             </button>
+			<div class="cert-message w-100"></div>
             <div class="fail-feedback w-100">인증번호를 다시 확인해주세요</div>
         </div>
      </script>
