@@ -14,8 +14,8 @@
 <script>
 $(function() {
     var state = {
-        empIdValid: true,
-        empNameValid: true,
+        empIdValid: false,//형식 검사 반영
+        empNameValid: false,//형식 검사 반영
         empPasswordValid: true,
         empPasswordCheckValid: true,
         empEmailValid: true,//형식검사 들어가면 밑도 위에도 false로 바꾸기
@@ -30,7 +30,7 @@ $(function() {
         }
     };
     
-    
+    //형식 검사
     $("[name=empId]").on("blur",function(){
         var regex =/^[a-z][a-z0-9]{4,19}$/;
         var empId = $("[name=empId]").val();
@@ -40,11 +40,68 @@ $(function() {
             .addClass("fail").attr("data-error","1");
             state.empIdValid = false;
             return;
-        } else {
-            $("[name=empId]").removeClass("success fail").addClass("success");
-            state.empIdValid = true;
-        }
+        } 
+        
+        //중복 검사
+        
+        $.ajax({
+        	url:"/rest/cert/checkId"
+        	method:"post",
+        	data:{empId : empId},
+        	success: function (response){
+        		if(response){
+        			$("[name=empId]".removeClass("success fail")
+        					.addClass("fail")
+        					.attr("data-error","2");
+        			state.empIdValid = false;
+        		}
+        		else{
+        			$("[name=empId]").removeClass("success fail")
+        					.addClass("success");
+        			state.empIdValid = true;
+        		}
+        	}
+        })
     });	
+    
+    $("[name=empName]").on("blur",function(){
+    	var regex =/^([가-힣a-zA-Z\.]{2,100})$/;
+    	var empName = $("[name=empName]").val();
+    	var valid = regex.test(empName);
+    	if(valid == false){
+    		$("[name=empName]").removeClass("success fail")
+    		.addClass("fail").attr("data-error","1");
+    		state.empNameValid = false;
+    		return;
+    	} 
+    	
+    	else{
+    		$("[name=empName]").removeClass("success fail").addClass("success");
+    		state.empNameValid=true;
+    	}
+    })
+    
+    $("[name=empPassword]").on("blur",function(){
+    	var empPassword = $("[name=empPassword]").val()
+    	
+    	var regex1 =/^[A-Za-z0-9!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\'"`~\<\>\.\,\/\?\\\|]{8,16}$/;
+    	var regex2 =/[A-Z]+/
+    	var regex3 =/[a-z]+/
+    	var regex4 =/[0-9]+/
+    	
+    	state.empPasswordValid = regex1.test(empPassword)
+    			 && regex2.test(empPassword)
+    			 && regex3.test(empPassword)
+    			 && regex4.test(empPassword);
+   
+    		$("[name=empPassword]").removeClass("success fail")
+    		.addClass(state.empPasswordValid ? "success" : "fail");
+    		
+    	state.empPasswordCheckValid = $("[name=empPassword]").val().length > 0 &&
+    		$("[name=empPassword]").val() == $(".password-check").val();
+    	$(".password-check").removeClass("success fail")
+    		.addClass(state.empPasswordCheckValid ? "success" : "fail");
+    })
     
     $("[name=empAddress2]").on("blur", function () {
         var empPost = $("[name=empPost]").val();
@@ -221,10 +278,32 @@ $(function() {
 				class="field w-100">
 		</div>
 
+<!-- 비밀번호 디자인 맞춰야 합니다 -->
+
 		<div class="cell">
-			<label>비밀번호</label> <input type="password" name="empPassword"
-				class="field w-100">
-		</div>
+                <label>비밀번호 <i class="fa-solid fa-asterisk red"></i></label>
+                <label class="togglebox">
+                    <input type="checkbox">
+                    <i class="fa-solid fa-eye-slash red"></i>
+                    <i class="fa-solid fa-eye blue"></i>
+                </label>
+                <input type="password" name="memberPassword" class="field w-100">
+                <div class="success-feedback">비밀번호 설정이 완료되었습니다!</div>
+                <div class="fail-feedback">영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여 8~16글자로 작성하세요</div>
+            </div>
+
+            <div class="cell">
+                <label>비밀번호 확인 <i class="fa-solid fa-asterisk red"></i></label>
+                <label class="togglebox">
+                    <input type="checkbox">
+                    <i class="fa-solid fa-eye-slash red"></i>
+                    <i class="fa-solid fa-eye blue"></i>
+                </label>
+                <input type="password" class="field w-100 password-check">
+                <div class="success-feedback">비밀번호가 일치합니다</div>
+                <div class="fail-feedback">비밀번호가 공란이거나 일치하지 않습니다</div>
+            </div>
+
 
 		<div class="cell">
 			<label>이메일</label>

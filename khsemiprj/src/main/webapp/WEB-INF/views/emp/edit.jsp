@@ -48,6 +48,16 @@ $(function() {
         var empAddress1 = $("[name=empAddress1]").val();
         var empAddress2 = $("[name=empAddress2]").val();
 
+        //address2의 리드온리 상태를 담고
+        var stable =$(this).prop("readonly");
+        
+        //리드온리가 참이라면
+        if(stable){
+			$("[name=empPost],[name=empAddress1],[name=empAddress2]").removeClass("success fail")
+			state.empAddressValid = true;//입력 가능한 상태로 만들기 위해서
+			return;
+        }
+        
         var empty = empPost.length == 0 && empAddress1.length == 0 && empAddress2.length == 0;
         var full = empPost.length > 0 && empAddress1.length > 0 && empAddress2.length > 0;
         var valid = empty || full;
@@ -71,6 +81,9 @@ $(function() {
                 $("[name=empPost]").val(data.zonecode);
                 $("[name=empAddress1]").val(addr);
 
+                //address2를 리드온리로 두고 새로운 우편번호 address1을 입력 해야만 리드온리를 풀어주고 빈칸으로 만들어줍니다.
+                $("[name=empAddress2]").prop("readonly",false).val("")
+                
                 $(".btn-address-clear").fadeIn();
                 $("[name=empAddress2]").trigger("focus");
             }
@@ -79,7 +92,9 @@ $(function() {
 
     $(".btn-address-clear").on("click", function () {
         $("[name=empPost], [name=empAddress1], [name=empAddress2]")
-            .val("").removeClass("success fail");
+            .val("").removeClass("success").addClass("fail");//클리어시 공백 때 fail 피드백을 나타내기위해 fail을 addclass했습니다.
+        //클리어 버튼을 클릭 했을 시에 리드온리가 풀린 address2를 다시 리드온리로 바꾸고 공백으로 돌려 놓습니다.
+        $("[name=empAddress2]").prop("readonly",true).val("")
         state.empAddressValid = true;
         $(this).fadeOut();
     });
@@ -267,20 +282,30 @@ $(function() {
 			</div>
 			<div class="flex-area mb-10">
 				<input type="text" id="postcode" name="empPost"
-					class="field w-200 me-10" placeholder="우편번호" readonly>
-				<button type="button" class="btn btn-neutral"
-					onclick="searchAddress()">주소 검색</button>
+					class="field w-200 me-10" value="${empDto.empPost}" readonly>
+				<button type="button" class="btn btn-neutral btn-address-search">
+					주소검색
+				</button>
+				<button type="button" class="btn btn-negative ms-10 btn-address-clear" style="display: none;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
 			</div>
+			
 			<div class="flex-area mb-10">
 				<input type="text" id="basicAddress" name="empAddress1"
-					class="field flex-fill w-100" placeholder="기본주소" readonly>
+					class="field flex-fill w-100" value="${empDto.empAddress1}"
+					readonly>
 			</div>
 			<div class="flex-area">
 				<input type="text" id="detailAddress" name="empAddress2"
-					class="field flex-fill w-100" pl	aceholder="상세주소">
+					class="field flex-fill w-100" value="${empDto.empAddress2}"
+					readonly>
 			</div>
+			
 			<div class="gray mt-10" style="font-size: 13px;">* 주소를 변경하려면
-				우편번호, 기본주소, 상세주소를 모두 입력해야 합니다.</div>
+				우편번호, 기본주소, 상세주소를 모두 입력해야 합니다.
+				
+			</div>
 		</div>
 
 		<div class="cell mt-30">
@@ -288,7 +313,7 @@ $(function() {
 				<b>연락처</b>
 			</div>
 			<div class="flex-area">
-				<input type="text" name="empContact" class="field flex-fill">
+				<input type="text" name="empContact" class="field flex-fill" placeholder="${empDto.empContact}">
 
 			</div>
 		</div>

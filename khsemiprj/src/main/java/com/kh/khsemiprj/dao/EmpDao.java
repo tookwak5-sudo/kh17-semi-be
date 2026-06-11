@@ -137,6 +137,13 @@ public class EmpDao {
 			List<EmpDto> list = jdbcTemplate.query(sql, empMapper,params);
 			return list.isEmpty() ? null : list.get(0);
 		}
+		
+		public EmpDto selectOneById(String empId) {
+			String sql = "select * from emp where emp_id = ?";
+			Object[] params = {empId};
+			List<EmpDto> list = jdbcTemplate.query(sql,empMapper,params);
+			return list.isEmpty() ? null : list.get(0);
+		}
 
 		public boolean changePassword(EmpDto empDto) {
 			String sql="update emp set emp_password = ? where emp_id = ?";
