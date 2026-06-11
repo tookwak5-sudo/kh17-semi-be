@@ -63,85 +63,114 @@
 		}
 	</style>
 	
-	<div class="cell mt-40 emp-info-card">
-		<div class="emp-info-row">
-			<div class="emp-info-label">사원 아이디</div>
-			<div class="emp-info-value point-color">${empDto.empId}</div>
+	<form action="edit" method="post" id="editForm">
+		<input type="hidden" name="empId" value="${empDto.empId}">
+		
+		<div class="cell mt-40 emp-info-card">
+			<div class="emp-info-row">
+				<div class="emp-info-label">사원 아이디</div>
+				<div class="emp-info-value point-color">${empDto.empId}</div>
+			</div>
+			
+			<div class="emp-info-row">
+				<div class="emp-info-label">직책(직급)</div>
+				<div class="emp-info-value">
+					<span class="view-mode">${empPositionDeptDto.empPositionName}</span>
+					<span class="edit-mode" style="display: none;">
+						<select name="empPositionNo" class="field">
+			            	<option value="">선택</option>
+			            	<c:forEach var="position" items="${positionList}">
+			            	<option value="${position.empPositionNo}" ${empPositionDeptDto.empPositionNo == position.empPositionNo ? 'selected' : ''}>
+		                            ${position.empPositionName}
+		                        </option>
+			            	</c:forEach>
+			            </select>
+					</span>
+				</div>
+			</div>
+			
+			<div class="emp-info-row">
+				<div class="emp-info-label">이메일</div>
+				<div class="emp-info-value">
+					<span class="view-mode">${empDto.empEmail}</span>
+					<span class="edit-mode" style="display: none;">
+						<input type="email" name="empEmail" value="${empDto.empEmail}" class="field w-100">
+					</span>
+				</div>
+			</div>
+			
+			<div class="emp-info-row">
+				<div class="emp-info-label">연락처</div>
+				<div class="emp-info-value">
+					<span class="view-mode">${empDto.empContact}</span>
+					<span class="edit-mode" style="display: none;">
+						<input type="text" name="empContact" value="${empDto.empContact}" class="field w-100">
+					</span>
+				</div>
+			</div>
+			
+			<div class="emp-info-row">
+				<div class="emp-info-label">우편번호</div>
+				<div class="emp-info-value">
+					<span class="view-mode">${empDto.empPost}</span>
+					<span class="edit-mode" style="display: none;">
+						<input type="text" name="empPost" value="${empDto.empPost}" class="field w-100">
+					</span>
+				</div>
+			</div>
+			
+			<div class="emp-info-row">
+				<div class="emp-info-label">기본주소</div>
+				<div class="emp-info-value">
+					<span class="view-mode">${empDto.empAddress1}</span>
+					<span class="edit-mode" style="display: none;">
+						<input type="text" name="empAddress1" value="${empDto.empAddress1}" class="field w-100">
+					</span>
+				</div>
+			</div>
+			
+			<div class="emp-info-row">
+				<div class="emp-info-label">상세주소</div>
+				<div class="emp-info-value">
+					<span class="view-mode">${empDto.empAddress2}</span>
+					<span class="edit-mode" style="display: none;">
+						<input type="text" name="empAddress2" value="${empDto.empAddress2}" class="field w-100">
+					</span>
+				</div>
+			</div>
 		</div>
-		<div class="emp-info-row">
-			<div class="emp-info-label">이메일</div>
-			<div class="emp-info-value">${empDto.empEmail}</div>
+		
+		<hr class="mt-50 mb-50">
+		
+		<div class="cell" style="display: flex; justify-content: flex-end; gap: 10px;">
+			<a href="list" class="btn btn-positive view-mode">
+				<i class="fa-solid fa-list"></i> 목록으로
+			</a>
+		
+			<button type="button" class="btn btn-neutral view-mode" onclick="toggleEditMode(true)">정보 수정</button>
+			
+			<button type="button" class="btn btn-negative edit-mode" style="display: none;" onclick="toggleEditMode(false)">취소</button>
+			<button type="submit" class="btn btn-positive edit-mode" style="display: none;">저장하기</button>
 		</div>
-		<div class="emp-info-row">
-			<div class="emp-info-label">생년월일</div>
-			<div class="emp-info-value">${empDto.empBirth}</div>
-		</div>
-		<div class="emp-info-row">
-			<div class="emp-info-label">연락처</div>
-			<div class="emp-info-value">${empDto.empContact}</div>
-		</div>
-		<div class="emp-info-row">
-			<div class="emp-info-label">우편번호</div>
-			<div class="emp-info-value">${empDto.empPost}</div>
-		</div>
-		<div class="emp-info-row">
-			<div class="emp-info-label">기본주소</div>
-			<div class="emp-info-value">${empDto.empAddress1}</div>
-		</div>
-		<div class="emp-info-row">
-			<div class="emp-info-label">상세주소</div>
-			<div class="emp-info-value">${empDto.empAddress2}</div>
-		</div>
-		<div class="emp-info-row">
-			<div class="emp-info-label">입사일</div>
-			<div class="emp-info-value">${empDto.empHireDate}</div>
-		</div>
-	</div>
-	<hr class="mt-50 mb-50">
-	
-	<%-- <c:if test="${sessionScope.empGrade >= 0}"> --%>
-	<div class="cell">
-		<button type="button" class="btn btn-neutral" id="SelectToggleBtn" onclick="toggleSelect()">직책 관리 메뉴 ▼</button>
-	</div>
-	
-	<div id="Select" style="display: none;">
-		<div class="cell red">
-			<h1>직책 관리</h1>
-		</div>
-		<div class="cell">
-			<form action="detail" method="post">
-	            
-	            <input type="hidden" name="empId" value="${empDto.empId}">
-	            
-	            <select name="empPositionNo" class="field">
-	            	<option value="">선택</option>
-	            	<c:forEach var="position" items="${positionList}">
-	            	<option value="${position.empPositionNo}" ${empPositionDto.empPositionNo == position.empPositionNo ? 'selected' : ''}>
-                            ${position.empPositionName}
-                        </option>
-	            	</c:forEach>
-	            </select>
-	            
-	            <button type="submit" class="btn btn-positive">직책 변경</button>
-	        </form>
-		</div>
-	</div>
-	<%-- </c:if> --%>
+	</form>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
 <script>
-	function toggleSelect() {
-		var area = document.getElementById("Select");
-		var btn = document.getElementById("SelectToggleBtn");
+	function toggleEditMode(isEdit) {
+		// 화면의 모든 view-mode와 edit-mode 요소들을 찾습니다.
+		var views = document.querySelectorAll('.view-mode');
+		var edits = document.querySelectorAll('.edit-mode');
 		
-		if (area.style.display === "none") {
-			area.style.display = "block";
-			btn.innerText = "직책 관리 메뉴 ▲";
+		if(isEdit) {
+			// 수정 모드 켜기: view는 숨기고, edit는 보여줌
+			views.forEach(function(el) { el.style.display = 'none'; });
+			edits.forEach(function(el) { el.style.display = 'inline-block'; }); // 또는 block
 		} else {
-			area.style.display = "none";
-			btn.innerText = "직책 관리 메뉴 ▼";
+			// 수정 모드 끄기(취소): edit는 숨기고, view는 다시 보여줌
+			views.forEach(function(el) { el.style.display = 'inline-block'; });
+			edits.forEach(function(el) { el.style.display = 'none'; });
 		}
 	}
 </script>

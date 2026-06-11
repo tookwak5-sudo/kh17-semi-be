@@ -116,4 +116,28 @@ public class EmpDao {
 			Object[] params = { empId };
 			return jdbcTemplate.queryForObject(sql, int.class, params);
 		}
+		
+	//관리자->사원정보 수정
+		public boolean updateByAdmin(EmpDto empDto, int empPositionNo) {
+			String sql = "UPDATE emp "
+					   + "SET emp_email = ?, "
+					   + "    emp_contact = ?, "
+					   + "    emp_post = ?, "
+					   + "    emp_address1 = ?, "
+					   + "    emp_address2 = ?, "
+					   + "    emp_position_no = ? "
+					   + "WHERE emp_id = ?";
+			
+			Object[] params = {
+					empDto.getEmpEmail(),
+					empDto.getEmpContact(),
+					empDto.getEmpPost(),
+					empDto.getEmpAddress1(),
+					empDto.getEmpAddress2(),
+					empPositionNo,
+					empDto.getEmpId()
+			};
+			
+			return jdbcTemplate.update(sql, params) > 0;
+		}
 }

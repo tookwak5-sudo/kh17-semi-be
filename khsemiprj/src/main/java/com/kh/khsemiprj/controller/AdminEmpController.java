@@ -72,11 +72,19 @@ public class AdminEmpController {
 		return "admin/emp/detail";
 	}
 	
-	@PostMapping("/detail")
-	public String detail(@ModelAttribute EmpPositionDeptDto empPositionDeptDto) {
-		empPositionDeptDao.updateByMaster(empPositionDeptDto);
+//	@PostMapping("/detail")
+//	public String detail(@ModelAttribute EmpPositionDeptDto empPositionDeptDto) {
+//		empPositionDeptDao.updateByMaster(empPositionDeptDto);
+//		
+//		return "redirect:detail?empId=" + empPositionDeptDto.getEmpId();
+//	}
+	
+	@PostMapping("/edit")
+	public String edit(@ModelAttribute EmpDto empDto, @RequestParam Integer empPositionNo) {
 		
-		return "redirect:detail?empId=" + empPositionDeptDto.getEmpId();
+		empDao.updateByAdmin(empDto, empPositionNo);
+		
+		return "redirect:detail?empId=" + empDto.getEmpId();
 	}
 	
 	@GetMapping("/reject")
