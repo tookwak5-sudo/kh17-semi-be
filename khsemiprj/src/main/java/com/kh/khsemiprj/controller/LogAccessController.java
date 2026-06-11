@@ -30,5 +30,5 @@ public class LogAccessController {
 		
 		return "admin/logAccess/list";
 		
-	}
+	};
 }
