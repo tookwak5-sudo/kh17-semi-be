@@ -632,10 +632,5 @@
 </div>
 </div>
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> refs/remotes/origin/hansung_20260608_1
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />
 

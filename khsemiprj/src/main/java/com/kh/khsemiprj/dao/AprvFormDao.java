@@ -14,6 +14,7 @@ import com.kh.khsemiprj.mapper.AprvFormMapper;
 import com.kh.khsemiprj.mapper.AprvFormSelectHeadMapper;
 import com.kh.khsemiprj.mapper.AprvFormSelectHomeListMapper;
 import com.kh.khsemiprj.mapper.AprvFormSelectMapper;
+import com.kh.khsemiprj.mapper.AprvFormVOMapper;
 import com.kh.khsemiprj.mapper.AprvMapper;
 import com.kh.khsemiprj.vo.AprvFormConnectVO;
 import com.kh.khsemiprj.vo.AprvFormHeadNameVO;
@@ -41,6 +42,8 @@ public class AprvFormDao {
 	AprvFormHeadNameMapper aprvFormHeadNameMapper;
 	@Autowired
 	AprvFormHeadTypeMapper aprvFormHeadTypeMapper;
+	@Autowired
+	AprvFormVOMapper aprvFormVOMapper;
 
 	private Set<String> allowColumns = Set.of("form_name", "form_head");
 
@@ -133,12 +136,12 @@ public class AprvFormDao {
 		return jdbcTemplate.query(sql, aprvFormSelectMapper, params);
 	}
 
-	public List<AprvFormDto> selectListForInsert() {
+	public List<AprvFormVO> selectListForInsert() {
 		String sql = "select * from (" + "select rownum rn, TMP.* from (" + "select * from aprv_form af "
 				+ "inner join aprv_head ah on ah.head_no = af.form_head_no " + "where form_use_yn = 'Y' "
 				+ "order by form_no asc " + ") TMP" + ")";
 		Object[] params = {};
-		return jdbcTemplate.query(sql, aprvFormMapper, params);
+		return jdbcTemplate.query(sql, aprvFormVOMapper, params);
 	}
 
 	public AprvFormDto selectOneByName(String formName) {

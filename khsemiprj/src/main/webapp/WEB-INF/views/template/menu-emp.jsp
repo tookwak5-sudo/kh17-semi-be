@@ -60,25 +60,29 @@
 	        <span>내정보</span>
 	    </a>
 	    <!-- 하위메뉴 -->
-        <ul>
-            <li>
-            	<form action="/emp/work-in" method="post">
-	                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
-	                 <button type="submit">출근</button>
-                 </form>
-            </li>
-            <li>
-            	<form action="/emp/work-out" method="post">
-	                <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
-	                <button type="submit">퇴근</button>
-                </form>
-            </li>
-            <li>
-                <a href="/emp/logout">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>로그아웃</span>
-                </a>
-            </li>
-        </ul>
+		<ul>
+		    <li>
+		        <form id="workInForm" action="/emp/work-in" method="post" style="display:none;"></form>
+		        <a href="#" onclick="document.getElementById('workInForm').submit(); return false;">
+		             <i class="fa-solid fa-right-from-bracket"></i>
+		             <span>출근</span>            	
+		        </a>
+		    </li>
+		    
+		    <li>
+		        <form id="workOutForm" action="/emp/work-out" method="post" style="display:none;"></block></form>
+		        <a href="#" onclick="document.getElementById('workOutForm').submit(); return false;">
+		            <i class="fa-solid fa-right-from-bracket"></i>
+		            <span>퇴근</span>
+		        </a>
+		    </li>
+		    
+		    <li>
+		        <a href="/emp/logout">
+		            <i class="fa-solid fa-right-from-bracket"></i>
+		            <span>로그아웃</span>
+		        </a>
+		    </li>
+		</ul>
     </li>
 </ul>
