@@ -168,12 +168,19 @@ textarea.field {
         - 부정버튼 : btn-negative 클래스를 추가로 부여
 */
 .btn {
-    outline: none;
-    font-size: 18px;
-    padding: 0.5em 0.75em;
-    border: 1px solid #636e72;
-    border-radius: 0.1em;
+/*     outline: none; */
+/*     font-size: 18px; */
+/*     padding: 0.5em 0.75em; */
+/*     border: 1px solid #636e72; */
+/*     border-radius: 0.1em; */
+/*     cursor: pointer; */
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s;
 }
 a.btn {
     display: inline-block;
@@ -183,21 +190,35 @@ a.btn {
 .btn:hover { /* 조건부 디자인 : 마우스가 올라갔을 때 */
     filter: brightness(0.95);
 }
-.btn.btn-positive {/* 긍정버튼 */
-    /* background-color: #0984e3;
-    border-color: #0984e3; */
-    background-color: #739BED;
-    border-color: #739BED;
+.btn.btn-positive {
+    background-color: transparent;
+    border: 2px solid #5A86E3;
+    color: #5A86E3;
+    font-weight: bold;
+}
+/* 마우스를 올렸을 때만 색상이 채워지게 */
+.btn.btn-positive:hover {
+    background-color: #5A86E3;
     color: white;
 }
 .btn.btn-neutral {/* 중립버튼 */
-    background-color: #AAB7C9;
-    border-color: #AAB7C9;
-    color: white;
+	background: #FFFFFF;
+	border: 2px solid black;
+    color: black;
 }
 .btn.btn-negative {/* 부정버튼 */
+	background-color: transparent;
+    border: 2px solid #E86A7A;
+    color: #E86A7A;
+    font-weight: bold;
+}
+.btn.btn-negative:hover {
     background-color: #E86A7A;
-    border-color: #E86A7A;
+    color: white;
+}
+.btn.btn-save {/* 임시저장버튼 */
+	background-color: #F4C47A;
+    border-color: #F4C47A;
     color: white;
 }
 
@@ -624,7 +645,12 @@ a.btn {
     transition: all 0.2s ease;   /* 부드러운 변화 효과 */
     outline: none;               /* 기본 브라우저 강조선 제거 */
 }
-
+/* 검색창 전용 클래스 (Compact) */
+.field-sm {
+    padding: 6px 12px;     /* 패딩을 줄여서 높이를 낮춤 */
+    font-size: 13px;       /* 폰트도 조금 작게 */
+    height: 34px;          /* 높이 고정 */
+}
 select.field {
     background-position-x: right 1em;
 }

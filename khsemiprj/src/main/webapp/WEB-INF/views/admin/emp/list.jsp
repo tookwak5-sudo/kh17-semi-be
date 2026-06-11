@@ -11,7 +11,7 @@
 	</div>
 	
 			
-				<%-- <c:if test="${sessionScope.loginLevel >= 0 && wList.size() > 0}"> --%>
+				<c:if test="${sessionScope.empGrade == 2 && wList.size() > 0}">
 				<div class="cell">
 						<h3 class="mt-0 black">승인 대기 사원 목록</h3>
 						
@@ -38,7 +38,7 @@
 						</table>
 				</div>
 				<hr class="mt-30 mb-30">
-				<%-- </c:if> --%>
+				</c:if>
 				
 				
 		<div class="cell" style="display: flex; justify-content: flex-end;">

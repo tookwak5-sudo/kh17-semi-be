@@ -1,32 +1,29 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
 <style>
-	.reply-viewer, .reply-editor {
-		display:flex;
-		padding:15px;
-		box-shadow: 0 0 0 1px lightgray;
-	}
-	.reply-viewer > .profile-wrapper ,
-	.reply-editor > .profile-wrapper
-	{
-		width:100px;
-	}
-	.reply-viewer > .profile-wrapper > img ,
-	.reply-editor > .profile-wrapper > img
-	{
-		width:100%;
-		aspect-ratio:1/1;
-	}
-	.reply-viewer > .content-wrapper ,
-	.reply-editor > .content-wrapper
-	{
-		flex-grow: 1;
-	}
+.reply-viewer, .reply-editor {
+	display: flex;
+	padding: 15px;
+	box-shadow: 0 0 0 1px lightgray;
+}
+
+.reply-viewer>.profile-wrapper, .reply-editor>.profile-wrapper {
+	width: 100px;
+}
+
+.reply-viewer>.profile-wrapper>img, .reply-editor>.profile-wrapper>img {
+	width: 100%;
+	aspect-ratio: 1/1;
+}
+
+.reply-viewer>.content-wrapper, .reply-editor>.content-wrapper {
+	flex-grow: 1;
+}
 </style>
 
 <!-- 좋아요 처리 관련 자바스크립트 (비회원도 가능) -->
@@ -67,8 +64,8 @@
 </script>
 
 <c:if test="${sessionScope.loginId != null}">
-<!-- 좋아요 토글 자바스크립트(회원만 가능) -->
-<script type="text/javascript">
+	<!-- 좋아요 토글 자바스크립트(회원만 가능) -->
+	<script type="text/javascript">
 	$(function(){
 		var params = new URLSearchParams(window.location.search);
 		var boardNo = params.get("boardNo");
@@ -427,7 +424,7 @@
 </script>
 <div class="container w-950 mt-50 mb-50">
 	<div class="cell">
-		<div class="flex-area" style="align-items:end">
+		<div class="flex-area" style="align-items: end">
 			<div>
 				<h1 class="mt-0 mb-0">
 					<!-- 말머리가 있으면 표시 -->
@@ -439,7 +436,7 @@
 					<!-- 수정되었다면 추가 표시 -->
 					<c:if test="${boardDto.boardEtime != null}">
 					(수정됨)
-					</c:if>	
+					</c:if>
 				</h1>
 			</div>
 			<div class="ms-40">
@@ -449,25 +446,27 @@
 				</c:if>
 				<c:if test="${boardDto.boardWriter != null}">
 					<!-- 누르면 이동하도록 링크 구현 -->
-					<a href="/member/detail?memberId=${boardDto.boardWriter}" class="link">
-						${boardDto.boardWriter}
-					</a>
+					<a href="/member/detail?memberId=${boardDto.boardWriter}"
+						class="link"> ${boardDto.boardWriter} </a>
 				</c:if>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="cell mt-20 flex-area">
-		<div><fmt:formatDate value="${boardDto.boardWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
+		<div>
+			<fmt:formatDate value="${boardDto.boardWtime}"
+				pattern="yyyy-MM-dd HH:mm"></fmt:formatDate>
+		</div>
 		<div class="ms-20">조회수 ${boardDto.boardReadcount}</div>
 	</div>
-	
+
 	<hr>
-	<div class="cell" style="min-height:300px">
+	<div class="cell" style="min-height: 300px">
 		<!-- 있는 그대로의 출력을 수행하는 태그(엔터, 스페이스 등을 인정) -->
 		<pre>${boardDto.boardContent}</pre>
 	</div>
-	
+
 	<div class="cell mt-20 flex-area">
 		<!-- 
 			좋아요 처리 시나리오
@@ -479,26 +478,25 @@
 			 → 회원만 가능한 기능
 		-->
 		<div>
-			좋아요 
-			<i class="fa-solid fa-thumbs-up red"></i>
-			<span class="thumbs-up-count">?</span>
+			좋아요 <i class="fa-solid fa-thumbs-up red"></i> <span
+				class="thumbs-up-count">?</span>
 		</div>
 		<div>
-			싫어요 
-			<i class="fa-regular fa-thumbs-down blue"></i>
-			<span class="thumbs-down-count">?</span>
+			싫어요 <i class="fa-regular fa-thumbs-down blue"></i> <span
+				class="thumbs-down-count">?</span>
 		</div>
-		<div class="ms-20">댓글 
-		<span class="reply-count-text">
-		${boardDto.boardReplycount}</span></div>
+		<div class="ms-20">
+			댓글 <span class="reply-count-text"> ${boardDto.boardReplycount}</span>
+		</div>
 	</div>
-	
+
 	<!-- 댓글 관련 정보가 표시될 자리 -->
 	<div class="cell reply-area">
-<!-- 		표시용 더미 화면 -->
+		<!-- 		표시용 더미 화면 -->
 		<div class="reply-viewer">
 			<div class="profile-wrapper">
-				<img src="https://picsum.photos/500" class="image-circle image-profile">
+				<img src="https://picsum.photos/500"
+					class="image-circle image-profile">
 			</div>
 			<div class="content-wrapper ms-20">
 				<h3 class="mt-0 mb-0 reply-writer">작성자</h3>
@@ -508,20 +506,21 @@
 						<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
 					</div>
 					<div class="button-writer right w-50">
-					<i class="fa-solid fa-reply blue btn-nested-reply"></i>
-				</div>
-				<div class="button-wrapper right w-20">
-					<i class="fa-solid fa-edit orange btn-reply-edit"></i>
-					<i class="fa-solid fa-trash red btn-reply-delete"></i>
-				</div>
+						<i class="fa-solid fa-reply blue btn-nested-reply"></i>
+					</div>
+					<div class="button-wrapper right w-20">
+						<i class="fa-solid fa-edit orange btn-reply-edit"></i> <i
+							class="fa-solid fa-trash red btn-reply-delete"></i>
+					</div>
 				</div>
 			</div>
 		</div>
-		
-<!-- 		수정용 더미화면 -->
+
+		<!-- 		수정용 더미화면 -->
 		<div class="reply-editor">
 			<div class="profile-wrapper">
-				<img src="https://picsum.photos/500" class="image-circle image-profile">
+				<img src="https://picsum.photos/500"
+					class="image-circle image-profile">
 			</div>
 			<div class="content-wrapper ms-20">
 				<h3 class="mt-0 mb-10 reply-writer">작성자</h3>
@@ -531,55 +530,59 @@
 						<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
 					</div>
 					<div class="button-wrapper right w-50">
-						<i class="fa-solid fa-xmark red btn-reply-cancel"></i>
-						<i class="fa-solid fa-check blue btn-reply-save"></i>
+						<i class="fa-solid fa-xmark red btn-reply-cancel"></i> <i
+							class="fa-solid fa-check blue btn-reply-save"></i>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<c:if test="${sessionScope.loginId != null}">
-	<div class="cell">
-		<textarea class="field w-100 field-reply" rows="4" placeholder="댓글 내용 작성"></textarea>
-		<button type="button" class="btn btn-positive w-100 mt-10 btn-reply">
-			<i class="fa-solid fa-pen"></i>
-			<span>댓글 작성하기</span>
-		</button>
-	</div>
+		<div class="cell">
+			<textarea class="field w-100 field-reply" rows="4"
+				placeholder="댓글 내용 작성"></textarea>
+			<button type="button" class="btn btn-positive w-100 mt-10 btn-reply">
+				<i class="fa-solid fa-pen"></i> <span>댓글 작성하기</span>
+			</button>
+		</div>
 	</c:if>
-	
+
 	<c:if test="${sessionScope.loginId == null}">
-	<div class="cell">
-		<h3>댓글 작성을 원하시면 <a href="/emp/login">로그인</a>하세요</h3>
-	</div>
+		<div class="cell">
+			<h3>
+				댓글 작성을 원하시면 <a href="/emp/login">로그인</a>하세요
+			</h3>
+		</div>
 	</c:if>
-	
-	
+
+
 	<hr>
-	
+
 	<!-- 이전글/다음글 출력 -->
 	<div class="cell">
-		<span class="badge blue me-20">이전글</span> 
-		<a href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>	
+		<span class="badge blue me-20">이전글</span> <a
+			href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>
 	</div>
 	<div class="cell">
-		<span class="badge blue me-20">다음글</span>
-		<a href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>	
+		<span class="badge blue me-20">다음글</span> <a
+			href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>
 	</div>
-	
+
 	<hr>
 	<div class="cell right">
 		<c:if test="${sessionScope.loginId != null}">
-		<a class="btn btn-positive" href="./write">글쓰기</a>
-		<!--  <a class="btn btn-positive" href="./write?boardParent=${boardDto.boardNo}">답글쓰기</a>-->
+			<a class="btn btn-positive" href="./write">글쓰기</a>
+			<!--  <a class="btn btn-positive" href="./write?boardParent=${boardDto.boardNo}">답글쓰기</a>-->
 		</c:if>
-		
-		<c:if test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
-		<a class="btn btn-negative" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
-		<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}">삭제</a>
+
+		<c:if
+			test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
+			<a class="btn btn-save" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
+			<a class="btn btn-negative"
+				href="./delete?boardNo=${boardDto.boardNo}">삭제</a>
 		</c:if>
-		
+
 		<a class="btn btn-neutral" href="./list">목록으로</a>
 	</div>
 </div>

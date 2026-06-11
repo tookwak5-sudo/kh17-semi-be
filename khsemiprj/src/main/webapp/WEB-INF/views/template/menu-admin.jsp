@@ -64,6 +64,27 @@
 			        <span>부서관리</span>
 				</a>
 			</li>
+        </ul>
+    </li>
+    <li>
+	    <a href="/emp/mypage">
+	        <i class="fa-solid fa-user"></i>
+	        <span>내정보</span>
+	    </a>
+	    <!-- 하위메뉴 -->
+        <ul>
+            <li>
+            	<form action="/emp/work-in" method="post">
+	                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
+	                 <button type="submit">출근</button>
+                 </form>
+            </li>
+            <li>
+            	<form action="/emp/work-out" method="post">
+	                <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
+	                <button type="submit">퇴근</button>
+                </form>
+            </li>
             <li>
                 <a href="/emp/logout">
                     <i class="fa-solid fa-right-from-bracket"></i>
