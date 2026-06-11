@@ -22,20 +22,23 @@
 
 				<select name="head_name" class="input w-100"
 					style="border: 1px solid #ccc; padding: 10px;">
-					<c:forEach var="headName" items="${headList}">
-						<option value="${headName}"
-							${findHeadName.headName == headName ? 'selected' : ''}>
-							${headName}</option>
+					
+					<c:forEach var="head" items="${headList}">
+						<option value="${head.headName}"
+							${findHeadName.headName == head.headName ? 'selected' : ''}>
+							${head.headName}</option>
 					</c:forEach>
-				</select> <select name="head_type" class="input w-100"
+				</select> 
+				
+				<select name="head_type" class="input w-100"
 					style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
-					<c:forEach var="headType" items="${typeList}">
-						<option value="${headType}"
-							${findHeadType.headType == headType ? 'selected' : ''}>
-							${headType}</option>
+					
+					<c:forEach var="type" items="${typeList}">
+						<option value="${type.headType}"
+							${findHeadType.headType == type.headType ? 'selected' : ''}>
+							${type.headType}</option>
 					</c:forEach>
 				</select>
-
 			</div>
 		</div>
 

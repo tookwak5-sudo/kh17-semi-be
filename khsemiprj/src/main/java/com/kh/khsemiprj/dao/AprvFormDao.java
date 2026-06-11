@@ -77,10 +77,11 @@ public class AprvFormDao {
 	}
 
 	// 오직 헤드 타입 목록만 가져오는 메소드
-
+	// 컴퓨터 일반 책에서 distinct라는 중복제거 키워드를 사용하였습니다. 사용 안 하면 휴가 연차 등등이 결재로 묶여있고 총 4개인데 객체로 뽑으면 결재도 4개만큼 나와서 채택했습니다.
+	
 	public List<AprvFormHeadTypeVO> selectOnlyTypeList() {
 
-		String sql = "select head_type from aprv_head";
+		String sql = "select distinct head_type from aprv_head";
 
 		return jdbcTemplate.query(sql,aprvFormHeadTypeMapper);
 	}
@@ -88,7 +89,7 @@ public class AprvFormDao {
 	// 오직 head_name만 개수만큼 딱 뽑아오는 메소드
 	public List<AprvFormHeadNameVO> selectOnlyHeadList() {
 
-		String sql = "select head_name from aprv_head";
+		String sql = "select distinct head_name from aprv_head";
 
 		return jdbcTemplate.query(sql,aprvFormHeadNameMapper);
 	}

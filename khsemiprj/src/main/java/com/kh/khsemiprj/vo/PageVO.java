@@ -25,11 +25,15 @@ public class PageVO {
 
 	// 시작 Rownum과 종료 Rownum을 계산
 	public int getBeginRownum() {
-		return page * size - (size - 1);
+
+		int total = page * size - (size-1);
+		return count == 0 ? 0 : total;
+
 	}
 
 	public int getEndRownum() {
-		return page * size;
+		int total = page * size;
+		return count < total ? count : total;
 	}
 
 	// 목록 및 검색 유지용 파라미터 생성

@@ -35,7 +35,7 @@ public class AprvFormController {
 	@Autowired
 	private AprvFormDao aprvFormDao;
 
-	private Set<String> excludeHeadNames = Set.of("일정");
+	private Set<String> excludeHeadNames = Set.of("일정","영웅");
 	private Set<String> excludeTypeNames = Set.of("일반");
 	
 	// 1. 결재 양식 목록 조회
@@ -60,33 +60,13 @@ public class AprvFormController {
 	@GetMapping("/insert")
 	public String insert(Model model) {
 		//일단 헤드네임 전부 가져오고
-		List<AprvFormHeadNameVO> headList = aprvFormDao.selectOnlyHeadList();
+//		List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
+//		List<AprvFormHeadTypeVO> filteredTypeList = aprvFormDao.selectFilteredTypeList();
 		
-		//필터링 된 헤드네임 바구니
-		List<AprvFormHeadNameVO> filteredHeadList = new ArrayList<>();
-		
-		
-		List<AprvFormHeadTypeVO> typeList = aprvFormDao.selectOnlyTypeList();
-		
-		//필터링 된 타입네임 바구니
-		List<AprvFormHeadTypeVO> filteredTypeList = new ArrayList<>();
-		
-
-		for(AprvFormHeadTypeVO type : typeList) {
-			if(!excludeTypeNames.contains(type.getHeadType())) {
-			filteredTypeList.add(type);
-			}
-		}
-		
-		//filteredList에 위에서 제외한 이름이 아니면 때려 넣고
-		for(AprvFormHeadNameVO head : headList) {
-			if(!excludeHeadNames.contains(head.getHeadName()))filteredHeadList.add(head);
-		}
-		
-		model.addAttribute("headList", filteredHeadList);
-		
-		model.addAttribute("typeList",filteredTypeList);	
-		
+//		model.addAttribute("headList", filteredHeadList);
+//		model.addAttribute("typeList", filteredTypeList);
+//		
+	
 		return "aprvForm/insert";
 	}
 
