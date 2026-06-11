@@ -57,7 +57,12 @@
 	
 	<hr class="mt-50 mb-50">
 	
-	<%-- <c:if test="${sessionScope.loginLevel >= 0}"> --%>
+	<%-- <c:if test="${sessionScope.empGrade >= 0}"> --%>
+	<div class="cell">
+		<button type="button" class="btn btn-neutral" id="SelectToggleBtn" onclick="toggleSelect()">직책 관리 메뉴 ▼</button>
+	</div>
+	
+	<div id="Select" style="display: none;">
 		<div class="cell red">
 			<h1>직책 관리</h1>
 		</div>
@@ -78,9 +83,24 @@
 	            <button type="submit" class="btn btn-positive">직책 변경</button>
 	        </form>
 		</div>
+	</div>
 	<%-- </c:if> --%>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
 
+<script>
+	function toggleSelect() {
+		var area = document.getElementById("Select");
+		var btn = document.getElementById("SelectToggleBtn");
+		
+		if (area.style.display === "none") {
+			area.style.display = "block";
+			btn.innerText = "직책 관리 메뉴 ▲";
+		} else {
+			area.style.display = "none";
+			btn.innerText = "직책 관리 메뉴 ▼";
+		}
+	}
+</script>

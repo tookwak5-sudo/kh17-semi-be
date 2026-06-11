@@ -91,6 +91,7 @@
 </table>
 
 
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -197,6 +198,10 @@
 	function drawWeeklyBarChart(labels, values) {
 		if(barChartInstance) barChartInstance.destroy(); 
 		
+		const maxValue = Math.max(...values);
+		
+		const chartMax = maxValue > 52 ? Math.ceil(maxValue) + 2 : 52;
+		
 		const ctx = document.getElementById('weeklyBarChart').getContext('2d');
 		barChartInstance = new Chart(ctx, {
 			type: 'bar',
@@ -215,7 +220,7 @@
 				responsive: true,
 				maintainAspectRatio: false,
 				scales: {
-					y: { beginAtZero: true, max: 60 } 
+					y: { beginAtZero: true, max : chartMax } 
 				}
 			}
 		});

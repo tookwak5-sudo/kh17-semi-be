@@ -20,6 +20,7 @@ import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.EmpPositionDto;
+import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
 @RequestMapping("/admin/emp")
@@ -36,11 +37,13 @@ public class AdminEmpController {
 	private EmpPositionDao empPositionDao;
 	
 	@RequestMapping("/list")
-	public String list(Model model, 
-			@RequestParam(required = false) String column,
-			@RequestParam(required = false) String keyword) {
+	public String list(Model model, @ModelAttribute PageVO pageVO) {
 		
-		List<EmpPositionDeptDto> list = empPositionDeptDao.selectList(column, keyword);
+		int count = empPositionDeptDao.count(pageVO);
+		pageVO.setCount(count);
+		model.addAttribute("pageVO", pageVO);
+		
+		List<EmpPositionDeptDto> list = empPositionDeptDao.selectList(pageVO);
 		model.addAttribute("list", list);
 		
 		List<EmpDto> wList = empDao.selectEmpByStatus(null);
@@ -51,7 +54,6 @@ public class AdminEmpController {
 		
 		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
 		model.addAttribute("positionList", positionList);
-		
 		
 		return "admin/emp/list"; 
 	}

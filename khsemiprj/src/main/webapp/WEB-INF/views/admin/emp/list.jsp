@@ -30,7 +30,7 @@
 									<td>${waitEmp.empName}</td>
 									<td>
 										<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 4px 8px; font-size: 12px;">승인</button>
-										<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="padding: 4px 8px; font-size: 12px;">거절</a>
+										<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="padding: 4px 8px; font-size: 12px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
 									</td>
 								</tr>
 								</c:forEach>
@@ -93,12 +93,19 @@
 		</table>
 	</div>
 	</c:if>
+	<div class="cell mt-40">
+		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+	</div>	
 </div>
 
 
 <div id="popUp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;">
     <div style="background-color: white; width: 400px; margin: 15% auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h3 class="mt-0 blue">사원 가입 승인</h3>
+        
+        <div style="background-color: #f5f6fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-weight: bold;">
+            사원 ID : <span id="targetEmpId" class="blue"></span>
+        </div>
         
         <form action="approve" method="post" style="display: flex; flex-direction: column; gap: 15px;">
             <input type="hidden" name="empId" id="postEmpId">
@@ -137,7 +144,6 @@
     </div>
 </div>
 
-
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
 
@@ -145,11 +151,16 @@
     // 팝업 함수
     function openPopUp(empId) {
         document.getElementById('postEmpId').value = empId;
+        document.getElementById('targetEmpId').innerText = empId;
         document.getElementById('popUp').style.display = 'block';
     }
 
     function closePopUp() {
         document.getElementById('popUp').style.display = 'none';
+    }
+    
+    function confirmReject(empId) {
+        return confirm("정말 " + empId + "님의 승인 요청을 거절하시겠습니까?");
     }
 </script>
 
