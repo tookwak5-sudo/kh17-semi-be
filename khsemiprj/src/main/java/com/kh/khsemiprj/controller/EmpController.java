@@ -230,8 +230,6 @@ public class EmpController {
 
 		empDao.join(empDto);
 
-		// 휴가 DB에 정보 등록
-		empLeaveService.leaveInsert(empDto.getEmpId());
 
 		// 프로필이 있으면 추가 등록 및 연결
 		if (!attach.isEmpty()) {
