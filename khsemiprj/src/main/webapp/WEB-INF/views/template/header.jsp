@@ -15,6 +15,7 @@
 
     <!-- 디자인을 작성하기 위한 영역 -->
     <link rel="stylesheet" type="text/css" href="/css/commons.css">
+    <link rel="stylesheet" type="text/css" href="/css/modal.css">
     <style>
         /* div { box-shadow: 0 0 0 1px gray ;} */
         .menu { /* 실제 사용 중인 메뉴 div의 클래스명으로 변경 */
