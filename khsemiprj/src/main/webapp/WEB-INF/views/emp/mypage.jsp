@@ -2,64 +2,100 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<style>
+	/* 마이페이지 정보 테이블 전체 감싸는 상자 */
+	.mypage-info-box {
+		border: 1px solid #dcdcdc;
+		border-radius: 8px;
+		overflow: hidden; /* 라운드 테두리 밖으로 배경색 안 삐져나가게 */
+		margin-bottom: 40px;
+	}
 
+	/* 마이페이지 전용 가로 정렬 행 (기존 flex-area 대체) */
+	.mypage-row {
+		display: flex;
+		align-items: center;
+		min-height: 48px;
+		border: none; /* 혹시 모를 기존 border 초기화 */
+	}
+	
+	/* 행과 행 사이의 구분선 (마지막 줄은 제외) */
+	.mypage-row:not(:last-child) {
+		border-bottom: 1px solid #e9e9e9;
+	}
+	
+	/* 왼쪽 항목 이름 (아이디, 이메일 등) */
+	.mypage-label {
+		background-color: #f8fafc;
+		color: black;
+		font-weight: bold;
+		padding: 12px 20px;
+		border-right: 1px solid #e9e9e9;
+		text-align: left;
+	}
+	
+	/* 오른쪽 실제 데이터 값 */
+	.mypage-value {
+		padding: 12px 20px;
+		font-weight: 500;
+	}
+</style>
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <h1>마이 페이지</h1>
 
 <div class="container w-950 mt-50 mb-50">
 	<div class="cell">
-
 		<h1>${findEmpDto.empName}님의정보</h1>
-
 	</div>
 
-	<div class="cell">
-		<div class="flex-area">
-			<div class="w-25">아이디</div>
-			<div class="w-75 blue">${findEmpDto.empId}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">이메일</div>
-			<div class="w-75 blue">${findEmpDto.empEmail}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">생년월일</div>
-			<div class="w-75 blue">${findEmpDto.empBirth}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">연락처</div>
-			<div class="w-75 blue">${findEmpDto.empContact}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">우편번호</div>
-			<div class="w-75 blue">${findEmpDto.empPost}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">도로명주소</div>
-			<div class="w-75 blue">${findEmpDto.empAddress1}</div>
-		</div>
-
-		<div class="flex-area">
-			<div class="w-25">상세주소</div>
-			<div class="w-75 blue">${findEmpDto.empAddress2}</div>
-		</div>
-
-
+	<div class="cell mypage-info-box">
 		
-		
-		<!-- 		로그인 이력은 dto dao 구현 해야합니다 -->
-		<div class="flex-area">
-			<div class="w-25">로그인 이력</div>
-			<div class="w-75 blue">2026.06.01</div>
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-user"></i></span>
+				아이디
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empId}</div>
 		</div>
 
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">
+				이메일
+			</div>
+			<div class="w-75 mypage-value">${findEmpDto.empEmail}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">생년월일</div>
+			<div class="w-75 mypage-value">${findEmpDto.empBirth}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">연락처</div>
+			<div class="w-75 mypage-value">${findEmpDto.empContact}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">우편번호</div>
+			<div class="w-75 mypage-value">${findEmpDto.empPost}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">도로명주소</div>
+			<div class="w-75 mypage-value">${findEmpDto.empAddress1}</div>
+		</div>
+
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">상세주소</div>
+			<div class="w-75 mypage-value">${findEmpDto.empAddress2}</div>
+		</div>
 		
+		<div class="mypage-row">
+			<div class="w-25 mypage-label">로그인 이력</div>
+			<div class="w-75 mypage-value">2026.06.01</div>
+		</div>
+
 	</div>
 
 
@@ -70,7 +106,7 @@
 	</div>
 	
 	
-	<table border="1">
+	<table class="table">
     <thead>
         <tr>
             <th>연도</th>
