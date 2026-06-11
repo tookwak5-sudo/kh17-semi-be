@@ -1,3 +1,4 @@
+
 package com.kh.khsemiprj.controller;
 
 import java.io.IOException;
@@ -34,6 +35,8 @@ import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.service.AttachService;
 import com.kh.khsemiprj.vo.AprvLineListVO;
 import com.kh.khsemiprj.vo.PageVO;
+import com.kh.khsemiprj.vo.AprvFormVO;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -69,7 +72,7 @@ public class AprvController {
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
 		
-		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
 		
 		List<AprvDto> aprvList = aprvDao.selectList(pageVO, loginId);
@@ -125,7 +128,7 @@ public class AprvController {
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("deptListJson", deptListJson);
 		
- 		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+ 		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
  		
 		return "aprv/insert";
@@ -269,7 +272,7 @@ public class AprvController {
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("deptListJson", deptListJson);
 		
- 		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+ 		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
  		
 		return "aprv/edit";

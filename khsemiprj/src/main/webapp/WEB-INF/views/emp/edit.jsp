@@ -277,7 +277,7 @@ $(function() {
 			</div>
 			<div class="flex-area">
 				<input type="text" id="detailAddress" name="empAddress2"
-					class="field flex-fill w-100" placeholder="상세주소">
+					class="field flex-fill w-100" pl	aceholder="상세주소">
 			</div>
 			<div class="gray mt-10" style="font-size: 13px;">* 주소를 변경하려면
 				우편번호, 기본주소, 상세주소를 모두 입력해야 합니다.</div>
