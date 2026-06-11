@@ -19,6 +19,7 @@ public class CertMapper implements RowMapper<CertDto> {
 				.certNumber(rs.getString("cert_number"))
 				.certTime(rs.getTimestamp("cert_time"))
 				.certYn(rs.getString("cert_yn"))
+				.certFailCnt(rs.getInt("cert_fail_cnt"))
 			.build();
 	}
 

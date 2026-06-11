@@ -10,11 +10,80 @@
 <!-- 결재 목록 스크립트 -->
 <script src="/js/aprv/list.js"></script>
 
-<h2>결재 목록</h2>
-<div class="cell">
-	<!-- <a href="/aprv/insert" class="btn btn-positive">결재 등록</a> -->
-	<a onclick="openModal();" class="btn btn-positive">결재 등록</a>
+<div class="container w-1200 mt-50 mb-50">
+
+	<div class="cell center mb-0">
+		<h1 class="mb-0">결재 목록</h1>
+	</div>
+
+	<!-- <div class="cell center">타인에 대한 무분별한 비방글은 예고 없이 삭제될 수 있습니다.</div> -->
+
+	<div class="cell right">
+		<c:if test="${sessionScope.loginId != null}">
+			<button type="button" onclick="openModal();" class="btn btn-neutral">결재 등록</button>
+		</c:if>
+	</div>
+
+	<div class="cell right">
+		${pageVO.getBeginRownum()}-${pageVO.endRownum} / 총 ${pageVO.count}개의 글
+	</div>
+
+	<div class="cell">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th class="w-40">제목</th>
+					<th>기안자</th>
+					<th>상태</th>
+					<th>기안일자</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+				<c:when test="${not empty aprvList}">
+				<c:forEach var="aprvDto" items="${aprvList}">
+					<tr>
+						<td>${aprvDto.aprvNo}</td>
+						<td class="left"><a href="./detail?aprvNo=${aprvDto.aprvNo}">${aprvDto.aprvTitle}</a></td>
+						<td>${aprvDto.aprvWriter}</td>
+						<td>${aprvDto.aprvStatus}</td>
+						<td>${aprvDto.aprvWtime}</td>
+					</tr>
+				</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<tr>
+						<td colspan="5">조건에 맞는 결재정보가 없습니다</td>
+					</tr>
+				</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+	</div>
+	<!-- 페이지네이션 -->
+	<div class="cell mt-40">
+		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+	</div>
+
+	<div class="cell center">
+		<form action="./list" method="get">
+			<select name="column" class="field">
+				<option value="aprv_title"
+					${param.column=="aprv_title" ? "selected" : ""}>제목</option>
+				<option value="aprv_writer"
+					${param.column=="aprv_writer" ? "selected" : ""}>기안자</option>
+				<option value="aprv_status"
+					${param.column=="aprv_status" ? "selected" : ""}>상태</option>
+			</select> <input type="text" name="keyword" class="field" placeholder="검색어 입력"
+				value="${param.keyword}">
+			<button type="submit" class="btn btn-positive">
+				<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+			</button>
+		</form>
+	</div>
 </div>
+
 
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-box">

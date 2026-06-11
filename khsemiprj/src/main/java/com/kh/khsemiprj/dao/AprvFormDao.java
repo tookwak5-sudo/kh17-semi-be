@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.exception.TargetNotfoundException;
 import com.kh.khsemiprj.mapper.AprvFormMapper;
+import com.kh.khsemiprj.mapper.AprvMapper;
 import com.kh.khsemiprj.vo.AprvFormConnectVO;
 import com.kh.khsemiprj.vo.AprvFormVO;
 import com.kh.khsemiprj.vo.PageVO;
@@ -17,12 +19,18 @@ import com.kh.khsemiprj.vo.PageVO;
 
 @Repository
 public class AprvFormDao {
+
+    private final AprvMapper aprvMapper;
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	@Autowired
 	AprvFormMapper aprvFormMapper;
 
 	private Set<String> allowColumns = Set.of("form_name", "form_head_no");
+
+    AprvFormDao(AprvMapper aprvMapper) {
+        this.aprvMapper = aprvMapper;
+    }
 
 	// 개별 파일 필요시
 	public AprvFormDto selectOne(int formNo) {
@@ -159,5 +167,23 @@ public class AprvFormDao {
 			e.getMessage();
 			return null;
 		}
+	}
+	
+	// 승인 대기 결재 문서 조회
+	public List<AprvFormDto> selectHomeList() {
+		String sql = "select "
+				+ "f.form_no AS formNo, "
+				+ "f.form_name AS formName, "
+				+ "h.head_name AS headName, "
+				+ "d.aprv_title AS aprvTitle, "
+				+ "d.aprv_writer AS aprvWriter, "
+				+ "d.aprv_sdate AS aprvSdate, "
+				+ "d.aprv_edate AS aprvEdate "
+				+ "from aprv_document d "
+				+ "left join aprv_form f on d.aprv_no = f.form_no "
+				+ "left join aprv_head h on f.form_head_no = h.head_no "
+				//+ ") where h.head_type='결재'";
+				+ "order by d.aprv_edate asc, d.aprv_no asc";
+		return jdbcTemplate.query(sql, aprvFormMapper);
 	}
 }

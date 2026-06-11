@@ -26,7 +26,7 @@ public class CertDao {
 	//수정
 	public boolean update(CertDto certDto) {
 		String sql = "update cert "
-				+ "set cert_number=?, cert_time=systimestamp, cert_yn='N' "
+				+ "set cert_number=?, cert_time=systimestamp, cert_yn='N', cert_fail_cnt=0, "
 				+ "where cert_email=?";
 		Object[] params = { certDto.getCertNumber(), certDto.getCertEmail() };
 		return jdbcTemplate.update(sql, params) > 0;
@@ -48,16 +48,23 @@ public class CertDao {
 	}
 	
 	public boolean update(String certEmail) {
-		String sql = "update cert set cert_yn = 'Y' where cert_email=?";
+		String sql = "update cert set cert_yn = 'Y', cert_fail_cnt=0 where cert_email=?";
 		Object[] params = { certEmail };
 		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	//인증번호 틀렸을때 실패횟수 1 늘어나는 
+	public boolean failUpdate(String certEmail) {
+		String sql = "update cert set cert_fail_cnt = cert_fail_cnt+1 where cert_emial=?";
+		Object[] params = { certEmail };
+		return jdbcTemplate.update(sql, params) >0;
 	}
 	
 	//청소 메소드 - nTime(N의 소멸시간), yTime(cert_yn=Y의 소멸시간)
 		public boolean clear(int nTime, int yTime) {
 			String sql = "delete cert where "
 					+ "(cert_yn='N' and systimestamp -  cert_time > numtodsinterval(?, 'MINUTE')) "
-					+ "and "
+					+ "or "
 					+ "(cert_yn='Y' and systimestamp - cert_time > numtodsinterval(?, 'MINUTE'))";
 			
 			Object[] params = {nTime, yTime};

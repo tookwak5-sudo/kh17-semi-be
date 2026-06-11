@@ -21,7 +21,7 @@ public class EmpOnlyInterceptor implements HandlerInterceptor {
 		
 		
 		if(loginId == null || empGrade == null) {
-			throw new WhoAreYouException();
+			throw new WhoAreYouException("로그인이 필요한 페이지입니다.");
 		}
 		
 		return true;
