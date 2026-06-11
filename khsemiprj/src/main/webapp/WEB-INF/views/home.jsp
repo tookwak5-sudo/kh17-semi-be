@@ -111,7 +111,9 @@
 <div class="calendarModal" class="container w-600 mt-50">
     <div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 상세</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
 
     <div class="container w-500 mt-50">
@@ -143,7 +145,9 @@
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
