@@ -20,10 +20,10 @@ public class EmpLeaveDao {
 	
 	
 	//회원가입이 되면 자동으로 휴가DB에 등록
-	public void insert(EmpLeaveDto empLeaveDto) {
-		String sql = "insert into emp_leave(leave_emp_id, leave_year) "
-				+ "values(?, sysdate)";
-		Object[] params = {empLeaveDto.getLeaveEmpId()};
+	public void insert(String leaveEmpId) {
+		String sql = "insert into emp_leave(leave_emp_id) "
+				+ "values(?)";
+		Object[] params = { leaveEmpId };
 		jdbcTemplate.update(sql, params);
 	}
 	

@@ -106,6 +106,7 @@
 					${param.column==bored_title ? "selected" : ""}>제목</option>
 				<option value="board_writer"
 					${param.column==board_writer ? "selected" : ""}>작성자</option>
+
 			</select> <input type="text" name="keyword" class="field" placeholder="검색어 입력"
 				value="${param.keyword}">
 			<button type="submit" class="btn btn-positive">

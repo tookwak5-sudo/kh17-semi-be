@@ -1,4 +1,4 @@
-package com.kh.khsemiprj.dto;
+package com.kh.khsemiprj.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
-public class AprvHeadDto {
-private int headNo;
+public class AprvFormHeadNameVO {
 private String headName;
-private String headType;
 }

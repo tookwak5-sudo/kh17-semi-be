@@ -50,7 +50,6 @@
 	</div>
 
 	<div class="cell mypage-info-box">
-		
 		<div class="mypage-row">
 			<div class="w-25 mypage-label">
 				<span><i class="fa-solid fa-user"></i></span>
@@ -58,112 +57,130 @@
 			</div>
 			<div class="w-75 mypage-value">${findEmpDto.empId}</div>
 		</div>
-
 		<div class="mypage-row">
 			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-envelope"></i></span>
 				이메일
 			</div>
 			<div class="w-75 mypage-value">${findEmpDto.empEmail}</div>
 		</div>
 
 		<div class="mypage-row">
-			<div class="w-25 mypage-label">생년월일</div>
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-cake-candles"></i></span>
+				생년월일
+			</div>
 			<div class="w-75 mypage-value">${findEmpDto.empBirth}</div>
 		</div>
 
 		<div class="mypage-row">
-			<div class="w-25 mypage-label">연락처</div>
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-phone"></i></span>
+				연락처
+			</div>
 			<div class="w-75 mypage-value">${findEmpDto.empContact}</div>
 		</div>
 
 		<div class="mypage-row">
-			<div class="w-25 mypage-label">우편번호</div>
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-signs-post"></i></span>
+				우편번호
+			</div>
 			<div class="w-75 mypage-value">${findEmpDto.empPost}</div>
 		</div>
 
 		<div class="mypage-row">
-			<div class="w-25 mypage-label">도로명주소</div>
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-location-dot"></i></span>
+				주소
+			</div>
 			<div class="w-75 mypage-value">${findEmpDto.empAddress1}</div>
 		</div>
 
 		<div class="mypage-row">
-			<div class="w-25 mypage-label">상세주소</div>
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-house"></i></span>
+				상세주소
+			</div>
 			<div class="w-75 mypage-value">${findEmpDto.empAddress2}</div>
-		</div>
-		
+		</div>	
 		<div class="mypage-row">
-			<div class="w-25 mypage-label">로그인 이력</div>
+			<div class="w-25 mypage-label">
+				<span><i class="fa-solid fa-clock-rotate-left"></i></span>
+				로그인 이력
+			</div>
 			<div class="w-75 mypage-value">2026.06.01</div>
 		</div>
-
 	</div>
-
+	
+	<div class="right">
+			<a href="/emp/checkPassword" class="btn btn-neutral" style="width : 140px;">내 정보 수정</a>
+	</div>
+		
+	<div class="right mt-10 mb-50">
+		<a href="/emp/changePassword" class="btn btn-neutral" style="width : 140px;">비밀번호 수정</a>
+	</div>	
 
 	<div class="cell">
-
-		<h1>${findEmpDto.empName}님의휴가 정보</h1>
-
+		<h1>${findEmpDto.empName}님의 휴가 정보</h1>
 	</div>
-	
-	
 	<table class="table">
-    <thead>
-        <tr>
-            <th>연도</th>
-            <th>총 연차</th>
-            <th>사용 연차</th>
-            <th>잔여 연차</th>
-        </tr>
-    </thead>
-    <tbody>
-        <c:forEach var="leave" items="${empLeaveList}">
-            <tr>
-                <td>${leave.leaveYear}년</td>
-                <td>${leave.leaveTotal}일</td>
-                <td>${leave.leaveUsed}일</td>
-                <td>${leave.leaveRemain}일</td>
-            </tr>
-        </c:forEach>
-    </tbody>
-</table>
+	    <thead>
+	        <tr>
+	            <th>연도</th>
+	            <th>총 연차</th>
+	            <th>사용 연차</th>
+	            <th>잔여 연차</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <c:forEach var="leave" items="${empLeaveList}">
+	            <tr>
+	                <td>${leave.leaveYear}년</td>
+	                <td>${leave.leaveTotal}일</td>
+	                <td>${leave.leaveUsed}일</td>
+	                <td>${leave.leaveRemain}일</td>
+	            </tr>
+	        </c:forEach>
+	    </tbody>
+	</table>
 
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-	.chart-section { width: 100%; margin-top: 50px; }
-	.chart-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 30px; user-select: none; }
-	.chart-header .btn-arrow { font-size: 24px; font-weight: bold; cursor: pointer; color: #333; transition: color 0.2s; }
-	.chart-header .btn-arrow:hover { color: #007bf6; }
-	.chart-header .period-text { font-size: 22px; font-weight: bold; color: #222; min-width: 250px; text-align: center; }
-	
-	.chart-flex-container { display: flex; gap: 30px; width: 100%; align-items: center; }
-	.chart-box-left { flex: 7; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-	.chart-box-right { flex: 3; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-	.total-info-text { margin-top: 15px; font-size: 18px; font-weight: bold; color: #333; }
-</style>
-
-<div class="chart-section">
-	<div class="chart-header">
-		<span class="btn-arrow" id="prevMonthBtn">&lt;</span>
-		<span class="period-text" id="periodDisplay">2026. 05 ~ 2026. 06</span>
-		<span class="btn-arrow" id="nextMonthBtn">&gt;</span>
-	</div>
-
-	<div class="chart-flex-container">
-		<div class="chart-box-left">
-			<canvas id="weeklyBarChart"></canvas>
-		</div>
+	<style>
+		.chart-section { width: 100%; margin-top: 50px; }
+		.chart-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 30px; user-select: none; }
+		.chart-header .btn-arrow { font-size: 24px; font-weight: bold; cursor: pointer; color: #333; transition: color 0.2s; }
+		.chart-header .btn-arrow:hover { color: #007bf6; }
+		.chart-header .period-text { font-size: 22px; font-weight: bold; color: #222; min-width: 250px; text-align: center; }
 		
-		<div class="chart-box-right">
-			<div style="width: 100%; height: 260px; position: relative;">
-				<canvas id="monthlyPieChart"></canvas>
+		.chart-flex-container { display: flex; gap: 30px; width: 100%; align-items: center; }
+		.chart-box-left { flex: 7; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+		.chart-box-right { flex: 3; background-color: #f8fafc; border-radius: 12px; padding: 20px; height: 380px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+		.total-info-text { margin-top: 15px; font-size: 18px; font-weight: bold; color: #333; }
+	</style>
+
+	<div class="chart-section">
+		<div class="chart-header">
+			<span class="btn-arrow" id="prevMonthBtn">&lt;</span>
+			<span class="period-text" id="periodDisplay">2026. 05 ~ 2026. 06</span>
+			<span class="btn-arrow" id="nextMonthBtn">&gt;</span>
+		</div>
+	
+		<div class="chart-flex-container">
+			<div class="chart-box-left">
+				<canvas id="weeklyBarChart"></canvas>
 			</div>
-			<div class="total-info-text" id="totalHoursText">총 근무시간: 0시간</div>
+			
+			<div class="chart-box-right">
+				<div style="width: 100%; height: 260px; position: relative;">
+					<canvas id="monthlyPieChart"></canvas>
+				</div>
+				<div class="total-info-text" id="totalHoursText">총 근무시간: 0시간</div>
+			</div>
 		</div>
 	</div>
 </div>
-
 <script>
 	let currentDate = new Date();
 	let currentYear = currentDate.getFullYear();
@@ -289,6 +306,5 @@
 	}
 </script>
 
-</div>
-
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
+

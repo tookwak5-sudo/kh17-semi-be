@@ -18,14 +18,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
+import com.kh.khsemiprj.dao.LogAccessDao;
 import com.kh.khsemiprj.dao.LogInoutDao;
 import com.kh.khsemiprj.dto.CertDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
+import com.kh.khsemiprj.dto.LogAccessDto;
 import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
+import com.kh.khsemiprj.service.EmpLeaveService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -33,75 +36,82 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/emp")
 public class EmpController {
-	
+
 	@Autowired
 	private EmpDao empDao;
-	
+
 	@Autowired
 	private CertDao certDao;
-	
+
 	@Autowired
 	private EmpLeaveDao empLeaveDao;
-	
+
 	@Autowired
 	private AttachService attachService;
-	
+
 	@Autowired
 	private LogInoutDao logInoutDao;
-	
-	
-	//로그인
+
+	@Autowired
+	private LogAccessDao logAccessDao;
+
+	@Autowired
+	private EmpLeaveService empLeaveService;
+
 	@GetMapping("/login")
 	public String login() {
 		return "emp/login";
 	}
-	
+
 	@PostMapping("/login")
-	public String login(@ModelAttribute EmpDto empDto
-							, HttpSession session//세션을 사용하겠다고 요청
-							, HttpServletRequest request//요청 정보를 모두 가져오기
-							) {
-		
-		//로그인 시도
+
+	public String login(@ModelAttribute EmpDto empDto, HttpSession session// 세션을 사용하겠다고 요청
+			, HttpServletRequest request// 요청 정보를 모두 가져오기
+	) {
+
+		// [1] 사용자가 입력한 아이디를 이용하여 DB에 대상이 있는 지를 조회
+
 		EmpDto findEmpDto = empDao.selectOne(empDto.getEmpId());
-		if(findEmpDto == null) {
+		if (findEmpDto == null) {
 			return "redirect:./login?error";
 		}
-		
-		if(!findEmpDto.getEmpPassword().equals(empDto.getEmpPassword())) {
+
+		// [2] 비밀번호 확인
+		if (!findEmpDto.getEmpPassword().equals(empDto.getEmpPassword())) {
+
 			return "redirect:./login?error";
 		}
-		
+
 		// 이 회원의 승인 상태가 상태가 N이라면
-		if(findEmpDto.getEmpValid().equals("N")) {
+		if (findEmpDto.getEmpValid().equals("N")) {
 			return "redirect:./login?valid";
 		}
-		
+
 		// 퇴사 회원이라면
 //		if(findEmpDto.isExit()) {
 //			return "redirect:./login?exit";
 //		}
-		
-		//- 현재시간을 생성(완벽하게 동일한 시간으로 설정해야 할 경우 자바에서 시간을 생성해서 양측에 추가)
-		//Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-		//- 로그인시간을 갱신
-		//empDao.updateMemberLogin(findEmpDto.getEmpId());
-		//- 로그인 이력 생성
+
+		// - 현재시간을 생성(완벽하게 동일한 시간으로 설정해야 할 경우 자바에서 시간을 생성해서 양측에 추가)
+		// Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+		// - 로그인시간을 갱신
+		// empDao.updateMemberLogin(findEmpDto.getEmpId());
+		// - 로그인 이력 생성
 //		EmpHistoryDto empHistoryDto = new EmpHistoryDto();
 //		empHistoryDto.setMemberHistoryOrigin(findEmpDto.getEmpId());//아이디
 //		empHistoryDto.setMemberHistoryAddress(request.getRemoteAddr());//IP
 //		empHistoryDto.setMemberHistoryAgent(request.getHeader("User-Agent"));//Agent
 //		empHistoryDao.insert(empHistoryDto);
-		
-		//- 세션(HttpSession)에 로그인 되었음을 표시
+
+		// - 세션(HttpSession)에 로그인 되었음을 표시
 		session.setAttribute("loginId", findEmpDto.getEmpId());
-		
-		// loginLevel 
+
+		// loginLevel
 		// - 1. 관리자 테이블 조회 후 존재 시 → loginLevel = 2로 설정
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
-		
+
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
 //		if(last == null) {
@@ -113,211 +123,401 @@ public class EmpController {
 //		if(duration.toDays() >= 30) {
 //			return "redirect:./notice";
 //		}
-		
-		//로그인 테이블에 저장
-		LogInoutDto logInoutDto = new LogInoutDto();
-		//아이디
-		logInoutDto.setLogInoutEmpId(findEmpDto.getEmpId());
-		//유형
+
+		// 목표: 로그인과 동시에 직원 출근처리
+		// [1] 사용자가 입력한 아이디를 이용하여 loginout 테이블 조회
+		LogInoutDto logInoutDto = logInoutDao.getLastType(empDto.getEmpId());
+
+		// [2] 퇴근 상태라면 출근상태로 변경하고 DB에 저장
+
 		logInoutDto.setLogInoutType("출근");
 		logInoutDao.insert(logInoutDto);
-		
+
 		return "redirect:/";
 	}
-	
-	//로그아웃(
+
+	// 로그아웃(
 	@RequestMapping("/logout")
 	public String logout(HttpSession session) {
 		session.removeAttribute("loginId");
 		session.removeAttribute("empGrade");
+
 		return "redirect:/emp/login";
 	}
-	
-//	//로그아웃 및 퇴근
-//	@RequestMapping("/logoutOut")
-//	public String logoutOut(HttpSession session) {
-//		session.removeAttribute("loginId");
-//		session.removeAttribute("empGrade");
-//		
-//		LogInoutDto logInoutDto = new LogInoutDto();
-//		logInoutDto.getLogInoutType();
-//	}
-	
-	//회원가입
+
+	// 목표 출근버튼을 누르면 출근 처리
+	@PostMapping("/work-in")
+	public String workIn(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		// 아이디를 조회해서 출퇴근 여부 확인
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+
+		// 출근 상태라면 상태변화x
+		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workIn";
+		}
+
+		// 퇴근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutEmpId(loginId);
+		newDto.setLogInoutType("출근");
+		System.out.println("출근" + newDto);
+		logInoutDao.insert(newDto);
+		return "redirect:/";
+	}
+
+	// 목표 퇴근 버튼을 누르면 퇴근 처리
+	@PostMapping("/work-out")
+	public String workOut(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		// 아이디를 조회해서 출퇴근 여부 확인
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		// 퇴근 상태라면 상태변화x
+		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workOut";
+		}
+		// 출근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutEmpId(loginId);
+		newDto.setLogInoutType("퇴근");
+		logInoutDao.insert(newDto);
+		System.out.println("퇴근" + newDto);
+		return "redirect:/";
+	}
+
+	// 로그아웃 및 퇴근
+	@RequestMapping("/logoutOut")
+	public String logoutOut(HttpSession session) {
+		session.removeAttribute("loginId");
+		session.removeAttribute("empGrade");
+
+		// 아이디를 조회해서 출퇴근 여부 확인
+		String loginId = (String) session.getAttribute("loginId");
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		// 퇴근 상태라면 상태변화x 로그아웃 안됨
+		if ("퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workOut";
+		}
+
+		// 출근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutType("퇴근");
+		logInoutDao.insert(logInoutDto);
+		return "redirect:/emp/login";
+	}
+
+	// 회원가입
+
 	@GetMapping("/join")
 	public String join() {
 		return "emp/join";
 	}
+
 	@PostMapping("/join")
-	public String join(@ModelAttribute EmpDto empDto, @RequestParam MultipartFile attach)throws IllegalStateException, IOException {
+
+	public String join(@ModelAttribute EmpDto empDto, @RequestParam MultipartFile attach)
+			throws IllegalStateException, IOException {
+
+		// 회원가입 정보 등록
+
 		empDao.join(empDto);
-		//프로필이 있으면 추가 등록 및 연결
-				if(!attach.isEmpty()) {
-					int attachNo = attachService.save(attach);
-					empDao.connect(empDto.getEmpId(), attachNo);
-				}
-				
-				return "redirect:./joinFinish";
+
+		// 휴가 DB에 정보 등록
+		empLeaveService.leaveInsert(empDto.getEmpId());
+
+		// 프로필이 있으면 추가 등록 및 연결
+		if (!attach.isEmpty()) {
+			int attachNo = attachService.save(attach);
+			empDao.connect(empDto.getEmpId(), attachNo);
+		}
+
+		return "redirect:./joinFinish";
+
 	}
+
 	@RequestMapping("/joinFinish")
 	public String joinFinish() {
 		return "emp/joinFinish";
 	}
 
-	//아이디 찾기 페이지
+	// 아이디 찾기 페이지
 	@GetMapping("/findId")
 	public String findId() {
 		return "emp/findId";
 	}
-	
+
 	@PostMapping("/findId")
-	public String findId(@RequestParam String empName,
-					@RequestParam String empEmail,
-						Model model){
+	public String findId(@RequestParam String empName, @RequestParam String empEmail, Model model) {
 		EmpDto empDto = empDao.selectId(empName, empEmail);
-		
-		if(empDto == null) {
-			// 일치하는 회원이 없었을때 
+
+		if (empDto == null) {
+			// 일치하는 회원이 없었을때
 			return "redirect:./findId?error";
-		}
-		else {
+		} else {
 			model.addAttribute("empId", empDto.getEmpId());
 			return "emp/findIdResult";
 		}
-		
+
 	}
-	
-	//비밀번호 찾기 페이지
+
+	// 비밀번호 찾기 페이지
 	@GetMapping("/findPassword")
 	public String findPassword() {
 		return "emp/findPassword";
 	}
-	
+
 	@PostMapping("/findPassword")
-	public String findPassword(@RequestParam String empId,@RequestParam String empName,
-			@RequestParam String empEmail,  Model model) {
+	public String findPassword(@RequestParam String empId, @RequestParam String empName, @RequestParam String empEmail,
+			Model model) {
 		EmpDto empDto = empDao.selectPassword(empId, empName, empEmail);
-		
-		if(empDto == null) {
-			//일치하는 회원이 없었을때
+
+		if (empDto == null) {
+			// 일치하는 회원이 없었을때
 			return "redirect:./findPassword?error";
-		}
-		else {
+		} else {
 			model.addAttribute("empPassword", empDto.getEmpPassword());
 			return "emp/findPasswordResult";
 		}
 	}
 
-	//이메일 인증 완료 페이지
+	// 이메일 인증 완료 페이지
 	@GetMapping("/cert")
 	public String cert(@ModelAttribute CertDto certDto) {
-		
-		//1. 정보가 있는지 확인
+
+		// 1. 정보가 있는지 확인
 		CertDto findDto = certDao.selectOne(certDto.getCertEmail());
-		if(findDto == null) throw new WhoAreYouException();
-		
-		//2. 번호가 맞는지 확인
+		if (findDto == null)
+			throw new WhoAreYouException();
+
+		// 2. 번호가 맞는지 확인
 		boolean valid = certDto.getCertNumber().equals(findDto.getCertNumber());
-		if(valid == false) throw new GetOutException();
-		
-		//3. 시간이 유효한지 확인
-		LocalDateTime current = LocalDateTime.now();//현재시각
-		LocalDateTime sent = findDto.getCertTime().toLocalDateTime();//발송시각
+		if (valid == false)
+			throw new GetOutException();
+
+		// 3. 시간이 유효한지 확인
+		LocalDateTime current = LocalDateTime.now();// 현재시각
+		LocalDateTime sent = findDto.getCertTime().toLocalDateTime();// 발송시각
 		Duration duration = Duration.between(sent, current);
-		if(duration.toMinutes() > 10) {//10분이 지났어?
+		if (duration.toMinutes() > 10) {// 10분이 지났어?
 			throw new GetOutException();
 		}
-		
-		//4. 인증 가능한 상태인지 확인 (cert_yn = 'N')
-		if(findDto.getCertYn().equals("Y")) {
+
+		// 4. 인증 가능한 상태인지 확인 (cert_yn = 'N')
+		if (findDto.getCertYn().equals("Y")) {
 			throw new GetOutException();
 		}
-		
-		certDao.delete(certDto.getCertEmail());//인증기록 삭제
+
+		certDao.delete(certDto.getCertEmail());// 인증기록 삭제
 		return "emp/cert";
 
 	}
-	
 
 	@RequestMapping("/mypage")
-	public String mypage(HttpSession session,Model model) {
-		
-		
-		String loginId =(String) session.getAttribute("loginId");
-		if(loginId==null) { 
-			//System.out.println("현재 세션: "+loginId);
+
+	public String mypage(HttpSession session, Model model) {
+
+		String loginId = (String) session.getAttribute("loginId");
+		if (loginId == null) {
+
 			return "redirect:./login";
-		
+
 		}
 		EmpDto findEmpDto = empDao.selectOne(loginId);
-		
-		if(findEmpDto == null) return "redirect:./login";
+
+		if (findEmpDto == null)
+			return "redirect:./login";
 		model.addAttribute("findEmpDto", findEmpDto);
-		
-		//근태 로그 및 로그인 로그 필요.
-		
-		List<EmpLeaveDto> empLeaveList =empLeaveDao.selectList(loginId);
-		
-		
-		
-		
+
+		// 근태 로그 및 로그인 로그 필요.
+
+		// 근태 로그 및 로그인 로그 필요.
+
+		List<EmpLeaveDto> empLeaveList = empLeaveDao.selectList(loginId);
+
 		model.addAttribute("empLeaveList", empLeaveList);
-		
-		
-		
+
+		LogAccessDto lastAccess = logAccessDao.getLastAccess(loginId);
+		model.addAttribute("lastAccess", lastAccess);
+
+		LogInoutDto lastLogIn = logInoutDao.getLastLogin(loginId);
+		model.addAttribute("lastLogIn", lastLogIn);
+
 		return "emp/mypage";
 	}
-	
-	//내 정보 수정 전 비밀번호 확인 페이지
+
+	@GetMapping("/checkPassword")
+	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		if (loginId == null) {
+			return "redirect:./login";
+		}
+
+		EmpDto findEmpDto = empDao.selectOne(loginId);
+		if (findEmpDto == null) {
+			return "redirect:./login";
+
+		}
+		return "emp/checkPassword";
+
+	}
+
+	// 내 정보 수정 전 비밀번호 확인 페이지
 	@PostMapping("/checkPassword")
-	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto,@RequestParam String empPassword) {
-		
-		
-		String loginId = (String) session.getAttribute("empId");
-		
-		if(loginId==null) {
+	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto, @RequestParam String empPassword) {
+
+		String loginId = (String) session.getAttribute("loginId");
+
+		if (loginId == null) {
 			return "redirect:./login";
 		}
 		EmpDto findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null) {
+		if (findEmpDto == null) {
 			return "redirect:./login";
 		}
 		boolean isValid = findEmpDto.getEmpPassword().equals(empDto.getEmpPassword());
-		if(!isValid) {
+		if (!isValid) {
 			return "redirect:./checkPassword?error";
 		}
-		
-		return "redirect:./emp/edit";
-		
+
+		return "redirect:/emp/edit";
+
 	}
-	
-	//내 정보 수정의 겟 매핑
+
+	// 비밀번호 바꾸는 페이지 겟매핑
+	@GetMapping("/changePassword")
+	public String changePassword(HttpSession session, @ModelAttribute EmpDto empDto) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		if (loginId == null) {
+			return "redirect:./login";
+		}
+
+		EmpDto findEmpDto = empDao.selectOne(loginId);
+		if (findEmpDto == null) {
+			return "redirect:./login";
+
+		}
+		return "emp/changePassword";
+
+	}
+
+	// 비밀번호 바꾸는 페이지
+	@PostMapping("/changePassword")
+	public String changePassword(HttpSession session, @ModelAttribute EmpDto empDto, @RequestParam String newPassword) {
+
+		String loginId = (String) session.getAttribute("loginId");
+
+		if (loginId == null) {
+			return "redirect:./login";
+		}
+		EmpDto findEmpDto = empDao.selectOne(loginId);
+		if (findEmpDto == null) {
+			return "redirect:./login";
+		}
+		boolean isValid = findEmpDto.getEmpPassword().equals(empDto.getEmpPassword());
+		if (!isValid) {
+			return "redirect:./changePassword?error";
+		}
+
+		empDto.setEmpId(loginId);
+		empDto.setEmpPassword(newPassword);
+		empDao.changePassword(empDto);
+
+		return "redirect:emp/mypage";
+
+	}
+
+	// 내 정보 수정의 겟 매핑
 	@GetMapping("/edit")
 	public String edit(HttpSession session, Model model) {
-		String loginId = (String) session.getAttribute("empId");
+		String loginId = (String) session.getAttribute("loginId");
 		EmpDto empDto = empDao.selectOne(loginId);
 		if (empDto == null) {
-	        return "redirect:./login"; 
-	    }
+			return "redirect:./login";
+		}
 		model.addAttribute("empDto", empDto);
 		return "emp/edit";
 	}
-	
-	
-	
-	
 
-	
-	//프로필 매핑
-		@RequestMapping("/profile")
-		public String profile(@RequestParam String empId) {
-			try {
-				int attachNo = empDao.searchProfile(empId);
-				return "redirect:/download/modern?attachNo="+attachNo;
-			}
-			catch(Exception e) {
-				return "redirect:/images/no_image.png";
-			}
+	// edit 포스트 매핑
+
+	@PostMapping("/edit")
+	public String edit(HttpSession session, @ModelAttribute EmpDto empDto,
+			@RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
+		String loginId = (String) session.getAttribute("loginId");
+		if (loginId == null) {
+			return "redirect:./login";
 		}
+
+		EmpDto findEmpDto = empDao.selectOne(loginId);
+		// 빈 칸 입력시 세터로 팅기는거 막아줬습니다.
+		if (empDto.getEmpEmail() == null || empDto.getEmpEmail().isEmpty()) {
+
+			empDto.setEmpEmail(findEmpDto.getEmpEmail());
+		}
+
+		if (empDto.getEmpContact() == null || empDto.getEmpContact().isEmpty()) {
+
+			empDto.setEmpContact(findEmpDto.getEmpContact());
+		}
+
+		if (empDto.getEmpBirth() == null || empDto.getEmpBirth().isEmpty()) {
+
+			empDto.setEmpBirth(findEmpDto.getEmpBirth());
+		}
+
+		if (empDto.getEmpBirth() == null || empDto.getEmpBirth().isEmpty()) {
+
+			empDto.setEmpBirth(findEmpDto.getEmpBirth());
+		}
+
+		if (empDto.getEmpPost() == null || empDto.getEmpPost().isEmpty()) {
+
+			empDto.setEmpPost(findEmpDto.getEmpPost());
+		}
+
+		if (empDto.getEmpAddress1() == null || empDto.getEmpAddress1().isEmpty()) {
+
+			empDto.setEmpAddress1(findEmpDto.getEmpAddress1());
+		}
+
+		if (empDto.getEmpAddress2() == null || empDto.getEmpAddress2().isEmpty()) {
+
+			empDto.setEmpAddress2(findEmpDto.getEmpAddress2());
+		}
+
+		empDto.setEmpId(loginId);
+		empDao.update(empDto);
+
+		// 프로필 교체 작업
+		if (attach != null && !attach.isEmpty()) {
+			// 삭제
+			try {
+				int attachNo = empDao.searchProfile(empDto.getEmpId());
+				attachService.delete(attachNo);
+			} catch (Exception e) {
+			}
+
+			// 등록
+			int attachNo = attachService.save(attach);
+			empDao.connect(empDto.getEmpId(), attachNo);
+		}
+
+		return "redirect:./mypage";
+	}
+
+	// 프로필 매핑
+	@RequestMapping("/profile")
+	public String profile(@RequestParam String empId) {
+		try {
+			int attachNo = empDao.searchProfile(empId);
+			return "redirect:/download/modern?attachNo=" + attachNo;
+		} catch (Exception e) {
+			return "redirect:/images/no_image.png";
+		}
+	}
 
 }
