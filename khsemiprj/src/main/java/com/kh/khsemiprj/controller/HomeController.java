@@ -57,7 +57,8 @@ public class HomeController {
 			extendedProps.put("planNo", planDto.getPlanNo());
 			extendedProps.put("planHeadNo", planDto.getPlanHeadNo());
 			extendedProps.put("planType", planDto.getPlanType());
-			extendedProps.put("planExplain", planDto.getPlanExplain());
+			extendedProps.put("planEx"
+					+ "plain", planDto.getPlanExplain());
 			extendedProps.put("planDeptNo", planDto.getPlanDeptNo());
 			extendedProps.put("planEmpId", planDto.getPlanEmpId());
 			event.put("extendedProps", extendedProps);

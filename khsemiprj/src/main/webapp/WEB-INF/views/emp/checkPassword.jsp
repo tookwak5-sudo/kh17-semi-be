@@ -6,7 +6,7 @@
 
 
 
-<div class="container w-950 mt-50 mb-50">
+<div class="container w-500 mt-50 mb-50">
 <div class="cell center">
 
 <h1>비밀번호 확인</h1>
@@ -24,7 +24,7 @@
 
 
 		<div class="mt-50">
-			<button type="submit" class="btn btn-negative w-100">
+			<button type="submit" class="btn btn-positive w-100">
 				<i class="fa-solid fa-lock fa-fade"></i> <span>확인</span>
 			</button>
 		</div>

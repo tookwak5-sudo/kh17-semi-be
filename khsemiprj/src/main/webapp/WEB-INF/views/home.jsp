@@ -1,31 +1,33 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+<jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <style>
-    /* 레이아웃 구성 */
-    .dashboard-container {
-        display: flex;
-        gap: 20px; /* 좌우 간격 */
-        width: 1200px;
-        margin: 50px auto;
-    }
+/* 레이아웃 구성 */
+.dashboard-container {
+	display: flex;
+	gap: 20px; /* 좌우 간격 */
+	width: 1200px;
+	margin: 50px auto;
+}
 
-    /* 좌측 달력 영역 (비율 7) */
-    .left-section {
-        flex: 7;
-    }
+/* 좌측 달력 영역 (비율 7) */
+.left-section {
+	flex: 7;
+}
 
-    /* 우측 리스트 영역 (비율 3) */
-    .right-section {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        gap: 20px; /* 공지사항과 결재목록 사이 간격 */
-    }
+/* 우측 리스트 영역 (비율 3) */
+.right-section {
+	flex: 3;
+	display: flex;
+	flex-direction: column;
+	gap: 20px; /* 공지사항과 결재목록 사이 간격 */
+}
 
+<<<<<<< HEAD
     .card {
         background: #fff;
         border: 1px solid #ddd;
@@ -52,10 +54,40 @@
     	z-index: 10000;
     }
     
+=======
+.card {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+}
+
+.lightpick {
+	z-index: 20000 !important;
+}
+
+.p-20 {
+	padding: 20px;
+}
+
+.calendarModal {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	background: white;
+	padding: 20px;
+	border: 1px solid #ccc;
+	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+	z-index: 10000;
+}
+>>>>>>> refs/remotes/origin/hero_20260611-1
 </style>
 
 <!-- fullcalendar cdn -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
 <!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 
 <script type="text/template" id="write-template">
@@ -623,6 +655,7 @@
 			</div>
 
            <div class="card p-20" style="height: 300px; overflow-y: auto;">
+<<<<<<< HEAD
             <h3>공지사항</h3>
             <hr>
             <c:forEach var="notice" items="${noticeList}">
@@ -643,6 +676,28 @@
             </c:if>
         </div>
 </div>
+=======
+	            <h3>공지사항</h3>
+	            <hr>
+	            <c:forEach var="notice" items="${noticeList}">
+	                <div
+	                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+	                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+	                    ${notice.boardTitle}
+	                </a>
+	
+	
+	                    <p style="color: #999; font-size: 12px;">작성자:
+	                        ${notice.boardWriter}</p>
+	                </div>
+	            </c:forEach>
+	
+	            <c:if test="${empty noticeList}">
+	                <div>등록된 공지사항이 없습니다.</div>
+	            </c:if>
+       		</div>
+		</div>
+>>>>>>> refs/remotes/origin/hero_20260611-1
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />

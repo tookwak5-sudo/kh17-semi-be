@@ -111,6 +111,24 @@ $(function () {
 		}
 	});
 	
+	//첨부 파일 변경 시
+	$(document).on("change", ".attach-input", function (e) {
+		$(".aprv-form-file-down").empty();
+		// 선택된 파일 정보 가져오기
+	    const file = e.target.files[0];
+	    // 만약 파일을 선택했다가 취소해서 파일이 없는 경우 함수 종료
+	    if (!file) return;
+		var fileTemplate = $("#aprv-form-file-template").text();
+		const a = $.parseHTML(fileTemplate)[1];
+		var fileName = file.name;
+		$(a).find("span").text(fileName);
+		var deleteTemplate = $("#aprv-form-file-delete-template").text();
+		const button = $.parseHTML(deleteTemplate)[1];
+		
+		$('.aprv-form-file-down').append(a);
+		$('.aprv-form-file-down').append(button);
+	});
+	
 	$(document).on("click", ".check-emp-all-2", function () {
     	var checked = $(this).prop("checked");
     	$("#empList2 input[type=checkbox][name=emp][disabled!=disabled]").prop("checked", checked);
@@ -155,15 +173,14 @@ function addEmp(no) {
 		$("#empList1 input[type=checkbox]:checked").each(function () {
 			var template = $("#line-template").text();
 			const tr = $.parseHTML(template)[1];
-			$(tr).attr("name", "line1EmpId");
 			$(tr).attr("data-id", $(this).val());//아이디
 			var empId = $(this).val();
 			$(tr).find("input[type=hidden]").attr("name", "aprvLine1IdList");
 			$(tr).find("input[type=hidden]").val(empId);
-			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
-			$(tr).find("td:eq(0)").text(empName);//이름
 			var deptName = $(this).closest("tr").find("td:eq(1)").text();
-			$(tr).find("td:eq(1)").text(deptName);//부서
+			$(tr).find("td:eq(0)").text(deptName);//부서
+			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
+			$(tr).find("td:eq(1)").text(empName);//이름
 			var positionName = $(this).closest("tr").find("td:eq(4)").text();
 			$(tr).find("td:eq(2)").text(positionName);//직책
 			$("#line1List").append(tr);	
@@ -172,15 +189,14 @@ function addEmp(no) {
 		$("#empList2 input[type=checkbox]:checked").each(function () {
 			var template = $("#line-template").text();
 			const tr = $.parseHTML(template)[1];
-			$(tr).attr("name", "line2EmpId");
 			$(tr).attr("data-id", $(this).val());//아이디
 			var empId = $(this).val();
 			$(tr).find("input[type=hidden]").attr("name", "aprvLine2IdList");
 			$(tr).find("input[type=hidden]").val(empId);
-			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
-			$(tr).find("td:eq(0)").text(empName);//이름
 			var deptName = $(this).closest("tr").find("td:eq(1)").text();
-			$(tr).find("td:eq(1)").text(deptName);//부서
+			$(tr).find("td:eq(0)").text(deptName);//부서
+			var empName = $(this).closest('tr').find("td:eq(3)").text().trim();
+			$(tr).find("td:eq(1)").text(empName);//이름
 			var positionName = $(this).closest("tr").find("td:eq(4)").text();
 			$(tr).find("td:eq(2)").text(positionName);//직책
 			$("#line2List").append(tr);	
@@ -333,4 +349,15 @@ function getEmpPositionDeptList(deptNo, No) {
 			}
         }
     });
+}
+
+function removeFile(button) {
+    if (confirm("이 첨부파일을 삭제하시겠습니까?")) {
+        const fileDiv = button.closest('.aprv-form-file-down');
+        if (fileDiv) {
+            $(fileDiv).empty();
+			$('input[name=attach]').val('');
+			$('input[name=deleteFileNo').val($(button).attr("data-no"));
+        }
+    }
 }

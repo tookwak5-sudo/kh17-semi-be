@@ -89,5 +89,21 @@ public class LogAccessDao {
 		return jdbcTemplate.queryForObject(sql, int.class, params);	
 	}
 	
-
+	// 특정 회원의 마지막 접속 기록 하나만 조회 (매퍼 규격에 맞게 조인 추가)
+	public LogAccessDto getLastAccess(String empId) {
+	    String sql = "select * from ("
+	            + "  select l.*, e.emp_name, d.dept_name "
+	            + "  from log_access l "
+	            + "  left outer join emp e on l.access_emp_id = e.emp_id "
+	            + "  left outer join emp_dept_relation r on e.emp_id = r.emp_id "
+	            + "  left outer join dept d on r.dept_no = d.dept_no "
+	            + "  where l.access_emp_id = ? "
+	            + "  order by l.access_no desc"
+	            + ") where rownum = 1";
+	    Object[] params = { empId };
+	    List<LogAccessDto> list = jdbcTemplate.query(sql, logAccessMapper, params);
+	    return list.isEmpty() ? null : list.get(0);
+	}
+	
+	
 }
