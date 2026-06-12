@@ -33,31 +33,18 @@ public class DeptRestController {
 	@PostMapping("/empPositionDeptList")
 	public List<EmpPositionDeptVO> empPositionDeptList(@RequestParam String deptNo) {
 		Long longDeptNo = deptNo == "" ? null : Long.parseLong(deptNo);
-		List<EmpPositionDeptDto> list = longDeptNo == null ? empPositionDeptDao.selectDepthEmpByNull() : empPositionDeptDao.selectDepthEmp(longDeptNo);
-		List<EmpPositionDeptVO> newList = new ArrayList<>();
+		List<EmpPositionDeptVO> list = longDeptNo == null ? empPositionDeptDao.selectDepthEmpByNull() : empPositionDeptDao.selectDepthEmp(longDeptNo);
 		
-		for(EmpPositionDeptDto empPositionDeptDto : list) {
-			newList.add(EmpPositionDeptVO.builder()
-						.empId(empPositionDeptDto.getEmpId())
-						.deptNo(empPositionDeptDto.getDeptNo())
-						.deptName(empPositionDeptDto.getDeptName())
-						.empId(empPositionDeptDto.getEmpId())
-						.empName(empPositionDeptDto.getEmpName())
-						.empPositionName(empPositionDeptDto.getEmpPositionName())
-						.deptEmpId(empPositionDeptDto.getDeptEmpId())
-					.build());
-		}
-		
-		return newList;
+		return list;
 	};
 	
-	//결재용 부서별 사원목록(내 직급보다 높은 사원만)
+	//결재용 부서별 사원목록(부서장만)
 	@PostMapping("/empPositionDeptListForAprv")
 	public List<EmpPositionDeptVO> empPositionDeptListForAprv(@RequestParam long deptNo, HttpSession session) {
 		String loginId = (String)session.getAttribute("loginId");
 		EmpDto findEmpDto = empDao.selectOne(loginId);
 		
-		List<EmpPositionDeptDto> list = empPositionDeptDao.selectDepthEmpForAprv(deptNo, findEmpDto.getEmpPositionNo());
+		List<EmpPositionDeptDto> list = empPositionDeptDao.selectDepthEmpForAprv(deptNo);
 		List<EmpPositionDeptVO> newList = new ArrayList<>();
 		
 		for(EmpPositionDeptDto empPositionDeptDto : list) {

@@ -56,7 +56,7 @@
 				<ul>
 					<li class="dept-item">
 						<div class="dept-row">
-							<span class="toggle-btn">▼</span>
+							<span class="toggle-btn" style="visibility:hidden;">▼</span>
 							<input type="checkbox" name="dept" class="dept-checkbox" id="dept1_" value="">
 							<label for="dept1_" class="dept-name">부서없음</label>
 						</div>
@@ -98,7 +98,7 @@
 				<ul>
 					<li class="dept-item">
 						<div class="dept-row">
-							<span class="toggle-btn">▼</span>
+							<span class="toggle-btn" style="visibility:hidden;">▼</span>
 							<input type="checkbox" name="dept" class="dept-checkbox" id="dept2_" value="">
 							<label for="dept2_" class="dept-name">부서없음</label>
 						</div>

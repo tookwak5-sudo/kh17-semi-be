@@ -221,7 +221,10 @@ function createTree(node, no) {
 	        node.children.forEach(child => {
 	            ul.appendChild(createTree(child, no));
 	        });
-	    }
+	    } else {
+			$(li).find(".toggle-btn").text("");
+			$(li).addClass("no-children");
+		}
 	} else if(no == '2') {
 		$(li).find(".dept-checkbox").attr("id", "dept2_" + node.deptNo);
 	    $(li).find(".dept-checkbox").attr("value", node.deptNo);
@@ -233,7 +236,10 @@ function createTree(node, no) {
 	        node.children.forEach(child => {
 	            ul.appendChild(createTree(child, no));
 	        });
-	    }
+	    } else {
+			$(li).find(".toggle-btn").text("");
+			$(li).addClass("no-children");
+		}
 	}
     return li;
 }

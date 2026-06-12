@@ -10,28 +10,28 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
-import com.kh.khsemiprj.dto.DeptDto;
-import com.kh.khsemiprj.dto.EmpPositionDeptDto;
+import com.kh.khsemiprj.vo.DeptVO;
+import com.kh.khsemiprj.vo.EmpPositionDeptVO;
 
 @Component
-public class DeptMapper implements RowMapper<DeptDto> {
+public class DeptVOMapper implements RowMapper<DeptVO> {
 	
 	@Autowired
 	private EmpPositionDeptDao empPositionDeptDao;
 	
 	@Override
-	public DeptDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		//List<EmpPositionDeptDto> list = empPositionDeptDao.selectDepthEmp(rs.getLong("dept_no"));
+	public DeptVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		List<EmpPositionDeptVO> list = empPositionDeptDao.selectDepthEmp(rs.getLong("dept_no"));
 		
-		return DeptDto.builder()
+		return DeptVO.builder()
 				.deptNo(rs.getLong("dept_no"))
 				.deptParentNo(rs.getLong("dept_parent_no"))
 				.deptName(rs.getString("dept_name"))
 				.deptDepth(rs.getInt("dept_depth"))
 				.deptUseYn(rs.getString("dept_use_yn"))
 				.deptEmpId(rs.getString("dept_emp_id"))
-				//.empList(list)
-				//.children(new ArrayList<>())
+				.empList(list)
+				.children(new ArrayList<>())
 			.build();
 	}
 }

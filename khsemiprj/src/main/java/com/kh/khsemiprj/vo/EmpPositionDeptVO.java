@@ -17,4 +17,8 @@ public class EmpPositionDeptVO {
     private int empPositionLevel;
     private long deptNo; // 부서번호
     private String deptEmpId; //부서장 아이디
+    private int empPositionNo;
+    
+    private String empEmail;
+    private String empContact;
 }

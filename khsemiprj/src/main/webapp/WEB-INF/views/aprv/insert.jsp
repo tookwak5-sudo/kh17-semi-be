@@ -373,13 +373,13 @@
         
         <div class="modal-body">
             <form id="popupForm1" class="flex-area">
-            	<div class="cell w-25">
-	                <div id="deptList1" class="dept-tree border">
+            	<div class="cell w-25 me-10">
+	                <div id="deptList1" class="dept-tree border height-limit">
 						<ul>
 						</ul>
 					</div>
 				</div>
-				<div class="cell w-75">
+				<div class="cell w-75 ms-10">
 					<!-- 테이블 -->
 					<div class="cell center">
 						<table class="table" style="margin-top: 15px;">
@@ -414,13 +414,13 @@
         
         <div class="modal-body">
             <form id="popupForm2" class="flex-area">
-            	<div class="cell w-25">
-	                <div id="deptList2" class="dept-tree border">
+            	<div class="cell w-25 me-10">
+	                <div id="deptList2" class="dept-tree border height-limit">
 						<ul>
 						</ul>
 					</div>
 				</div>
-				<div class="cell w-75">
+				<div class="cell w-75 ms-10">
 					<!-- 테이블 -->
 					<div class="cell center">
 						<table class="table" style="margin-top: 15px;">

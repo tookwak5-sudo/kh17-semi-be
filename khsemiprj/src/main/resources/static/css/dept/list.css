@@ -1,17 +1,21 @@
 @charset "UTF-8";
 
 /* 기본 스타일 초기화 */
-.dept-tree, .dept-tree ul {
+/* .dept-tree, .dept-tree ul {
     list-style: none;
     padding-left: 24px;
     font-family: 'Malgun Gothic', sans-serif;
     color: #333;
 }
+.dept-tree.height-limit {
+	max-height: 300px;
+	overflow-y: auto;
+}
 .dept-tree > ul {
     padding-left: 0;
 }
 
-/* 각 부서 항목 스타일 */
+각 부서 항목 스타일
 .dept-item {
     margin: 6px 0;
 }
@@ -28,7 +32,7 @@
     background-color: #f0f4f9;
 }
 
-/* 토글 화살표 */
+토글 화살표
 .toggle-btn {
     display: inline-block;
     width: 16px;
@@ -40,7 +44,7 @@
     text-align: center;
 }
 
-/* 체크박스 스타일 커스텀 */
+체크박스 스타일 커스텀
 .dept-checkbox, .emp-checkbox {
     margin-right: 8px;
     width: 16px;
@@ -48,20 +52,20 @@
     cursor: pointer;
 }
 
-/* 부서명 */
+부서명
 .dept-name {
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
 }
 
-/* 하위 부서가 없는 최하단 팀은 화살표를 숨김 처리 */
+하위 부서가 없는 최하단 팀은 화살표를 숨김 처리
 .no-children .toggle-btn {
     visibility: hidden;
     cursor: default;
 }
 
-/* [핵심] 하위 메뉴를 숨기기 위한 클래스 */
+[핵심] 하위 메뉴를 숨기기 위한 클래스
 .collapsed > ul {
     display: none;
 }
@@ -72,7 +76,128 @@
 }
 .dept-change-list {
 	display: none;
+} */
+
+/* 기본 트리 구조 설정 */
+.dept-tree, .dept-tree ul {
+    list-style: none;
+    padding-left: 24px; /* 들여쓰기 공간 */
+    font-family: 'Malgun Gothic', sans-serif;
+    color: #333;
+    position: relative;
 }
+
+.dept-tree.height-limit {
+	max-height: 450px;
+	overflow-y: auto;
+}
+
+.dept-tree > ul {
+    padding-left: 0;
+}
+
+.dept-item {
+    margin: 0;
+    position: relative;
+}
+
+/* -----------------------------------------
+   [핵심] 부서 한 행(.dept-row)을 기준으로 선 정렬
+----------------------------------------- */
+.dept-row {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 4px; /* 위아래 여백 */
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.dept-row:hover {
+    background-color: #f0f4f9;
+}
+
+/* 1. 세로 연결선 (li 기준) */
+.dept-tree ul li::before {
+    content: "";
+    position: absolute;
+    left: -14px; /* 세로선 위치 축 */
+    top: 0;
+    border-left: 1px solid #b8c2cc;
+    width: 1px;
+    height: 100%;
+}
+
+/* 마지막 자식 노드의 세로선은 체크박스 중앙 높이까지만 내려옴 */
+.dept-tree ul li:last-child::before {
+    height: 18px; /* .dept-row의 높이 절반 지점에서 딱 끊기도록 고정 */
+}
+
+/* 2. 가로 연결선 (★ li가 아니라 .dept-row의 가상요소로 배치 ★)
+   이렇게 해야 하위 메뉴(자식노드)가 길게 늘어져도 가로선 높이가 변하지 않습니다. */
+.dept-row::before {
+    content: "";
+    position: absolute;
+    top: 50%; /* 체크박스의 완벽한 세로 중앙 */
+    transform: translateY(-50%);
+    left: -14px; /* 왼쪽 세로선과 맞닿는 지점 */
+    border-top: 1px solid #b8c2cc;
+    width: 14px; /* 기본 상위 부서용 (화살표 전까지만) */
+}
+
+/* 하위 부서가 없는 말단 팀(.no-children)의 가로선은 체크박스 앞까지 확장 */
+.no-children > .dept-row::before {
+    width: 32px; /* 화살표 빈 공간을 완전히 가로질러 체크박스에 밀착 */
+}
+
+/* 최상위 루트 노드들은 연결선이 필요 없으므로 제거 */
+.dept-tree > ul > li::before,
+.dept-tree > ul > li > .dept-row::before {
+    display: none;
+}
+
+/* -----------------------------------------
+   기타 구성 요소 스타일 (화살표, 체크박스)
+----------------------------------------- */
+.toggle-btn {
+    display: inline-block;
+    width: 16px;
+    font-size: 10px;
+    color: #888;
+    user-select: none;
+    margin-right: 4px;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.no-children .toggle-btn {
+    cursor: default;
+}
+
+.dept-checkbox {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+
+.dept-name {
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+
+/* 접기/펴기 */
+.collapsed > ul {
+    display: none;
+}
+
 .border {
 	box-shadow: 0 0 0 1px #2d3436;
 }
