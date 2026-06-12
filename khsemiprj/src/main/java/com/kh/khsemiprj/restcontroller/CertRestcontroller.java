@@ -100,5 +100,17 @@ public class CertRestcontroller {
 		}
 		
 	}
+	
+	//비밀번호 대조용
+	@PostMapping("/checkPassword")
+	public boolean checkPassword(@RequestParam String empPassword) {
+		EmpDto findEmpDto = empDao.selectOneByPassword(empPassword);
+		if(findEmpDto != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 }

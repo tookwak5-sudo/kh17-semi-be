@@ -144,7 +144,14 @@ public class EmpDao {
 			List<EmpDto> list = jdbcTemplate.query(sql,empMapper,params);
 			return list.isEmpty() ? null : list.get(0);
 		}
-
+		//비밀번호 대조용
+		public EmpDto selectOneByPassword(String empPassword) {
+			String sql ="select * from emp where emp_password =?";
+			Object[] params = {empPassword};
+			List<EmpDto> list = jdbcTemplate.query(sql, empMapper,params);
+			return list.isEmpty() ? null : list.get(0);
+		}
+		
 		public boolean changePassword(EmpDto empDto) {
 			String sql="update emp set emp_password = ? where emp_id = ?";
 			Object[] params = { empDto.getEmpPassword(), empDto.getEmpId()};

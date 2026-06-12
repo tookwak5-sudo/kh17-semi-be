@@ -17,7 +17,7 @@
 }
 
 .togglebox>[type=checkbox]:checked ~.fa-eye, /*체크되었을 때 눈 표시*/ .togglebox>[type=checkbox]
-	~.fa-eye-slash /*평상시 체크박스 뒤 눈가림 표시*/ {
+	 ~.fa-eye-slash /*평상시 체크박스 뒤 눈가림 표시*/ {
 	display: inline;
 }
 </style>
@@ -49,9 +49,10 @@ $(function() {
         empPasswordCheckValid: false,
         empEmailValid: false,//형식검사 들어가면 밑도 위에도 false로 바꾸기
         empEmailCertValid: false, // 인증 통과했는지
-        empBirthValid: true,
-        empContactValid: true,
+        empBirthValid: false,
+        empContactValid: false,
         empAddressValid: false,
+        
         ok: function(){
             return Object.values(this)
             .filter(v => typeof v==="boolean")
@@ -64,7 +65,7 @@ $(function() {
     //날짜 선택기 생성
     var datePicker = new Lightpick({
         field: $("[name=empBirth]")[0],
-        format: "YYYY년-MM월-DD일",
+        format: "YYYY-MM-DD",
         firstDay: 7,
         maxDate: moment(),//오늘까지
     });
@@ -103,6 +104,7 @@ $(function() {
         })
     });	
     
+    //이름은 형식 검사만
     $("[name=empName]").on("blur",function(){
     	var regex =/^([가-힣a-zA-Z\.]{2,100})$/;
     	var empName = $("[name=empName]").val();
@@ -118,15 +120,52 @@ $(function() {
     		$("[name=empName]").removeClass("success fail").addClass("success");
     		state.empNameValid=true;
     	}
-    })
+    });
     
+    //생일은 형식검사만
+    $("[name=empBirth]").on("blur",function(){
+    	var regex = /^([0-9]{4})-(((02)-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/
+    	var empBirth = $("[name=empBirth]").val();
+    	var valid = regex.test(empBirth);
+    	if(valid == false){
+    		$("[name=empBirth]").removeClass("success fail")
+    		.addClass("fail").attr("data-error","1");
+    		state.empBirthValid = false;
+    		return;
+    	}
+    	
+    	else{
+    		$("[name=empBirth]").removeClass("success fail").addClass("success");
+    		state.empBirthValid = true;
+    	}
+    });
+    
+    //전화 번호는 형식검사만
+    $("[name=empContact]").on("blur",function(){
+    	var regex = /^010[1-9][0-9]{7}$/
+    	var empContact = $("[name=empContact]").val();
+    	var valid = regex.test(empContact);
+    	if(valid == false){
+    		$("[name=empContact]").removeClass("success fail")
+    		.addClass("fail").attr("data-error","1");
+    		state.empContactValid = false;
+    		return;
+    	}
+    	
+    	else{
+    		$("[name=empContact]").removeClass("success fail").addClass("success");
+    		state.empContactValid = true;
+    	}
+    });
+    
+    //비밀번호 형식검사와 중복 검사
     $("[name=empPassword], .password-check").on("blur",function(){
     	var empPassword = $("[name=empPassword]").val()
     	
-    	var regex1 =/^[A-Za-z0-9!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\'"`~\<\>\.\,\/\?\\\|]{8,16}$/;
-    	var regex2 =/[A-Z]+/
-    	var regex3 =/[a-z]+/
-    	var regex4 =/[0-9]+/
+		var regex1 = /^[A-Za-z0-9!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\'\"`~\<\>\.\,\/\?\\\|]{8,16}$/;
+    	var regex2 =/[A-Z]+/;
+    	var regex3 =/[a-z]+/;
+    	var regex4 =/[0-9]+/;
     	
     	state.empPasswordValid = regex1.test(empPassword)
     			 && regex2.test(empPassword)
@@ -142,13 +181,14 @@ $(function() {
     		.addClass(state.empPasswordCheckValid ? "success" : "fail");
     })
     
+    //주소 부분 시작
     $("[name=empAddress2]").on("blur", function () {
         var empPost = $("[name=empPost]").val();
         var empAddress1 = $("[name=empAddress1]").val();
         var empAddress2 = $("[name=empAddress2]").val();
-        var empty = empPost.length == 0 && empAddress1.length == 0 && empAddress2.length == 0;
-        var full = empPost.length > 0 && empAddress1.length > 0 && empAddress2.length > 0;
-        var valid = empty || full;
+        
+        var valid = empPost.length > 0 && empAddress1.length > 0 && empAddress2.length > 0;
+       
 
         $("[name=empPost],[name=empAddress1],[name=empAddress2]")
             .removeClass("success fail").addClass(valid ? "success" : "fail");
@@ -210,6 +250,7 @@ $(function() {
                     $("[name=empEmail]").removeClass("success fail")
                                        .addClass("success");
                     state.empEmailValid = true; 
+                    $("[name=empEmail]").removeClass("success fail")
                 }
             }
         });
@@ -319,7 +360,7 @@ $(function() {
          //- 숫자 전용 입력창
          $(".field.field-numeric").on("input", function () {
              var regex = /[^0-9]/g;//양의 정수만 가능
-             var origin = $(this).val();
+             var origin = $(this).val()           
              var replacement = origin.replace(regex, "");
              $(this).val(replacement);
          });
@@ -366,8 +407,8 @@ $(function() {
 		</div>
 
 		<div class="cell">
-			<label>아이디</label> <input type="text" name="empId"
-				class="field w-100">
+			<label>아이디<i class="fa-solid fa-asterisk red"></i></label> <input
+				type="text" name="empId" class="field w-100">
 			<div class="success-feedback">사용 가능한 아이디입니다.</div>
 			<div class="fail-feedback">
 				<div>아이디는 영어소문자로 시작하고 영어나 숫자를 혼합한 4자이상 20자이하입니다.</div>
@@ -383,7 +424,7 @@ $(function() {
 				class="fa-solid fa-eye-slash red"></i> <i
 				class="fa-solid fa-eye blue"></i>
 			</label> <input type="password" name="empPassword" class="field w-100">
-			<div class="success-feedback">비밀번호 설정이 완료되었습니다!</div>
+			<div class="success-feedback">올바른 비밀 번호 입니다.</div>
 			<div class="fail-feedback">영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여
 				8~16글자로 작성하세요</div>
 		</div>
@@ -400,51 +441,52 @@ $(function() {
 
 
 		<div class="cell">
-    		<label>이메일</label>
+			<label>이메일<i class="fa-solid fa-asterisk red"></i></label>
 		</div>
-			<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
-    			<input type="text" name="empEmail" class="field" inputmode="email">
-    
-    		<button type="button" class="btn btn-neutral btn-cert-send ms-10">
-       			 <i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
-   			</button>
-    		<button type="button" class="btn btn-negative btn-cert-retry ms-10" style="display: none;">
-        		<i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
-    		</button>
+		<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
+			<input type="text" name="empEmail" class="field" inputmode="email">
 
-	    		<div class="success-feedback w-100 mt-5">사용가능한 이메일입니다.</div>
-	    			<div class="fail-feedback w-100 mt-5">
-	        			<div>이메일이 형식에 맞지 않습니다.</div>
-	        			<div>중복된 이메일입니다.</div>
-	    			</div>
+			<button type="button" class="btn btn-neutral btn-cert-send ms-10">
+				<i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
+			</button>
+			<button type="button" class="btn btn-negative btn-cert-retry ms-10"
+				style="display: none;">
+				<i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
+			</button>
+
+			<div class="success-feedback w-100 mt-5"></div>
+			<div class="fail-feedback w-100 mt-5">
+				<div>이메일이 형식에 맞지 않습니다.</div>
+				<div>중복된 이메일입니다.</div>
 			</div>
+		</div>
 
-		
+
 
 		<!-- 인증번호 입력 영역 -->
 		<div class="cell cert-area"></div>
 
 		<div class="cell">
-			<label>성함</label> <input type="text" name="empName"
-				class="field w-100">
+			<label>성함<i class="fa-solid fa-asterisk red"></i></label> <input
+				type="text" name="empName" class="field w-100">
 		</div>
 
 		<div class="cell">
-			<label>생년월일</label> <input type="text" name="empBirth"
-				class="field w-100" placeholder="연도-월-일">
+			<label>생년월일<i class="fa-solid fa-asterisk red"></i></label> <input
+				type="text" name="empBirth" class="field w-100" placeholder="연도-월-일">
 			<div class="fail-feedback">올바른 날짜 형식이 아닙니다</div>
 		</div>
 
 
 		<div class="cell">
-			<label>개인 휴대전화 연락처</label> <input type="text" inputmode="tel"
-				name="empContact" class="field field-numeric w-100"
-				placeholder="대시(-) 없이 입력">
+			<label>개인 휴대전화 연락처<i class="fa-solid fa-asterisk red"></i></label> <input
+				type="text" inputmode="tel" name="empContact"
+				class="field field-numeric w-100" placeholder="대시(-) 없이 입력">
 			<div class="fail-feedback">올바른 전화번호 형식이 아닙니다</div>
 		</div>
 
 		<div class="cell mb-0">
-			<label>주소</label>
+			<label>주소<i class="fa-solid fa-asterisk red"></i></label>
 		</div>
 		<div class="cell mt-0 flex-area">
 			<input type="text" name="empPost" class="field field-numeric"
@@ -476,6 +518,8 @@ $(function() {
 				style="display: none;">
 			</label>
 		</div>
+
+
 		<div class="cell preview-area"></div>
 
 

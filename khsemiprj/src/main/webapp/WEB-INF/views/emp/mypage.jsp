@@ -46,7 +46,7 @@
 
 <div class="container w-950 mt-50 mb-50">
 	<div class="cell">
-		<h1>${findEmpDto.empName}님의정보</h1>
+		<h1>${findEmpDto.empName}님의 정보</h1>
 	</div>
 
 	<div class="cell mypage-info-box">
