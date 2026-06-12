@@ -1,5 +1,6 @@
 package com.kh.khsemiprj.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,7 +24,6 @@ public class BoardDao {
 	
 	//목록 및 조회
 	public List<BoardDto> selectList(int page, int size) {
-
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
 							+ "select * from board_list "
@@ -39,25 +39,42 @@ public class BoardDao {
 
 	public List<BoardDto> selectList(PageVO pageVO) {
 	
-		if (pageVO.isList())
-			return selectList(pageVO.getPage(), pageVO.getSize());
-
-		if (!allowColumns.contains(pageVO.getColumn()))
-			return selectList(pageVO.getPage(), pageVO.getSize());
+		StringBuilder tempoSql=new StringBuilder();
+		tempoSql.append("select * from board_list ");
+		boolean hasKeyword = !pageVO.isList() && allowColumns.contains(pageVO.getColumn());
+	    boolean hasHead = pageVO.getBoardHead() != null && !pageVO.getBoardHead().isEmpty();
+	    List<Object> paramList = new ArrayList<>();
+	    
+	    if (hasKeyword || hasHead) {
+	        tempoSql.append("where ");
+	        
+	        if (hasHead) {
+	            tempoSql.append("board_head = ? ");
+	            paramList.add(pageVO.getBoardHead());
+	        }
+	        
+	        if (hasKeyword) {
+	            if (hasHead) tempoSql.append("and "); // 둘 다 있으면 and로 연결
+	            tempoSql.append("instr(").append(pageVO.getColumn()).append(", ?) > 0 ");
+	            paramList.add(pageVO.getKeyword());
+	        }
+	    }
+	    
+//		if (pageVO.isList())
+//			return selectList(pageVO.getPage(), pageVO.getSize());
+//
+//		if (!allowColumns.contains(pageVO.getColumn()))
+//			return selectList(pageVO.getPage(), pageVO.getSize());
 		
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ("
-							+ "select * from board_list "
-							+ "where instr("+pageVO.getColumn()+", ?) > 0 "
+							+ tempoSql.toString()
 							+ "order by board_no desc"
 						+ ") TMP"
 					+ ") where rn between ? and ?";
-		Object[] params = { 
-			pageVO.getKeyword(), 
-			pageVO.getBeginRownum(),
-			pageVO.getEndRownum()
-		};
-		return jdbcTemplate.query(sql, boardMapper, params);
+			paramList.add(pageVO.getBeginRownum());
+			paramList.add(pageVO.getEndRownum());
+		return jdbcTemplate.query(sql, boardMapper, paramList.toArray());
 	}
 
 	// 공지사항 조회
@@ -69,14 +86,14 @@ public class BoardDao {
 	                + ") where rownum <= 5"; // 상위 5개만
 	    return jdbcTemplate.query(sql, boardMapper);
 	}
-	//첫 주석과 같은 이유로 넣었습니다.
-	public List<BoardDto> selectNullList() {
-		String sql = "select * from board_list "
-					+ "where board_head is null "
-					+ "order by board_no desc";
-		return jdbcTemplate.query(sql, boardMapper);
-	}
-
+//	//첫 주석과 같은 이유로 넣었습니다.
+//	public List<BoardDto> selectNullList() {//이제 null없음
+//		String sql = "select * from board_list "
+//					+ "where board_head is null "
+//					+ "order by board_no desc";
+//		return jdbcTemplate.query(sql, boardMapper);
+//	}
+	
 
 	// 상세
 	public BoardDto selectOne(long boardNo) {
@@ -96,17 +113,37 @@ public class BoardDao {
 		List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
-	//[변형] 이전글 정보(검색어 있을 때)
-		public BoardDto selectPreviousOne(long boardNo, PageVO pageVO) {
-			String sql = "select * from board_list where board_no = ("
-							+ "select max(board_no) from board_list "
-							+ "where board_no < ? and instr("+pageVO.getColumn()+", ?)>0 "
-						+ ")";
-			Object[] params = { boardNo, pageVO.getKeyword() };
-			List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
-			return list.isEmpty() ? null : list.get(0);
-		}
-	//[변형] 다음글 정보
+	// [변형] 이전글 정보
+	public BoardDto selectPreviousOne(long boardNo, PageVO pageVO) {
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("select * from board_list where board_no = (");
+	    sql.append("select max(board_no) from board_list where board_no < ? ");
+	    
+	    List<Object> paramList = new ArrayList<>();
+	    paramList.add(boardNo);
+	    
+	    //조건 검사
+	    boolean hasKeyword = !pageVO.isList() && allowColumns.contains(pageVO.getColumn());
+	    boolean hasHead = pageVO.getBoardHead() != null && !pageVO.getBoardHead().isEmpty();
+	    
+	    //말머리 조건이 있으면 추가
+	    if (hasHead) {
+	        sql.append("and board_head = ? ");
+	        paramList.add(pageVO.getBoardHead());
+	    }
+	    
+	    //검색어 조건이 있으면 추가
+	    if (hasKeyword) {
+	        sql.append("and instr(").append(pageVO.getColumn()).append(", ?) > 0 ");
+	        paramList.add(pageVO.getKeyword());
+	    }
+	    
+	    sql.append(")");
+	    
+	    List<BoardDto> list = jdbcTemplate.query(sql.toString(), boardMapper, paramList.toArray());
+	    return list.isEmpty() ? null : list.get(0);
+	}
+	// [변형] 다음글 정보
 	public BoardDto selectNextOne(long boardNo) {
 		String sql = "select * from board_list where board_no = ("
 						+ "select min(board_no) from board_list where board_no > ?"
@@ -115,16 +152,36 @@ public class BoardDao {
 		List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
-	//[변형] 다음글 정보(검색어 있을 때)
-		public BoardDto selectNextOne(long boardNo, PageVO pageVO) {
-			String sql = "select * from board_list where board_no = ("
-							+ "select min(board_no) from board_list "
-							+ "where board_no > ? and instr("+pageVO.getColumn()+", ?) > 0"
-						+ ")";
-			Object[] params = { boardNo, pageVO.getKeyword() };
-			List<BoardDto> list = jdbcTemplate.query(sql, boardMapper, params);
-			return list.isEmpty() ? null : list.get(0);
-		}
+	// [변형] 다음글 정보 
+	public BoardDto selectNextOne(long boardNo, PageVO pageVO) {
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("select * from board_list where board_no = (");
+	    sql.append("select min(board_no) from board_list where board_no > ? ");
+	    
+	    List<Object> paramList = new ArrayList<>();
+	    paramList.add(boardNo);
+	    
+	    //조건 검사
+	    boolean hasKeyword = !pageVO.isList() && allowColumns.contains(pageVO.getColumn());
+	    boolean hasHead = pageVO.getBoardHead() != null && !pageVO.getBoardHead().isEmpty();
+	    
+	    //말머리 조건이 있으면 추가
+	    if (hasHead) {
+	        sql.append("and board_head = ? ");
+	        paramList.add(pageVO.getBoardHead());
+	    }
+	    
+	    //검색어 조건이 있으면 추가
+	    if (hasKeyword) {
+	        sql.append("and instr(").append(pageVO.getColumn()).append(", ?) > 0 ");
+	        paramList.add(pageVO.getKeyword());
+	    }
+	    
+	    sql.append(")");
+	    
+	    List<BoardDto> list = jdbcTemplate.query(sql.toString(), boardMapper, paramList.toArray());
+	    return list.isEmpty() ? null : list.get(0);
+	}
 	public long sequence() {
 		String sql = "select board_seq.nextval from dual";
 		return jdbcTemplate.queryForObject(sql, long.class);

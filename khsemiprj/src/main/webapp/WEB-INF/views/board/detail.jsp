@@ -229,6 +229,9 @@
 				method: "post",
 				data: {replyOrigin : boardNo},
 				success: function(response) {
+					
+				    var displayLimit = 15;
+					
 					/* $(".reply-count-text").text(response.length); */
 					//response는 백엔드에서의 List<ReplyDto>이다
 					//반복을 통해 템플릿을 배치하고 정보를 갈아끼운다
@@ -305,12 +308,54 @@
 							$(html).find(".btn-nested-reply").remove();
 						}
 						
+						if (i >= displayLimit) {
+				            $(html).addClass("reply-hidden").hide(); 
+				        }
+
 						$(".reply-area").append(html);//화면에 추가
 					}
+					//댓글 더보기 토글버튼
+					if (response.length > displayLimit) {
+				        var hiddenCount = response.length - displayLimit;
+				        var toggleBtnHtml = `
+				            <div class="center mt-20 reply-toggle-wrapper">
+				                <button type="button" class="btn btn-neutral w-100 btn-reply-toggle" style="padding: 15px; font-weight: bold;">
+				                    <i class="fa-solid fa-chevron-down"></i> 
+				                    <span class="toggle-text">댓글 더보기 (` + hiddenCount + `개)</span>
+				                </button>
+				            </div>
+				        `;
+				        $(".reply-area").append(toggleBtnHtml);
+				    }
 				}
 			});
 		}
 		
+		
+		//댓글 더보기 / 접기 토글
+		$(".reply-area").on("click", ".btn-reply-toggle", function() {
+			var $hiddenReplies = $(".reply-hidden");
+			var $icon = $(this).find("i");
+			var $text = $(this).find(".toggle-text");
+            var hiddenCount = $hiddenReplies.length;
+
+			// 만약 현재 숨겨진 댓글들이 안 보이고 있는 상태라면 (펼치기 동작)
+			if ($hiddenReplies.is(":hidden")) {
+				$hiddenReplies.slideDown(200);
+				$icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
+				$text.text("댓글 접기");
+			} 
+			// 만약 다 펴져 있는 상태라면 (접기 동작)
+			else {
+				$hiddenReplies.slideUp(200);
+				$icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
+				$text.text("댓글 더보기 (" + hiddenCount + "개)");
+				
+				//접었을 때 스크롤을 다시 첫 댓글 위치로
+				/* var offset = $(".reply-area").offset().top - 100;
+				$("html, body").animate({ scrollTop: offset }, 200); */
+			}
+		});
 		
 		//등록 버튼을 누르면 발생할 등록 작업
 		$(".btn-reply").on("click", function(){
@@ -747,19 +792,19 @@
 	<!-- 이전글/다음글 출력 -->
 	<div class="cell">
 		<span class="badge blue me-20">다음글</span>
-		<c:if test="${param.column!=null}">
+		<c:if test="${param.column!=null || param.boardHead!=null}">
 		<a href="./detail?boardNo=${nextBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${nextBoardDto.boardTitle}</a>
 		</c:if>
-		<c:if test="${param.column==null}">
+		<c:if test="${param.column==null && param.boardHead==null}">
 		<a href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>
 		</c:if>
 	</div>
 	<div class="cell">
 		<span class="badge blue me-20">이전글</span> 
-		<c:if test="${param.column!=null}">
+		<c:if test="${param.column!=null || param.boardHead!=null}">
 		<a href="./detail?boardNo=${prevBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${prevBoardDto.boardTitle}</a>
 		</c:if>
-		<c:if test="${param.column==null}">
+		<c:if test="${param.column==null && param.boardHead==null}">
 		<a href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>
 		</c:if>
 	</div>
@@ -775,11 +820,11 @@
 		<a class="btn btn-negative" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
 		<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}"  onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
 		</c:if>
-		<c:if test="${param.column==null}">
+		<c:if test="${param.column==null && param.boardHead==null}">
 			<a class="btn btn-neutral" href="./list">목록으로</a>
 		</c:if>
-		<c:if test="${param.column!=null}">
-			<a class="btn btn-neutral" href="./list?column=${param.column}&keyword=${param.keyword}">목록으로</a>
+		<c:if test="${param.column!=null || param.boardHead!=null}">
+			<a class="btn btn-neutral" href="./list?boardHead=${param.boardHead}&column=${param.column}&keyword=${param.keyword}">목록으로</a>
 		</c:if>
 	</div>
 </div>

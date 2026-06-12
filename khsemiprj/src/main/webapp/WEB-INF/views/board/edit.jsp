@@ -21,20 +21,24 @@
 		<input type="text" name="boardTitle" required class="field w-100"
 				value="${boardDto.boardTitle}">
 	</div>
-	<c:if test="${sessionScope.loginLevel != '0'}">
 		<div class="cell mb-0">
 			<label>구분</label>
 		</div>
 		<div class="cell mt-0">
-			<select name="boardHead" class="field">
+			<select name="boardHead" class="field" required>
 				<option value="">선택 안함</option>
 				
 				<!-- 공지는 관리자에게만 보이도록 해야함 -->
+			<c:if test="${sessionScope.loginLevel == '0'}">
 				<option ${boardDto.boardHead == '공지' ? 'selected':''}>공지</option>
+			</c:if>
 				<option ${boardDto.boardHead == '자유' ? 'selected':''}>자유</option>
+				<option ${boardDto.boardHead == '유머' ? 'selected':''}>유머</option>
+				<option ${boardDto.boardHead == '정보' ? 'selected':''}>정보</option>
+				<option ${boardDto.boardHead == '질문' ? 'selected':''}>질문</option>
+				<option ${boardDto.boardHead == '나눔' ? 'selected':''}>나눔</option>
 			</select>
 		</div>
-	</c:if>
 	
 	<div class="cell">
 		<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
