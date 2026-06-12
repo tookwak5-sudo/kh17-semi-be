@@ -1,4 +1,4 @@
-package com.kh.khsemiprj.dto;
+package com.kh.khsemiprj.vo;
 
 import java.sql.Timestamp;
 
@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data @Builder @AllArgsConstructor @NoArgsConstructor
-public class AprvDto {
+public class AprvDetailVO {
 	private int aprvNo;
 	private String aprvWriter;
 	private int aprvFormNo;
@@ -23,4 +23,9 @@ public class AprvDto {
 	private Timestamp aprvWtime;
 	private Timestamp aprvEtime;
 	private Double aprvLeave;
+	private int headNo;
+	private String headName;
+	private long deptNo;
+	private String empName;
+	private String empPositionName;
 }

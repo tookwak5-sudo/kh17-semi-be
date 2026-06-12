@@ -9,7 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.AprvDto;
+import com.kh.khsemiprj.mapper.AprvDetailMapper;
 import com.kh.khsemiprj.mapper.AprvMapper;
+import com.kh.khsemiprj.vo.AprvDetailVO;
 import com.kh.khsemiprj.vo.PageVO;
 import com.kh.khsemiprj.mapper.EmpAprvLineMapper;
 import com.kh.khsemiprj.vo.EmpAprvLineVO;
@@ -22,6 +24,8 @@ public class AprvDao {
 	AprvMapper aprvMapper;
 	@Autowired
 	EmpAprvLineMapper empAprvLineMapper;
+	@Autowired
+	AprvDetailMapper aprvDetailMapper;
 	
 	//검색 허용할 컬럼
 	private Set<String> allowColumns = Set.of("aprv_writer", "aprv_title", "aprv_status");
@@ -35,22 +39,22 @@ public class AprvDao {
 	public boolean insertAprvTemp(AprvDto aprvDto) {
 		String sql = "insert into aprv_document("
 						+ "aprv_no, aprv_writer, aprv_form_no, aprv_title, aprv_content"
-						+ ", aprv_status, aprv_current_seq, aprv_sdate, aprv_edate, aprv_temp_wtime) "
-					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
+						+ ", aprv_status, aprv_current_seq, aprv_sdate, aprv_edate, aprv_leave, aprv_temp_wtime) "
+					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
 		Object[] params = { aprvDto.getAprvNo(), aprvDto.getAprvWriter(), aprvDto.getAprvFormNo()
 							, aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
-							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate() };
+							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave() };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
 	public boolean insertAprv(AprvDto aprvDto) {
 		String sql = "insert into aprv_document("
 						+ "aprv_no, aprv_writer, aprv_form_no, aprv_title, aprv_content"
-						+ ", aprv_status, aprv_current_seq, aprv_sdate, aprv_edate, aprv_wtime) "
-					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
+						+ ", aprv_status, aprv_current_seq, aprv_sdate, aprv_edate, aprv_leave, aprv_wtime) "
+					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
 		Object[] params = { aprvDto.getAprvNo(), aprvDto.getAprvWriter(), aprvDto.getAprvFormNo()
 							, aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
-							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate() };
+							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave() };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
@@ -62,10 +66,11 @@ public class AprvDao {
 					+ ", aprv_current_seq = ? "
 					+ ", aprv_sdate = ? "
 					+ ", aprv_edate = ? "
+					+ ", aprv_leave = ? "
 					+ ", aprv_temp_utime = systimestamp "
 					+ "where aprv_no = ?";
 		Object[] params = { aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
-							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate()
+							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave()
 							, aprvDto.getAprvNo()};
 		return jdbcTemplate.update(sql, params) > 0;
 	}
@@ -78,10 +83,11 @@ public class AprvDao {
 					+ ", aprv_current_seq = ? "
 					+ ", aprv_sdate = ? "
 					+ ", aprv_edate = ? "
+					+ ", aprv_leave = ? "
 					+ ", aprv_wtime = systimestamp "
 					+ "where aprv_no = ?";
 		Object[] params = { aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
-							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate()
+							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave()
 							, aprvDto.getAprvNo()};
 		return jdbcTemplate.update(sql, params) > 0;
 	}
@@ -102,10 +108,36 @@ public class AprvDao {
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
+	public boolean setAprvDeny(int aprvNo) {
+		String sql = "update aprv_document set aprv_status = '반려', aprv_etime = systimestamp where aprv_no = ? and aprv_status = '대기'";
+		Object[] params = { aprvNo };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
 	public AprvDto selectOne(int aprvNo) {
 		String sql = "select * from aprv_document where aprv_no = ? ";
 		Object[] params = { aprvNo };
 		List<AprvDto> list = jdbcTemplate.query(sql, aprvMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	public AprvDetailVO selectOneForAprv(int aprvNo) {
+		String sql = "SELECT "
+				+ "	a.* "
+				+ ", e.emp_name "
+				+ ", ep.emp_position_name "
+				+ ", ah.head_no "
+				+ ", ah.head_name "
+				+ ", edr.dept_no "
+				+ "from aprv_document a "
+				+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
+				+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
+				+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+				+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
+				+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
+				+ "where a.aprv_no = ?";
+		Object[] params = { aprvNo };
+		List<AprvDetailVO> list = jdbcTemplate.query(sql, aprvDetailMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
 	

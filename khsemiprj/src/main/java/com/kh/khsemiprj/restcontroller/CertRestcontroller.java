@@ -86,5 +86,31 @@ public class CertRestcontroller {
 		} else
 			return false;
 	}
+	
+	//id 중복검사용
+	@PostMapping("/checkId")
+	public boolean checkId(@RequestParam String empId) {
+		
+		EmpDto findEmpDto = empDao.selectOneById(empId);
+		if(findEmpDto != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+	}
+	
+	//비밀번호 대조용
+	@PostMapping("/checkPassword")
+	public boolean checkPassword(@RequestParam String empPassword) {
+		EmpDto findEmpDto = empDao.selectOneByPassword(empPassword);
+		if(findEmpDto != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 }

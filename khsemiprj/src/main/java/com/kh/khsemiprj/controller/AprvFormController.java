@@ -151,7 +151,7 @@ public class AprvFormController {
 		// 4. 본문 텍스트 데이터 수정
 		aprvFormDao.update(aprvFormDto);
 
-		// 5. 파일 교체 로직
+		// 5. 파일 교체 로직 (파일이 실제로 첨부됐을 때만 실행)
 		if (attach != null && !attach.isEmpty()) {
 			aprvFormService.modifyFile(aprvFormDto, attachDto, attach);
 		}

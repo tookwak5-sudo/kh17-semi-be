@@ -5,14 +5,14 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import com.kh.khsemiprj.vo.AprvDetailVO;
 
-import com.kh.khsemiprj.dto.AprvDto;
 
 @Component
-public class AprvMapper implements RowMapper<AprvDto> {
+public class AprvDetailMapper implements RowMapper<AprvDetailVO> {
 	@Override
-	public AprvDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return AprvDto.builder()
+	public AprvDetailVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		return AprvDetailVO.builder()
 				.aprvNo(rs.getInt("aprv_no"))
 				.aprvWriter(rs.getString("aprv_writer"))
 				.aprvFormNo(rs.getInt("aprv_form_no"))
@@ -27,6 +27,11 @@ public class AprvMapper implements RowMapper<AprvDto> {
 				.aprvWtime(rs.getTimestamp("aprv_wtime"))
 				.aprvEtime(rs.getTimestamp("aprv_etime"))
 				.aprvLeave(rs.getObject("aprv_leave", Double.class))
+				.headNo(rs.getInt("head_no"))
+				.headName(rs.getString("head_name"))
+				.deptNo(rs.getLong("dept_no"))
+				.empName(rs.getString("emp_name"))
+				.empPositionName(rs.getString("emp_position_name"))
 				.build();
 	}
 }

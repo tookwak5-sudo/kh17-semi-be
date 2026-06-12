@@ -92,4 +92,13 @@ public class EmpLeaveDao {
 		jdbcTemplate.update(sql, params);
 	}
 
+	public boolean leaveUpdate(String empId, double usedLeave) {
+		String sql = "update emp_leave set "
+					+ "leave_used = leave_used + ? "
+					+ ", leave_remain = leave_remain - ? "
+					+ ", leave_update = systimestamp "
+					+ "where leave_emp_id = ? ";
+		Object[] params = { usedLeave, usedLeave, empId };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
 }
