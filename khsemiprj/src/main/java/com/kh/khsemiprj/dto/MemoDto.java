@@ -17,4 +17,5 @@ public class MemoDto {
 	private String memoReadStatus = "N";
 	private String memoType = "일반";
 	private Timestamp memoWtime;
+	private String empName;
 }

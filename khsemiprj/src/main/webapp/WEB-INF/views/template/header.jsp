@@ -71,10 +71,20 @@ empGrade : ${sessionScope.empGrade}
                 <div class="w-50 flex-area flex-center">
                     <h1>KH정보교육원 그룹웨어 프로젝트</h1>
                 </div>
-                <div class="w-25 flex-area flex-center">
-                    <div class="center">
-                        <!-- <h2 class="mt-0 mb-0">24시간상담</h2>
-                        <div>1588-0000</div>-->
+                <div class="w-25 flex-area" style="justify-content: right; align-items: end;">
+                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 50px;background-color: #739BED;text-align: center;"> 
+                    	<a href="/memo/list" 
+				           style="font-size:20px; text-decoration: none;" 
+				           onclick="
+				               var w = 650; 
+				               var h = 650; 
+				               var left = (screen.width/2) - (w/2); 
+				               var top = (screen.height/2) - (h/2); 
+				               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+				               return false;
+				         ">
+				            <i class="fa-solid fa-bell yellow" style="color: #f1c40f;">(1)</i>
+				        </a>
                     </div>
                 </div>
             </div>

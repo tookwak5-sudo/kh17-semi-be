@@ -2,24 +2,23 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>    
+<jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include>   
 
 <form action="./write" method="post">
-	<div class="container w-950 mt-50 mb-50">
+	<div class="container memo-card w-600 mt-0">
 		<div class="cell">
 			<!-- 제목을 답글일 때와 새글일 때로 나눠서 처리 -->
 			<h1 class="mt-0 mb-0">쪽지쓰기</h1>
 		</div>
 		
-		<div class="cell mt-40">
+		<div class="cell mt-10">
 			<label>제목 <i class="fa-solid fa-asterisk red"></i></label>
 			<input type="text" name="memoTitle" class="field w-100">
 		</div>
 		<div class="cell">
 			<label>받을사람 아이디<i class="fa-solid fa-asterisk red"></i></label>
-			<input type="text" name="memoReceiverId" class="field w-100">
+			<input type="text" name="memoReceiverId" value="${replyReceiverId}" class="field w-100">
 		</div>
-		
 		<c:if test="${sessionScope.empGrade = '2'}">
 			<div class="cell mb-0">
 				<label>쪽지 타입</label>
@@ -37,11 +36,11 @@
 		
 		<div class="cell">
 			<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-			<textarea name="memoContent" rows="10" required rows="10" class="field w-100"></textarea>
+			<textarea name="memoContent" rows="6" required rows="6" class="field w-100"></textarea>
 		</div>
 		
 		<div class="cell mt-50 right">
-			<a href="#" class="btn btn-neutral">
+			<a href="/memo/list" class="btn btn-neutral">
 				<i class="fa-solid fa-list"></i>
 				<span>목록으로 이동</span>
 			</a>
@@ -52,5 +51,3 @@
 		</div>
 	</div>
 </form>
-
-<jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

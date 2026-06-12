@@ -21,6 +21,7 @@ public class MemoMapper implements RowMapper<MemoDto>{
 					.memoReadStatus(rs.getString("memo_read_status"))
 					.memoType(rs.getString("memo_type"))
 					.memoWtime(rs.getTimestamp("memo_wtime"))
+					.empName(rs.getString("emp_name"))
 				.build();
 	}
 		
