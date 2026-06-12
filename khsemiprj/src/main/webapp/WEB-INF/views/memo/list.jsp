@@ -89,13 +89,13 @@
 										</c:choose>
 									</td>
 									<td align="left" style="padding-left: 15px; font-weight: ${memo.memoReadStatus == 'N' ? 'bold' : 'normal'};">
+										<c:if test="${memo.memoReadStatus == 'N'}">
+											<span class="unread-badge">New</span>
+										</c:if>
+										<c:if test="${memo.memoReadStatus == 'Y'}">
+											<span style="color: #adb5bd;">읽음</span>
+										</c:if>
 										<a href="./detail?memoNo=${memo.memoNo}">
-											<c:if test="${memo.memoReadStatus == 'N'}">
-												<span class="unread-badge">New</span>
-											</c:if>
-											<c:if test="${memo.memoReadStatus == 'Y'}">
-												<span style="color: #adb5bd;">읽음</span>
-											</c:if>
 											${memo.memoTitle}										
 										</a>
 									</td>

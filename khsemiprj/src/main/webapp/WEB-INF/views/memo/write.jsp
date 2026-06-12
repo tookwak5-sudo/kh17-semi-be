@@ -19,7 +19,7 @@
 			<label>받을사람 아이디<i class="fa-solid fa-asterisk red"></i></label>
 			<input type="text" name="memoReceiverId" value="${replyReceiverId}" class="field w-100">
 		</div>
-		<c:if test="${sessionScope.empGrade = '2'}">
+		<c:if test="${sessionScope.empGrade == '2'}">
 			<div class="cell mb-0">
 				<label>쪽지 타입</label>
 			</div>
@@ -36,10 +36,10 @@
 		
 		<div class="cell">
 			<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-			<textarea name="memoContent" rows="6" required rows="6" class="field w-100"></textarea>
+			<textarea name="memoContent" rows="5" required rows="5" class="field w-100"></textarea>
 		</div>
 		
-		<div class="cell mt-50 right">
+		<div class="cell mt-10 right">
 			<a href="/memo/list" class="btn btn-neutral">
 				<i class="fa-solid fa-list"></i>
 				<span>목록으로 이동</span>
