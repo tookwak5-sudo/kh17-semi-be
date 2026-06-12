@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
     
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
@@ -48,7 +49,9 @@
 						<td class="left"><a href="./detail?aprvNo=${aprvDto.aprvNo}">${aprvDto.aprvTitle}</a></td>
 						<td>${aprvDto.aprvWriter}</td>
 						<td>${aprvDto.aprvStatus}</td>
-						<td>${aprvDto.aprvWtime}</td>
+						<td>
+							<fmt:formatDate value="${aprvDto.aprvWtime}" pattern="yyyy-MM-dd HH:mm"/>	
+						</td>
 					</tr>
 				</c:forEach>
 				</c:when>

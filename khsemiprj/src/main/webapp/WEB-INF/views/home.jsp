@@ -621,6 +621,7 @@
 
        <div class="right-section">
             <div class="card p-20" style="height: 300px;">
+<<<<<<< HEAD
 	            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
 	            	<div style="display: flex; justify-content: space-between; align-items: center;">
 	                    <h3>결재 대기 목록</h3>
@@ -685,6 +686,94 @@
 	                 	</table>
 	                </div>
 	            </c:if>
+=======
+            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+            	<div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>결재 대기 목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>     
+                </div>
+                <div class="cell list-area">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>기안자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+							<!--리스트가 비어있지 않을때 -->
+			  				<c:if test="${not emptyReceivedList}">
+				  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${rAprvList.aprvNo}">
+							                	${rAprvList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${rAprvList.empName}</td>
+					  					<td>${rAprvList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+			  				</c:if>
+							<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyReceivedList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					결재 대기 중인 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
+			  			</tbody>
+                 	</table>
+                </div>
+            </c:if>
+            <c:if test="${sessionScope.empGrade == 0}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>내 결재목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>   
+                </div>
+                <div class="cell list-area">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>작성자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+							<!--내가쓴 결재가 있을때 -->
+				  			<c:if test="${not emptyMyList}">
+				  				<c:forEach var="myList" items="${myAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+							                	${myList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${myList.empName}</td>
+					  					<td>${myList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+				  			</c:if>
+				  			<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyMyList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					상신한 결재 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
+			  			</tbody>
+                 	</table>
+                </div>
+            </c:if>
+>>>>>>> refs/remotes/origin/hero_20260611-1
             
 			</div>
 	           	<div class="card p-20" style="height: 300px; overflow-y: auto;">

@@ -20,16 +20,15 @@ public class LogAccessController {
 	
 	@RequestMapping("/list")
 	public String list(Model model, @ModelAttribute PageVO pageVO) {
-		List<LogAccessDto> logAccessList = logAccessDao.selectList(pageVO);
-		System.out.println(logAccessList);
-		System.out.println(pageVO);
-		model.addAttribute("logAccessList", logAccessList);
-		
 		int count = logAccessDao.count(pageVO);
 		pageVO.setCount(count);//데이터 개수 설정
 		System.out.println(count);
 		model.addAttribute("pageVO", pageVO);
+		
+		List<LogAccessDto> logAccessList = logAccessDao.selectList(pageVO);
+		model.addAttribute("logAccessList", logAccessList);
+		
 		return "admin/logAccess/list";
-	}
-	
+		
+	};
 }

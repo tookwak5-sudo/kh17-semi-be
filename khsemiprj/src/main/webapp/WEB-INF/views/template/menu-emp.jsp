@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
@@ -55,10 +54,14 @@
 	<li class="divider"></li>
 	
 	<li>
-	    <a href="/emp/mypage">
-	        <i class="fa-solid fa-user"></i>
-	        <span>내정보</span>
-	    </a>
+		<div class="flex-area">
+		    <a href="/emp/mypage">
+		        <i class="fa-solid fa-user"></i>
+		        <span>
+		        	내정보
+		        </span>
+		    </a>
+		</div>
 	    <!-- 하위메뉴 -->
 		<ul>
 		    <li>

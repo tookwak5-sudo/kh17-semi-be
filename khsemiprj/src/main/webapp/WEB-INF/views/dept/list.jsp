@@ -8,6 +8,23 @@
 <!-- 부서 목록 디자인 css -->
 <link rel="stylesheet" type="text/css" href="/css/dept/list.css">
 
+<style>
+/* 은은한 그림자가 들어간 부드러운 상자 스타일 */
+.custom-card {
+    background: #ffffff;
+    border-radius: 12px; /* 모서리를 부드럽게 라운딩 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 은은하고 부드러운 그림자 효과 */
+    padding: 24px; /* 상자 내부 여백 */
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* 마우스 올렸을 때 자연스러운 효과용 (선택) */
+}
+
+/* 마우스를 올렸을 때 그림자가 살짝 더 선명해지는 효과 (선택사항, 원치 않으면 삭제 가능) */
+.custom-card:hover {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+</style>
+
 <script>
 	//부서 목록 json 데이터
 	const deptList = JSON.parse('${deptListJson}');
@@ -47,12 +64,12 @@
 		<h1>부서관리</h1>
 	</div>
 	<div class="cell flex-area">
-		<div class="cell w-25">
-			<div class="cell">
-				<span>부서 목록</span>
-				<a href="/dept/insert" class="btn btn-positive">부서 등록</a>
+		<div class="cell w-25 custom-card">
+			<div class="cell flex-area" style="justify-content: space-between; align-items: center;">
+				<h2>부서 목록</h2>
+				<a href="/dept/insert" class="btn btn-positive">부서 등록</a>				
 			</div>
-			<div id="deptList" class="dept-tree border">
+			<div id="deptList" class="dept-tree">
 				<ul>
 					<li class="dept-item">
 						<div class="dept-row">
@@ -64,16 +81,18 @@
 				</ul>
 			</div>
 		</div>
-		<div class="cell w-50 ms-10 me-10">
+		<div class="cell w-50 ms-10 me-10 custom-card">
 			<div class="cell">
-				<div class="cell">
-					<span>부서별 사원 목록</span>
-					<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
-					<a class="btn btn-positive dept-emp-demotion" style="display:none;">부서장 해제</a>
+				<div class="cell flex-area" style="display: flex; justify-content: space-between; align-items: center;">
+					<h2>부서별 사원 목록</h2>
+					<div style="display: flex; gap: 6px;">
+						<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
+						<a class="btn btn-positive dept-emp-demotion" style="display:none;">부서장 해제</a>					
+					</div>
 				</div>
 			</div>
 			<!-- 테이블 -->
-			<div class="cell center" style="width:580px;">
+			<div class="cell center w-100">
 				<table class="table" style="margin-top: 15px;">
 					<thead>
 						<tr>
@@ -89,12 +108,12 @@
 				</table>
 			</div>
 		</div>
-		<div class="cell w-25 dept-change-list">
-			<div class="cell">
-				<span>이동할 부서 목록</span>
+		<div class="cell w-25 dept-change-list custom-card">
+			<div class="cell flex-area" style="justify-content: space-between; align-items: center;">
+				<h2>이동할 부서 목록</h2>
 				<a class="btn btn-positive dept-change">변경</a>
 			</div>
-			<div id="deptList2" class="dept-tree border">
+			<div id="deptList2" class="dept-tree">
 				<ul>
 					<li class="dept-item">
 						<div class="dept-row">
