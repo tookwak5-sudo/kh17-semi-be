@@ -287,7 +287,7 @@ $(function() {
                     <i class="fa-solid fa-eye-slash red"></i>
                     <i class="fa-solid fa-eye blue"></i>
                 </label>
-                <input type="password" name="memberPassword" class="field w-100">
+                <input type="password" name="empPassword" class="field w-100">
                 <div class="success-feedback">비밀번호 설정이 완료되었습니다!</div>
                 <div class="fail-feedback">영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여 8~16글자로 작성하세요</div>
             </div>
