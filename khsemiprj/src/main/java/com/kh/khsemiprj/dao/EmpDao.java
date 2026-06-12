@@ -1,6 +1,7 @@
 package com.kh.khsemiprj.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.mapper.EmpMapper;
+import com.kh.khsemiprj.vo.PageVO;
 
 @Repository
 public class EmpDao {
@@ -145,4 +147,27 @@ public class EmpDao {
 			return jdbcTemplate.update(sql,params)>0;
 		}
 
+	//관리자->사원정보 수정
+		public boolean updateByAdmin(EmpDto empDto, int empPositionNo) {
+			String sql = "UPDATE emp "
+					   + "SET emp_email = ?, "
+					   + "    emp_contact = ?, "
+					   + "    emp_post = ?, "
+					   + "    emp_address1 = ?, "
+					   + "    emp_address2 = ?, "
+					   + "    emp_position_no = ? "
+					   + "WHERE emp_id = ?";
+			
+			Object[] params = {
+					empDto.getEmpEmail(),
+					empDto.getEmpContact(),
+					empDto.getEmpPost(),
+					empDto.getEmpAddress1(),
+					empDto.getEmpAddress2(),
+					empPositionNo,
+					empDto.getEmpId()
+			};
+			
+			return jdbcTemplate.update(sql, params) > 0;
+		}
 }
