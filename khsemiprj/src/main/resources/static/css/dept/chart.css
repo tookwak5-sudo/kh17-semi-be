@@ -231,5 +231,136 @@ border-radius: 0 0 12px 12px; /* 컨테이너 라운드에 맞춤 */
 /* 📌 [중요] 확대/축소 시 중심축 설정 */
 #deptChart {
     transform-origin: top center; /* 상단 중앙을 기준으로 크기가 조절되어 정렬이 깨지지 않음 */
-transition: transform 0.2s ease-out; /* 변형될 때 부드럽게 애니메이션 적용 */
+	transition: transform 0.2s ease-out; /* 변형될 때 부드럽게 애니메이션 적용 */
+}
+
+/* */
+/* 📌 팝업 위치 계산을 위해 컨테이너에 기준점 다시 부여 */
+.dept-chart-container {
+    position: relative; 
+}
+
+/* 📇 사원 상세정보 팝업 스타일 */
+.emp-detail-popup {
+    position: absolute;
+    z-index: 100;
+    width: 220px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    font-size: 13px;
+    color: #334155;
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 닫기 버튼 */
+.popup-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #94a3b8;
+    font-weight: bold;
+}
+.popup-close:hover { color: #475569; }
+
+/* 팝업 내부 정렬 */
+.popup-row {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start; /* 📌 줄바꿈이 일어날 때를 대비해 정렬을 상단(top) 기준으로 변경 */
+    line-height: 1.4;
+}
+.popup-row:last-child { margin-bottom: 0; }
+.popup-label {
+    font-weight: bold;
+    color: #64748b;
+    width: 50px;
+    flex-shrink: 0;
+}
+.popup-value {
+    color: #1e293b;
+    font-weight: 500;
+    
+    /* 🔥 핵심 속성: 공백 없는 긴 문자열도 박스 너비에 맞춰 강제로 줄바꿈 */
+    word-break: break-all; 
+    overflow-wrap: break-word;
+}
+
+/* 📌 팝업 화살표 마스터 스타일 */
+.emp-detail-popup::after,
+.emp-detail-popup::before {
+    content: "";
+    position: absolute;
+    top: var(--arrow-top, 20px);
+    display: block;
+    width: 0;
+    height: 0;
+    transition: top 0.1s ease-out;
+}
+
+/* ◀️ 화살표가 왼쪽에 붙을 때 (기존 우측 배치형) */
+.emp-detail-popup[style*="--arrow-direction: left"]::after {
+    left: -6px;   
+    right: auto;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #ffffff; 
+    border-left: none;
+    z-index: 101;
+}
+.emp-detail-popup[style*="--arrow-direction: left"]::before {
+    left: -7px;   
+    right: auto;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #cbd5e1; 
+    border-left: none;
+    z-index: 100;
+}
+
+/* ▶️ 화살표가 오른쪽에 붙을 때 (새로운 좌측 배치형) */
+.emp-detail-popup[style*="--arrow-direction: right"]::after {
+    right: -6px;  
+    left: auto;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid #ffffff; /* 삼각형 방향 반대 처리 */
+    border-right: none;
+    z-index: 101;
+}
+.emp-detail-popup[style*="--arrow-direction: right"]::before {
+    right: -7px;  
+    left: auto;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid #cbd5e1; 
+    border-right: none;
+    z-index: 100;
+}
+
+.member-detail-popup hr {
+    /* 1. 브라우저 기본 border 설정을 아예 지워버립니다. (기울어짐 원인 제거) */
+    border: none; 
+    
+    /* 2. 선을 border가 아니라 '실제 높이 1px 짜리 직사각형 면'으로 바꿉니다. */
+    height: 1px;
+    background-color: #cbd5e1; 
+    
+    /* 3. 좌우 너비를 명확히 100%로 채워 수평을 강제합니다. */
+    width: 100%;
+    display: block;
+    clear: both; /* 혹시 모를 내부 float 요소 간섭 차단 */
+    
+    /* 4. 위아래 간격 */
+    margin: 12px 0;
+    padding: 0;
 }

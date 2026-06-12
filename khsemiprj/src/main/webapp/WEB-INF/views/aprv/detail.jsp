@@ -53,35 +53,35 @@
 			<div>
 				<h1 class="mt-0 mb-0">
 					<!-- 결재 분류 -->
-					[${aprvDto.aprvFormNo}]
+					[${aprvDetailVO.headName}]
 					<!-- 제목 -->
-					${aprvDto.aprvTitle}
+					${aprvDetailVO.aprvTitle}
 					<!-- 상태 -->
 				</h1>
 			</div>
 			<div class="ms-40">
-				${aprvDto.aprvWriter}
+				<span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span>
 			</div>
 		</div>
 	</div>
 	
-	<c:if test="${not empty aprvDto.aprvWtime}">
+	<c:if test="${not empty aprvDetailVO.aprvWtime}">
 	<div class="cell mt-20">
-		<div>기안일 : <fmt:formatDate value="${aprvDto.aprvWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
+		<div>기안일 : <fmt:formatDate value="${aprvDetailVO.aprvWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
 	</div>
 	<hr>
 	</c:if>
 	<div class="cell mt-20">
-	기한 : ${aprvDto.aprvSdate} ~ ${aprvDto.aprvEdate}
+	기한 : ${aprvDetailVO.aprvSdate} ~ ${aprvDetailVO.aprvEdate}
 	</div>
 	<hr>
 	<div class="cell mt-20">
-		<div>상태 : ${aprvDto.aprvStatus}</div>
+		<div>상태 : ${aprvDetailVO.aprvStatus}</div>
 	</div>
 	<hr>
 	<div class="cell" style="min-height:50px">
 		<!-- 있는 그대로의 출력을 수행하는 태그(엔터, 스페이스 등을 인정) -->
-		<pre>${aprvDto.aprvContent}</pre>
+		<pre>${aprvDetailVO.aprvContent}</pre>
 	</div>
 	<c:if test="${attachDto != null}">
 	<hr>
@@ -116,14 +116,18 @@
 	        				<td>${aprvLineList.deptName}</td>
 	        				<td>${aprvLineList.empName}</td>
 	        				<td>${aprvLineList.empPositionName}</td>
-        					<td data-no="${aprvLineList.aprvLineNo}">
+        					<td data-no="${aprvLineList.aprvLineNo}" style="font-weight:bold;">
 	        				<c:choose>
-		        				<c:when test="${aprvDto.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvLineList.empId == sessionScope.loginId}">
+		        				<c:when test="${aprvDetailVO.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvLineList.empId == sessionScope.loginId}">
         						<button type="button" class="btn btn-positive line-accept" onclick="openModal('${aprvLineList.aprvLineNo}', '승인')">승인</button>
         						<button type="button" class="btn btn-negative line-deny" onclick="openModal('${aprvLineList.aprvLineNo}', '반려')">반려</button>
 		        				</c:when>
 		        				<c:otherwise>
-	        					${aprvLineList.aprvLineStatus}
+			        				<c:choose>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
+			        				</c:choose>
 		        				</c:otherwise>
 	        				</c:choose>
         					</td>
@@ -155,14 +159,18 @@
 	        				<td>${aprvLineList.deptName}</td>
 	        				<td>${aprvLineList.empName}</td>
 	        				<td>${aprvLineList.empPositionName}</td>
-		        			<td data-no="${aprvLineList.aprvLineNo}">
+		        			<td data-no="${aprvLineList.aprvLineNo}" style="font-weight:bold;">
 	        				<c:choose>
-		        				<c:when test="${aprvDto.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvDto.aprvCurrentSeq == '2' && aprvLineList.empId == sessionScope.loginId}">
+		        				<c:when test="${aprvDetailVO.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvDetailVO.aprvCurrentSeq == '2' && aprvLineList.empId == sessionScope.loginId}">
         						<button type="button" class="btn btn-positive line-accept" onclick="openModal('${aprvLineList.aprvLineNo}', '승인')">승인</button>
         						<button type="button" class="btn btn-negative line-deny" onclick="openModal('${aprvLineList.aprvLineNo}', '반려')">반려</button>
 		        				</c:when>
 		        				<c:otherwise>
-		        				${aprvLineList.aprvLineStatus}
+			        				<c:choose>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
+			        				</c:choose>
 		        				</c:otherwise>
 		        			</c:choose>
         					</td>
@@ -183,9 +191,9 @@
 	<div class="cell right">
 		<form method="post" class="form-check">
 		<input type="hidden" name="aprvNo" value="${param.aprvNo}" />
-		<c:if test="${aprvDto.aprvStatus == '임시저장' && aprvDto.aprvWriter == sessionScope.loginId}">
+		<c:if test="${aprvDetailVO.aprvStatus == '임시저장' && aprvDetailVO.aprvWriter == sessionScope.loginId}">
 		<button class="btn btn-positive aprv-save">기안하기</button>
-		<a class="btn btn-negative" href="./edit?aprvNo=${aprvDto.aprvNo}">수정</a>
+		<a class="btn btn-negative" href="./edit?aprvNo=${aprvDetailVO.aprvNo}">수정</a>
 		<button class="btn btn-negative aprv-delete">삭제</button>
 		</c:if>
 		<a class="btn btn-neutral" href="./list">목록으로</a>

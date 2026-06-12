@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dto.DeptDto;
-import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.exception.TargetNotfoundException;
+import com.kh.khsemiprj.vo.DeptVO;
 
 @Controller
 @RequestMapping("/dept")
@@ -60,19 +60,19 @@ public class DeptController {
 	public String list(Model model, @RequestParam(defaultValue = "0") long deptNo) throws JsonProcessingException {
 		
 		// 1. 부서 목록 가져오기
- 		List<DeptDto> list = deptDao.selectListAll();
+ 		List<DeptVO> list = deptDao.selectListAll();
  		
  		// 2. 부서 목록 트리구조로 변경
- 		List<DeptDto> rootList = new ArrayList<>();
- 	    Map<Long, DeptDto> dtoMap = new HashMap<>();
+ 		List<DeptVO> rootList = new ArrayList<>();
+ 	    Map<Long, DeptVO> dtoMap = new HashMap<>();
  	    
  	    // - 2-1. Map에 모두 저장
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	        dtoMap.put(dto.getDeptNo(), dto);
  	    }
  	    
  	    // - 2-2. 부서번호를 키값으로 가지는 해시맵 생성
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	    	Long deptParentNo = dto.getDeptParentNo();
  	    	dtoMap.put(dto.getDeptNo(), dto);
  	    	// 부모 ID가 없거나, 부모 ID가 있지만 Map에 존재하지 않는 경우 최상위(Root)로 취급
@@ -131,19 +131,19 @@ public class DeptController {
 	public String chart(Model model) throws JsonProcessingException {
 		
 		// 1. 부서 목록 가져오기
- 		List<DeptDto> list = deptDao.selectListAll();
+ 		List<DeptVO> list = deptDao.selectListAll();
  		
  		// 2. 부서 목록 트리구조로 변경
- 		List<DeptDto> rootList = new ArrayList<>();
- 	    Map<Long, DeptDto> dtoMap = new HashMap<>();
+ 		List<DeptVO> rootList = new ArrayList<>();
+ 	    Map<Long, DeptVO> dtoMap = new HashMap<>();
  	    
  	    // - 2-1. Map에 모두 저장
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	        dtoMap.put(dto.getDeptNo(), dto);
  	    }
  	    
  	    // - 2-2. 부서번호를 키값으로 가지는 해시맵 생성
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	    	Long deptParentNo = dto.getDeptParentNo();
  	    	dtoMap.put(dto.getDeptNo(), dto);
  	    	// 부모 ID가 없거나, 부모 ID가 있지만 Map에 존재하지 않는 경우 최상위(Root)로 취급
@@ -161,7 +161,7 @@ public class DeptController {
  	    
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("deptChartJson", deptChartJson);
-		
+		System.out.println(deptChartJson);
 		return "dept/chart";
 	}
 }

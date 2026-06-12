@@ -28,14 +28,15 @@ import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.AttachDto;
-import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.service.AttachService;
+import com.kh.khsemiprj.vo.AprvDetailVO;
 import com.kh.khsemiprj.vo.AprvLineListVO;
-import com.kh.khsemiprj.vo.PageVO;
 import com.kh.khsemiprj.vo.AprvFormVO;
 
+import com.kh.khsemiprj.vo.DeptVO;
+import com.kh.khsemiprj.vo.PageForAprvVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -66,7 +67,7 @@ public class AprvController {
 	private AttachService attachService;
 	
 	@RequestMapping("/list")
-	public String list(HttpServletRequest request, Model model, @ModelAttribute PageVO pageVO) {
+	public String list(HttpServletRequest request, Model model, @ModelAttribute PageForAprvVO pageForAprvVO) {
 		
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
@@ -74,14 +75,13 @@ public class AprvController {
 		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
 		
-		List<AprvDto> aprvList = aprvDao.selectList(pageVO, loginId);
-		model.addAttribute("aprvList", aprvList);
-		
 		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
-		int count = aprvDao.count(pageVO);
-		pageVO.setCount(count);//데이터 개수 설정
-		model.addAttribute("pageVO", pageVO);
+		int count = aprvDao.count(pageForAprvVO, loginId);
+		pageForAprvVO.setCount(count);//데이터 개수 설정
+		model.addAttribute("pageVO", pageForAprvVO);
 		
+		List<AprvDetailVO> aprvList = aprvDao.selectList(pageForAprvVO, loginId);
+		model.addAttribute("aprvList", aprvList);
 		return "aprv/list";
 	}
 	
@@ -96,19 +96,19 @@ public class AprvController {
 		model.addAttribute("leaveRemain", leaveRemain);
 		
 		// 1. 부서 목록 가져오기
-		List<DeptDto> list = deptDao.selectListMyDept(loginId);
+		List<DeptVO> list = deptDao.selectListAll();
  		
  		// 2. 부서 목록 트리구조로 변경
- 		List<DeptDto> rootList = new ArrayList<>();
- 	    Map<Long, DeptDto> dtoMap = new HashMap<>();
+ 		List<DeptVO> rootList = new ArrayList<>();
+ 	    Map<Long, DeptVO> dtoMap = new HashMap<>();
  	    
  	    // - 2-1. Map에 모두 저장
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	        dtoMap.put(dto.getDeptNo(), dto);
  	    }
  	    
  	    // - 2-2. 부서번호를 키값으로 가지는 해시맵 생성
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	    	Long deptParentNo = dto.getDeptParentNo();
  	    	dtoMap.put(dto.getDeptNo(), dto);
  	    	// 부모 ID가 없거나, 부모 ID가 있지만 Map에 존재하지 않는 경우 최상위(Root)로 취급
@@ -116,7 +116,7 @@ public class AprvController {
  	            rootList.add(dto);
  	        } else {
  	        	// 부모가 있다면 해당 부모의 자식 리스트에 추가
- 	            dtoMap.get(deptParentNo).getChildren().add(dto);
+ 	        	dtoMap.get(deptParentNo).getChildren().add(dto);
  	        }
  	    }
  		
@@ -196,8 +196,8 @@ public class AprvController {
 	public String detail(Model model
 						, @RequestParam int aprvNo) {
 		
-		AprvDto aprvDto = aprvDao.selectOne(aprvNo);
-		model.addAttribute("aprvDto", aprvDto);
+		AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvNo);
+		model.addAttribute("aprvDetailVO", aprvDetailVO);
 		
 		Integer attachNo = aprvDao.searchAttach(aprvNo);
 		if(attachNo != null) {
@@ -240,19 +240,19 @@ public class AprvController {
 		model.addAttribute("leaveRemain", leaveRemain);
 		
 		// 1. 부서 목록 가져오기
-		List<DeptDto> list = deptDao.selectListMyDept(loginId);
+		List<DeptVO> list = deptDao.selectListAll();
  		
  		// 2. 부서 목록 트리구조로 변경
- 		List<DeptDto> rootList = new ArrayList<>();
- 	    Map<Long, DeptDto> dtoMap = new HashMap<>();
+ 		List<DeptVO> rootList = new ArrayList<>();
+ 	    Map<Long, DeptVO> dtoMap = new HashMap<>();
  	    
  	    // - 2-1. Map에 모두 저장
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	        dtoMap.put(dto.getDeptNo(), dto);
  	    }
  	    
  	    // - 2-2. 부서번호를 키값으로 가지는 해시맵 생성
- 	    for (DeptDto dto : list) {
+ 	    for (DeptVO dto : list) {
  	    	Long deptParentNo = dto.getDeptParentNo();
  	    	dtoMap.put(dto.getDeptNo(), dto);
  	    	// 부모 ID가 없거나, 부모 ID가 있지만 Map에 존재하지 않는 경우 최상위(Root)로 취급
