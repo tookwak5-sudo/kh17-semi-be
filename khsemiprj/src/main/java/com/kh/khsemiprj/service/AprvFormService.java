@@ -26,17 +26,16 @@
 	
 		public void registerFormFile(AprvFormDto aprvFormDto, MultipartFile attach)
 				throws IllegalStateException, IOException {
+			
+			// DAO의 원래 insertForm 호출
 			AprvFormVO aprvFormVo = aprvFormDao.insertForm(aprvFormDto);
-	
+
 			int formNo = aprvFormVo.getFormNo();
 			if (attach != null && !attach.isEmpty()) {
 				int attachNo = attachService.save(attach);
-	
 				aprvFormDao.connect(formNo, attachNo);
 			}
-	
 		}
-	
 		public void modifyFile(AprvFormDto aprvFormDto, AttachDto attachDto, MultipartFile attach)
 				throws IllegalStateException, IOException {
 			

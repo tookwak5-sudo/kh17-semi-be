@@ -1,60 +1,64 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+<jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <style>
-    /* 레이아웃 구성 */
-    .dashboard-container {
-        display: flex;
-        gap: 20px; /* 좌우 간격 */
-        width: 1200px;
-        margin: 50px auto;
-    }
+/* 레이아웃 구성 */
+.dashboard-container {
+	display: flex;
+	gap: 20px; /* 좌우 간격 */
+	width: 1200px;
+	margin: 50px auto;
+}
 
-    /* 좌측 달력 영역 (비율 7) */
-    .left-section {
-        flex: 7;
-    }
+/* 좌측 달력 영역 (비율 7) */
+.left-section {
+	flex: 7;
+}
 
-    /* 우측 리스트 영역 (비율 3) */
-    .right-section {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        gap: 20px; /* 공지사항과 결재목록 사이 간격 */
-    }
+/* 우측 리스트 영역 (비율 3) */
+.right-section {
+	flex: 3;
+	display: flex;
+	flex-direction: column;
+	gap: 20px; /* 공지사항과 결재목록 사이 간격 */
+}
 
-    .card {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
-    
-    .lightpick {
-    z-index: 20000 !important;
-	}
-	
-    .p-20 { padding: 20px; }
-    
-    .calendarModal {
-    	display: none;
-    	position: fixed;
-    	top: 50%;
-    	left: 50%;
-    	transform: translate(-50%, -50%);
-    	width: 600px;
-    	background: white;
-    	padding: 20px;
-    	border: 1px solid #ccc; 
-    	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
-    	z-index: 10000;
-    }
+.card {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+}
+
+.lightpick {
+	z-index: 20000 !important;
+}
+
+.p-20 {
+	padding: 20px;
+}
+
+.calendarModal {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	background: white;
+	padding: 20px;
+	border: 1px solid #ccc;
+	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+	z-index: 10000;
+}
 </style>
 
 <!-- fullcalendar cdn -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
 <!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 
 <script type="text/template" id="write-template">
@@ -112,7 +116,9 @@
 <div class="calendarModal" class="container w-600 mt-50">
     <div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 상세</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
     <div class="container w-500 mt-50">
         <div class="cell">
@@ -143,7 +149,9 @@
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
@@ -550,11 +558,72 @@
 
         <div class="right-section">
             <div class="card p-20" style="height: 300px;">
+            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+            	<div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>결재 대기 목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>     
+                </div>
+                <div class="cell">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>기안자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+			  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+				  				<tr>
+				  					<td>
+						                <a href="/aprv/detail?aprvNo=${rArvList.aprvNo}">
+						                	${rAprvList.aprvTitle}
+						                </a>
+		                            </td>
+				  					<td>${rAprvList.empName}</td>
+				  					<td>${rAprvList.aprvStatus}</td>
+				  				</tr>
+			  				</c:forEach>
+			  			</tbody>
+                 	</table>
+                </div>
+            </c:if>
+            <c:if test="${sessionScope.empGrade == 0}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>결재사항</h3>
-                    <a href="#">더보기</a>
+                    <h3>내 결재목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>   
                 </div>
+                <div class="cell">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>작성자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+			  				<c:forEach var="myList" items="${myAprvList}">
+				  				<tr>
+				  					<td>
+						                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+						                	${myList.aprvTitle}
+						                </a>
+		                            </td>
+				  					<td>${myList.empName}</td>
+				  					<td>${myList.aprvStatus}</td>
+				  				</tr>
+			  				</c:forEach>
+			  			</tbody>
+                 	</table>
                 </div>
+            </c:if>
+            
+			</div>
 
            <div class="card p-20" style="height: 300px; overflow-y: auto;">
 	            <h3>공지사항</h3>
@@ -580,3 +649,4 @@
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />
+
