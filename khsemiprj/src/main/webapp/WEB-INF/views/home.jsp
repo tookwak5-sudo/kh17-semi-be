@@ -717,8 +717,6 @@
 		                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
 		                    ${notice.boardTitle}
 		                </a>
-		
-		
 		                    <p style="color: #999; font-size: 12px;">작성자:
 		                        ${notice.boardWriter}</p>
 		                </div>
