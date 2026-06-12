@@ -16,11 +16,11 @@
 	$(function() {
 		var state = {
 				empIdValid: false,
-// 				empNameValid: false,
-// 				empPasswordValid: false,
-// 				empPasswordCheckValid: false,
-				empEmailValid: true,
-				empEmailCertValid: false,//인증 통과했는지
+				empNameValid: false,
+ 				empPasswordValid: false,
+ 				empPasswordCheckValid: false,
+//				empEmailValid: false,
+//				empEmailCertValid: false,//인증 통과했는지
 // 				empBirthValid: false,
 // 				empContactValid: false,
 // 				empAddressValid: false,
