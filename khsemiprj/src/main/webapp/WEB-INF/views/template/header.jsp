@@ -36,6 +36,44 @@
 	        margin: 0;
 	        display: none; /* 기본은 숨김 */
     	}
+    	
+    	/* 1. 종 아이콘과 뱃지를 감싸는 부모 상자 */
+		.notification-box {
+		    position: relative;    /* 💡 중요: 뱃지가 이 상자를 기준으로 움직이게 함 */
+		    display: inline-block;
+		    padding: 10px;         /* 클릭 영역 확보를 위한 여백 */
+		    cursor: pointer;
+		}
+		
+		/* 2. 종 아이콘 스타일 */
+		.bell-icon {
+		    font-size: 20px;       /* 아이콘 크기 (상단바에 맞게 조절 가능) */
+		    color: #ffffff;        /* 아이콘 색상을 흰색으로 통일 */
+		}
+		
+		/* 3. 🔥 핵심: 빨간색 알림 뱃지 */
+		.badge {
+		    position: absolute;    /* 💡 중요: 부모 상자를 기준으로 자유롭게 배치 */
+		    top: 10px;             /* 위에서부터의 위치 */
+		    right: 30px;           /* 우측에서부터의 위치 */
+		    
+		    background-color: #ff4d4d; /* 선명하고 트렌디한 빨간색 */
+		    color: #ffffff;        /* 숫자 색상은 흰색 */
+		    
+		    font-size: 13px;       /* 작은 글씨 크기 */
+		    font-weight: bold;
+		    
+		    /* 둥근 원형 뱃지를 만들기 위한 속성들 */
+		    min-width: 20px;
+		    height: 20px;
+		    padding: 0 4px;
+		    border-radius: 50px;   /* 완전히 둥글게 처리 */
+		    
+		    /* 숫자가 중앙에 오도록 정렬 */
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		}
     </style>
     
     <!-- jQuery CDN -->
@@ -71,22 +109,24 @@ empGrade : ${sessionScope.empGrade}
                 <div class="w-50 flex-area flex-center">
                     <h1>KH정보교육원 그룹웨어 프로젝트</h1>
                 </div>
-                <div class="w-25 flex-area" style="justify-content: right; align-items: end;">
-                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 50px;background-color: #739BED;text-align: center;"> 
-                    	<a href="/memo/list" 
-				           style="font-size:20px; text-decoration: none;" 
-				           onclick="
-				               var w = 650; 
-				               var h = 650; 
-				               var left = (screen.width/2) - (w/2); 
-				               var top = (screen.height/2) - (h/2); 
-				               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
-				               return false;
-				         ">
-				            <i class="fa-solid fa-bell yellow" style="color: #f1c40f;">(1)</i>
-				        </a>
-                    </div>
-                </div>
+                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+	                <div class="w-25 flex-area" style="justify-content: right; align-items: end;">
+	                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 50px;background-color: #739BED;text-align: center;" class="notification-box"> 
+	                    	<a href="/memo/list" 
+					           style="font-size:20px; text-decoration: none;" 
+					           onclick="
+					               var w = 650; 
+					               var h = 650; 
+					               var left = (screen.width/2) - (w/2); 
+					               var top = (screen.height/2) - (h/2); 
+					               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+					               return false;
+					         ">
+					            <i class="fa-solid fa-bell bell-icon" style="color: #FFFFFF;"><span class="badge">1</span></i>
+					        </a>
+	                    </div>
+	                </div>
+                </c:if>
             </div>
 
             <!-- 메뉴 -->
