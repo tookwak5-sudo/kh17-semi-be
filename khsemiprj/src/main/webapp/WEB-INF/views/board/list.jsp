@@ -169,12 +169,12 @@
 	</div>
 	<div class="cell center">
 		<form action="./list" method="get">
-			<select name="column" class="field.field-sm">
+			<select name="column" class="field">
 				<option value="board_title"
 					${param.column=='board_title' ? "selected" : ""}>제목</option>
 				<option value="board_writer"
 					${param.column=='board_writer' ? "selected" : ""}>작성자</option>
-			</select> <input type="text" name="keyword" class="field" placeholder="검색어 입력"
+			</select> <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력"
 				value="${param.keyword}">
 			<button type="submit" class="btn btn-positive">
 				<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>

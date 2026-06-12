@@ -21,6 +21,7 @@ public class LeaveManageVO {
 	//사원테이블
 	private String empId;
 	private String empHireDate;
+	private String empValid;
 	
 	//휴가로그테이블
 	private long leaveNo;

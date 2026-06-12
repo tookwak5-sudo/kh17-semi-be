@@ -124,21 +124,12 @@ public class EmpController {
 //			return "redirect:./notice";
 //		}
 
-		// 목표: 관리자가 로그인을 하면 전 직원의 연별 휴가 기록 갱신
-		if(findEmpDto.getEmpGrade() == 2) { // 등급이 관리자 이면
-			
-		}
-		
 		//목표: 로그인과 동시에 직원 출근처리 
-		//[1] 사용자가 입력한 아이디를 이용하여 loginout 테이블 조회
-
-		LogInoutDto logInoutDto = logInoutDao.getLastType(empDto.getEmpId());
-
-		// [2] 퇴근 상태라면 출근상태로 변경하고 DB에 저장
-
+		LogInoutDto logInoutDto = new LogInoutDto();
+		logInoutDto.setLogInoutEmpId(empDto.getEmpId());
 		logInoutDto.setLogInoutType("출근");
 		logInoutDao.insert(logInoutDto);
-
+		
 		return "redirect:/";
 	}
 
@@ -222,7 +213,6 @@ public class EmpController {
 	}
 
 	@PostMapping("/join")
-
 	public String join(@ModelAttribute EmpDto empDto, @RequestParam MultipartFile attach)
 			throws IllegalStateException, IOException {
 
@@ -319,7 +309,6 @@ public class EmpController {
 	}
 
 	@RequestMapping("/mypage")
-
 	public String mypage(HttpSession session, Model model) {
 
 		String loginId = (String) session.getAttribute("loginId");
@@ -333,8 +322,6 @@ public class EmpController {
 		if (findEmpDto == null)
 			return "redirect:./login";
 		model.addAttribute("findEmpDto", findEmpDto);
-
-		// 근태 로그 및 로그인 로그 필요.
 
 		// 근태 로그 및 로그인 로그 필요.
 

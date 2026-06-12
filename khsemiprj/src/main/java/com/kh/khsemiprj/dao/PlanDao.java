@@ -100,4 +100,20 @@ public class PlanDao {
         Object[] params = { empId, empId };
         return jdbcTemplate.query(sql,  planMapper, params);
     }
+    
+    //일정제목 중복검사 조회
+    public PlanDto selectOnePlanName(String planName) {
+    	String sql = "select * from plan where plan_name = ?";
+		Object[] params = { planName };
+		List<PlanDto> list = jdbcTemplate.query(sql, planMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+    }
+    
+  //일정유형 중복검사 조회
+    public PlanDto selectOnePlanType(String planType) {
+    	String sql = "select * from plan where plan_type = ?";
+		Object[] params = { planType };
+		List<PlanDto> list = jdbcTemplate.query(sql, planMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+    }
 }

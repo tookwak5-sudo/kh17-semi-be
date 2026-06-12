@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.kh.khsemiprj.dao.EmpLeaveDao;
@@ -17,11 +18,28 @@ public class EmpLeaveService {
 	@Autowired
 	private EmpLeaveDao empLeaveDao;  
 	
+	/*
+	 * [스케줄러 메소드]
+	 * 매일 자정 0시 0분 0초에 자동 실행
+	 * */
+
+//@Scheduled(cron = "0 0 0 * * *")
+//	@Scheduled(fixedRate = 5000)
+	public void autoUpdateLeave() {
+		// 내부적으로 기존 로직 호출
+		// 시스템 작업이므로 empId를 "SYSTEM"등으로 지정
+		calculateLeaveDays("SYSTEM", null);
+ 		System.out.println("자동 휴가 갱신 로직 실행: " + LocalDate.now());
+	}
+	
 	//휴가
 	public void calculateLeaveDays(String empId, String hireDateStr) {
 		//1. 오늘이 입사 기념일인 사원들 조회(1년차 이상)
 		List<LeaveManageVO> targets = empLeaveDao.selectTarget();
 		
+		//디버깅 용 로그
+		System.out.println("조회된 대상자 수: " + targets);
+		System.out.println("들어온 아이디" + empId);
 		for(LeaveManageVO target : targets) {
 			// 3. 휴가 개수 계산
 			double newTotal = calculateLeave(target.getEmpHireDate());
@@ -36,7 +54,7 @@ public class EmpLeaveService {
 			
 			// 5. 로그 테이블 기록
 			target.setLeaveType("갱신");
-			target.setLeaveLogId(empId);
+			target.setLeaveLogId(target.getEmpId());
 			target.setLeaveAmount(newTotal);
 			target.setLeaveTotalAfter(newTotal);
 			target.setLeaveUsedAfter(0.0);

@@ -68,14 +68,14 @@
 
 	<div class="cell center">
 		<form action="./list" method="get">
-			<select name="column" class="field">
+			<select name="column" class="field field-sm">
 				<option value="aprv_title"
 					${param.column=="aprv_title" ? "selected" : ""}>제목</option>
 				<option value="aprv_writer"
 					${param.column=="aprv_writer" ? "selected" : ""}>기안자</option>
 				<option value="aprv_status"
 					${param.column=="aprv_status" ? "selected" : ""}>상태</option>
-			</select> <input type="text" name="keyword" class="field" placeholder="검색어 입력"
+			</select> <input type="text" name="keyword" class="field field-sm" placeholder="검색어 입력"
 				value="${param.keyword}">
 			<button type="submit" class="btn btn-positive">
 				<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>

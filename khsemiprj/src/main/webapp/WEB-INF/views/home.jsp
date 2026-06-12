@@ -82,6 +82,9 @@
 			<div class="cell">
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<input type="hidden" name="planDeptNo" value="${deptNo}" class="field w-100">
 	        <div class="cell">
@@ -92,6 +95,9 @@
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
@@ -107,7 +113,7 @@
 	                <i class="fa-solid fa-minus ms-10 me-10"></i>
 	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
 	        </div>
-	        
+	       	
 	         <div class="cell">
 	            <label>내용</label>
 	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
@@ -209,24 +215,73 @@
 
 <script type="text/javascript">
 	$(function(){
+	
+	});
+</script>
+
+<script type="text/javascript">
+	$(function(){
+		//상태객체
+        var state = {
+            planNameValid : false,
+            planTypeValid : false,
+            planHeadNoValid : true,
+            planSdateValid : true,
+            planEdateValid : true,
+            planExplainValid : true, // 선택항목
+            ok : function() {
+                return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
+                .filter(v => typeof v == "boolean") // boolean값만 추출해서
+                .every(v => v === true); //모두 true인지 확인해서 반환해라;
+            }
+        };
 		
-// 		//상태객체
-//         var state = {
-//             planNameValid : false,
-//             planTypeValid : false,
-//             planHeadNoValid : true,
-//             planSdateValid : true,
-//             planEdateValid : true,
-//             planExplainValid : true, // 선택항목
-//             ok : function() {
-//                 return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
-//                 .filter(v => typeof v == "boolean") // boolean값만 추출해서
-//                 .every(v => v === true); //모두 true인지 확인해서 반환해라;
-//             }
-//         };
+    	 // 항목검사 통합 함수
+        $(document).on("blur input", "[name=planName]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planName") state.planNameValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+        $(document).on("blur input", "[name=planType]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planType") state.planTypeValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+		 
 		//등록 버튼을 누르면 발생하는 등록 작업
 		$(document).on("click",".btn-plan", function(){
 			
+			// 모든 .field에 대해 검사
+		    $(".field").trigger("blur").trigger("input");
+		    
+		    if(!state.ok()) {
+		        alert("입력 오류를 확인하세요.");
+		        return;
+		    }
 			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
 			var planDeptNo = $("[name=planDeptNo]").val();
 			
@@ -284,7 +339,6 @@
 		
 	  //목표 : 수정버튼을 누르면 수정화면을 보여주도록 처리
 		$(document).on("click", "#modalEditBtn", function(){//영역 감시
-
 // 			기존 reply-viewer의 정보를 불러온다
 			var planNo = $(this).data("key");
 			var planTitle = $(this).data("plan-title");
