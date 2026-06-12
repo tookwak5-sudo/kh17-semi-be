@@ -42,17 +42,6 @@ public class EmpLeaveDao {
 
 	}
 	
-	// [1] 입사일을 포함하여 전 직원 휴가 날짜 조회
-	public List<LeaveManageVO> selectAll(){
-		String sql = "select "
-				+ "l.leave_emp_id, l.leave_total, l.leave_used, "
-				+ "l.leave_remain, l.leave_update, e.emp_hire_date "
-				+ "from emp_leave l "
-				+ "join emp e on l.leave_emp_id = e.emp_id "
-				+ "order by e.emp_hire_date asc";
-		return jdbcTemplate.query(sql, leaveManageMapper);
-	}
-	
 	// [1] (1년차 이상) 오늘이 입사기념일인 사원들 조회
 	public List<LeaveManageVO> selectTarget() {
 		String sql = "select "
@@ -81,9 +70,22 @@ public class EmpLeaveDao {
 	
 	public EmpLeaveDto selectOne(String empId) {
 		String sql = "select * from emp_leave where leave_emp_id = ?";
-		Object[] params = { empId};
+		Object[] params = { empId };
 		List<EmpLeaveDto> list = jdbcTemplate.query(sql,  empLeaveMapper, params);
 		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	// 로그기록 저장 (로그 Dao 따로 x)
+	public void logInsert(LeaveManageVO leaveManageVO) {
+		String sql = "insert into log_leave("
+				+ "leave_no, leave_log_id, leave_type, "
+				+ "leave_amount, leave_total_after, leave_used_after) "
+				+ "values(log_leave_seq.nextval, ?, ?, ?, ?, ?)";
+		Object[] params = { 
+				leaveManageVO.getLeaveLogId(), leaveManageVO.getLeaveType(), leaveManageVO.getLeaveAmount(), 
+				leaveManageVO.getLeaveTotalAfter(), leaveManageVO.getLeaveUsedAfter()
+		};
+		jdbcTemplate.update(sql, params);
 	}
 
 }

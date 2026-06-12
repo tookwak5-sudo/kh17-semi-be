@@ -6,25 +6,95 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
 <style>
-.reply-viewer, .reply-editor {
-	display: flex;
-	padding: 15px;
-	box-shadow: 0 0 0 1px lightgray;
-}
+	.reply-viewer, .reply-editor {
+		display:flex;
+		padding:15px;
+		box-shadow: 0 0 0 1px lightgray;
+	}
+	.reply-viewer > .profile-wrapper ,
+	.reply-editor > .profile-wrapper
+	{
+		width:100px;
+	}
+	.reply-viewer > .profile-wrapper > img ,
+	.reply-editor > .profile-wrapper > img
+	{
+		width:100%;
+		aspect-ratio:1/1;
+	}
+	.reply-viewer > .content-wrapper ,
+	.reply-editor > .content-wrapper
+	{
+		flex-grow: 1;
+	}
+	
+	#user-context-menu {
+    		position: absolute;
+    		background-color: white;
+    		border: 1px solid #ccc;
+    		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    		border-radius: 3px;
+    		padding: 5px 0;
+    		z-index: 1000; 
+		}
 
-.reply-viewer>.profile-wrapper, .reply-editor>.profile-wrapper {
-	width: 100px;
-}
+		#user-context-menu a {
+    		display: block;
+    		padding: 8px 15px;
+    		color: #333;
+    		text-decoration: none;
+    		font-size: 14px;
+		}
 
-.reply-viewer>.profile-wrapper>img, .reply-editor>.profile-wrapper>img {
-	width: 100%;
-	aspect-ratio: 1/1;
-}
-
-.reply-viewer>.content-wrapper, .reply-editor>.content-wrapper {
-	flex-grow: 1;
-}
+		#user-context-menu a:hover {
+    		background-color: #f1f3f5; 
+		}
+		
+		/* 긴 문자열이 창을 뚫고 나가는 현상 방지 */
+		pre, .reply-content {
+    		white-space: pre-wrap;       /* 엔터와 띄어쓰기는 유지하되, 영역 끝에 닿으면 줄바꿈해라 */
+    		word-break: break-all;       /* 띄어쓰기가 없는 아주 긴 단어라도 무조건 쪼개서 줄바꿈해라 */
+    		overflow-wrap: break-word;   /* 글자가 박스를 뚫고 나가지 못하게 막아라 */
+    		font-family: inherit;        /* (선택사항) pre 태그 특유의 딱딱한 글씨체를 기본 글씨체로 변경 */
+		}
+		
+		/* 본문 영역에도 뚫고 나가는 것 방지 */
+		.board-content-area {
+    		word-break: break-all;
+    		overflow-wrap: break-word;
+		}
 </style>
+
+<!-- 작성글 보기 자바스크립트(비회원 가능) -->
+<script type="text/javascript">
+	$(function(){
+    	// 1. 닉네임 클릭 시 메뉴 띄우기
+    	// 동적으로 생성된 댓글 닉네임도 클릭 가능하도록 document 영역 감시
+    	$(document).on("click", ".writer-name", function(e) {
+	        e.stopPropagation(); //클릭 이벤트가 문서 전체로 퍼지는 것을 막음 (바로 닫히는 현상 방지)
+
+    	    var memberId = $(this).data("id");
+
+        	if(!memberId) return; // 탈퇴한 사용자 등 아이디가 없으면 무시
+
+        // 2) 작성 글 보기 링크의 href 주소를 변경
+        	var searchUrl = "/board/list?column=board_writer&keyword=" + memberId;
+        	$("#link-view-posts").attr("href", searchUrl);
+
+        // 3) 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
+        	$("#user-context-menu").css({
+            	top: e.pageY + 10 + "px", // 마우스 포인터보다 살짝 아래
+            	left: e.pageX + "px"      // 마우스 포인터 위치
+        	}).show();
+    	});
+
+    // 2. 메뉴 밖의 다른 빈 공간을 클릭하면 메뉴 숨기기
+    	$(document).on("click", function() {
+        	$("#user-context-menu").hide();
+    	});
+	});
+</script>
+
 
 <!-- 좋아요 처리 관련 자바스크립트 (비회원도 가능) -->
 <script type="text/javascript">
@@ -42,9 +112,9 @@
 			success: function(response){
 				//response에 action, count가 있을 것으로 기대
 				//- action은 좋아요 여부, count는 좋아요 개수
-				$(".fa-thumbs-up").removeClass("fa-regular fa-solid")
+				$(".board-btn-like").removeClass("fa-regular fa-solid")
 					.addClass(response.action ? "fa-solid" : "fa-regular");
-				$(".fa-thumbs-up").next(".thumbs-up-count").text(response.count);
+				$(".board-btn-like").next(".thumbs-up-count").text(response.count);
 			}
 		});
 		
@@ -55,9 +125,9 @@
 			success: function(response){
 				//response에 action, count가 있을 것으로 기대
 				//- action은 좋아요 여부, count는 좋아요 개수
-				$(".fa-thumbs-down").removeClass("fa-regular fa-solid")
+				$(".board-btn-dislike").removeClass("fa-regular fa-solid")
 					.addClass(response.action ? "fa-solid" : "fa-regular");
-				$(".fa-thumbs-down").next(".thumbs-down-count").text(response.count);
+				$(".board-btn-dislike").next(".thumbs-down-count").text(response.count);
 			}
 		});
 	});
@@ -71,16 +141,16 @@
 		var boardNo = params.get("boardNo");
 		
 		// 1. 좋아요 하트를 클릭했을 때
-		$(".fa-thumbs-up").on("click", function(){
+		$(".board-btn-like").on("click", function(){
 			// 만약 싫어요가 칠해져있다면 싫어요 먼저 취소 요청
-			if($(".fa-thumbs-down").hasClass("fa-solid")) {
+			if($(".board-btn-dislike").hasClass("fa-solid")) {
 				$.ajax({
 					url: "/rest/board/dislike-action",
 					method: "post",
 					data: {boardNo : boardNo},
 					success: function(response){
-						$(".fa-thumbs-down").removeClass("fa-solid").addClass("fa-regular");
-						$(".fa-thumbs-down").next(".thumbs-down-count").text(response.count);
+						$(".board-btn-dislike").removeClass("fa-solid").addClass("fa-regular");
+						$(".board-btn-dislike").next(".thumbs-down-count").text(response.count);
 						toggleLike(); // 싫어요 취소 후 좋아요 실행
 					}
 				});
@@ -90,16 +160,16 @@
 		});
 		
 		// 2. 싫어요 하트를 클릭했을 때
-		$(".fa-thumbs-down").on("click", function(){
+		$(".board-btn-dislike").on("click", function(){
 			// 만약 좋아요가 칠해져있다면 좋아요 먼저 취소 요청
-			if($(".fa-thumbs-up").hasClass("fa-solid")) {
+			if($(".board-btn-like").hasClass("fa-solid")) {
 				$.ajax({
 					url: "/rest/board/like-action",
 					method: "post",
 					data: {boardNo : boardNo},
 					success: function(response){
-						$(".fa-thumbs-up").removeClass("fa-solid").addClass("fa-regular");
-						$(".fa-thumbs-up").next(".thumbs-up-count").text(response.count); 
+						$(".board-btn-like").removeClass("fa-solid").addClass("fa-regular");
+						$(".board-btn-like").next(".thumbs-up-count").text(response.count); 
 						toggleDislike(); // 좋아요 취소 후 싫어요 실행
 					}
 				});
@@ -115,10 +185,10 @@
 				method: "post",
 				data: {boardNo : boardNo},
 				success: function(response){
-					$(".fa-thumbs-up").removeClass("fa-regular fa-solid")
+					$(".board-btn-like").removeClass("fa-regular fa-solid")
 						.addClass(response.action ? "fa-solid" : "fa-regular");
 					// heart-count 오타를 html에 맞게 thumbs-up-count로 수정
-					$(".fa-thumbs-up").next(".thumbs-up-count").text(response.count);
+					$(".board-btn-like").next(".thumbs-up-count").text(response.count);
 				}
 			});
 		}
@@ -130,15 +200,16 @@
 				method: "post",
 				data: {boardNo : boardNo},
 				success: function(response){
-					$(".fa-thumbs-down").removeClass("fa-regular fa-solid")
+					$(".board-btn-dislike").removeClass("fa-regular fa-solid")
 						.addClass(response.action ? "fa-solid" : "fa-regular");
-					$(".fa-thumbs-down").next(".thumbs-down-count").text(response.count);
+					$(".board-btn-dislike").next(".thumbs-down-count").text(response.count);
 				}
 			});
 		}
 	});
 </script>
 </c:if>
+
 
 <!-- 댓글 시스템을 위한 자바스크립트 -->
 <script type="text/javascript">
@@ -158,7 +229,7 @@
 				method: "post",
 				data: {replyOrigin : boardNo},
 				success: function(response) {
-					$(".reply-count-text").text(response.length);
+					/* $(".reply-count-text").text(response.length); */
 					//response는 백엔드에서의 List<ReplyDto>이다
 					//반복을 통해 템플릿을 배치하고 정보를 갈아끼운다
 					for(var i=0; i < response.length; i++) {
@@ -181,16 +252,33 @@
 						//- (중요) 수정, 삭제등을 위해서 기본키를 영역에 설정해야함
 						//- html은 .reply-wrapper이다.
 						if(response[i].replyStatus=='Y'){
-							$(html).find(".reply-writer").text("(알수없음)");
+							$(html).find(".reply-writer").text("(알수없음)").removeClass("writer-name").css("cursor", "default");
 							$(html).find(".reply-content").text("(삭제된 댓글입니다)").addClass("gray");
 							$(html).find(".button-wrapper").remove();
 							$(html).find(".board-writer").remove();
 							$(html).find(".button-writer").remove();
+							$(html).find(".reply-btn-like").remove();
+							$(html).find(".reply-thumbs-up-count").remove();
+							$(html).find(".reply-btn-dislike").remove();
+							$(html).find(".reply-thumbs-down-count").remove();
 						} else {
-						$(html).find(".image-profile")
-							.attr("src", "/member/profile?memberId="+response[i].replyWriter);
-						$(html).find(".reply-writer").text(response[i].replyWriter);
+						/* $(html).find(".image-profile")
+							.attr("src", "/member/profile?memberId="+response[i].replyWriter); */
+							$(html).find(".reply-writer").text(response[i].replyWriter)
+							.attr("data-id", response[i].replyWriter);
+						$(html).find(".reply-thumbs-up-count").text(response[i].replyLikecount);
+						$(html).find(".reply-thumbs-down-count").text(response[i].replyDislikecount);
 						$(html).find(".reply-content").text(response[i].replyContent);
+						if (response[i].empLiked=='Y') {
+					    	$(html).find(".reply-btn-like").removeClass("fa-regular").addClass("fa-solid");
+					    } else{
+					    	$(html).find(".reply-btn-like").removeClass("fa-solid").addClass("fa-regular");
+					    }
+					    if (response[i].empDisliked=='Y') {
+					    	$(html).find(".reply-btn-dislike").removeClass("fa-regular").addClass("fa-solid");
+					    } else{
+					    	$(html).find(".reply-btn-dislike").removeClass("fa-solid").addClass("fa-regular");
+					    }
 						}
 						
 						//$(html).find(".reply-wtime").text(response[i].replyWtime);
@@ -376,6 +464,80 @@
 				}
 			});
 		});
+		
+		// === [댓글 좋아요/싫어요 이벤트] ===
+		
+		// 1. 댓글 좋아요 클릭
+		$(".reply-area").on("click", ".reply-btn-like", function(){
+			var $thisLikeBtn = $(this);
+			var $thisDislikeBtn = $(this).siblings(".reply-btn-dislike");
+			var replyNo = $(this).closest(".reply-viewer").data("key");
+			
+			// 싫어요가 눌려있다면 취소 먼저
+			if($thisDislikeBtn.hasClass("fa-solid")) {
+				$.ajax({
+					url: "/rest/reply/dislike-action",
+					method: "post",
+					data: {replyNo : replyNo},
+					success: function(response){
+						$thisDislikeBtn.removeClass("fa-solid").addClass("fa-regular");
+						$thisDislikeBtn.next(".reply-thumbs-down-count").text(response.count);
+						executeReplyLike(replyNo, $thisLikeBtn);
+					}
+				});
+			} else {
+				executeReplyLike(replyNo, $thisLikeBtn);
+			}
+		});
+
+		// 2. 댓글 싫어요 클릭
+		$(".reply-area").on("click", ".reply-btn-dislike", function(){
+			var $thisDislikeBtn = $(this);
+			var $thisLikeBtn = $(this).siblings(".reply-btn-like");
+			var replyNo = $(this).closest(".reply-viewer").data("key");
+			
+			// 좋아요가 눌려있다면 취소 먼저
+			if($thisLikeBtn.hasClass("fa-solid")) {
+				$.ajax({
+					url: "/rest/reply/like-action",
+					method: "post",
+					data: {replyNo : replyNo},
+					success: function(response){
+						$thisLikeBtn.removeClass("fa-solid").addClass("fa-regular");
+						$thisLikeBtn.next(".reply-thumbs-up-count").text(response.count);
+						executeReplyDislike(replyNo, $thisDislikeBtn);
+					}
+				});
+			} else {
+				executeReplyDislike(replyNo, $thisDislikeBtn);
+			}
+		});
+
+		// 댓글 좋아요 실행 함수
+		function executeReplyLike(replyNo, btnElement) {
+			$.ajax({
+				url: "/rest/reply/like-action",
+				method: "post",
+				data: {replyNo : replyNo},
+				success: function(response){
+					btnElement.removeClass("fa-regular fa-solid").addClass(response.action ? "fa-solid" : "fa-regular");
+					btnElement.next(".reply-thumbs-up-count").text(response.count);
+				}
+			});
+		}
+
+		// 댓글 싫어요 실행 함수
+		function executeReplyDislike(replyNo, btnElement) {
+			$.ajax({
+				url: "/rest/reply/dislike-action",
+				method: "post",
+				data: {replyNo : replyNo},
+				success: function(response){
+					btnElement.removeClass("fa-regular fa-solid").addClass(response.action ? "fa-solid" : "fa-regular");
+					btnElement.next(".reply-thumbs-down-count").text(response.count);
+				}
+			});
+		}
 	});
 </script>
 <script type="text/template" id="reply-viewer-template">
@@ -384,17 +546,25 @@
 			<img src="https://picsum.photos/500" class="image-circle image-profile">
 		</div>
 		<div class="content-wrapper ms-20">
+			<div class="flex-area">
 			<h3 class="mt-0 mb-0">
-				<span class="reply-writer">아이디</span>
+				<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
 				<span class="board-writer red">(작성자)</span>
 			</h3>
+				<div style="margin-left : auto">
+					<i class="fa-regular fa-thumbs-up red reply-btn-like"></i>
+					<span class="reply-thumbs-up-count">0</span>
+					<i class="fa-regular fa-thumbs-down blue reply-btn-dislike"></i>
+					<span class="reply-thumbs-down-count">0</span>
+				</div>
+			</div>
 			<pre class="mt-10 mb-0 reply-content">내용 샘플</pre>
 			<div class="mt-20 flex-area"> 
 				<div class="w-50">
 					<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
 				</div>
 				<div class="button-wrapper right w-50">
-					<i class="fa-solid fa-reply blue btn-nested-reply"></i>
+					<i class="fa-solid fa-comment-dots blue btn-nested-reply"></i>
 					<i class="fa-solid fa-edit orange btn-reply-edit"></i>
 					<i class="fa-solid fa-trash red btn-reply-delete"></i>
 				</div>
@@ -445,9 +615,10 @@
 					(탈퇴한사용자)
 				</c:if>
 				<c:if test="${boardDto.boardWriter != null}">
-					<!-- 누르면 이동하도록 링크 구현 -->
-					<a href="/member/detail?memberId=${boardDto.boardWriter}"
-						class="link"> ${boardDto.boardWriter} </a>
+					<!-- 누르면 팝업나오게 링크 구현 -->
+					<span class="writer-name" data-id="${boardDto.boardWriter}" style="cursor: pointer; font-weight: bold;">
+  						  	${boardDto.boardWriter}
+						</span>
 				</c:if>
 			</div>
 		</div>
@@ -462,9 +633,10 @@
 	</div>
 
 	<hr>
-	<div class="cell" style="min-height: 300px">
-		<!-- 있는 그대로의 출력을 수행하는 태그(엔터, 스페이스 등을 인정) -->
-		<pre>${boardDto.boardContent}</pre>
+	<div class="cell" style="min-height:300px">
+    	<div class="board-content-area">
+        	${boardDto.boardContent}
+    	</div>
 	</div>
 
 	<div class="cell mt-20 flex-area">
@@ -478,12 +650,14 @@
 			 → 회원만 가능한 기능
 		-->
 		<div>
-			좋아요 <i class="fa-solid fa-thumbs-up red"></i> <span
-				class="thumbs-up-count">?</span>
+			좋아요 
+			<i class="fa-solid fa-thumbs-up red board-btn-like"></i>
+			<span class="thumbs-up-count">?</span>
 		</div>
-		<div>
-			싫어요 <i class="fa-regular fa-thumbs-down blue"></i> <span
-				class="thumbs-down-count">?</span>
+		<div class="ms-20">
+			싫어요 
+			<i class="fa-regular fa-thumbs-down blue board-btn-dislike"></i>
+			<span class="thumbs-down-count">?</span>
 		</div>
 		<div class="ms-20">
 			댓글 <span class="reply-count-text"> ${boardDto.boardReplycount}</span>
@@ -499,19 +673,30 @@
 					class="image-circle image-profile">
 			</div>
 			<div class="content-wrapper ms-20">
-				<h3 class="mt-0 mb-0 reply-writer">작성자</h3>
+			<div class="flex-area">
+			<h3 class="mt-0 mb-0">
+				<span class="reply-writer">작성자</span>
+			</h3>
+				<div style="margin-left : auto">
+					<i class="fa-solid fa-thumbs-up red reply-btn-like"></i>
+					<span class="reply-thumbs-up-count"></span>
+					<i class="fa-regular fa-thumbs-down blue reply-btn-dislike"></i>
+					<span class="reply-thumbs-down-count"></span>
+				</div>
+			</div>
 				<pre class="mt-10 mb-0 reply-content">내용 샘플</pre>
 				<div class="mt-20 flex-area">
 					<div class="w-50">
 						<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
 					</div>
 					<div class="button-writer right w-50">
-						<i class="fa-solid fa-reply blue btn-nested-reply"></i>
-					</div>
-					<div class="button-wrapper right w-20">
-						<i class="fa-solid fa-edit orange btn-reply-edit"></i> <i
-							class="fa-solid fa-trash red btn-reply-delete"></i>
-					</div>
+					<i class="fa-solid fa-comment-dots blue btn-nested-reply"></i>
+				</div>
+				<div class="button-wrapper right w-20">
+					<i class="fa-solid fa-comment-dots blue btn-nested-reply"></i>
+					<i class="fa-solid fa-edit orange btn-reply-edit"></i>
+					<i class="fa-solid fa-trash red btn-reply-delete"></i>
+				</div>
 				</div>
 			</div>
 		</div>
@@ -539,13 +724,13 @@
 	</div>
 
 	<c:if test="${sessionScope.loginId != null}">
-		<div class="cell">
-			<textarea class="field w-100 field-reply" rows="4"
-				placeholder="댓글 내용 작성"></textarea>
-			<button type="button" class="btn btn-positive w-100 mt-10 btn-reply">
-				<i class="fa-solid fa-pen"></i> <span>댓글 작성하기</span>
-			</button>
-		</div>
+	<div class="cell">
+		<textarea class="field w-100 field-reply" rows="4" placeholder="댓글 내용 작성(500자 이내)"></textarea>
+		<button type="button" class="btn btn-positive w-100 mt-10 btn-reply">
+			<i class="fa-solid fa-pen"></i>
+			<span>댓글 작성하기</span>
+		</button>
+	</div>
 	</c:if>
 
 	<c:if test="${sessionScope.loginId == null}">
@@ -561,12 +746,22 @@
 
 	<!-- 이전글/다음글 출력 -->
 	<div class="cell">
-		<span class="badge blue me-20">이전글</span> <a
-			href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>
+		<span class="badge blue me-20">다음글</span>
+		<c:if test="${param.column!=null}">
+		<a href="./detail?boardNo=${nextBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${nextBoardDto.boardTitle}</a>
+		</c:if>
+		<c:if test="${param.column==null}">
+		<a href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>
+		</c:if>
 	</div>
 	<div class="cell">
-		<span class="badge blue me-20">다음글</span> <a
-			href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>
+		<span class="badge blue me-20">이전글</span> 
+		<c:if test="${param.column!=null}">
+		<a href="./detail?boardNo=${prevBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${prevBoardDto.boardTitle}</a>
+		</c:if>
+		<c:if test="${param.column==null}">
+		<a href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>
+		</c:if>
 	</div>
 
 	<hr>
@@ -575,18 +770,26 @@
 			<a class="btn btn-positive" href="./write">글쓰기</a>
 			<!--  <a class="btn btn-positive" href="./write?boardParent=${boardDto.boardNo}">답글쓰기</a>-->
 		</c:if>
-
-		<c:if
-			test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
-			<a class="btn btn-save" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
-			<a class="btn btn-negative"
-				href="./delete?boardNo=${boardDto.boardNo}">삭제</a>
+		
+		<c:if test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
+		<a class="btn btn-negative" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
+		<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}"  onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
 		</c:if>
-
-		<a class="btn btn-neutral" href="./list">목록으로</a>
+		<c:if test="${param.column==null}">
+			<a class="btn btn-neutral" href="./list">목록으로</a>
+		</c:if>
+		<c:if test="${param.column!=null}">
+			<a class="btn btn-neutral" href="./list?column=${param.column}&keyword=${param.keyword}">목록으로</a>
+		</c:if>
 	</div>
 </div>
 
+<!-- 닉네임 클릭 시 나타날 창 -->
+<div id="user-context-menu" style="display: none;">
+    <a href="#" id="link-view-posts">
+        <i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
+    </a>
+</div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 

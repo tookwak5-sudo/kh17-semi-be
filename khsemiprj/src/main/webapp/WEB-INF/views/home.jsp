@@ -27,7 +27,6 @@
 	gap: 20px; /* 공지사항과 결재목록 사이 간격 */
 }
 
-<<<<<<< HEAD
     .card {
         background: #fff;
         border: 1px solid #ddd;
@@ -53,39 +52,6 @@
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
     	z-index: 10000;
     }
-    
-=======
-.card {
-	background: #fff;
-	border: 1px solid #ddd;
-	border-radius: 8px;
-}
-
-.lightpick {
-	z-index: 20000 !important;
-}
-
-.p-20 {
-	padding: 20px;
-}
-
-.calendarModal {
-	display: none;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 600px;
-	background: white;
-	padding: 20px;
-	border: 1px solid #ccc;
-	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-	z-index: 10000;
-}
-<<<<<<< HEAD
->>>>>>> refs/remotes/origin/hero_20260611-1
-=======
-
 .list-area{
 		height:190px;
 	    overflow-y:auto;
@@ -97,8 +63,6 @@
    background: white;
    z-index: 10;
 }
-	
->>>>>>> refs/remotes/origin/hero_20260611-1
 </style>
 
 <!-- fullcalendar cdn -->
@@ -597,123 +561,99 @@
 
 <!--  결재, 공지 보여주는 화면 -->
 <div class="dashboard-container">
-        <div class="left-section">
+       <div class="left-section">
             <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
-        </div>
+       </div>
 
-        <div class="right-section">
+       <div class="right-section">
             <div class="card p-20" style="height: 300px;">
-            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
-            	<div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>결재 대기 목록</h3>
-                    <a href="/aprv/list">
-                    	<span><i class="fa-solid fa-list black"></i></span>
-                    </a>     
-                </div>
-                <div class="cell list-area">
-                 	<table class="table">
-                  		<thead>
-			               <tr> 
-			                   <th>결재 제목</th> 
-			                   <th>기안자</th> 
-			                   <th>결재 상태</th> 
-			               </tr> 
-		  				</thead>
-			  			<tbody>
-			  				<c:forEach var="rAprvList" items="${receivedAprvList}">
-				  				<tr>
-				  					<td>
-						                <a href="/aprv/detail?aprvNo=${rArvList.aprvNo}">
-						                	${rAprvList.aprvTitle}
-						                </a>
-		                            </td>
-				  					<td>${rAprvList.empName}</td>
-				  					<td>${rAprvList.aprvStatus}</td>
-				  				</tr>
-			  				</c:forEach>
-			  			</tbody>
-                 	</table>
-                </div>
-            </c:if>
-            <c:if test="${sessionScope.empGrade == 0}">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>내 결재목록</h3>
-                    <a href="/aprv/list">
-                    	<span><i class="fa-solid fa-list black"></i></span>
-                    </a>   
-                </div>
-                <div class="cell list-area">
-                 	<table class="table">
-                  		<thead>
-			               <tr> 
-			                   <th>결재 제목</th> 
-			                   <th>작성자</th> 
-			                   <th>결재 상태</th> 
-			               </tr> 
-		  				</thead>
-			  			<tbody>
-			  				<c:forEach var="myList" items="${myAprvList}">
-				  				<tr>
-				  					<td>
-						                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
-						                	${myList.aprvTitle}
-						                </a>
-		                            </td>
-				  					<td>${myList.empName}</td>
-				  					<td>${myList.aprvStatus}</td>
-				  				</tr>
-			  				</c:forEach>
-			  			</tbody>
-                 	</table>
-                </div>
-            </c:if>
+	            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+	            	<div style="display: flex; justify-content: space-between; align-items: center;">
+	                    <h3>결재 대기 목록</h3>
+	                    <a href="/aprv/list">
+	                    	<span><i class="fa-solid fa-list black"></i></span>
+	                    </a>     
+	                </div>
+	                <div class="cell list-area">
+	                 	<table class="table">
+	                  		<thead>
+				               <tr> 
+				                   <th>결재 제목</th> 
+				                   <th>기안자</th> 
+				                   <th>결재 상태</th> 
+				               </tr> 
+			  				</thead>
+				  			<tbody>
+				  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${rArvList.aprvNo}">
+							                	${rAprvList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${rAprvList.empName}</td>
+					  					<td>${rAprvList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+				  			</tbody>
+	                 	</table>
+	                </div>
+	            </c:if>
+	            <c:if test="${sessionScope.empGrade == 0}">
+	                <div style="display: flex; justify-content: space-between; align-items: center;">
+	                    <h3>내 결재목록</h3>
+	                    <a href="/aprv/list">
+	                    	<span><i class="fa-solid fa-list black"></i></span>
+	                    </a>   
+	                </div>
+	                <div class="cell list-area">
+	                 	<table class="table">
+	                  		<thead>
+				               <tr> 
+				                   <th>결재 제목</th> 
+				                   <th>작성자</th> 
+				                   <th>결재 상태</th> 
+				               </tr> 
+			  				</thead>
+				  			<tbody>
+				  				<c:forEach var="myList" items="${myAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+							                	${myList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${myList.empName}</td>
+					  					<td>${myList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+				  			</tbody>
+	                 	</table>
+	                </div>
+	            </c:if>
             
 			</div>
-
-           <div class="card p-20" style="height: 300px; overflow-y: auto;">
-<<<<<<< HEAD
-            <h3>공지사항</h3>
-            <hr>
-            <c:forEach var="notice" items="${noticeList}">
-                <div
-                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
-                    ${notice.boardTitle}
-                </a>
-
-
-                    <p style="color: #999; font-size: 12px;">작성자:
-                        ${notice.boardWriter}</p>
-                </div>
-            </c:forEach>
-
-            <c:if test="${empty noticeList}">
-                <div>등록된 공지사항이 없습니다.</div>
-            </c:if>
-        </div>
-</div>
-=======
-	            <h3>공지사항</h3>
-	            <hr>
-	            <c:forEach var="notice" items="${noticeList}">
-	                <div
-	                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-	                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
-	                    ${notice.boardTitle}
-	                </a>
-	
-	
-	                    <p style="color: #999; font-size: 12px;">작성자:
-	                        ${notice.boardWriter}</p>
-	                </div>
-	            </c:forEach>
-	
-	            <c:if test="${empty noticeList}">
-	                <div>등록된 공지사항이 없습니다.</div>
-	            </c:if>
-       		</div>
-		</div>
->>>>>>> refs/remotes/origin/hero_20260611-1
+	           	<div class="card p-20" style="height: 300px; overflow-y: auto;">
+		            <h3>공지사항</h3>
+		            <hr>
+		            <c:forEach var="notice" items="${noticeList}">
+		                <div
+		                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+		                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+		                    ${notice.boardTitle}
+		                </a>
+		
+		
+		                    <p style="color: #999; font-size: 12px;">작성자:
+		                        ${notice.boardWriter}</p>
+		                </div>
+		            </c:forEach>
+		
+		            <c:if test="${empty noticeList}">
+		                <div>등록된 공지사항이 없습니다.</div>
+		            </c:if>
+	       		</div>
+	</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />

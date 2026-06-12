@@ -23,7 +23,7 @@ public class EmpLeaveService {
 		List<LeaveManageVO> targets = empLeaveDao.selectTarget();
 		
 		for(LeaveManageVO target : targets) {
-			// 3. 자바에서 연차 개수 계산
+			// 3. 휴가 개수 계산
 			double newTotal = calculateLeave(target.getEmpHireDate());
 			
 			// 4. 휴가 테이블 갱신 
@@ -36,14 +36,15 @@ public class EmpLeaveService {
 			
 			// 5. 로그 테이블 기록
 			target.setLeaveType("갱신");
+			target.setLeaveLogId(empId);
 			target.setLeaveAmount(newTotal);
 			target.setLeaveTotalAfter(newTotal);
 			target.setLeaveUsedAfter(0.0);
-			
+			empLeaveDao.logInsert(target);
 		}
-		
 	}
 	
+	//휴가 개수 계산식
 	private double calculateLeave(String hireDateStr) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate hireDate = LocalDate.parse(hireDateStr, formatter);
@@ -60,11 +61,11 @@ public class EmpLeaveService {
 			//1개월 이상이면 근속년수 계산
 			long yearsOfService = ChronoUnit.YEARS.between(hireDate, today);
 			
-			//1년차
-			if(yearsOfService < 1) {
+			
+			if(yearsOfService < 1) { // 1년차인 경우
 				newTotal = 15;
 			}
-			else {
+			else { // 2년차 이상인 경우
 				//3년차부터 연차 증가 로직
 				int extra = (int)((yearsOfService - 1) / 2);
 				newTotal = Math.min(15 + extra, 25);
