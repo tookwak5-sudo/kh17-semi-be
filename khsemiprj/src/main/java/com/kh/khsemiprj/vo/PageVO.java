@@ -13,6 +13,7 @@ public class PageVO {
 	private Integer page = 1;//파라미터에 있는 페이지번호 (없으면 1페이지)
 	private Integer size = 10;//파라미터에 있는 페이지규격 (없으면 5개)
 	private int count; //총 데이터 개수 (DB에서 조회해서 채워줘야함)
+	private String boardHead;
 	
 	public boolean isList() {
 		return column == null || keyword == null || keyword.trim().isEmpty();

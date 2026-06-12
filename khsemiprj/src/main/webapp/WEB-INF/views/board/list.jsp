@@ -37,6 +37,25 @@
 		#user-context-menu a:hover {
     		background-color: #f1f3f5; 
 		}
+		
+		/* 카테고리 메뉴 스타일 */
+		.category-menu a {
+		    text-decoration: none;
+		    color: #555;
+		    font-size: 15px;
+		}
+		
+		/* 마우스를 올렸을 때 */
+		.category-menu a:hover {
+		    color: #007bff; 
+		    font-weight: bold;
+		}
+		
+		/* 현재 선택된 말머리일 때*/
+		.category-menu a.active {
+		    color: #007bff;
+		    font-weight: bold;
+		}
 </style>
 
 <script type="text/javascript">
@@ -72,7 +91,7 @@
 <div class="container w-1200 mt-50 mb-50">
 
 	<div class="cell center mb-0">
-		<h1 class="mb-0">자유 게시판</h1>
+		<h1 class="mb-0">${param.boardHead} 게시판</h1>
 	</div>
 
 	<div class="cell center">타인에 대한 무분별한 비방글은 예고 없이 삭제될 수 있습니다.</div>
@@ -82,9 +101,20 @@
 			<a href="write" class="btn btn-neutral">신규 글 등록하기</a>
 		</c:if>
 	</div>
-
-	<div class="cell right">
-		${pageVO.getBeginRownum()}-${pageVO.endRownum} / 총 ${pageVO.count}개의 글
+	
+	<div class="flex-area ms-20" style="justify-content: space-between; align-items: center;">
+		<div class="left category-menu">
+	        <a href="./list" class="ms-20 ${empty pageVO.boardHead ? 'active' : ''}">전체</a>
+	        <a href="./list?boardHead=공지&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '공지' ? 'active' : ''}">공지</a>
+	        <a href="./list?boardHead=자유&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '자유' ? 'active' : ''}">자유</a>
+	        <a href="./list?boardHead=유머&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '유머' ? 'active' : ''}">유머</a>
+	        <a href="./list?boardHead=정보&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '정보' ? 'active' : ''}">정보</a>
+	        <a href="./list?boardHead=질문&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '질문' ? 'active' : ''}">질문</a>
+	        <a href="./list?boardHead=나눔&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '나눔' ? 'active' : ''}">나눔</a>
+	    </div>
+		<div class="right">
+			${pageVO.getBeginRownum()}-${pageVO.endRownum} / 총 ${pageVO.count}개의 글
+		</div>
 	</div>
 
 	<div class="cell">
@@ -101,31 +131,33 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="boardDto" items="${noticeList}">
-					<tr bgcolor="#f6f5f5" style="font-weight: bold;">
-						<td>${boardDto.boardNo}</td>
-						<td align="left"><c:if test="${boardDto.boardHead != null}">
-                    (${boardDto.boardHead})
-                </c:if> <a href="./detail?boardNo=${boardDto.boardNo}">${boardDto.boardTitle}
-                <c:if test="${boardDto.boardReplycount > 0}">
-                    [${boardDto.boardReplycount}]
-                </c:if> 
-                </a>
-
-							</td>
-						<td><c:if test="${boardDto.boardWriter == null}">
-                    (탈퇴한 사용자)
-                </c:if> <c:if test="${boardDto.boardWriter != null}">
-								<span class="writer-name" data-id="${boardDto.boardWriter}" style="cursor: pointer; font-weight: bold;">
-    								${boardDto.boardWriter}
-								</span>
-							</c:if></td>
-						<td>${boardDto.boardWtimeString}</td>
-						<td>${boardDto.boardReadcount}</td>
-						<td>${boardDto.boardLikecount}</td>
-						<%-- <td>${boardDto.boardDislikecount}</td> --%>
-					</tr>
-				</c:forEach>
+				<c:if test="${param.boardHead!='공지'}">
+					<c:forEach var="boardDto" items="${noticeList}">
+						<tr bgcolor="#f6f5f5" style="font-weight: bold;">
+							<td>${boardDto.boardNo}</td>
+							<td align="left"><c:if test="${boardDto.boardHead != null}">
+	                    (${boardDto.boardHead})
+	                </c:if> <a href="./detail?boardNo=${boardDto.boardNo}">${boardDto.boardTitle}
+	                <c:if test="${boardDto.boardReplycount > 0}">
+	                    [${boardDto.boardReplycount}]
+	                </c:if> 
+	                </a>
+	
+								</td>
+							<td><c:if test="${boardDto.boardWriter == null}">
+	                    (탈퇴한 사용자)
+	                </c:if> <c:if test="${boardDto.boardWriter != null}">
+									<span class="writer-name" data-id="${boardDto.boardWriter}" style="cursor: pointer; font-weight: bold;">
+	    								${boardDto.boardWriter}
+									</span>
+								</c:if></td>
+							<td>${boardDto.boardWtimeString}</td>
+							<td>${boardDto.boardReadcount}</td>
+							<td>${boardDto.boardLikecount}</td>
+							<%-- <td>${boardDto.boardDislikecount}</td> --%>
+						</tr>
+					</c:forEach>
+				</c:if>
 
 				<c:forEach var="boardDto" items="${boardList}">
 					<tr>
@@ -133,13 +165,13 @@
 						<td align="left"><c:if test="${boardDto.boardHead != null}">
                     (${boardDto.boardHead})
                 </c:if> 
-                <c:if test="${param.column!=null }">
-                <a href="./detail?boardNo=${boardDto.boardNo}&column=${param.column}&keyword=${param.keyword}">${boardDto.boardTitle}
+                <c:if test="${param.column!=null || param.boardHead!=null}">
+                <a href="./detail?boardNo=${boardDto.boardNo}&boardHead=${param.boardHead}&column=${param.column}&keyword=${param.keyword}">${boardDto.boardTitle}
                 <c:if test="${boardDto.boardReplycount > 0}">
                     [${boardDto.boardReplycount}]
                 </c:if></a>
 				</c:if>
-				 <c:if test="${param.column==null }">
+				 <c:if test="${param.column==null && param.boardHead==null}">
                 <a href="./detail?boardNo=${boardDto.boardNo}">${boardDto.boardTitle}
                 <c:if test="${boardDto.boardReplycount > 0}">
                     [${boardDto.boardReplycount}]
@@ -168,18 +200,21 @@
 		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
 	</div>
 	<div class="cell center">
-		<form action="./list" method="get">
-			<select name="column" class="field">
-				<option value="board_title"
-					${param.column=='board_title' ? "selected" : ""}>제목</option>
-				<option value="board_writer"
-					${param.column=='board_writer' ? "selected" : ""}>작성자</option>
-			</select> <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력"
-				value="${param.keyword}">
-			<button type="submit" class="btn btn-positive">
-				<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
-			</button>
-		</form>
+	    <form action="./list" method="get">
+	        
+	        <c:if test="${param.boardHead != null}">
+	            <input type="hidden" name="boardHead" value="${param.boardHead}">
+	        </c:if>
+	        <select name="column" class="field">
+	            <option value="board_title" ${param.column == 'board_title' ? "selected" : ""}>제목</option>
+	            <option value="board_writer" ${param.column == 'board_writer' ? "selected" : ""}>작성자</option>
+	        </select> 
+	        <input type="text" name="keyword" class="field" placeholder="검색어 입력" value="${param.keyword}">
+	        
+	        <button type="submit" class="btn btn-positive">
+	            <i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+	        </button>
+	    </form>
 	</div>
 </div>
 
