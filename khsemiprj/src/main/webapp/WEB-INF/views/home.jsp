@@ -10,7 +10,7 @@
 .dashboard-container {
 	display: flex;
 	gap: 20px; /* 좌우 간격 */
-	width: 1200px;
+	width: 1400px;
 	margin: 50px auto;
 }
 
@@ -81,6 +81,36 @@
     .fc-col-header-cell.fc-day-sat {
         color: #739BED;
     }
+    
+   /* 모든 날짜 영역의 투명도를 1로 강제 고정 */
+	.fc .fc-daygrid-day, 
+	.fc .fc-daygrid-day-frame, 
+	.fc .fc-daygrid-day-top, 
+	.fc .fc-popover,
+	.fc-day-other, 
+	.fc-day-sun, 
+	.fc-day-sat {
+	    opacity: 1 !important;
+	}
+	/* 1. 팝업 박스(Popover) 전체를 선명하게 */
+	.fc .fc-popover {
+	    opacity: 1 !important;
+	    background-color: #ffffff !important; /* 배경을 흰색으로 고정 */
+	    border: 1px solid #ddd !important;
+	    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+	}
+
+	/* 2. 팝업 박스 안의 날짜 및 일정 텍스트 선명하게 */
+	.fc .fc-popover .fc-daygrid-day-number,
+	.fc .fc-popover .fc-daygrid-event {
+	    opacity: 1 !important;
+	    color: #333 !important; /* 글자색을 진하게 */
+	}
+	
+	/* 3. 혹시 모를 내부 요소의 투명도 제거 */
+	.fc .fc-popover .fc-daygrid-event-harness {
+	    opacity: 1 !important;
+	}
 </style>
 
 <!-- fullcalendar cdn -->

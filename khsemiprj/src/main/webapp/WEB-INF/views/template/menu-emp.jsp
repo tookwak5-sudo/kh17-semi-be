@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
@@ -24,25 +29,10 @@
         </ul>
 	</li>
 	<li>
-	    <a href="#">
-	        <i class="fa-solid fa-building"></i>
-	        <span>부서관리</span>
-		</a>
-        <!-- 하위 메뉴 -->
-        <ul>
-            <li>
-                <a href="/dept/list">
-                    <i class="fa-solid fa-table-list"></i>
-                    <span>부서 목록</span>
-                </a>
-            </li>
-            <li>
-                <a href="/dept/chart">
-                    <i class="fa-solid fa-people-group"></i>
-                    <span>조직도</span>
-                </a>
-            </li>
-        </ul>
+        <a href="/dept/chart">
+            <i class="fa-solid fa-people-group"></i>
+            <span>조직도</span>
+        </a>
 	</li>
 	<li>
 	    <a href="/board/list">
@@ -64,6 +54,7 @@
 		</div>
 	    <!-- 하위메뉴 -->
 		<ul>
+			<c:if test="${sessionScope.lastLogType == '퇴근' || empty sessionScope.lastLogType}">
 		    <li>
 		        <form id="workInForm" action="/emp/work-in" method="post" style="display:none;"></form>
 		        <a href="#" onclick="document.getElementById('workInForm').submit(); return false;">
@@ -71,7 +62,8 @@
 		             <span>출근</span>            	
 		        </a>
 		    </li>
-		    
+		    </c:if>
+		    <c:if test="${sessionScope.lastLogType == '출근'}">
 		    <li>
 		        <form id="workOutForm" action="/emp/work-out" method="post" style="display:none;"></block></form>
 		        <a href="#" onclick="document.getElementById('workOutForm').submit(); return false;">
@@ -79,7 +71,7 @@
 		            <span>퇴근</span>
 		        </a>
 		    </li>
-		    
+		    </c:if>
 		    <li>
 		        <a href="/emp/logout">
 		            <i class="fa-solid fa-right-from-bracket"></i>

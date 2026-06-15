@@ -4,6 +4,51 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
+<style>
+/* 1. 기본 체크박스 숨기기 */
+input[type="checkbox"] {
+    display: none;
+}
+
+/* 체크박스를 스위치 모양으로 */
+input[type="checkbox"] + label {
+    position: relative;
+    padding-left: 60px; /* 스위치 크기만큼 여백 */
+    cursor: pointer;
+}
+
+input[type="checkbox"] + label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 50px;
+    height: 26px;
+    background-color: #cbd5e1;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+input[type="checkbox"] + label::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+/* 체크 되었을 때 */
+input[type="checkbox"]:checked + label::before {
+    background-color: #4f46e5;
+}
+
+input[type="checkbox"]:checked + label::after {
+    transform: translateX(24px);
+}
+</style>
 
 <form action="./insert" autocomplete="off" method="post" class="form-check">
 
@@ -33,8 +78,8 @@
         </div>
         
         <div class="cell">
-        	<label>부서 사용 여부</label>
-        	<input type="checkbox" name="deptUseYn" value="Y">
+        	<input type="checkbox" id="check1" name="deptUseYn" value="Y">
+        	<label for="check1">부서 사용 여부</label>
         </div>
         
         <div class="cell mt-40 right">

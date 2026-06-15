@@ -36,18 +36,19 @@
 <!-- 화면에 나오지 않으면서 언제든지 불러서 쓸 수 있는 화면 조각(템플릿) -->
 <script type="text/template" id="dept-template">
 <li class="dept-item">
-	<div class="dept-row">
-		<span class="toggle-btn">▼</span>
-		<input type="checkbox" name="dept" class="dept-checkbox" id="dept">
-		<label for="dept" class="dept-name">부서명</label>
-	</div>
-	<ul>
-	</ul>
+    <div class="dept-row">
+        <span class="toggle-btn">▼</span>
+        <input type="checkbox" name="dept" class="dept-checkbox" id="dept_DYNAMIC_ID">
+        <label for="dept_DYNAMIC_ID" class="dept-name">부서명</label>
+    </div>
+    <ul></ul>
 </li>
 </script>
 <script type="text/template" id="emp-template">
 <tr>
-	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp"></td>
+	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp_DYNAMIC_ID">
+	<label for="emp_DYNAMIC_ID"></label>
+	</td>
 	<td></td>
 	<td></td>
 	<td></td>

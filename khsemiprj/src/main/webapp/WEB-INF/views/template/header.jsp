@@ -88,6 +88,15 @@
 		    color: #202124; /* 구글 스타일의 다크 그레이 */
 		    font-family: 'Pretendard', sans-serif;
 		}
+		.flex-center h1 {
+    font-size: 26px;
+    font-weight: 800;
+    /* 그라데이션 텍스트 처리 */
+    background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
     </style>
     
     <!-- jQuery CDN -->
@@ -113,7 +122,7 @@
 
 
     <!-- 메인 컨테이너1 + 내부영역4 -->
-    <div class="container w-1200">
+    <div class="container w-1400">
         <div class="flex-area flex-vertical">
             <!-- 헤더 영역 -->
             <div class="flex-area">
@@ -121,7 +130,7 @@
                     <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
                 </div>
                 <div class="w-50 flex-area flex-center">
-                    <h1>KH정보교육원 그룹웨어 프로젝트</h1>
+                    <h1>　                        </h1>
                 </div>
                 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
 	                <div class="w-25 flex-area" style="justify-content: right; align-items: center;">
