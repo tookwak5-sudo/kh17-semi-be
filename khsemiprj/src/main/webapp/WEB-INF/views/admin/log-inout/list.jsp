@@ -18,7 +18,7 @@
                     <option value="log_inout_type">분류</option>
                 </select>
                 <input type="text" name="keyword"
-                    class="field" placeholder="검색어 입력">
+                    class="field-sm" placeholder="검색어 입력">
                 <button type="submit" class="btn btn-positive">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span>검색</span>

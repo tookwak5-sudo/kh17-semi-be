@@ -68,7 +68,10 @@
 .w-1100 { width:1100px !important; }
 .w-1150 { width:1150px !important; }
 .w-1200 { width:1200px !important; }
-
+.w-1300 { width:1300px !important; }
+.w-1400 { width:1400px !important; }
+.w-1500 { width:1500px !important; }
+.w-1600 { width:1600px !important; }
 /* 폭 비율 설정 */
 .w-100 { width:100% !important; }
 .w-80 { width:80% !important; }
@@ -132,18 +135,17 @@
 
 
 /* 컴포넌트(Component) 디자인 */
-
 /* 입력창(field) 디자인 */
-.field {
-    outline: none; /* 기본 강조선 제거 */
-    font-size: 20px;
-    padding: 0.35em 0.75em;
-    border: 1px solid #636e72;
-    border-radius: 0.1em;
-}
-textarea.field {
-    resize: none;
-}
+/* .field { */
+/*     outline: none; 기본 강조선 제거 */
+/*     font-size: 20px; */
+/*     padding: 0.35em 0.75em; */
+/*     border: 1px solid #636e72; */
+/*     border-radius: 0.1em; */
+/* } */
+/* textarea.field { */
+/*     resize: none; */
+/* } */
 .field:focus { /*조건부 디자인 : 입력 상태일 경우 */
     border-color: #2d3436;
 }
@@ -214,6 +216,8 @@ a.btn {
     align-items: center;     /* 수직 중앙 정렬 */
     vertical-align: middle;  /* 부모 요소와 수직 정렬 */
     line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */
+    
+    white-space: nowrap; /* 자동 줄바꿈 방지 */
 }
 /* 마우스를 올렸을 때만 색상이 채워지게 */
 .btn.btn-positive:hover {
@@ -662,7 +666,7 @@ a.btn {
 
 /* 입력창 공통 스타일 */
 .field {
-    width: 120px;            /* 100% 대신 고정 너비 지정 */
+    width: 90px;            /* 100% 대신 고정 너비 지정 */
     height: 40px;           /* .field-sm과 높이 통일 */
     padding: 0px 10px;       /* 내부 여백을 주어 답답하지 않게 */
     line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
@@ -676,9 +680,17 @@ a.btn {
     outline: none;
     transition: all 0.2s ease;
 }
+/* 2. textarea 전용 스타일 */
+textarea.field {
+    height: 100px;          /* 원하는 고정 높이 지정 */
+    padding: 10px;
+    resize: none;           /* 이 속성이 핸들을 제거합니다 */
+    line-height: normal;    /* textarea는 line-height를 높이와 동일하게 하면 안 됩니다 */
+    vertical-align: top;    /* 텍스트가 상단부터 시작되도록 설정 */
+}
 /* 검색창 전용 클래스 (Compact) */
 .field-sm {
-    width: 250px;
+    width: 400px;
     height: 40px; /* 높이 고정 */
     padding: 0px 12px; /* 패딩을 줄여서 높이를 낮춤 */
     line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */

@@ -29,7 +29,7 @@
 	<div class="cell center flex-area">
 		<div class="w-20 flex-area flex-center">
         </div>
-		<div class="w-60 flex-area flex-center">
+		<div class="w-80 flex-area flex-center">
 			<form action="./list" method="get">
 				<select name="aprvStatus" class="field">
 					<option value="" ${param.aprvStatus=="" ? "selected" : ""}>전체</option>
@@ -42,7 +42,7 @@
 						${param.column=="aprv_title" ? "selected" : ""}>제목</option>
 					<option value="aprv_writer"
 						${param.column=="aprv_writer" ? "selected" : ""}>기안자</option>
-				</select> <input type="text" name="keyword" class="field" placeholder="검색어 입력"
+				</select> <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력"
 					value="${param.keyword}">
 				<button type="submit" class="btn btn-positive">
 					<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>

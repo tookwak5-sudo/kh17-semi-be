@@ -138,7 +138,6 @@ public class ReplyRestController {
 //						.empDisliked(replyVO.getEmpDisliked())
 //					.build());
 		}
-//		System.out.println(list);
 		return list;
 	}
 	

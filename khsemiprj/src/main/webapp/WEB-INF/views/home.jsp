@@ -10,7 +10,7 @@
 .dashboard-container {
 	display: flex;
 	gap: 20px; /* 좌우 간격 */
-	width: 1200px;
+	width: 1400px;
 	margin: 50px auto;
 }
 
@@ -63,6 +63,54 @@
    background: white;
    z-index: 10;
 }
+
+/* 일요일 날짜 텍스트 색상 변경 */
+    .fc .fc-day-sun a {
+        color: #ff4d4d !important; /* 빨간색 계열 */
+    }
+
+    /* 토요일 날짜 텍스트 색상 변경 */
+    .fc .fc-day-sat a {
+        color: #739BED !important; /* 파란색 계열 */
+    }
+    
+    /* 혹시 헤더(월,화,수...)의 글씨 색도 바꾸고 싶다면 */
+    .fc-col-header-cell.fc-day-sun {
+        color: #ff4d4d;
+    }
+    .fc-col-header-cell.fc-day-sat {
+        color: #739BED;
+    }
+    
+   /* 모든 날짜 영역의 투명도를 1로 강제 고정 */
+	.fc .fc-daygrid-day, 
+	.fc .fc-daygrid-day-frame, 
+	.fc .fc-daygrid-day-top, 
+	.fc .fc-popover,
+	.fc-day-other, 
+	.fc-day-sun, 
+	.fc-day-sat {
+	    opacity: 1 !important;
+	}
+	/* 1. 팝업 박스(Popover) 전체를 선명하게 */
+	.fc .fc-popover {
+	    opacity: 1 !important;
+	    background-color: #ffffff !important; /* 배경을 흰색으로 고정 */
+	    border: 1px solid #ddd !important;
+	    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+	}
+
+	/* 2. 팝업 박스 안의 날짜 및 일정 텍스트 선명하게 */
+	.fc .fc-popover .fc-daygrid-day-number,
+	.fc .fc-popover .fc-daygrid-event {
+	    opacity: 1 !important;
+	    color: #333 !important; /* 글자색을 진하게 */
+	}
+	
+	/* 3. 혹시 모를 내부 요소의 투명도 제거 */
+	.fc .fc-popover .fc-daygrid-event-harness {
+	    opacity: 1 !important;
+	}
 </style>
 
 <!-- fullcalendar cdn -->
@@ -116,7 +164,7 @@
 	       	
 	         <div class="cell">
 	            <label>내용</label>
-	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
+	            <textarea name="planExplain" class="field w-100"></textarea>
 	        </div>
 	        <div class="cell mt-40 right">
 	            <button type="submit" class="btn btn-positive btn-plan">
@@ -292,6 +340,7 @@
 				planSdate : $("[name=planSdate]").val(),
 				planEdate : $("[name=planEdate]").val(),
 				planExplain : $("[name=planExplain]").val(),
+				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
 			
 			//console.log(data);

@@ -11,18 +11,18 @@
 			transition: background-color 0.2s ease;
 	}
 	
-	.field {
-	    border: 1px solid #ced4da; 
-	    border-radius: 6px; 
-	    padding: 5px 10px; 
-	    outline: none;
-	    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-	}
+/* 	.field { */
+/* 	    border: 1px solid #ced4da;  */
+/* 	    border-radius: 6px;  */
+/* 	    padding: 5px 10px;  */
+/* 	    outline: none; */
+/* 	    transition: border-color 0.2s ease, box-shadow 0.2s ease; */
+/* 	} */
 	
-	.field:focus {
-	    border-color: #739BED;
-	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2);
-	}
+/* 	.field:focus { */
+/* 	    border-color: #739BED; */
+/* 	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2); */
+/* 	} */
 	
 	input[type="date"].field.fail,
 	input[type="date"].field.success {
@@ -71,13 +71,13 @@
 				
 		<div class="cell" style="display: flex; justify-content: flex-end;">
 			<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
-				<select name="column" class="field" style="padding: 8px 18px; font-size: 16px;">
+				<select name="column" class="field">
 					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
 					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>이름</option>
 					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
 					<option value="emp_position_name" ${param.column == 'emp_position_name' ? 'selected' : ''}>직급</option>
 				</select>
-				<input type="text" name="keyword" class="field" value="${param.keyword}" style="padding: 8px 18px; font-size: 16px;">
+				<input type="text" name="keyword" class="field-sm" value="${param.keyword}">
 				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
 					<i class="fa-solid fa-magnifying-glass"></i>
 					<span>검색</span>

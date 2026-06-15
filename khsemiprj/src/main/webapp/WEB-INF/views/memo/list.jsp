@@ -41,14 +41,14 @@
 	
 	<div class="cell" style="display: flex; justify-content: flex-end;">
 		<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
-			<select name="column" class="field" style="padding: 8px 18px; font-size: 16px;">
+			<select name="column" class="field" style="padding: 5px 10px; font-size: 16px;">
 				<option value="memo_sender_id" ${pageVO.column == 'memo_sender_id' ? 'selected' : ''}>보낸사람</option>
 				<option value="memo_title" ${pageVO.column == 'memo_title' ? 'selected' : ''}>제목</option>
 				<option value="memo_content" ${pageVO.column == 'memo_content' ? 'selected' : ''}>내용</option>
 			</select>
 			<input type="text" name="keyword" class="field-sm" value="${pageVO.keyword}" placeholder="검색어를 입력하세요" style="padding: 8px 18px; font-size: 16px;">
 			<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
-				<i class="fa-solid fa-magnifying-glass"></i>
+				<i class="fa-solid fa-magnifying-glass"></i> 
 				<span>검색</span>
 			</button>
 		</form>
