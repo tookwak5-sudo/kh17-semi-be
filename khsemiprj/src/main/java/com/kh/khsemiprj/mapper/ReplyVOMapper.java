@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import com.kh.khsemiprj.dto.ReplyDto;
 import com.kh.khsemiprj.vo.ReplyVO;
 
 @Component
@@ -26,6 +25,7 @@ public class ReplyVOMapper implements RowMapper<ReplyVO>{
 					.replyDislikecount(rs.getLong("reply_dislikecount"))
 					.empLiked(rs.getString("emp_liked"))
 					.empDisliked(rs.getString("emp_disliked"))
+					.attachNo(rs.getObject("attach_no", Integer.class))
 				.build();
 	}
 }

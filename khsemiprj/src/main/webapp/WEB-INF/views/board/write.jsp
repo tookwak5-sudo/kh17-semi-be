@@ -31,7 +31,6 @@
 				<option>공지</option>
 			</c:if>
 				<option>자유</option>
-				<option>자유</option>
 				<option>유머</option>
 				<option>정보</option>
 				<option>질문</option>
@@ -104,7 +103,7 @@ function sendImageFile(file, editor) {
     data.append("uploadFile", file);
 
     $.ajax({
-        url: "${pageContext.request.contextPath}/board/uploadImage",
+        url: "/rest/file/upload",
         type: "POST",
         data: data,
         contentType: false,    

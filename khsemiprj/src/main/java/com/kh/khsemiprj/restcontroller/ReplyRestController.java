@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.ReplyDao;
@@ -15,6 +16,7 @@ import com.kh.khsemiprj.dao.ReplyDislikeDao;
 import com.kh.khsemiprj.dao.ReplyLikeDao;
 import com.kh.khsemiprj.dto.BoardDto;
 import com.kh.khsemiprj.dto.ReplyDto;
+import com.kh.khsemiprj.service.ReplyService;
 import com.kh.khsemiprj.vo.DislikeVO;
 import com.kh.khsemiprj.vo.LikeVO;
 import com.kh.khsemiprj.vo.ReplyVO;
@@ -32,6 +34,8 @@ public class ReplyRestController {
 	private ReplyLikeDao replyLikeDao;
 	@Autowired
 	private ReplyDislikeDao replyDislikeDao;
+	@Autowired
+    private ReplyService replyService;
 	
 	//좋아요 싫어요 토글 영역
 	@PostMapping("/like-check")
@@ -94,17 +98,15 @@ public class ReplyRestController {
 	
 	//댓글작성 영역
 	@PostMapping("/write")
-	public void write(@ModelAttribute ReplyDto replyDto, HttpSession session) {
-		long replyNo=replyDao.sequence();
-		String loginId=(String)session.getAttribute("loginId");
+    public void write(@ModelAttribute ReplyDto replyDto, 
+                      @RequestParam(required = false) MultipartFile replyImage, 
+                      HttpSession session) throws Exception {
+        
+		String loginId = (String) session.getAttribute("loginId");
+        replyDto.setReplyWriter(loginId);
 		
-		replyDto.setReplyNo(replyNo);
-		replyDto.setReplyWriter(loginId);
-		
-		replyDao.insert(replyDto);
-		//댓글갯수 업데이트
-		boardDao.updateBoardReplycount(replyDto.getReplyOrigin());
-	}
+        replyService.registerFormFile(replyDto, replyImage); 
+    }
 	
 	@PostMapping("/list")
 	public List<ReplyVO> list(@RequestParam long replyOrigin, HttpSession session) {
@@ -145,13 +147,7 @@ public class ReplyRestController {
 	//댓글 삭제
 	@PostMapping("/delete")
 	public void delete(@RequestParam long replyNo) {
-		//댓글 삭제 전 어디 글에 있던 댓글인지 확인
-		ReplyDto replyDto=replyDao.selectOne(replyNo);
-		long boardNo = replyDto.getReplyOrigin();
-
-		replyDao.delete(replyNo);
-		//댓글갯수 업데이트
-		boardDao.updateBoardReplycount(boardNo);
+		replyService.deleteReply(replyNo);
 	}
 	
 	//댓글 수정

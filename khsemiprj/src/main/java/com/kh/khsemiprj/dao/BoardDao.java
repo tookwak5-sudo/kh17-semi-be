@@ -271,4 +271,31 @@ public class BoardDao {
 		Object[] params = { boardNo, boardNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
+	
+	//AprvFormDao 파쿠리
+	public void connect(long boardNo, int attachNo) {
+		String sql = "insert into board_file(board_no,attach_no) values(?, ?)";
+		Object[] params = { boardNo, attachNo };
+		jdbcTemplate.update(sql, params);
+	}
+	
+	// 파일 연결 관계 끊어 버리는 메소드
+	//AprvFormDao 파쿠리
+		public boolean disconnect(long boardNo, int attachNo) {
+			String sql = "delete from board_file where board_no = ? and attach_no = ?";
+			Object[] params = { boardNo, attachNo };
+			return jdbcTemplate.update(sql, params) > 0;
+		}
+
+		//AprvFormDao 파쿠리
+		public Integer findAttachNo(long boardNo) {
+			String sql = "select attach_no from board_file where board_no=?";
+			Object[] params = { boardNo };
+			try {
+				return jdbcTemplate.queryForObject(sql, Integer.class, params);
+			} catch (Exception e) {
+				e.getMessage();
+				return null;
+			}
+		}
 }

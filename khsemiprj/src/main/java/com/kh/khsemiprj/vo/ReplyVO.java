@@ -27,4 +27,6 @@ public class ReplyVO {
 	//유저가 좋아요, 싫어요를 눌렀는지 확인하는 필드
 	private String empLiked;
 	private String empDisliked;
+	//첨부파일 번호를 확인하는 필드, 없을수도 있기때문에 Integer 사용
+	private Integer attachNo;
 }

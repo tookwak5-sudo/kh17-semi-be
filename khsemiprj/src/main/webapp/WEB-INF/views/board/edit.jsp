@@ -29,7 +29,7 @@
 				<option value="">선택 안함</option>
 				
 				<!-- 공지는 관리자에게만 보이도록 해야함 -->
-			<c:if test="${sessionScope.loginLevel == '0'}">
+			<c:if test="${sessionScope.empGrade == '0'}">
 				<option ${boardDto.boardHead == '공지' ? 'selected':''}>공지</option>
 			</c:if>
 				<option ${boardDto.boardHead == '자유' ? 'selected':''}>자유</option>
@@ -93,6 +93,9 @@ $(document).ready(function() {
                     sendImageFile(files[i], this);
                 }
             }
+		    onMediaDelete: function(target) {
+		        deleteImageFile(target[0].src);
+		    }
         }
     });
     
@@ -103,7 +106,7 @@ function sendImageFile(file, editor) {
     data.append("uploadFile", file);
 
     $.ajax({
-        url: "${pageContext.request.contextPath}/board/uploadImage",
+        url: "/rest/file/upload",
         type: "POST",
         data: data,
         contentType: false,    
@@ -122,6 +125,21 @@ function sendImageFile(file, editor) {
             console.error(err);
         }
     });
+}
+
+function deleteImageFile(src) {
+    var match = src.match(/attachNo=(\d+)/);
+    if(match) {
+        var attachNo = match[1];
+        $.ajax({
+            url: "/rest/file/delete",
+            type: "POST",
+            data: { attachNo: attachNo },
+            success: function() {
+                console.log("좀비 이미지 삭제 완료");
+            }
+        });
+    }
 }
 
 function checkContent() {
