@@ -40,16 +40,24 @@
     	
     	/* 1. 종 아이콘과 뱃지를 감싸는 부모 상자 */
 		.notification-box {
-		    position: relative;    /* 💡 중요: 뱃지가 이 상자를 기준으로 움직이게 함 */
+		    position: relative;
 		    display: inline-block;
-		    padding: 10px;         /* 클릭 영역 확보를 위한 여백 */
+		    background: rgba(255, 255, 255, 0.2); 
+		    backdrop-filter: blur(8px);
+		    border: 1px solid rgba(255, 255, 255, 0.3);
+		    border-radius: 12px;
+		    padding: 10px 15px; /* 패딩 조정 */
+		    transition: all 0.3s ease;
 		    cursor: pointer;
 		}
-		
+		.notification-box:hover {
+		    background: rgba(255, 255, 255, 0.2);
+		    transform: translateY(-2px);
+		}
 		/* 2. 종 아이콘 스타일 */
 		.bell-icon {
 		    font-size: 20px;       /* 아이콘 크기 (상단바에 맞게 조절 가능) */
-		    color: #ffffff;        /* 아이콘 색상을 흰색으로 통일 */
+		 	color: #739BED; /* 세련된 골드 느낌 */
 		}
 		
 		/* 3. 🔥 핵심: 빨간색 알림 뱃지 */
@@ -75,6 +83,11 @@
 		    align-items: center;
 		    justify-content: center;
 		}
+		body {
+		    background-color: #F8F9FA; /* 네이버 스타일의 밝은 회색 */
+		    color: #202124; /* 구글 스타일의 다크 그레이 */
+		    font-family: 'Pretendard', sans-serif;
+		}
     </style>
     
     <!-- jQuery CDN -->
@@ -94,9 +107,9 @@
 
 <body>
 
-세션ID : ${pageContext.session.id}
-loginId : ${sessionScope.loginId}
-empGrade : ${sessionScope.empGrade}
+<%-- 세션ID : ${pageContext.session.id} --%>
+<%-- loginId : ${sessionScope.loginId} --%>
+<%-- empGrade : ${sessionScope.empGrade} --%>
 
 
     <!-- 메인 컨테이너1 + 내부영역4 -->
@@ -111,8 +124,8 @@ empGrade : ${sessionScope.empGrade}
                     <h1>KH정보교육원 그룹웨어 프로젝트</h1>
                 </div>
                 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-	                <div class="w-25 flex-area" style="justify-content: right; align-items: end;">
-	                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 50px;background-color: #739BED;text-align: center;" class="notification-box"> 
+	                <div class="w-25 flex-area" style="justify-content: right; align-items: center;">
+	                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 42px; text-align: center;" class="notification-box"> 
 	                    	<a href="/memo/list" 
 					           style="font-size:20px; text-decoration: none;" 
 					           onclick="
@@ -123,7 +136,7 @@ empGrade : ${sessionScope.empGrade}
 					               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
 					               return false;
 					         ">
-					            <i class="fa-solid fa-bell bell-icon" style="color: #FFFFFF;"><span class="badge">1</span></i>
+					            <i class="fa-solid fa-bell bell-icon"><span class="badge">1</span></i>
 					        </a>
 	                    </div>
 	                </div>

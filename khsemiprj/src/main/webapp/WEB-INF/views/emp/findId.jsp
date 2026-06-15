@@ -134,7 +134,7 @@
 	</div>
 	<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
                <input type="text" name="empEmail"
-               class="field" inputmode="email">
+               class="field-sm" inputmode="email">
                <button type="button" class="btn btn-neutral btn-cert-send ms-10">
                    <i class="fa-solid fa-envelope"></i>
                    <span>인증메일 보내기</span>

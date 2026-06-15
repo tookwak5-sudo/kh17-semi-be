@@ -328,13 +328,13 @@ $(function() {
                         
                         if(certFailCount>= 5){
                         	$(".cert-message").text("인증번호를 5회 이상 틀렸습니다. 다시 인증번호를 전송 후 시도해주세요.")
-                            .css("color", "red");
+                            .css("color", "#d63031");
 					        $(".field-cert").prop("disabled", true); // 입력창 막기
 					        $(".btn-cert-check").prop("disabled", true); // 검사 버튼 막기
                         }
                         else{
                         	$(".cert-message").text("인증번호가 일치하지 않습니다. (" + certFailCount + "/5회 오류)")
-                            .css("color", "red");
+                            .css("color", "#d63031");
                         	}
                         }
                     }
@@ -444,7 +444,7 @@ $(function() {
 			<label>이메일<i class="fa-solid fa-asterisk red"></i></label>
 		</div>
 		<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
-			<input type="text" name="empEmail" class="field" inputmode="email">
+			<input type="text" name="empEmail" class="field field-sm" inputmode="email">
 
 			<button type="button" class="btn btn-neutral btn-cert-send ms-10">
 				<i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>

@@ -63,6 +63,24 @@
    background: white;
    z-index: 10;
 }
+
+/* 일요일 날짜 텍스트 색상 변경 */
+    .fc .fc-day-sun a {
+        color: #ff4d4d !important; /* 빨간색 계열 */
+    }
+
+    /* 토요일 날짜 텍스트 색상 변경 */
+    .fc .fc-day-sat a {
+        color: #739BED !important; /* 파란색 계열 */
+    }
+    
+    /* 혹시 헤더(월,화,수...)의 글씨 색도 바꾸고 싶다면 */
+    .fc-col-header-cell.fc-day-sun {
+        color: #ff4d4d;
+    }
+    .fc-col-header-cell.fc-day-sat {
+        color: #739BED;
+    }
 </style>
 
 <!-- fullcalendar cdn -->
@@ -116,7 +134,7 @@
 	       	
 	         <div class="cell">
 	            <label>내용</label>
-	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
+	            <textarea name="planExplain" class="field w-100"></textarea>
 	        </div>
 	        <div class="cell mt-40 right">
 	            <button type="submit" class="btn btn-positive btn-plan">
@@ -292,6 +310,7 @@
 				planSdate : $("[name=planSdate]").val(),
 				planEdate : $("[name=planEdate]").val(),
 				planExplain : $("[name=planExplain]").val(),
+				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
 			
 			//console.log(data);

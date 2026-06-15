@@ -132,18 +132,17 @@
 
 
 /* 컴포넌트(Component) 디자인 */
-
 /* 입력창(field) 디자인 */
-.field {
-    outline: none; /* 기본 강조선 제거 */
-    font-size: 20px;
-    padding: 0.35em 0.75em;
-    border: 1px solid #636e72;
-    border-radius: 0.1em;
-}
-textarea.field {
-    resize: none;
-}
+/* .field { */
+/*     outline: none; 기본 강조선 제거 */
+/*     font-size: 20px; */
+/*     padding: 0.35em 0.75em; */
+/*     border: 1px solid #636e72; */
+/*     border-radius: 0.1em; */
+/* } */
+/* textarea.field { */
+/*     resize: none; */
+/* } */
 .field:focus { /*조건부 디자인 : 입력 상태일 경우 */
     border-color: #2d3436;
 }
@@ -676,9 +675,17 @@ a.btn {
     outline: none;
     transition: all 0.2s ease;
 }
+/* 2. textarea 전용 스타일 */
+textarea.field {
+    height: 100px;          /* 원하는 고정 높이 지정 */
+    padding: 10px;
+    resize: none;           /* 이 속성이 핸들을 제거합니다 */
+    line-height: normal;    /* textarea는 line-height를 높이와 동일하게 하면 안 됩니다 */
+    vertical-align: top;    /* 텍스트가 상단부터 시작되도록 설정 */
+}
 /* 검색창 전용 클래스 (Compact) */
 .field-sm {
-    width: 250px;
+    width: 400px;
     height: 40px; /* 높이 고정 */
     padding: 0px 12px; /* 패딩을 줄여서 높이를 낮춤 */
     line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
