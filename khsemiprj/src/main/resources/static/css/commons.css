@@ -213,6 +213,8 @@ a.btn {
     align-items: center;     /* 수직 중앙 정렬 */
     vertical-align: middle;  /* 부모 요소와 수직 정렬 */
     line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */
+    
+    white-space: nowrap; /* 자동 줄바꿈 방지 */
 }
 /* 마우스를 올렸을 때만 색상이 채워지게 */
 .btn.btn-positive:hover {
@@ -661,7 +663,7 @@ a.btn {
 
 /* 입력창 공통 스타일 */
 .field {
-    width: 120px;            /* 100% 대신 고정 너비 지정 */
+    width: 90px;            /* 100% 대신 고정 너비 지정 */
     height: 40px;           /* .field-sm과 높이 통일 */
     padding: 0px 10px;       /* 내부 여백을 주어 답답하지 않게 */
     line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
