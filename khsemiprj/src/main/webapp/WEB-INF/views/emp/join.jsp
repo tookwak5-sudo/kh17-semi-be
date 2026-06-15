@@ -4,7 +4,6 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <style>
-
 /* togglebox 디자인 */
 .togglebox {
 	cursor: pointer;
@@ -514,8 +513,8 @@ $(function() {
 		<div class="cell mt-40">
 			<label> <i class="fa-solid fa-image"></i> <span>클릭해서
 					프로필 이미지를 선택하세요</span> <input type="file" name="attach"
-				class="field w-100 preview-input" accept=".png, .jpg"
-				style="display: none;">
+				class="field w-100 preview-input" accept=".png, .jpg" 
+				>
 			</label>
 		</div>
 

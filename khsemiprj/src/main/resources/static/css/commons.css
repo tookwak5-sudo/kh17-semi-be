@@ -691,11 +691,25 @@ a.btn {
 select.field {
     background-position-x: right 1em;
 }
+
+/* 바로위에있는 .field로 커지는거방지 */
 .field.success {
+    transition: none !important; 
     background-image: url("https://cdn.jsdelivr.net/gh/hiphop5782/cdn2/valid.png");
+    border-color: #0984e3;
+    background-repeat: no-repeat !important;      /* 아이콘 반복 방지 */
+    background-position: right 12px center !important; /* 우측 정렬 */
+    background-size: 16px 16px !important;         /* 거대 반원을 16px 조그만 아이콘으로 압축 */
+    padding-right: 40px !important;
     border-color: #0984e3;
 }
 .field.fail {
+    transition: none !important; 
     background-image: url("https://cdn.jsdelivr.net/gh/hiphop5782/cdn2/invalid.png");
+    border-color: #0984e3;
+    background-repeat: no-repeat !important;      /* 아이콘 반복 방지 */
+    background-position: right 12px center !important; /* 우측 정렬 */
+    background-size: 16px 16px !important;         /* 거대 반원을 16px 조그만 아이콘으로 압축 */
+    padding-right: 40px !important;
     border-color: #d63031;
 }
