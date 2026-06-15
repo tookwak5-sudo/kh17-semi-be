@@ -417,7 +417,7 @@ public class EmpController {
 		empDto.setEmpPassword(newPassword);
 		empDao.changePassword(empDto);
 
-		return "redirect:emp/mypage";
+		return "redirect:/emp/mypage";
 
 	}
 
