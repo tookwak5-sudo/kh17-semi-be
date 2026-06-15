@@ -72,7 +72,17 @@
 	<hr>
 	</c:if>
 	<div class="cell mt-20">
+	<c:choose>
+	<c:when test="${aprvDetailVO.headName == '비용'}">
+	지출일자 : ${aprvDetailVO.aprvSdate}
+	</c:when>
+	<c:when test="${aprvDetailVO.headName == '사직'}">
+	퇴사일자 : ${aprvDetailVO.aprvSdate}
+	</c:when>
+	<c:otherwise>
 	기한 : ${aprvDetailVO.aprvSdate} ~ ${aprvDetailVO.aprvEdate}
+	</c:otherwise>
+	</c:choose>
 	</div>
 	<hr>
 	<div class="cell mt-20">

@@ -2,6 +2,7 @@ package com.kh.khsemiprj.restcontroller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,14 +14,17 @@ import com.kh.khsemiprj.dao.AprvDao;
 import com.kh.khsemiprj.dao.AprvFormDao;
 import com.kh.khsemiprj.dao.AprvLineDao;
 import com.kh.khsemiprj.dao.AttachDao;
+import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.PlanDao;
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.AttachDto;
+import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.vo.AprvDetailVO;
 import com.kh.khsemiprj.vo.AprvLineListVO;
+import com.kh.khsemiprj.vo.LeaveManageVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -45,7 +49,13 @@ public class AprvRestController {
 	private PlanDao planDao;
 	
 	@Autowired
+	private EmpDao empDao;
+	
+	@Autowired
 	private AttachDao attachDao;
+	
+	//일정 등록할 분류
+	private Set<String> planHead = Set.of("연차", "병가", "비용", "기타");
 	
 	@RequestMapping("/getAprvFormFile")
 	public Map<String, Object> getAprvFormFile(@RequestParam int formNo) {
@@ -98,31 +108,52 @@ public class AprvRestController {
 							//상태값이 승인으로 변경되었다면
 							if(aprvDetailVO.getAprvStatus().equals("승인")) {
 								String headName = aprvDetailVO.getHeadName();
-								//결재헤드가 연차일때 휴가계산 및 일정 등록 필요
-								if(headName.equals("연차")) {
-									//휴가 차감
-									empLeaveDao.leaveUpdate(aprvDetailVO.getAprvWriter(), aprvDetailVO.getAprvLeave());
+								//일정 등록해야 하는 분류라면
+								if(planHead.contains(headName)) {
+									//결재헤드가 연차일때 휴가계산 및 일정 등록 필요
+									if(headName.equals("연차")) {
+										//휴가 차감
+										boolean leaveUpdate = empLeaveDao.leaveUpdate(aprvDetailVO.getAprvWriter(), aprvDetailVO.getAprvLeave());
+										//휴가 변경 로그 등록
+										if(leaveUpdate) {
+											EmpLeaveDto empLeaveDto = empLeaveDao.selectOne(aprvDetailVO.getAprvWriter());
+											double leaveRemain = empLeaveDto == null ? 0 : empLeaveDto.getLeaveRemain();
+											double leaveUsed = empLeaveDto == null ? 0 : empLeaveDto.getLeaveUsed();
+											LeaveManageVO leaveManagerVO = LeaveManageVO.builder()
+													.leaveType("휴가")
+													.leaveLogId(aprvDetailVO.getAprvWriter())
+													.leaveAmount(aprvDetailVO.getAprvLeave())
+													.leaveTotalAfter(leaveRemain)
+													.leaveUsedAfter(leaveUsed)
+													.build();
+											empLeaveDao.logInsert(leaveManagerVO);
+										}
+									}
+									//일정 등록
+									int planNo = planDao.sequence();
+									String planName = aprvDetailVO.getEmpName();
+									if(aprvDetailVO.getEmpPositionName() != null && aprvDetailVO.getEmpPositionName() != "") {
+										planName += " " + aprvDetailVO.getEmpPositionName();
+									}
+									planName += " " + headName;
+									PlanDto planDto = PlanDto.builder()
+											.planNo(planNo)
+											.planEmpId(aprvDetailVO.getAprvWriter())
+											.planAprvNo(aprvDetailVO.getAprvNo())
+											.planDeptNo(aprvDetailVO.getDeptNo())
+											.planHeadNo(aprvDetailVO.getHeadNo())
+											.planName(planName)
+											.planExplain(aprvDetailVO.getAprvContent())
+											.planSdate(aprvDetailVO.getAprvSdate())
+											.planEdate(aprvDetailVO.getAprvEdate())
+											.planType("부서")
+											.build();
+									planDao.insert(planDto);
+								} else {//일정 등록하지 않는 헤더라면
+									if(headName.equals("사직")) {
+										empDao.insertEmpExit(aprvDetailVO.getAprvWriter(), aprvDetailVO.getAprvSdate());
+									}
 								}
-								//일정 등록
-								int planNo = planDao.sequence();
-								String planName = aprvDetailVO.getEmpName();
-								if(aprvDetailVO.getEmpPositionName() != null && aprvDetailVO.getEmpPositionName() != "") {
-									planName += " " + aprvDetailVO.getEmpPositionName();
-								}
-								planName += " " + headName;
-								PlanDto planDto = PlanDto.builder()
-										.planNo(planNo)
-										.planEmpId(aprvDetailVO.getAprvWriter())
-										.planAprvNo(aprvDetailVO.getAprvNo())
-										.planDeptNo(aprvDetailVO.getDeptNo())
-										.planHeadNo(aprvDetailVO.getHeadNo())
-										.planName(planName)
-										.planExplain(aprvDetailVO.getAprvContent())
-										.planSdate(aprvDetailVO.getAprvSdate())
-										.planEdate(aprvDetailVO.getAprvEdate())
-										.planType("부서")
-										.build();
-								planDao.insert(planDto);
 							}
 						} else {
 							//반려라면 결재의 상태값도 반려로 변경

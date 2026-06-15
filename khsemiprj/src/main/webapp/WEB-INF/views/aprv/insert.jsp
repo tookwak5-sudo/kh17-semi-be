@@ -107,6 +107,22 @@
 				});
 			
 				break;
+			case "사직":
+				$(".date-title").text("퇴사일자");
+				$(".picker-sdate").attr("placeholder", "퇴사일");
+				$(".timeTilde").hide();
+				$(".picker-edate").hide();
+				var picker1 = new Lightpick({ 
+				    field : $(".picker-sdate")[0],
+				    format : "YYYY-MM-DD",
+					firstDay : 7,
+					disableWeekends: true,
+					onSelect: function(start, end){
+				        // 날짜 선택 시 실행될 코드
+				        $(".picker-edate").val($(".picker-sdate").val());//시작일만 선택 가능하므로 종료일도 동일하게 설정
+				    }
+				});
+				break;
 			case "비용":
 				$(".date-title").text("지출일자");
 				$(".picker-sdate").attr("placeholder", "지출일");

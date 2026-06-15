@@ -25,16 +25,17 @@ import com.kh.khsemiprj.dao.AprvLineDao;
 import com.kh.khsemiprj.dao.AttachDao;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
+import com.kh.khsemiprj.dao.MemoDao;
 import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
+import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.service.AttachService;
 import com.kh.khsemiprj.vo.AprvDetailVO;
-import com.kh.khsemiprj.vo.AprvLineListVO;
 import com.kh.khsemiprj.vo.AprvFormVO;
-
+import com.kh.khsemiprj.vo.AprvLineListVO;
 import com.kh.khsemiprj.vo.DeptVO;
 import com.kh.khsemiprj.vo.PageForAprvVO;
 
@@ -62,6 +63,9 @@ public class AprvController {
 	
 	@Autowired
 	private AttachDao attachDao;
+	
+	@Autowired
+	private MemoDao memoDao;
 	
 	@Autowired
 	private AttachService attachService;
@@ -93,6 +97,7 @@ public class AprvController {
 		
 		EmpLeaveDto empLeaveDto = empLeaveDao.selectOne(loginId);
 		double leaveRemain = empLeaveDto == null ? 0 : empLeaveDto.getLeaveRemain();
+		System.out.println("loginId - " + loginId + ", empLeaveDto - " + empLeaveDto);
 		model.addAttribute("leaveRemain", leaveRemain);
 		
 		// 1. 부서 목록 가져오기
@@ -171,6 +176,17 @@ public class AprvController {
 				aprvLineDto.setAprvLineCurrentSeq(1);
 				aprvLineDto.setAprvLineStatus("대기");
 				aprvLineDao.insertAprvLine(aprvLineDto);
+				
+				MemoDto memoDto = MemoDto.builder()
+						.memoNo(memoDao.sequence())
+						.memoReceiverId(aprvLine1IdList.get(i))
+						.memoSenderId("systemadmin")
+						.memoTitle("신규 결재 알림")
+						.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+						.memoReadStatus("N")
+						.memoType("결재")
+						.build();
+				memoDao.insert(memoDto);
 			}
 			
 			//결재라인2 등록
@@ -184,6 +200,17 @@ public class AprvController {
 					aprvLineDto.setAprvLineCurrentSeq(2);
 					aprvLineDto.setAprvLineStatus("대기");
 					aprvLineDao.insertAprvLine(aprvLineDto);
+					
+					MemoDto memoDto = MemoDto.builder()
+							.memoNo(memoDao.sequence())
+							.memoReceiverId(aprvLine2IdList.get(i))
+							.memoSenderId("systemadmin")
+							.memoTitle("신규 결재 알림")
+							.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+							.memoReadStatus("N")
+							.memoType("결재")
+							.build();
+					memoDao.insert(memoDto);
 				}
 			}
 		}
