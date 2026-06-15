@@ -132,4 +132,15 @@ public class MemoDao {
  		return jdbcTemplate.update(sql, params)>0;
  	}
  	
+ 	//나한테온 쪽지 카운트
+ 	public int memoCount(String receiverId) {
+		String sql = "select count(*) from memo "
+				+ "where memo_receiver_id = ? and memo_read_status = 'N' ";
+		Object[] params = { receiverId };
+		
+		Integer countMemo = jdbcTemplate.queryForObject(sql, Integer.class, receiverId);
+		
+		return countMemo != null ? countMemo : 0;
+	}
+ 	
 }

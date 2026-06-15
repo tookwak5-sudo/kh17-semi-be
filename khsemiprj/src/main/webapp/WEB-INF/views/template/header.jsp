@@ -105,7 +105,7 @@ empGrade : ${sessionScope.empGrade}
             <!-- 헤더 영역 -->
             <div class="flex-area">
                 <div class="w-25 flex-area flex-center">
-                    <img src="https://www.dummyimage.com/200x50">
+                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
                 </div>
                 <div class="w-50 flex-area flex-center">
                     <h1>KH정보교육원 그룹웨어 프로젝트</h1>
@@ -122,8 +122,12 @@ empGrade : ${sessionScope.empGrade}
 					               var top = (screen.height/2) - (h/2); 
 					               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
 					               return false;
-					         ">
-					            <i class="fa-solid fa-bell bell-icon" style="color: #FFFFFF;"><span class="badge">1</span></i>
+					        		 ">
+					            <i class="fa-solid fa-bell bell-icon" style="color: #FFFFFF;">
+					            	<c:if test="${not empty countMemo && countMemo != 0}">
+						            	<span class="badge">${countMemo}</span>					            	
+					            	</c:if>
+					            </i>
 					        </a>
 	                    </div>
 	                </div>

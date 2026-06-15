@@ -21,6 +21,8 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 	private AdminOnlyInterceptor adminOnlyInterceptor;
 	@Autowired
 	private MasterOnlyInterceptor masterOnlyInterceptor;
+	@Autowired
+	private MemoCountInterceptor memoCountInterceptor;
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -33,7 +35,18 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 		registry.addInterceptor(boardReadInterceptor)
 				.addPathPatterns("/board/detail");
 		
-		
+		//나한테온 메모 카운트
+		registry.addInterceptor(memoCountInterceptor)
+			.addPathPatterns("/**")
+			.excludePathPatterns(
+					"/css/**", 
+					"/js/**", 
+					"/images/**", 
+					"/static/**", 
+					"/error",
+					"/memo/**"
+					);
+			
 		//비회원이 들어갈수 있는 페이지 설정
 
 		registry.addInterceptor(empOnlyInterceptor)

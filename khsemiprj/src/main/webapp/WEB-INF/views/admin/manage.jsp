@@ -159,10 +159,10 @@ document.addEventListener("DOMContentLoaded", function () {
 			                              name="headNo" 
 			                              class="aprvHead-checkbox" 
 			                              value="${aprvHead.headNo}"
-			                              <c:if test="${aprvHead.headNo<=5}">disabled</c:if>
+			                              <c:if test="${aprvHead.headNo<=6}">disabled</c:if>
 			                              >
 				               </td>
-				               <td>${aprvHead.headName}<c:if test="${aprvHead.headNo <= 5}"><small>(삭제 불가)</small></c:if></td>
+				               <td>${aprvHead.headName}<c:if test="${aprvHead.headNo <= 6}"><small>(삭제 불가)</small></c:if></td>
 				               <td>${aprvHead.headType}</td>
 				           </tr>
 				       </c:forEach>
