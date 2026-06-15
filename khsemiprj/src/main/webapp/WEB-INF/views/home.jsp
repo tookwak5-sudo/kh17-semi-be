@@ -648,7 +648,26 @@
 							                </a>
 			                            </td>
 					  					<td>${rAprvList.empName}</td>
-					  					<td>${rAprvList.aprvStatus}</td>
+					  					<td>  
+									    <td>
+										    <c:if test="${myList.aprvStatus == '승인'}">
+										        <div class="cell" style="color: #5A86E3; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '반려'}">
+										        <div class="cell" style="color: #E86A7A; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '대기'}">
+										        <div class="cell" style="color: black; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										</td>
 					  				</tr>
 				  				</c:forEach>
 			  				</c:if>
@@ -691,7 +710,25 @@
 							                </a>
 			                            </td>
 					  					<td>${myList.empName}</td>
-					  					<td>${myList.aprvStatus}</td>
+					  					<td>
+										    <c:if test="${myList.aprvStatus == '승인'}">
+										        <div class="cell" style="color: #5A86E3; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '반려'}">
+										        <div class="cell" style="color: #E86A7A; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '대기'}">
+										        <div class="cell" style="color: black; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										</td>
 					  				</tr>
 				  				</c:forEach>
 				  			</c:if>
