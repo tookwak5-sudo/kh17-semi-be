@@ -237,13 +237,7 @@ public class EmpController {
 			empDao.connect(empDto.getEmpId(), attachNo);
 		}
 
-		return "redirect:./joinFinish";
-
-	}
-
-	@RequestMapping("/joinFinish")
-	public String joinFinish() {
-		return "emp/joinFinish";
+		return "redirect:/emp/login?alarm=join";
 	}
 
 	// 아이디 찾기 페이지

@@ -46,7 +46,7 @@ public class AdminController {
 		aprvHeadDto.setHeadNo(headNo);
 		aprvHeadDao.insert(aprvHeadDto);
 		
-		return "redirect:manage";
+		return "redirect:/admin/manage?alarm=headWriter";
 	}
 	
 	//헤더 삭제
@@ -64,7 +64,7 @@ public class AdminController {
 		empPositionDto.setEmpPositionNo(empPositionNo);
 		empPositionDao.insert(empPositionDto);
 		
-		return "redirect:manage";
+		return "redirect:/admin/manage?alarm=positionWriter";
 	}
 	
 	//직급 삭제
