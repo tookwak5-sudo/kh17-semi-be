@@ -4,7 +4,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
@@ -47,25 +46,24 @@
 		<div class="flex-area">
 		    <a href="/emp/mypage">
 		        <i class="fa-solid fa-user"></i>
-		        <span>
-		        	내정보
-		        </span>
+		        <span>내정보</span>
 		    </a>
 		</div>
 	    <!-- 하위메뉴 -->
 		<ul>
-			<c:if test="${sessionScope.lastLogType == '퇴근' || empty sessionScope.lastLogType}">
+			<c:if test="${logInoutType.trim() eq '퇴근'}">
 		    <li>
-		        <form id="workInForm" action="/emp/work-in" method="post" style="display:none;"></form>
+		        <form id="workInForm" action="/emp/work-in" method="post"></form>
 		        <a href="#" onclick="document.getElementById('workInForm').submit(); return false;">
 		             <i class="fa-solid fa-right-from-bracket"></i>
-		             <span>출근</span>            	
+		             <span>출근</span>
 		        </a>
 		    </li>
 		    </c:if>
-		    <c:if test="${sessionScope.lastLogType == '출근'}">
+		    <c:if test="${logInoutType.trim() eq '출근'}">
 		    <li>
-		        <form id="workOutForm" action="/emp/work-out" method="post" style="display:none;"></block></form>
+		        <form id="workOutForm" action="/emp/work-out" method="post"></form>
+		        
 		        <a href="#" onclick="document.getElementById('workOutForm').submit(); return false;">
 		            <i class="fa-solid fa-right-from-bracket"></i>
 		            <span>퇴근</span>

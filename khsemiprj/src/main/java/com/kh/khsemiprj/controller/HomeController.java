@@ -23,6 +23,7 @@ import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.vo.EmpAprvLineVO;
+import com.kh.khsemiprj.vo.PlanHeadVO;
 
 import jakarta.servlet.http.HttpSession;
 

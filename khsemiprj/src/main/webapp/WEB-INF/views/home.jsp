@@ -117,7 +117,6 @@
 <script
 	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
 <!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
-
 <script type="text/template" id="write-template">
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10 w-100">

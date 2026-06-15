@@ -111,7 +111,7 @@ public class EmpController {
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
-
+		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
 //		if(last == null) {
@@ -129,7 +129,6 @@ public class EmpController {
 		logInoutDto.setLogInoutEmpId(empDto.getEmpId());
 		logInoutDto.setLogInoutType("출근");
 		logInoutDao.insert(logInoutDto);
-		
 		return "redirect:/";
 	}
 
@@ -161,7 +160,7 @@ public class EmpController {
 		logInoutDao.insert(newDto);
 		
 		// [추가] 세션에 상태 저장
-	    session.setAttribute("lastLogType", "출근");
+	    session.setAttribute("logInoutType", "퇴근");
 		
 		return "redirect:/";
 	}
@@ -184,7 +183,7 @@ public class EmpController {
 		logInoutDao.insert(newDto);
 		
 		// [추가] 세션에 상태 저장
-	    session.setAttribute("lastLogType", "퇴근");
+	    session.setAttribute("logInoutType", "출근");
 		
 		return "redirect:/";
 	}
@@ -227,7 +226,6 @@ public class EmpController {
 			throws IllegalStateException, IOException {
 
 		// 회원가입 정보 등록
-
 		empDao.join(empDto);
 
 
@@ -236,7 +234,7 @@ public class EmpController {
 			int attachNo = attachService.save(attach);
 			empDao.connect(empDto.getEmpId(), attachNo);
 		}
-
+		
 		return "redirect:./joinFinish";
 
 	}

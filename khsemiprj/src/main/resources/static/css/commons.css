@@ -297,11 +297,16 @@ a.btn {
     - .table > thead > tr > th 과 같이 부등호 표시로 연결
 */
 .table {
+/*     width: 100%; */
+/*     border: 1px solid #2d3436; */
+/*     border: none; */
+/*     border-bottom: 1px solid #ebebeb; */
+/*     border-collapse: collapse; */
+    
     width: 100%;
-    /* border: 1px solid #2d3436; */
-    border: none;
-    border-bottom: 1px solid #ebebeb;
-    border-collapse: collapse;
+    border-collapse: separate; /* border-radius를 위해 separate 사용 */
+    border-spacing: 0;
+    margin-top: 10px;
 }
 
 .table > thead > tr > th, 

@@ -88,7 +88,13 @@ public class PlanDao {
 				+ "left join aprv_head h on p.plan_head_no = h.HEAD_NO "
 				+ "order by p.plan_no desc";
 		return jdbcTemplate.query(sql, planHeadMapper);
-	}
+	}	
+	
+	//plan head type ='일반'조인 조회
+	public List<PlanHeadVO> selectListPlanHeadType() {
+		String sql = "select * from head where head_type = '일반'";
+		return jdbcTemplate.query(sql, planHeadMapper);
+	}	
 	
 	//전체 일정 조회
     public List<PlanDto> selectList(String empId) {

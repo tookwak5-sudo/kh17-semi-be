@@ -68,7 +68,7 @@
 	    border-bottom: 1px solid #f1f5f9;
 	}
 	.info-row:last-child { border-bottom: none; }
-	.info-label { width: 120px; color: #64748b; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+	.info-label { width: 125px; color: #64748b; font-weight: 500; display: flex; align-items: center; gap: 8px; }
 	.info-value { color: #1e293b; font-weight: 600; }
 	
 	/* 테이블 헤더 색상 및 디자인 개선 */
@@ -166,9 +166,9 @@
 	
 	    <div class="info-card">
 	        <h3>상세 정보</h3>
-	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-location-dot"></i> 주소</div><div class="info-value">${findEmpDto.empAddress1}</div></div>
-	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-cake-candles"></i> 생년월일</div><div class="info-value">${findEmpDto.empBirth}</div></div>
-	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-clock-rotate-left"></i> 마지막 로그인</div><div class="info-value">2026.06.01</div></div>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-location-dot"></i>주소</div><div class="info-value">${findEmpDto.empAddress1}</div></div>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-cake-candles"></i>생년월일</div><div class="info-value">${findEmpDto.empBirth}</div></div>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-clock-rotate-left"></i>마지막 로그인</div><div class="info-value">2026.06.01</div></div>
 	    </div>
 	</div>
 

@@ -120,7 +120,6 @@
 <%-- loginId : ${sessionScope.loginId} --%>
 <%-- empGrade : ${sessionScope.empGrade} --%>
 
-
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-1400">
         <div class="flex-area flex-vertical">
@@ -155,7 +154,6 @@
 	                </div>
                 </c:if>
             </div>
-
             <!-- 메뉴 -->
            <div> 
            		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
