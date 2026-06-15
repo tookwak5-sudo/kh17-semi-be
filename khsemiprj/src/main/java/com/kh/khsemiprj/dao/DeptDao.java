@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.mapper.DeptMapper;
+import com.kh.khsemiprj.mapper.DeptVOMapper;
+import com.kh.khsemiprj.vo.DeptVO;
 
 @Repository
 public class DeptDao {
@@ -15,7 +17,8 @@ public class DeptDao {
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private DeptMapper deptMapper;
-	
+	@Autowired
+	private DeptVOMapper deptVOMapper;
 	
 	//부서 등록
 	public void insert(DeptDto deptDto) {
@@ -41,10 +44,10 @@ public class DeptDao {
 		return jdbcTemplate.query(sql, deptMapper);
 	}
 	
-	public List<DeptDto> selectListAll() {
+	public List<DeptVO> selectListAll() {
 		String sql = "select * from dept where dept_use_yn = 'Y' order by dept_name asc";
 		Object[] params = {  };
-		return jdbcTemplate.query(sql, deptMapper, params);
+		return jdbcTemplate.query(sql, deptVOMapper, params);
 	}
 	
 	//내 부서와 관련된 부서만 조회

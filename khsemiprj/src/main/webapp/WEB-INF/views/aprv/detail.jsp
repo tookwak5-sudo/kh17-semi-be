@@ -5,6 +5,9 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
+<!-- 결재 상세 스크립트 -->
+<script src="/js/aprv/detail.js"></script>
+
 <script>
 
 	$(function () {
@@ -50,31 +53,35 @@
 			<div>
 				<h1 class="mt-0 mb-0">
 					<!-- 결재 분류 -->
-					[${aprvDto.aprvFormNo}]
+					[${aprvDetailVO.headName}]
 					<!-- 제목 -->
-					${aprvDto.aprvTitle}
+					${aprvDetailVO.aprvTitle}
 					<!-- 상태 -->
 				</h1>
 			</div>
 			<div class="ms-40">
-				${aprvDto.aprvWriter}
+				<span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span>
 			</div>
 		</div>
 	</div>
 	
-	<c:if test="${not empty aprvDto.aprvWtime}">
+	<c:if test="${not empty aprvDetailVO.aprvWtime}">
 	<div class="cell mt-20">
-		<div>기안일 : <fmt:formatDate value="${aprvDto.aprvWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
+		<div>기안일 : <fmt:formatDate value="${aprvDetailVO.aprvWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
 	</div>
+	<hr>
 	</c:if>
 	<div class="cell mt-20">
-		<div>상태 : ${aprvDto.aprvStatus}</div>
+	기한 : ${aprvDetailVO.aprvSdate} ~ ${aprvDetailVO.aprvEdate}
 	</div>
-	
+	<hr>
+	<div class="cell mt-20">
+		<div>상태 : ${aprvDetailVO.aprvStatus}</div>
+	</div>
 	<hr>
 	<div class="cell" style="min-height:50px">
 		<!-- 있는 그대로의 출력을 수행하는 태그(엔터, 스페이스 등을 인정) -->
-		<pre>${aprvDto.aprvContent}</pre>
+		<pre>${aprvDetailVO.aprvContent}</pre>
 	</div>
 	<c:if test="${attachDto != null}">
 	<hr>
@@ -97,10 +104,10 @@
 	        	<table class="table">
 	        		<thead>
 	        			<tr>
-		        			<th>부서</th>
-		        			<th>결재자</th>
-		        			<th>직책</th>
-		        			<th>상태</th>
+		        			<th width="25%">부서</th>
+		        			<th width="25%">결재자</th>
+		        			<th width="25%">직책</th>
+		        			<th width="25%">상태</th>
 	        			</tr>
 	        		</thead>
 	        		<tbody id="line1List" class="lineList">
@@ -109,17 +116,21 @@
 	        				<td>${aprvLineList.deptName}</td>
 	        				<td>${aprvLineList.empName}</td>
 	        				<td>${aprvLineList.empPositionName}</td>
+        					<td data-no="${aprvLineList.aprvLineNo}" style="font-weight:bold;">
 	        				<c:choose>
-		        				<c:when test="${aprvDto.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvLineList.empId == sessionScope.loginId}">
-        					<td>
-        						<button type="button" class="btn btn-positive line-accept">승인</button>
-        						<button type="button" class="btn btn-negaitve line-deny">반려</button>
-        					</td>
+		        				<c:when test="${aprvDetailVO.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvLineList.empId == sessionScope.loginId}">
+        						<button type="button" class="btn btn-positive line-accept" onclick="openModal('${aprvLineList.aprvLineNo}', '승인')">승인</button>
+        						<button type="button" class="btn btn-negative line-deny" onclick="openModal('${aprvLineList.aprvLineNo}', '반려')">반려</button>
 		        				</c:when>
 		        				<c:otherwise>
-	        				<td>${aprvLineList.aprvLineStatus}</td>
+			        				<c:choose>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
+			        				</c:choose>
 		        				</c:otherwise>
 	        				</c:choose>
+        					</td>
 	        			</tr>
 	        			</c:forEach>
 	        		</tbody>
@@ -134,10 +145,10 @@
 	        	<table class="table">
 	        		<thead>
 	        			<tr>
-		        			<th>부서</th>
-		        			<th>결재자</th>
-		        			<th>직책</th>
-		        			<th>상태</th>
+		        			<th width="25%">부서</th>
+		        			<th width="25%">결재자</th>
+		        			<th width="25%">직책</th>
+		        			<th width="25%">상태</th>
 	        			</tr>
 	        		</thead>
 	        		<tbody id="line2List" class="lineList">
@@ -148,7 +159,21 @@
 	        				<td>${aprvLineList.deptName}</td>
 	        				<td>${aprvLineList.empName}</td>
 	        				<td>${aprvLineList.empPositionName}</td>
-	        				<td>${aprvLineList.aprvLineStatus}</td>
+		        			<td data-no="${aprvLineList.aprvLineNo}" style="font-weight:bold;">
+	        				<c:choose>
+		        				<c:when test="${aprvDetailVO.aprvStatus == '대기' && aprvLineList.aprvLineStatus == '대기' && aprvDetailVO.aprvCurrentSeq == '2' && aprvLineList.empId == sessionScope.loginId}">
+        						<button type="button" class="btn btn-positive line-accept" onclick="openModal('${aprvLineList.aprvLineNo}', '승인')">승인</button>
+        						<button type="button" class="btn btn-negative line-deny" onclick="openModal('${aprvLineList.aprvLineNo}', '반려')">반려</button>
+		        				</c:when>
+		        				<c:otherwise>
+			        				<c:choose>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span></c:when>
+			        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
+			        				</c:choose>
+		        				</c:otherwise>
+		        			</c:choose>
+        					</td>
 	        			</tr>
 	        			</c:forEach>
 	        			</c:when>
@@ -166,14 +191,34 @@
 	<div class="cell right">
 		<form method="post" class="form-check">
 		<input type="hidden" name="aprvNo" value="${param.aprvNo}" />
-		<c:if test="${aprvDto.aprvStatus == '임시저장' && aprvDto.aprvWriter == sessionScope.loginId}">
+		<c:if test="${aprvDetailVO.aprvStatus == '임시저장' && aprvDetailVO.aprvWriter == sessionScope.loginId}">
 		<button class="btn btn-positive aprv-save">기안하기</button>
-		<a class="btn btn-negative" href="./edit?aprvNo=${aprvDto.aprvNo}">수정</a>
+		<a class="btn btn-negative" href="./edit?aprvNo=${aprvDetailVO.aprvNo}">수정</a>
 		<button class="btn btn-negative aprv-delete">삭제</button>
 		</c:if>
 		<a class="btn btn-neutral" href="./list">목록으로</a>
 		</form>
 	</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <div class="modal-header center">결재 승인</div>
+        
+        <div class="modal-body">
+            <form id="popupForm" class="flex-area">
+            	<div class="cell w-100">
+            		<input type="hidden" name="aprvLineNo" value="" />
+            		<input type="hidden" name="aprvLineStatus" value="대기" />
+            		<input type="text" name="aprvLineComment" class="field w-100" placeholder="결재 코멘트" />
+				</div>
+            </form>
+        </div>
+        <div class="modal-footer">
+        	<button type="button" class="btn btn-negative" onclick="closeModal()">취소</button>
+        	<button type="button" class="btn btn-positive" onclick="aprvLineUpdate()">입력 완료</button>
+        </div>
+    </div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

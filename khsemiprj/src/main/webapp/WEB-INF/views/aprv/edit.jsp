@@ -102,6 +102,9 @@
 								picker1.setDateRange(null, null);
 								$(".picker-sdate").val("");
 								$(".picker-edate").val("");
+								$('input[name=aprvLeave]').val("");
+							} else {
+								$('input[name=aprvLeave]').val(count);
 							}
 						}
 				    }
@@ -282,9 +285,10 @@
 		            <label><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i></label>
 		        </div>
 		        <div class="cell mt-0">
+					<input type="hidden" name="aprvLeave" value="${aprvDto.aprvLeave}" />
 		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일">
 		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvSdate}">
+		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvEdate}">
 		        </div>
 	        </div>
 	        <div class="w-66 vacationType">
@@ -399,13 +403,13 @@
         
         <div class="modal-body">
             <form id="popupForm1" class="flex-area">
-            	<div class="cell w-25">
-	                <div id="deptList1" class="dept-tree border">
+            	<div class="cell w-25 me-10">
+	                <div id="deptList1" class="dept-tree border height-limit">
 						<ul>
 						</ul>
 					</div>
 				</div>
-				<div class="cell w-75">
+				<div class="cell w-75 ms-10">
 					<!-- 테이블 -->
 					<div class="cell center">
 						<table class="table" style="margin-top: 15px;">
@@ -440,13 +444,13 @@
         
         <div class="modal-body">
             <form id="popupForm2" class="flex-area">
-            	<div class="cell w-25">
-	                <div id="deptList2" class="dept-tree border">
+            	<div class="cell w-25 me-10">
+	                <div id="deptList2" class="dept-tree border height-limit">
 						<ul>
 						</ul>
 					</div>
 				</div>
-				<div class="cell w-75">
+				<div class="cell w-75 ms-10">
 					<!-- 테이블 -->
 					<div class="cell center">
 						<table class="table" style="margin-top: 15px;">

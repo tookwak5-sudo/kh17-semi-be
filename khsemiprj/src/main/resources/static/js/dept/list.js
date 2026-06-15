@@ -16,7 +16,10 @@ function createTree(node) {
         node.children.forEach(child => {
             ul.appendChild(createTree(child));
         });
-    }
+    } else {
+		$(li).find(".toggle-btn").text("");
+		$(li).addClass("no-children");
+	}
     return li;
 }
 
@@ -33,7 +36,10 @@ function createTree2(node) {
         node.children.forEach(child => {
             ul.appendChild(createTree2(child));
         });
-    }
+    } else {
+		$(li).find(".toggle-btn").text("");
+		$(li).addClass("no-children");
+	}
     return li;
 }
     

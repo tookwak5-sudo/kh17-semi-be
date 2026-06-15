@@ -31,7 +31,7 @@
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 1200px;
+    width: 400px;
     max-width: 90%;
     max-height: 80%;
     transform: translateY(-20px);
@@ -51,12 +51,28 @@
 }
 
 .modal-body {
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .form-group {
     margin-bottom: 12px;
 }
+/* 
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+ */
 /* 버튼 스타일 */
 .modal-footer {
     display: flex;
