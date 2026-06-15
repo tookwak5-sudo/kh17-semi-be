@@ -57,7 +57,7 @@ public class MemoController {
 		memoDto.setMemoSenderId(loginId);
 		
 		memoDao.insert(memoDto);
-		return "redirect:./writeComplete";
+		return "redirect:./list?send";
 	}
 	
 	@GetMapping("/writeComplete")
@@ -101,4 +101,16 @@ public class MemoController {
 		
 		return "memo/list";
 	}
+	
+	@PostMapping("/countMemo")
+	public String list(HttpSession session, Model model) {
+		String receiverId = (String) session.getAttribute("loginId");
+		
+		int countMemo = memoDao.memoCount(receiverId);
+		
+		model.addAttribute("countMemo", countMemo);
+		
+		return "template/header";
+	}
+	
 }
