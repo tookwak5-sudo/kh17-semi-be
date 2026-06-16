@@ -23,6 +23,20 @@
 .custom-card:hover {
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
 }
+
+.table tbody tr td.empty-msg {
+    display: table-cell !important;      /* 셀 속성 강제 */
+    text-align: center !important;       /* 가로 중앙 */
+    vertical-align: middle !important;   /* 세로 중앙 */
+    width: 100% !important;              /* 표 전체 너비 활용 */
+    padding: 50px 0 !important;          /* 높이 확보 */
+    border-bottom: none !important;      /* 줄 제거 */
+}
+
+/* 템플릿의 tr 자체가 정렬을 방해하지 않도록 처리 */
+.table tbody tr.empty-row {
+    display: table-row !important;
+}
 </style>
 
 <script>
@@ -46,18 +60,21 @@
 </script>
 <script type="text/template" id="emp-template">
 <tr>
-	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp_DYNAMIC_ID">
-	<label for="emp_DYNAMIC_ID"></label>
-	</td>
-	<td></td>
-	<td></td>
-	<td></td>
-	<td></td>
+    <td>
+        <input type="checkbox" name="emp" class="emp-checkbox" id="">
+        <label for="" class="emp-label"></label>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
 </tr>
 </script>
 <script type="text/template" id="emp-empty-template">
-<tr>
-	<td colspan="5">검색된 사원이 없습니다</td>
+<tr class="empty-row">
+    <td colspan="5" class="empty-msg">
+        검색된 사원이 없습니다
+    </td>
 </tr>
 </script>
 
@@ -96,13 +113,16 @@
 			<div class="cell center w-100">
 				<table class="table" style="margin-top: 15px;">
 					<thead>
-						<tr>
-							<th><input type="checkbox" name="emp" class="emp-checkbox check-emp-all"></th>
-							<th>부서</th>
-							<th>사원아이디</th>
-							<th>이름</th>
-							<th>직급</th>
-						</tr>
+					    <tr>
+					        <th style="width: 50px;">
+					            <input type="checkbox" name="emp" class="emp-checkbox check-emp-all" id="check-emp-all">
+					            <label for="check-emp-all"></label>
+					        </th>
+					        <th>부서</th>
+					        <th>사원아이디</th>
+					        <th>이름</th>
+					        <th>직급</th>
+					    </tr>
 					</thead>
 					<tbody id="empList">
 					</tbody>
@@ -115,16 +135,16 @@
 				<a class="btn btn-positive dept-change">변경</a>
 			</div>
 			<div id="deptList2" class="dept-tree">
-				<ul>
-					<li class="dept-item">
-						<div class="dept-row">
-							<span class="toggle-btn" style="visibility:hidden;">▼</span>
-							<input type="checkbox" name="dept" class="dept-checkbox" id="dept2_" value="">
-							<label for="dept2_" class="dept-name">부서없음</label>
-						</div>
-					</li>
-				</ul>
-			</div>
+		    <ul>
+		        <li class="dept-item no-children">
+		            <div class="dept-row">
+		                <span class="toggle-btn" style="visibility:hidden;">▶</span>
+		                <input type="checkbox" name="dept" class="dept-checkbox" id="dept2_none" value="">
+		                <label for="dept2_none" class="dept-name">부서없음</label>
+		            </div>
+		        </li>
+		        </ul>
+		</div>
 		</div>
 	</div>
 	

@@ -310,6 +310,7 @@ a.btn {
     자식(하위) 선택자
     - .table > thead > tr > th 과 같이 부등호 표시로 연결
 */
+
 .table {
 /*     width: 100%; */
 /*     border: 1px solid #2d3436; */
@@ -331,6 +332,9 @@ a.btn {
     border-bottom: 1px solid #ebebeb;
     padding: 0.2em;
     height: 37px;
+    
+    /* 추가: 세로 중앙 정렬 핵심 */
+    vertical-align: middle;
 }
 
 .table > tbody > tr:hover
@@ -372,6 +376,27 @@ a.btn {
 .table.table-stripe > tbody > tr:nth-child(2n) 
 {
     background-color: #dfe6e9;
+}
+
+.table input[type="checkbox"] {
+    display: none !important;
+}
+
+/* 사원 목록 테이블의 첫 번째 열(체크박스+라벨 영역) 강제 중앙 정렬 */
+
+.table > tbody > tr > td:first-child {
+    display: flex !important;          /* <td> 내부를 플렉스 컨테이너로 */
+    justify-content: center !important; /* 가로 중앙 */
+    align-items: center !important;     /* 세로 중앙 */
+    height: 37px;                       /* 기존 tr 높이와 동일하게 맞춤 */
+}
+
+/* 디자인된 체크박스가 담긴 label 태그 정렬 */
+.table > tbody > tr > td:first-child label {
+    display: flex !important;          /* label 내부를 플렉스 컨테이너로 */
+    align-items: center !important;     /* 세로 중앙 정렬 */
+    margin: 0 !important;              /* 여백 제거 */
+    cursor: pointer;
 }
 
 /* 
