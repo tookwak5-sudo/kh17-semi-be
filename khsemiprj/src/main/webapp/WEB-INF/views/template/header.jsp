@@ -75,6 +75,14 @@
 		    align-items: center;
 		    justify-content: center;
 		}
+		
+		/* 고정 헤더 */
+		.sticky-header {
+		    position: sticky;
+		    top: 0; 
+		    z-index: 9999; 
+		    background-color: #ffffff; 
+		}
     </style>
     
     <!-- jQuery CDN -->
@@ -102,49 +110,50 @@ empGrade : ${sessionScope.empGrade}
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-1200">
         <div class="flex-area flex-vertical">
-            <!-- 헤더 영역 -->
-            <div class="flex-area">
-                <div class="w-25 flex-area flex-center">
-                    <img src="https://www.dummyimage.com/200x50">
-                </div>
-                <div class="w-50 flex-area flex-center">
-                    <h1>KH정보교육원 그룹웨어 프로젝트</h1>
-                </div>
-                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-	                <div class="w-25 flex-area" style="justify-content: right; align-items: end;">
-	                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 50px;background-color: #739BED;text-align: center;" class="notification-box"> 
-	                    	<a href="/memo/list" 
-					           style="font-size:20px; text-decoration: none;" 
-					           onclick="
-					               var w = 650; 
-					               var h = 650; 
-					               var left = (screen.width/2) - (w/2); 
-					               var top = (screen.height/2) - (h/2); 
-					               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
-					               return false;
-					         ">
-					            <i class="fa-solid fa-bell bell-icon" style="color: #FFFFFF;"><span class="badge">1</span></i>
-					        </a>
-	                    </div>
+        	<div class="sticky-header">
+	            <!-- 헤더 영역 -->
+	            <div class="flex-area">
+	                <div class="w-25 flex-area flex-center">
+	                    <img src="https://www.dummyimage.com/200x50">
 	                </div>
-                </c:if>
-            </div>
-
-            <!-- 메뉴 -->
-           <div> 
-           		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-	            	<c:if test="${sessionScope.empGrade == '2'}">
-	            	<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
+	                <div class="w-50 flex-area flex-center">
+	                    <h1>KH정보교육원 그룹웨어 프로젝트</h1>
+	                </div>
+	                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+		                <div class="w-25 flex-area" style="justify-content: right; align-items: end;">
+		                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 50px;background-color: #739BED;text-align: center;" class="notification-box"> 
+		                    	<a href="/memo/list" 
+						           style="font-size:20px; text-decoration: none;" 
+						           onclick="
+						               var w = 650; 
+						               var h = 650; 
+						               var left = (screen.width/2) - (w/2); 
+						               var top = (screen.height/2) - (h/2); 
+						               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+						               return false;
+						         ">
+						            <i class="fa-solid fa-bell bell-icon" style="color: #FFFFFF;"><span class="badge">1</span></i>
+						        </a>
+		                    </div>
+		                </div>
+	                </c:if>
+	            </div>
+	
+	            <!-- 메뉴 -->
+	           <div> 
+	           		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+		            	<c:if test="${sessionScope.empGrade == '2'}">
+		            	<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
+						</c:if>
+						<c:if test="${sessionScope.empGrade == '1'}">
+							<jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
+						</c:if>
+						<c:if test="${sessionScope.empGrade == '0'}">           	
+						<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
+						</c:if>
 					</c:if>
-					<c:if test="${sessionScope.empGrade == '1'}">
-						<jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
-					</c:if>
-					<c:if test="${sessionScope.empGrade == '0'}">           	
-					<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
-					</c:if>
-				</c:if>
-            </div>
-
-            <!-- 사이드바 및 컨텐츠 -->
-            <div style="min-height: 450px;" class="flex-area">
-                <div class="w-200 flex-fill">
+	            </div>
+			</div>
+	            <!-- 사이드바 및 컨텐츠 -->
+	            <div style="min-height: 450px;" class="flex-area">
+	                <div class="w-200 flex-fill">
