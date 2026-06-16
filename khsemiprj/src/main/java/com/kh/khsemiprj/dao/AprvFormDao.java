@@ -1,5 +1,6 @@
 package com.kh.khsemiprj.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +46,7 @@ public class AprvFormDao {
 	@Autowired
 	AprvFormVOMapper aprvFormVOMapper;
 
-	private Set<String> allowColumns = Set.of("form_name", "form_head");
+	private Set<String> allowColumns = Set.of("form_name", "head_type","form_head_no");
 
 	AprvFormDao(AprvMapper aprvMapper) {
 		this.aprvMapper = aprvMapper;
@@ -117,43 +118,63 @@ public class AprvFormDao {
 	}
 	
 	public int count(PageVO pageVO) {
-		if(pageVO.isList()) return count();
-		if(!allowColumns.contains(pageVO.getColumn())) return count();
-		
-		String sql = "select count(*) from aprv_form "
-					+ "where instr("+pageVO.getColumn()+", ?) > 0";
-		Object[] params = { pageVO.getKeyword() };
-		return jdbcTemplate.queryForObject(sql, int.class, params);
+	    if(pageVO.isList()) return count();
+	    if(!allowColumns.contains(pageVO.getColumn())) return count();
+	    
+	    // 조인문 추가 및 동적 분기 처리
+	    String sql = "select count(*) from aprv_form af "
+	               + "left join aprv_head ah on af.form_head_no = ah.head_no ";
+	    
+	    if (pageVO.getColumn().equals("form_name")) {
+	        sql += "where instr(af.form_name, ?) > 0";
+	    }
+	    else if (pageVO.getColumn().equals("form_head_no")) {
+	        sql += "where instr(ah.head_name, ?) > 0"; // 👈 af.form_head_no 에서 ah.head_name 으로 변경
+	    } else if (pageVO.getColumn().equals("head_type")) {
+	        sql += "where instr(ah.head_type, ?) > 0";
+	    }
+	    
+	    Object[] params = { pageVO.getKeyword() };
+	    return jdbcTemplate.queryForObject(sql, int.class, params);
 	}
 	
-	
 	public List<AprvFormSelectVO> selectList(PageVO pageVO) {
-		if (pageVO.isList())
-			return selectList(pageVO.getPage(), pageVO.getSize());
-		if (!allowColumns.contains(pageVO.getColumn()))
-			return selectList(pageVO.getPage(), pageVO.getSize());
+	    if (pageVO.isList()) return selectList(pageVO.getPage(), pageVO.getSize());
+	    if (!allowColumns.contains(pageVO.getColumn())) return selectList(pageVO.getPage(), pageVO.getSize());
 
-		// 빈 검색 sql문장을 먼저 만든후 조건에 따라 분기 시켰습니다.
-		String search = "";
+	    // 1. head_type 누락 보완한 메인 베이스 쿼리
+	    String sql = "select * from (" 
+	               + "select rownum rn, TMP.* from ("
+	               + "select af.*, ah.head_name, ah.head_type " 
+	               + "from aprv_form af "
+	               + "left join aprv_head ah on af.form_head_no = ah.head_no ";
 
-		if (pageVO.getColumn().equals("form_name")) {
-			search = "where instr(af.form_name, ?) > 0 ";
-		}
+	    List<Object> paramList = new ArrayList<>();
 
-		else if (pageVO.getColumn().equals("form_head")) {
-			search = "where instr(ah.head_name,?) >0 ";
-		}
+	    // 2. 동적 조건 검증 및 변수 바인딩 매칭
+	    if (pageVO.getColumn().equals("form_name")) {
+	        sql += "where instr(af.form_name, ?) > 0 ";
+	        paramList.add(pageVO.getKeyword());
+	    }
+	    else if (pageVO.getColumn().equals("form_head_no")) {
+	        sql += "where instr(ah.head_name, ?) > 0 "; // 👈 af.form_head_no 에서 ah.head_name 으로 변경
+	        paramList.add(pageVO.getKeyword());
+	    } 
+	    else if (pageVO.getColumn().equals("head_type")) {
+	        sql += "where instr(ah.head_type, ?) > 0 ";
+	        paramList.add(pageVO.getKeyword());
+	    }
 
-		else if (pageVO.getColumn().equals("head_type")) {
-			search = "where instr(ah.head_type,?) >0 ";
-		}
+	    // 3. 정렬 및 페이징 마감
+	    sql += "order by af.form_no desc "
+	         + ") TMP " 
+	         + ") where rn between ? and ?";
+	         
+	    paramList.add(pageVO.getBeginRownum());
+	    paramList.add(pageVO.getEndRownum());
 
-		String sql = "select * from (" + "select rownum rn, TMP.* from ("
-				+ "select af.*, ah.head_name from aprv_form af "
-				+ "left join aprv_head ah on af.form_head_no = ah.head_no " + search + "order by af.form_no desc"
-				+ ") TMP " + ") where rn between ? and ?";
-		Object[] params = { pageVO.getKeyword(), pageVO.getBeginRownum(), pageVO.getEndRownum() };
-		return jdbcTemplate.query(sql, aprvFormSelectMapper, params);
+	    Object[] params = paramList.toArray();
+	    return jdbcTemplate.query(sql, aprvFormSelectMapper, params);
 	}
 
 	public List<AprvFormVO> selectListForInsert() {
@@ -211,10 +232,10 @@ public class AprvFormDao {
 	
 	
 	//head_no 찾아주는 메소드
-	public int findHeadNo(String headName, String headType) {
-	    String sql = "select head_no from aprv_head where head_name = ? and head_type = ?";
+	public int findHeadNo(String headName) {
+	    String sql = "select head_no from aprv_head where head_name = ?";
 	    try {
-	        return jdbcTemplate.queryForObject(sql, Integer.class, headName, headType);
+	        return jdbcTemplate.queryForObject(sql, Integer.class, headName);
 	    } catch (Exception e) {
 	        return 0; 
 	    }

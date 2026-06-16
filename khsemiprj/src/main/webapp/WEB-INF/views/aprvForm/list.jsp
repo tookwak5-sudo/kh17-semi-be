@@ -69,13 +69,12 @@
         <jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
     </div>
         
-    <div class="cell center">
-        <form action="./list" method="get">
-            <select name="column" class="field">
-                <option value="form_name" ${param.column == 'form_name' ? 'selected' : ''}>양식명</option>
-                <option value="form_head" ${param.column == 'form_head_no' ? 'selected' : ''}>구분(업무/비용 등)</option>
-<!--             	head_type 넣어야합니다. -->
-            </select>
+   <div class="cell center">
+    	<form action="./list" method="get">
+        	<select name="column" class="field">
+            <option value="form_name" ${param.column == 'form_name' ? 'selected' : ''}>양식명</option>
+            <option value="form_head_no" ${param.column == 'form_head_no' ? 'selected' : ''}>구분(업무/비용 등)</option>
+         	</select>
             <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
             <button type="submit" class="btn btn-positive">
                 <i class="fa-solid fa-magnifying-glass"></i>

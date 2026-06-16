@@ -6,6 +6,9 @@
 
 <script>
 	$(function() {
+		// 인증 실패 횟수 카운트 변수 선언 (누락 수정)
+		var certFailCount = 0; 
+		
 		//상태객체
 		var state = {
 				empIdValid: false,
@@ -175,8 +178,7 @@
 	     
 	   //폼검사
        $(".form-check").on("submit", function(){
-           $(this).find("select[name]").trigger("input");
-           $(this).find("input[name], textarea[name]").trigger("blur");
+           $(this).find("input[name]").trigger("blur");
            return state.ok();
       	 });
 	});

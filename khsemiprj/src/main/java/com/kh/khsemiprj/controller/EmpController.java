@@ -30,7 +30,6 @@ import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
-import com.kh.khsemiprj.service.EmpLeaveService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -59,9 +58,6 @@ public class EmpController {
 
 	@Autowired
 	private LogAccessDao logAccessDao;
-
-	@Autowired
-	private EmpLeaveService empLeaveService;
 
 	@GetMapping("/login")
 	public String login() {
@@ -424,7 +420,7 @@ public class EmpController {
 		empDto.setEmpPassword(newPassword);
 		empDao.changePassword(empDto);
 
-		return "redirect:emp/mypage";
+		return "redirect:/emp/mypage";
 
 	}
 
@@ -517,5 +513,7 @@ public class EmpController {
 			return "redirect:/images/no_image.png";
 		}
 	}
+	
+	
 
 }
