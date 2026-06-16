@@ -1,9 +1,7 @@
 package com.kh.khsemiprj.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,17 +33,20 @@ public class AprvFormController {
 	@Autowired
 	private AprvFormDao aprvFormDao;
 
-	// 1. 결재 양식 목록 조회
 	@GetMapping("/list")
 	public String list(@ModelAttribute PageVO pageVO, Model model) {
-		
-		List<AprvFormSelectVO> list = aprvFormDao.selectList(pageVO);
-		model.addAttribute("list", list);
-		//페이딩을 위해 추가로 전달할 값이 있다면 전달
-		int count = aprvFormDao.count(pageVO);
-		pageVO.setCount(count);
-		model.addAttribute("pageVO", pageVO);
-		return "aprvForm/list";
+	    
+	    
+	    int count = aprvFormDao.count(pageVO);
+	    pageVO.setCount(count);
+	    
+	
+	    List<AprvFormSelectVO> list = aprvFormDao.selectList(pageVO);
+	    
+	    model.addAttribute("list", list);
+	    model.addAttribute("pageVO", pageVO);
+	    
+	    return "aprvForm/list";
 	}
 
 	// 2. 결재 양식 상세 보기
@@ -73,28 +74,35 @@ public class AprvFormController {
 
 	// 4. 결재 양식 신규 등록 처리 (텍스트 + 파일)
 	@PostMapping("/insert")
-	public String insert(@ModelAttribute AprvFormDto aprvFormDto, @RequestParam(value = "head_name") String headName,
-			@RequestParam(value = "head_type") String headType, @RequestParam(required = false) MultipartFile attach)
-			throws IllegalStateException, IOException {
+	public String insert(
+	        @RequestParam String formName,
+	        @RequestParam String formExplain,
+	        @RequestParam String headName,
+	        @RequestParam(required = false) String formUseYn,
+	        @RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
 
-		// 1. 화면에서 넘어온 명칭과 타입으로 진짜 head_no를 DB에서 조회함
-		int headNo = aprvFormDao.findHeadNo(headName, headType);
+	    // 1. DTO 객체 수동 생성 후 파라미터 매핑
+	    AprvFormDto aprvFormDto = new AprvFormDto();
+	    aprvFormDto.setFormName(formName);
+	    aprvFormDto.setFormExplain(formExplain);
+	    
+	    // 2. 체크박스 null 처리 해주고 Y/N 세팅
+	    aprvFormDto.setFormUseYn(formUseYn != null ? "Y" : "N");
 
-		if (headNo == 0) {
-			// DB에 없는 조합이면 강제로 인서트 막고 에러 방지용 리다이렉트 처리
-			return "redirect:/aprvForm/insert?error=invalid_head";
-		}
+	    // 3. 화면에서 넘어온 명칭으로 진짜 head_no를 DB에서 조회
+	    int headNo = aprvFormDao.findHeadNo(headName);
 
-		// 2. 찾아온 번호를 DTO에 수동으로 수수료 넘기듯 꽂아넣음
-		aprvFormDto.setFormHeadNo(headNo);
+	    if (headNo == 0) {
+	        return "redirect:/aprvForm/insert?error=invalid_head";
+	    }
 
-		// 3. 체크박스 null 처리 해주고
-		aprvFormDto.setFormUseYn(aprvFormDto.getFormUseYn() != null ? "Y" : "N");
+	    // 4. 찾아온 외래키 번호를 DTO에 세팅
+	    aprvFormDto.setFormHeadNo(headNo);
 
-		// 4. 서비스 호출해서 인서트 진행
-		aprvFormService.registerFormFile(aprvFormDto, attach);
+	    // 5. 서비스 호출해서 인서트 진행 (파일이 없어도 알아서 처리됨)
+	    aprvFormService.registerFormFile(aprvFormDto, attach);
 
-		return "redirect:./list";
+	    return "redirect:./list";
 	}
 
 	// 5. 결재 양식 수정 페이지 열기
@@ -135,7 +143,7 @@ public class AprvFormController {
 			@RequestParam(value = "head_name") String headName, @RequestParam(value = "head_type") String headType,
 			@RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
 
-		int headNo = aprvFormDao.findHeadNo(headName, headType);
+		int headNo = aprvFormDao.findHeadNo(headName);
 
 		if (headNo == 0) {
 			// 이상한 조합이면 수정 안 시키고 에러 리다이렉트

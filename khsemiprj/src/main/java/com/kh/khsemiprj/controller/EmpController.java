@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
+import com.kh.khsemiprj.dao.EmpExitDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.LogAccessDao;
 import com.kh.khsemiprj.dao.LogInoutDao;
@@ -29,6 +30,8 @@ import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
 import com.kh.khsemiprj.service.EmpLeaveService;
+import com.kh.khsemiprj.vo.EmpExitVO;
+import com.kh.khsemiprj.vo.PageVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -57,6 +60,9 @@ public class EmpController {
 
 	@Autowired
 	private EmpLeaveService empLeaveService;
+	
+	@Autowired
+	private EmpExitDao empExitDao;
 
 	@GetMapping("/login")
 	public String login() {
@@ -510,5 +516,7 @@ public class EmpController {
 			return "redirect:/images/no_image.png";
 		}
 	}
+	
+	
 
 }
