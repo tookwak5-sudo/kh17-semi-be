@@ -5,7 +5,6 @@
     
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 	
-<!-- 부서 목록 디자인 css -->
 <link rel="stylesheet" type="text/css" href="/css/dept/list.css">
 
 <style>
@@ -19,7 +18,7 @@
     transition: all 0.3s ease; /* 마우스 올렸을 때 자연스러운 효과용 (선택) */
 }
 
-/* 마우스를 올렸을 때 그림자가 살짝 더 선명해지는 효과 (선택사항, 원치 않으면 삭제 가능) */
+/* 마우스를 올렸을 때 그림자가 살짝 더 선명해지는 효과 */
 .custom-card:hover {
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
 }
@@ -36,6 +35,35 @@
 /* 템플릿의 tr 자체가 정렬을 방해하지 않도록 처리 */
 .table tbody tr.empty-row {
     display: table-row !important;
+/* [수정] 헤더 영역 내부 요소를 세로축 기준 완벽한 중앙(Center) 정렬 */
+.card-header {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* 버튼 높이에 맞춰 h2가 정중앙에 오도록 설정 */
+}
+
+/* [수정] h2 폰트 자체의 여백을 리셋하고 라인 높이를 정돈 */
+.custom-card h2 {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1; /* 글자가 위아래로 치우치지 않게 고정 */
+}
+
+/* 우측 버튼 레이아웃 */
+.card-header .btn-area {
+    display: flex; 
+    gap: 6px;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    align-items: center;
+}
+
+/* 버튼 자체의 여백 리셋 */
+.card-header .btn {
+    margin: 0 !important;
+>>>>>>> refs/remotes/origin/hero_20260611-1
 }
 </style>
 
@@ -44,10 +72,8 @@
 	const deptList = JSON.parse('${deptListJson}');
 </script>
 
-<!-- 부서 목록 스크립트 -->
 <script src="/js/dept/list.js"></script>
 
-<!-- 화면에 나오지 않으면서 언제든지 불러서 쓸 수 있는 화면 조각(템플릿) -->
 <script type="text/template" id="dept-template">
 <li class="dept-item">
     <div class="dept-row">
@@ -83,11 +109,13 @@
 	</div>
 	<div class="cell flex-area">
 		<div class="cell w-25 custom-card">
-			<div class="cell flex-area" style="justify-content: space-between; align-items: center;">
+			<div class="cell card-header">
 				<h2>부서 목록</h2>
-				<a href="/dept/insert" class="btn btn-positive">부서 등록</a>				
+				<div class="btn-area">
+					<a href="/dept/insert" class="btn btn-positive">부서 등록</a>				
+				</div>
 			</div>
-			<div id="deptList" class="dept-tree">
+			<div id="deptList" class="dept-tree" style="margin-top: 20px;">
 				<ul>
 					<li class="dept-item">
 						<div class="dept-row">
@@ -99,19 +127,17 @@
 				</ul>
 			</div>
 		</div>
+		
 		<div class="cell w-50 ms-10 me-10 custom-card">
-			<div class="cell">
-				<div class="cell flex-area" style="display: flex; justify-content: space-between; align-items: center;">
-					<h2>부서별 사원 목록</h2>
-					<div style="display: flex; gap: 6px;">
-						<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
-						<a class="btn btn-positive dept-emp-demotion" style="display:none;">부서장 해제</a>					
-					</div>
+			<div class="cell card-header">
+				<h2>부서별 사원 목록</h2>
+				<div class="btn-area">
+					<a class="btn btn-positive dept-emp-change" style="display:none;">부서장 변경</a>
+					<a class="btn btn-positive dept-emp-demotion" style="display:none;">부서장 해제</a>					
 				</div>
 			</div>
-			<!-- 테이블 -->
 			<div class="cell center w-100">
-				<table class="table" style="margin-top: 15px;">
+				<table class="table" style="margin-top: 20px;">
 					<thead>
 					    <tr>
 					        <th style="width: 50px;">
@@ -129,10 +155,13 @@
 				</table>
 			</div>
 		</div>
+		
 		<div class="cell w-25 dept-change-list custom-card">
-			<div class="cell flex-area" style="justify-content: space-between; align-items: center;">
+			<div class="cell card-header">
 				<h2>이동할 부서 목록</h2>
-				<a class="btn btn-positive dept-change">변경</a>
+				<div class="btn-area">
+					<a class="btn btn-positive dept-change">변경</a>
+				</div>
 			</div>
 			<div id="deptList2" class="dept-tree">
 		    <ul>

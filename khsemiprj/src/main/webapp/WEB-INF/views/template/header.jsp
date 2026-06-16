@@ -133,7 +133,7 @@
         <div class="flex-area flex-vertical">
         	<div class="sticky-header">
             	<!-- 헤더 영역 -->
-	            <div class="flex-area">
+	            <div class="flex-area" style="background: #f8f9fa">
 	                <div class="w-25 flex-area flex-center">
 	                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
 	                </div>
