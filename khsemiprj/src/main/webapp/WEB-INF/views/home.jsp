@@ -219,6 +219,9 @@
 			<div class="cell">
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        <div class="cell">
 	        	<label>유형</label>
@@ -230,6 +233,9 @@
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        </div>
 			<div class="cell">
@@ -754,8 +760,12 @@
             </c:if>
 			</div>
 	           	<div class="card p-20" style="height: 300px; overflow-y: auto;">
+		            <div style="display: flex; justify-content: space-between; align-items: center;">
 		            <h3>공지사항</h3>
-		            <hr>
+		            <a href="/board/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a> 
+                    </div>  
 		            <c:forEach var="notice" items="${noticeList}">
 		                <div
 		                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">

@@ -5,48 +5,51 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
 <style>
+/* -----------------------------------------
+커스텀 체크박스 클래스 (.checkbox-custom) [형태 토글박스]
+----------------------------------------- */
 /* 1. 기본 체크박스 숨기기 */
 input[type="checkbox"] {
-    display: none;
+ display: none;
 }
 
 /* 체크박스를 스위치 모양으로 */
 input[type="checkbox"] + label {
-    position: relative;
-    padding-left: 60px; /* 스위치 크기만큼 여백 */
-    cursor: pointer;
+ position: relative;
+ padding-left: 60px; /* 스위치 크기만큼 여백 */
+ cursor: pointer;
 }
 
 input[type="checkbox"] + label::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 50px;
-    height: 26px;
-    background-color: #cbd5e1;
-    border-radius: 15px;
-    transition: 0.3s;
+ content: "";
+ position: absolute;
+ left: 0;
+ width: 50px;
+ height: 26px;
+ background-color: #cbd5e1;
+ border-radius: 15px;
+ transition: 0.3s;
 }
 
 input[type="checkbox"] + label::after {
-    content: "";
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    width: 18px;
-    height: 18px;
-    background-color: white;
-    border-radius: 50%;
-    transition: 0.3s;
+ content: "";
+ position: absolute;
+ left: 4px;
+ top: 4px;
+ width: 18px;
+ height: 18px;
+ background-color: white;
+ border-radius: 50%;
+ transition: 0.3s;
 }
 
 /* 체크 되었을 때 */
 input[type="checkbox"]:checked + label::before {
-    background-color: #4f46e5;
+ background-color: #4f46e5;
 }
 
 input[type="checkbox"]:checked + label::after {
-    transform: translateX(24px);
+ transform: translateX(24px);
 }
 </style>
 

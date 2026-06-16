@@ -4,6 +4,55 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
+<style>
+/* -----------------------------------------
+   커스텀 체크박스 클래스 (.checkbox-custom) [형태 토글박스]
+----------------------------------------- */
+/* 1. 기본 체크박스 숨기기 */
+input[type="checkbox"] {
+    display: none;
+}
+
+/* 체크박스를 스위치 모양으로 */
+input[type="checkbox"] + label {
+    position: relative;
+    padding-left: 60px; /* 스위치 크기만큼 여백 */
+    cursor: pointer;
+}
+
+input[type="checkbox"] + label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 50px;
+    height: 26px;
+    background-color: #cbd5e1;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+input[type="checkbox"] + label::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+/* 체크 되었을 때 */
+input[type="checkbox"]:checked + label::before {
+    background-color: #4f46e5;
+}
+
+input[type="checkbox"]:checked + label::after {
+    transform: translateX(24px);
+}
+</style>
+
 <form action="./insert" method="post" enctype="multipart/form-data">
 
 	<div class="container w-950 mt-50 mb-50">
@@ -39,13 +88,11 @@
 
 		</div>
 
-		<div class="cell mb-0 mt-20">
-			<label>사용 여부</label>
-		</div>
 		<div class="cell mt-0">
-			<input type="checkbox" name="formUseYn" value="Y">
-		</div>
-
+        	<input type="checkbox" id="formUseYn" name="formUseYn" value="Y">
+        	<label for="formUseYn">부서 사용 여부</label>
+        </div>
+		
 		<div class="cell mt-20">
 			<label>양식 설명 <i class="fa-solid fa-asterisk red"></i></label>
 			<textarea name="formExplain" rows="10" required class="field w-100"

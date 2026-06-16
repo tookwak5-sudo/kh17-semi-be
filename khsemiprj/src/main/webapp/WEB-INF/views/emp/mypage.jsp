@@ -6,42 +6,6 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <style>
-/* 	/* 마이페이지 정보 테이블 전체 감싸는 상자 */ */
-/* 	.mypage-info-box { */
-/* 		border: 1px solid #dcdcdc; */
-/* 		border-radius: 8px; */
-/* 		overflow: hidden; /* 라운드 테두리 밖으로 배경색 안 삐져나가게 */ */
-/* 		margin-bottom: 40px; */
-/* 	} */
-
-/* 	/* 마이페이지 전용 가로 정렬 행 (기존 flex-area 대체) */ */
-/* 	.mypage-row { */
-/* 		display: flex; */
-/* 		align-items: center; */
-/* 		min-height: 48px; */
-/* 		border: none; /* 혹시 모를 기존 border 초기화 */ */
-/* 	} */
-	
-/* 	/* 행과 행 사이의 구분선 (마지막 줄은 제외) */ */
-/* 	.mypage-row:not(:last-child) { */
-/* 		border-bottom: 1px solid #e9e9e9; */
-/* 	} */
-	
-/* 	/* 왼쪽 항목 이름 (아이디, 이메일 등) */ */
-/* 	.mypage-label { */
-/* 		background-color: #f8fafc; */
-/* 		color: black; */
-/* 		font-weight: bold; */
-/* 		padding: 12px 20px; */
-/* 		border-right: 1px solid #e9e9e9; */
-/* 		text-align: left; */
-/* 	} */
-	
-/* 	/* 오른쪽 실제 데이터 값 */ */
-/* 	.mypage-value { */
-/* 		padding: 12px 20px; */
-/* 		font-weight: 500; */
-/* 	} */
 	/* 전체 컨테이너 여백 */
 	.mypage-container { max-width: 1000px; margin: 40px auto; }
 	
@@ -118,34 +82,56 @@
 	/* 섹션 제목 컨테이너 */
 	.section-header {
 	    display: flex;
-	    align-items: center;
-	    margin-bottom: 24px;
-	    padding-left: 8px;
-	    border-left: 4px solid #4f46e5; /* 좌측에 인디고 포인트 바 */
+        flex-direction: column; /* 세로 정렬 */
+        align-items: flex-start; /* 좌측 기준 정렬 */
+        margin-bottom: 24px;
+        padding-left: 12px;
+        border-left: 4px solid #4f46e5;
 	}
 	
 	/* 제목 텍스트 스타일 */
 	.section-title {
 	    font-size: 20px;
-	    font-weight: 700;
-	    color: #1e293b;
-	    margin: 0;
-	    letter-spacing: -0.5px; /* 자간을 좁혀 더 정돈된 느낌 */
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
 	}
 	
 	/* 부가적인 강조를 위한 서브 문구 (선택) */
 	.section-subtitle {
 	    font-size: 14px;
-	    color: #64748b;
-	    margin-left: 10px;
+        color: #64748b;
+        margin-top: 5px; /* 제목과 부제목 사이 간격 */
+        margin-left: 0;
+	}
+	
+	.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 30px;
+    position: relative;
+    display: inline-block;
+	}
+	.page-title::after {
+	    content: '';
+	    position: absolute;
+	    left: 0; bottom: -8px;
+	    width: 40px; height: 4px;
+	    background: #4f46e5; /* 포인트 컬러 */
+	    border-radius: 2px;
 	}
 </style>
 
 
-
-<h1>마이 페이지</h1>
-
 <div class="container w-950 mt-50 mb-50">
+	<div style="margin-bottom: 40px;">
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            마이 페이지
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+	</div>
+	
 	<div class="section-header">
 	    <h1 class="section-title">${findEmpDto.empName}님의 프로필 정보</h1>
 	    <span class="section-subtitle">기본 및 상세 설정 관리</span>
@@ -216,9 +202,9 @@
 
 	<div class="chart-section">
 		<div class="section-header">
-	    <h1 class="section-title">${findEmpDto.empName}님의 근태 정보</h1>
-	    <span class="section-subtitle">휴가 관련 정보</span>
-		</div>
+	    <h1 class="section-title">${findEmpDto.empName}님의 근무 리포트</h1>
+	    <span class="section-subtitle">근무 시간</span>
+		</div> 
 		<div class="chart-header">
 			<span class="btn-arrow" id="prevMonthBtn">&lt;</span>
 			<span class="period-text" id="periodDisplay">2026. 05 ~ 2026. 06</span>

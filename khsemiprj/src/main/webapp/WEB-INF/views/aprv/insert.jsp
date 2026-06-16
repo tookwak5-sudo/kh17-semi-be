@@ -192,7 +192,9 @@
 </script>
 <script type="text/template" id="emp-template">
 <tr>
-	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp"></td>
+	<td>
+        <input type="checkbox" name="emp" class="emp-checkbox checkbox-custom" id="emp_DYNAMIC">
+        <label for="emp_DYNAMIC" class="my-checkbox-label"></label> </td>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -357,7 +359,7 @@
         <div class="cell mt-40 mb-50 right">
         	<input type="hidden" name="aprvStatus" class="aprv-status" value="">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
-        	<button class="btn aprv-temp-insert" style="background-color:#93A8AC;">
+        	<button class="btn btn-save aprv-temp-insert">
                 임시저장
             </button>
             <button class="btn btn-positive aprv-insert">

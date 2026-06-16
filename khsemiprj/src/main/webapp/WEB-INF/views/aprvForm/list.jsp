@@ -76,7 +76,7 @@
                 <option value="form_head" ${param.column == 'form_head_no' ? 'selected' : ''}>구분(업무/비용 등)</option>
 <!--             	head_type 넣어야합니다. -->
             </select>
-            <input type="text" name="keyword" class="field" placeholder="검색어 입력" value="${param.keyword}">
+            <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
             <button type="submit" class="btn btn-positive">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <span>검색</span>
