@@ -17,7 +17,7 @@
 	}
 </style>
 
-<div class="container w-1200 mt-50 mb-50">
+<div class="container w-100 mt-50 mb-50">
 
 	<div class="cell center mb-0">
 		<h1 class="mb-0">결재 목록</h1>

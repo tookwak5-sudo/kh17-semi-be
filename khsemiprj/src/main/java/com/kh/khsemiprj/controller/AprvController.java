@@ -182,7 +182,7 @@ public class AprvController {
 						.memoReceiverId(aprvLine1IdList.get(i))
 						.memoSenderId("systemadmin")
 						.memoTitle("신규 결재 알림")
-						.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+						.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 						.memoReadStatus("N")
 						.memoType("결재")
 						.build();
@@ -206,7 +206,7 @@ public class AprvController {
 							.memoReceiverId(aprvLine2IdList.get(i))
 							.memoSenderId("systemadmin")
 							.memoTitle("신규 결재 알림")
-							.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+							.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 							.memoReadStatus("N")
 							.memoType("결재")
 							.build();

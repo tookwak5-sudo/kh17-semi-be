@@ -153,6 +153,8 @@ $(function(){
 	                	var template = $("#emp-template").text();
 	                	const tr = $.parseHTML(template)[1];
 	                	$(tr).find(".emp-checkbox").attr("value", empId);
+						$(tr).find(".emp-checkbox").attr("id", "emp_" + empId);
+						$(tr).find("label").attr("for", "emp_" + empId);
 	                	$(tr).find("td:eq(1)").text(deptName);
 	                	$(tr).find("td:eq(2)").text(empId);
 	                	if(empId == deptEmpId) {

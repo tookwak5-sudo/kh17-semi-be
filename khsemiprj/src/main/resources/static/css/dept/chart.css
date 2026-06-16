@@ -129,7 +129,7 @@ h2 { color: #333; margin-bottom: 30px; }
 /* 📦 조직도 외곽 컨테이너 (화면 중앙 정렬 및 여백 공간 확보) */
 .dept-chart-wrapper {
     width: 100%;
-    max-width: 1200px; /* 화면이 너무 퍼지지 않도록 최대 너비 제한 (자유롭게 조절 가능) */
+    /* max-width: 1200px; */ /* 화면이 너무 퍼지지 않도록 최대 너비 제한 (자유롭게 조절 가능) */
 margin: 0 auto;
 /* padding: 0 20px; */
 box-sizing: border-box;

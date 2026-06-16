@@ -31,7 +31,7 @@ public class EmpPositionDeptDao {
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
 				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
-				+ "where d.dept_no = ? "
+				+ "where d.dept_no = ? and e.emp_valid = 'Y' "
 				+ "order by e.emp_grade desc, p.emp_position_no asc, e.emp_name asc";
 		Object[] params = {deptNo};
 		return jdbcTemplate.query(sql, empPositionDeptVOMapper, params);
@@ -55,7 +55,7 @@ public class EmpPositionDeptDao {
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
-				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no is null";
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no is null and e.emp_valid = 'Y'";
 		Object[] params = {};
 		return jdbcTemplate.query(sql, empPositionDeptVOMapper, params);
 	}

@@ -97,7 +97,7 @@
 				<table class="table" style="margin-top: 15px;">
 					<thead>
 						<tr>
-							<th><input type="checkbox" name="emp" class="emp-checkbox check-emp-all"></th>
+							<th><input type="checkbox" id="emp_all" name="emp" class="emp-checkbox check-emp-all"><label for="emp_all"></label></th>
 							<th>부서</th>
 							<th>사원아이디</th>
 							<th>이름</th>

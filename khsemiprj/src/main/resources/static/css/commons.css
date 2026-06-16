@@ -72,6 +72,13 @@
 .w-1400 { width:1400px !important; }
 .w-1500 { width:1500px !important; }
 .w-1600 { width:1600px !important; }
+.w-clamp { 
+	width: clamp(1000px, 95%, 1920px);
+    /* 화면 중앙 배치 */
+    margin: 0 auto;
+    /* 필요시 배경색이나 여백 설정 */
+    /* padding: 0 20px; */
+}
 /* 폭 비율 설정 */
 .w-100 { width:100% !important; }
 .w-80 { width:80% !important; }
