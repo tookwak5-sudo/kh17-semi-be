@@ -72,6 +72,9 @@
         // 2) 작성 글 보기 링크의 href 주소를 변경
         	var searchUrl = "/board/list?column=board_writer&keyword=" + memberId;
         	$("#link-view-posts").attr("href", searchUrl);
+        	
+        	var memoUrl = "/board/list?column=board_writer&keyword=" + memberId;
+        	$("#link-view-posts").attr("href", searchUrl);
 
         // 3) 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
         	$("#user-context-menu").css({
@@ -94,7 +97,24 @@
 		<h1 class="mb-0">${param.boardHead} 게시판</h1>
 	</div>
 
-	<div class="cell center">타인에 대한 무분별한 비방글은 예고 없이 삭제될 수 있습니다.</div>
+	<!-- <div class="cell center">타인에 대한 무분별한 비방글은 예고 없이 삭제될 수 있습니다.</div> -->
+		<div class="cell center">
+	    <form action="./list" method="get">
+	        
+	        <c:if test="${param.boardHead != null}">
+	            <input type="hidden" name="boardHead" value="${param.boardHead}">
+	        </c:if>
+	        <select name="column" class="field">
+	            <option value="board_title" ${param.column == 'board_title' ? "selected" : ""}>제목</option>
+	            <option value="board_writer" ${param.column == 'board_writer' ? "selected" : ""}>작성자</option>
+	        </select> 
+	        <input type="text" name="keyword" class="field" placeholder="검색어 입력" value="${param.keyword}">
+	        
+	        <button type="submit" class="btn btn-positive">
+	            <i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+	        </button>
+	    </form>
+	</div>
 
 	<div class="cell right">
 		<c:if test="${sessionScope.loginId != null}">
@@ -197,7 +217,7 @@
 	</div>
 <!-- 페이지네이션 -->
 	<div class="cell mt-40">
-		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+		<jsp:include page="/WEB-INF/views/template/board-pagination.jsp"></jsp:include>
 	</div>
 	<div class="cell center">
 	    <form action="./list" method="get">
@@ -222,6 +242,9 @@
 <div id="user-context-menu" style="display: none;">
     <a href="#" id="link-view-posts">
         <i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
+    </a>
+    <a href="#" id="link-memo-write">
+        <i class="fa-solid fa-memo"></i> 쪽지 보내기
     </a>
 </div>
 

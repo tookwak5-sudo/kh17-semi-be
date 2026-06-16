@@ -326,7 +326,7 @@
 		
 		loadList();
 		
-		// [목록 불러오기 로직]
+		//목록 불러오기 로직
 		function loadList() {
 			$(".reply-area").empty();
 			
@@ -335,9 +335,45 @@
 				method: "post",
 				data: {replyOrigin : boardNo},
 				success: function(response) {
-				    var displayLimit = 15;
+				    
+				    var displayLimit = 15; //15개 단위로 그룹화
+				    
+				    var totalValidCount = response.filter(function(r) { return r.replyStatus !== 'Y'; }).length;
+				    
+				    var currentChunkContainer = null; 
+				    var chunkIndex = 0;         //그룹 박스 번호
+				    var validCounter = 0;       //현재 그룹 박스 안에 들어간 정상 댓글 수
+				    var globalValidCounter = 0; //전체 진행된 정상 댓글 수
 					
 					for(var i=0; i < response.length; i++) {
+					    if (currentChunkContainer === null || (validCounter === displayLimit && globalValidCounter < totalValidCount)) {
+					        //이미 박스가 있는데 새로 여는 거라면 카운트 리셋
+					        if (currentChunkContainer !== null) {
+					            chunkIndex++;
+					            validCounter = 0; 
+					        }
+					        
+					        var startNum = chunkIndex * displayLimit + 1;
+					        var endNum = Math.min((chunkIndex + 1) * displayLimit, totalValidCount);
+					        
+					        var isOpen = (chunkIndex === 0);
+					        var iconClass = isOpen ? "fa-minus" : "fa-plus";
+					        var displayStyle = isOpen ? "block" : "none";
+					        
+					        if (totalValidCount > displayLimit) {
+					            var chunkHeader = `
+					                <div class="reply-chunk-header" data-target="chunk-` + chunkIndex + `" style="border: 1px solid #ddd; padding: 12px 15px; margin-bottom: -1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #fbfbfb; border-radius: 3px;">
+					                    <span style="font-weight: bold; font-size: 14px; color: #333;">` + startNum + ` ~ ` + endNum + ` 번째 댓글</span>
+					                    <i class="fa-solid ` + iconClass + `" style="color: #666;"></i>
+					                </div>
+					            `;
+					            $(".reply-area").append(chunkHeader);
+					        }
+					        
+					        currentChunkContainer = $(`<div id="chunk-` + chunkIndex + `" class="reply-chunk-container" style="display: ` + (totalValidCount > displayLimit ? displayStyle : 'block') + `; margin-bottom: 20px;"></div>`);
+					        $(".reply-area").append(currentChunkContainer);
+					    }
+					    
 						var template = $("#reply-viewer-template").text();
 						var html = $.parseHTML(template);
 						$(html).attr("data-key", response[i].replyNo);
@@ -350,7 +386,7 @@
 						    $(html).find(".btn-nested-reply").remove(); 
 						}
 						
-						// 삭제된 댓글 처리
+						//삭제된 댓글 처리
 						if(response[i].replyStatus=='Y'){
 							$(html).find(".reply-writer").text("(알수없음)").removeClass("writer-name").css("cursor", "default");
 							$(html).find(".reply-content").text("(삭제된 댓글입니다)").addClass("gray");
@@ -360,15 +396,14 @@
 							$(html).find(".reply-thumbs-up-count").remove();
 							$(html).find(".reply-btn-dislike").remove();
 							$(html).find(".reply-thumbs-down-count").remove();
-							$(html).find(".reply-image-wrapper").hide(); // 삭제된 댓글 사진 숨김
+							$(html).find(".reply-image-wrapper").hide(); 
 						} else {
-							// 정상 댓글 처리
+						    //정상 댓글 처리
 							$(html).find(".reply-writer").text(response[i].replyWriter).attr("data-id", response[i].replyWriter);
 							$(html).find(".reply-thumbs-up-count").text(response[i].replyLikecount);
 							$(html).find(".reply-thumbs-down-count").text(response[i].replyDislikecount);
 							$(html).find(".reply-content").text(response[i].replyContent);
 							
-							// ★ 새로 추가된 이미지 렌더링 로직 (정상 댓글에만 적용)
 							if (response[i].attachNo != null && response[i].attachNo > 0) {
 						        var imageUrl = "/download/modern?attachNo=" + response[i].attachNo;
 						        $(html).find(".reply-image").attr("src", imageUrl);
@@ -387,12 +422,15 @@
 					    	} else{
 					    		$(html).find(".reply-btn-dislike").removeClass("fa-solid").addClass("fa-regular");
 					    	}
+					    	
+					    	//정상 댓글일 때만 카운트를 센다
+					    	validCounter++;
+					    	globalValidCounter++;
 						}
 						
 						var wtime = moment(response[i].replyWtime).fromNow();
 						$(html).find(".reply-wtime").text(wtime);
 						
-						// 권한별 버튼 숨김
 						if(response[i].owner == false) {
 							$(html).find(".btn-reply-edit").remove();
 							$(html).find(".btn-reply-delete").remove();
@@ -404,49 +442,33 @@
 							$(html).find(".btn-nested-reply").remove();
 						}
 						
-						if (i >= displayLimit) {
-				            $(html).addClass("reply-hidden").hide(); 
-				        }
-
-						$(".reply-area").append(html);
+						//완성된 댓글을 그룹 박스에 추가
+						currentChunkContainer.append(html);
 					}
-					
-					// 더보기 토글
-					if (response.length > displayLimit) {
-				        var hiddenCount = response.length - displayLimit;
-				        var toggleBtnHtml = `
-				            <div class="center mt-20 reply-toggle-wrapper">
-				                <button type="button" class="btn btn-neutral w-100 btn-reply-toggle" style="padding: 15px; font-weight: bold;">
-				                    <i class="fa-solid fa-chevron-down"></i> 
-				                    <span class="toggle-text">댓글 더보기 (` + hiddenCount + `개)</span>
-				                </button>
-				            </div>
-				        `;
-				        $(".reply-area").append(toggleBtnHtml);
-				    }
 				}
 			});
 		}
 		
-		// [이벤트: 더보기 토글]
-		$(".reply-area").on("click", ".btn-reply-toggle", function() {
-			var $hiddenReplies = $(".reply-hidden");
+		//이벤트: 인벤 스타일 아코디언 그룹 토글
+		$(".reply-area").on("click", ".reply-chunk-header", function() {
+		    // 내가 누른 헤더가 담당하는 그룹 박스 ID
+			var targetId = $(this).data("target");
+			var $container = $("#" + targetId);
 			var $icon = $(this).find("i");
-			var $text = $(this).find(".toggle-text");
-            var hiddenCount = $hiddenReplies.length;
 
-			if ($hiddenReplies.is(":hidden")) {
-				$hiddenReplies.slideDown(200);
-				$icon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
-				$text.text("댓글 접기");
-			} else {
-				$hiddenReplies.slideUp(200);
-				$icon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
-				$text.text("댓글 더보기 (" + hiddenCount + "개)");
+            // 숨겨져 있으면 열면서 아이콘을 - 로 변경
+			if ($container.is(":hidden")) {
+				$container.slideDown(200);
+				$icon.removeClass("fa-plus").addClass("fa-minus");
+			} 
+			// 열려있으면 닫으면서 아이콘을 + 로 변경
+			else {
+				$container.slideUp(200);
+				$icon.removeClass("fa-minus").addClass("fa-plus");
 			}
 		});
-		
-		// [이벤트: 일반 댓글 첨부파일]
+	
+		//이벤트: 일반 댓글 첨부파일
 		$(".btn-attach-image").on("click", function() {
 			$("#reply-file-input").click();
 		});
@@ -473,7 +495,7 @@
 			$("#preview-img").attr("src", ""); 
 		});
 
-		// [이벤트: 일반 댓글 등록]
+		//이벤트: 일반 댓글 등록
 		$(".btn-reply").on("click", function(){
 			var replyContent = $(".field-reply").val();
 			if(replyContent.length == 0) return; 
@@ -502,10 +524,10 @@
 			});
 		});
 		
-		// [이벤트: 대댓글 폼 열기]
+		//이벤트: 대댓글 폼 열기
 		$(".reply-area").on("click", ".btn-nested-reply", function() {
 		    var $replyViewer = $(this).closest(".reply-viewer");
-		    var isAlreadyOpen = $replyViewer.find(".nested-reply-editor").length > 0;
+		    var isAlreadyOpen = $replyViewer.next(".nested-reply-editor").length > 0;
 		    $(".nested-reply-editor").remove();
 		    
 		    if (isAlreadyOpen) return; 
@@ -520,17 +542,23 @@
 			            <i class="fa-solid fa-circle-xmark red btn-nested-preview-remove" style="position:absolute; top:-8px; right:-8px; cursor:pointer; font-size:20px; background:white; border-radius:50%;"></i>
 			        </div>
 			        <textarea class="field w-100 field-nested-reply" rows="2" placeholder="답글을 남겨주세요"></textarea>
-			        <div class="right mt-10">
-			            <button type="button" class="btn btn-neutral btn-nested-attach-image" style="flex-shrink: 0;"><i class="fa-solid fa-camera"></i> 사진 첨부</button>
-			            <button type="button" class="btn btn-neutral btn-nested-cancel">취소</button>
-			            <button type="button" class="btn btn-positive btn-nested-save" data-parent="`+parentNo+`">등록</button>
+				        <div class="mt-10" style="display: flex; justify-content: space-between; align-items: center;">
+				            <div>
+				                <button type="button" class="btn btn-neutral btn-nested-attach-image" style="flex-shrink: 0;">
+				                    <i class="fa-solid fa-camera"></i> 사진 첨부
+				                </button>
+				            </div>
+			            <div>
+			                <button type="button" class="btn btn-neutral btn-nested-cancel">취소</button>
+			                <button type="button" class="btn btn-positive btn-nested-save" data-parent="`+parentNo+`">등록</button>
+			            </div>
 			        </div>
 			    </div>
 			`;
 		    $(this).closest(".reply-viewer").after(html);
 		});
 		
-		// [이벤트: 대댓글 첨부파일]
+		//이벤트: 대댓글 첨부파일
 		$(".reply-area").on("click", ".btn-nested-attach-image", function() {
 		    $(this).closest(".nested-reply-editor").find(".nested-file-input").click();
 		});
@@ -563,7 +591,7 @@
 		    $(this).closest(".nested-reply-editor").remove();
 		});
 		
-		// [이벤트: 대댓글 등록]
+		//이벤트: 대댓글 등록
 		$(".reply-area").on("click", ".btn-nested-save", function() {
 		    var $editor = $(this).closest(".nested-reply-editor");
 		    var parentNo = $(this).data("parent");
@@ -593,7 +621,7 @@
 		    });
 		});
 		
-		// [이벤트: 댓글 삭제, 수정]
+		//이벤트: 댓글 삭제, 수정
 		$(".reply-area").on("click", ".btn-reply-delete", function(){
 			var choice = window.confirm("정말 삭제하시겠습니까?");
 			if(choice == false) return;
@@ -650,7 +678,7 @@
 			});
 		});
 		
-		// [이벤트: 댓글 좋아요 / 싫어요]
+		//이벤트: 댓글 좋아요 / 싫어요
 		$(".reply-area").on("click", ".reply-btn-like", function(){
 			var $thisLikeBtn = $(this);
 			var $thisDislikeBtn = $(this).siblings(".reply-btn-dislike");
