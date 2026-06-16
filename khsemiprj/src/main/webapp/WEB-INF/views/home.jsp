@@ -20,18 +20,33 @@
 }
 
 /* 우측 리스트 영역 (비율 3) */
-.right-section {
-	flex: 3;
-	display: flex;
-	flex-direction: column;
-	gap: 20px; /* 공지사항과 결재목록 사이 간격 */
-}
-
-    .card {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
+/* 우측 리스트 영역 (비율 3) */
+	.right-section {
+	    flex: 3;
+	    display: flex;
+	    flex-direction: column;
+	    gap: 20px; /* 두 카드 사이의 정밀한 간격 */
+	    height: 662px; /* 💡 핵심: 좌측 달력 카드(620px + 패딩40px + 테두리2px)와 전체 높이를 완벽히 일치시킴 */
+	}
+	
+	.card {
+	    background: #fff;
+	    border: 1px solid #ddd;
+	    border-radius: 8px;
+	    box-sizing: border-box; /* 패딩과 테두리가 높이에 포함되도록 고정 */
+	}
+	
+	/* 두 카드가 우측 영역을 정확히 5:5 반씩 나눠 가지도록 설정 */
+	.right-section > .card {
+	    flex: 1; 
+	    height: 0; /* flex-fill 처럼 균등 분배를 위해 기본 높이 초기화 */
+	}
+	
+	/* 카드 내부 제목의 기본 마진이 위쪽 공백을 만드므로 초기화 */
+	.card h3 {
+	    margin-top: 0;
+	    margin-bottom: 15px;
+	}
     
     .lightpick {
     z-index: 20000 !important;
@@ -352,9 +367,10 @@
 				method: "post",
 				data: data,
 				success : function(response) {
+					var planType = $("[name=planType]").val();
 					closeCalendarModal();
 					//홈 화면 새로고침
-					location.reload();
+					location.href = "/?alarm=calendarWriter&planType=" + planType;
 				}
 			});
 		});
@@ -374,9 +390,10 @@
 	            data: { planNo : planNo },
 	            success: function(response){
 	                alert("삭제되었습니다.");
+	                var planType = $("[name=planType]").val();
 	                closeCalendarModal();
 	                //홈 화면 새로고침
-	                location.reload();
+	                location.href = "/?alarm=calendarDelete&planType=" + planType;
 	            }
 	        });
 	    });
@@ -441,9 +458,11 @@
 				method:"post",
 				data: data,
 				success: function(response){
+					var planType = $("[name=planType]").val();
 					closeCalendarModal();
 					//홈 화면 새로고침
-					location.reload();
+					//location.reload();
+					location.href = "/?alarm=calendarEdit&planType=" + planType;
 				}
 			});
 		});
@@ -622,7 +641,7 @@
         //날짜 클릭시 클릭한 날짜와 함께 
         calendar.render();
         //처음 로드 될때 회사 디폴트
-        filterCalendarEvents("회사");
+        filterCalendarEvents("${param.planType == null ? '회사' : param.planType}");
 		
         document.addEventListener('click', function(e) {
             // 클릭된 요소가 '+더보기' 링크인지 확인
@@ -653,6 +672,8 @@
                 }
             });
         }
+        
+        
     });
     
     function closeCalendarModal() {
@@ -699,7 +720,11 @@
 							                </a>
 			                            </td>
 					  					<td>${rAprvList.empName}</td>
-					  					<td>${rAprvList.aprvStatus}</td>
+									    <td>
+										   	<div class="cell" style="color: black; font-weight:bold; text-align: center;">
+												${rAprvList.aprvStatus} 					    	 
+										   	</div>
+										</td>
 					  				</tr>
 				  				</c:forEach>
 			  				</c:if>
@@ -742,7 +767,25 @@
 							                </a>
 			                            </td>
 					  					<td>${myList.empName}</td>
-					  					<td>${myList.aprvStatus}</td>
+					  					<td>
+										    <c:if test="${myList.aprvStatus == '승인'}">
+										        <div class="cell" style="color: #5A86E3; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '반려'}">
+										        <div class="cell" style="color: #E86A7A; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '대기'}">
+										        <div class="cell" style="color: black; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										</td>
 					  				</tr>
 				  				</c:forEach>
 				  			</c:if>

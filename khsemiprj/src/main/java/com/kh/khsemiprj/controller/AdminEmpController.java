@@ -112,6 +112,6 @@ public class AdminEmpController {
 		//3. 휴가 테이블 등록
 		empLeaveDao.insert(empId);
 		
-		return "redirect:list";
+		return "redirect:/admin/emp/list?alarm=empApprove";
 	}
 }

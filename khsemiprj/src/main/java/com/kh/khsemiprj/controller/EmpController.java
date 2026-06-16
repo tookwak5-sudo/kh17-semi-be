@@ -17,11 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
+import com.kh.khsemiprj.dao.EmpExitDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.LogAccessDao;
 import com.kh.khsemiprj.dao.LogInoutDao;
 import com.kh.khsemiprj.dto.CertDto;
 import com.kh.khsemiprj.dto.EmpDto;
+import com.kh.khsemiprj.dto.EmpExitDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.dto.LogAccessDto;
 import com.kh.khsemiprj.dto.LogInoutDto;
@@ -40,6 +42,9 @@ public class EmpController {
 	@Autowired
 	private EmpDao empDao;
 
+	@Autowired
+	private EmpExitDao empExitDao;
+	
 	@Autowired
 	private CertDao certDao;
 
@@ -88,9 +93,10 @@ public class EmpController {
 		}
 
 		// 퇴사 회원이라면
-//		if(findEmpDto.isExit()) {
-//			return "redirect:./login?exit";
-//		}
+		EmpExitDto empExitDto = empExitDao.selectOne(empDto.getEmpId());
+		if(empExitDto != null && empExitDto.isExit()) {
+			return "redirect:./login?exit";
+		}
 
 		// - 현재시간을 생성(완벽하게 동일한 시간으로 설정해야 할 경우 자바에서 시간을 생성해서 양측에 추가)
 		// Timestamp now = Timestamp.valueOf(LocalDateTime.now());
@@ -234,14 +240,7 @@ public class EmpController {
 			int attachNo = attachService.save(attach);
 			empDao.connect(empDto.getEmpId(), attachNo);
 		}
-		
-		return "redirect:./joinFinish";
-
-	}
-
-	@RequestMapping("/joinFinish")
-	public String joinFinish() {
-		return "emp/joinFinish";
+		return "redirect:/emp/login?alarm=join";
 	}
 
 	// 아이디 찾기 페이지

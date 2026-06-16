@@ -87,7 +87,7 @@
 							<c:otherwise>${aprvDetailVO.aprvStatus}</c:otherwise>
 							</c:choose>
 						</td>
-						<td class="left" style="padding-left:20px;"><span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span></td>
+						<td class="left" style="padding-left:20px;"><a class="writer-name" data-id="${aprvDetailVO.aprvWriter}">[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</a></td>
 						<td><fmt:formatDate value="${aprvDetailVO.aprvWtime}" pattern="yyyy-MM-dd HH:mm" /></td>
 					</tr>
 				</c:forEach>
@@ -127,6 +127,78 @@
         	<button type="button" class="btn btn-negative" onclick="closeModal()">취소</button>
         </div>
     </div>
+</div>
+
+<style>
+	#user-context-menu {
+   		position: absolute;
+   		background-color: white;
+   		border: 1px solid #ccc;
+   		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+   		border-radius: 3px;
+   		padding: 5px 0;
+   		z-index: 1000; 
+	}
+
+	#user-context-menu a {
+   		display: block;
+   		padding: 8px 15px;
+   		color: #333;
+   		text-decoration: none;
+   		font-size: 14px;
+	}
+
+	#user-context-menu a:hover {
+   		background-color: #f1f3f5; 
+	}
+	
+	.writer-name {
+		cursor:pointer;
+	}
+</style>
+
+<script>
+	$(document).on("click", ".writer-name", function(e) {
+	    e.stopPropagation(); //클릭 이벤트가 문서 전체로 퍼지는 것을 막음 (바로 닫히는 현상 방지)
+	    var memberId = $(this).data("id");
+		if(!memberId) return; // 탈퇴한 사용자 등 아이디가 없으면 무시
+	
+		// 작성 글 보기 링크의 href 주소를 변경
+		var searchUrl = "/aprv/list?aprvStatus=&column=aprv_writer&keyword=" + memberId;
+		$("#link-view-posts").attr("href", searchUrl);
+	
+		// 쪽지 보내기 링크의 주소를 변경
+		var searchUrl = "/aprv/list?aprvStatus=&column=aprv_writer&keyword=" + memberId;
+		$("#link-send-memo").attr("onclick", "sendMemo('" + memberId + "')");
+		
+		// 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
+		$("#user-context-menu").css({
+	    	top: e.pageY + 10 + "px", // 마우스 포인터보다 살짝 아래
+	    	left: e.pageX + "px"      // 마우스 포인터 위치
+		}).show();
+	});
+	
+	$(document).on("click", function() {
+    	$("#user-context-menu").hide();
+	});
+	
+	function sendMemo(empId) {
+		var w = 650; 
+		var h = 650; 
+		var left = (screen.width/2) - (w/2); 
+		var top = (screen.height/2) - (h/2); 
+		window.open('/memo/write?memoSenderId=' + empId, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no');
+	}
+</script>
+
+<!-- 닉네임 클릭 시 나타날 창 -->
+<div id="user-context-menu" style="display: none;">
+    <a href="#" id="link-view-posts">
+        <i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
+    </a>
+    <a href="#" id="link-send-memo">
+    	<i class="fa-solid fa-paper-plane"></i> 쪽지 보내기
+   	</a>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

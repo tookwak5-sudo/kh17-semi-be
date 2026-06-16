@@ -102,6 +102,7 @@ function showDetailCard(event, element, empData) {
     // 1. 팝업 데이터 매핑
 	document.getElementById('popDeptName').innerText = empData.deptName;
     document.getElementById('popEmpName').innerText = empData.empName;
+	document.getElementById('popEmpId').innerHTML = "<a onclick='sendMemo(\"" + empData.empId + "\");' style='cursor:pointer;margin-left:5px;' title='쪽지쓰기'><i class='fa-solid fa-paper-plane'></i></a>";
 	document.getElementById('popEmpPositionName').innerText = empData.empPositionName;
 	document.getElementById('popEmpContact').innerText = empData.empContact;
 	document.getElementById('popEmpEmail').innerText = empData.empEmail;
@@ -185,6 +186,14 @@ function showDetailCard(event, element, empData) {
 function closeDetailCard() {
     const popup = document.getElementById('empDetailCard');
     if (popup) popup.style.display = 'none';
+}
+
+function sendMemo(empId) {
+	var w = 650; 
+	var h = 650; 
+	var left = (screen.width/2) - (w/2); 
+	var top = (screen.height/2) - (h/2); 
+	window.open('/memo/write?memoSenderId=' + empId, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no');
 }
 
 // 바탕화면(조직도 빈 공간) 클릭 시 자동으로 팝업 닫히게 하기 (선택 사항)
