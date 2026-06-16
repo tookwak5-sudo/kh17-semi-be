@@ -168,12 +168,34 @@ textarea.field {
         - 부정버튼 : btn-negative 클래스를 추가로 부여
 */
 .btn {
-    outline: none;
-    font-size: 18px;
-    padding: 0.5em 0.75em;
-    border: 1px solid #636e72;
-    border-radius: 0.1em;
+/*     outline: none; */
+/*     font-size: 18px; */
+/*     padding: 0.5em 0.75em; */
+/*     border: 1px solid #636e72; */
+/*     border-radius: 0.1em; */
+/*     cursor: pointer; */
+/*     height: 40px; */
+/*     padding: 0px 20px; */
+/*     border-radius: 6px; */
+/*     font-size: 14px; */
+/*     font-weight: 600; */
+/*     cursor: pointer; */
+/*     border: 1px solid #E2E8F0; */
+/*     transition: all 0.2s; */
+	height: 40px;            /* 입력창과 동일 */
+    padding: 0 20px;         /* 상하 패딩 0, 좌우 패딩만 조절 */
+    box-sizing: border-box;  /* 테두리(2px) 포함하여 크기 계산 */
+    display: inline-flex;    /* 내부 아이콘과 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 주변 요소와 정렬 */
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s;
+    
+    justify-content: center;  /* 가로 중앙 정렬 */
+    align-items: center;      /* 세로 중앙 정렬 */
 }
 a.btn {
     display: inline-block;
@@ -183,21 +205,47 @@ a.btn {
 .btn:hover { /* 조건부 디자인 : 마우스가 올라갔을 때 */
     filter: brightness(0.95);
 }
-.btn.btn-positive {/* 긍정버튼 */
-    /* background-color: #0984e3;
-    border-color: #0984e3; */
-    background-color: #739BED;
-    border-color: #739BED;
+.btn.btn-positive {
+    background-color: transparent;
+    border: 2px solid #5A86E3;
+    color: #5A86E3;
+    font-weight: bold;
+    display: inline-flex;    /* flex를 사용하여 내부 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 부모 요소와 수직 정렬 */
+    line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */
+}
+/* 마우스를 올렸을 때만 색상이 채워지게 */
+.btn.btn-positive:hover {
+    background-color: #5A86E3;
     color: white;
 }
 .btn.btn-neutral {/* 중립버튼 */
-    background-color: #AAB7C9;
-    border-color: #AAB7C9;
-    color: white;
+	background: #FFFFFF;
+	border: 2px solid black;
+    color: black;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 .btn.btn-negative {/* 부정버튼 */
+	background-color: transparent;
+    border: 2px solid #E86A7A;
+    color: #E86A7A;
+    font-weight: bold;
+    display: inline-flex;    /* flex를 사용하여 내부 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 부모 요소와 수직 정렬 */
+    line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */
+}
+.btn.btn-negative:hover {
     background-color: #E86A7A;
-    border-color: #E86A7A;
+    color: white;
+}
+.btn.btn-save {/* 임시저장버튼 */
+	background-color: #F4C47A;
+    border-color: #F4C47A;
     color: white;
 }
 
@@ -269,8 +317,8 @@ a.btn {
 
 .table > thead > tr > th
 {
-	background-color: #739BED;
-	color: white;
+	background-color: #EFF6FF;
+	color: #334155;
 }
 
 .table > tbody > tr > td > a
@@ -612,12 +660,33 @@ a.btn {
     display: block;
 }
 
+/* 입력창 공통 스타일 */
 .field {
-    background-size: 1em;
-    background-repeat: no-repeat;
-    background-position-x: right 0.5em;
-    background-position-y: center;
-    padding-right: 2em;
+    width: 120px;            /* 100% 대신 고정 너비 지정 */
+    height: 40px;           /* .field-sm과 높이 통일 */
+    padding: 0px 10px;       /* 내부 여백을 주어 답답하지 않게 */
+    line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
+    border: 1px solid #E2E8F0; /* 연한 회색 테두리 */
+    border-radius: 6px; /* 둥근 모서리 */
+    background-color: #FFFFFF;
+    font-size: 13px;         /* 글자 크기 조정 */
+    color: #1E293B;
+    vertical-align: middle;  /* 옆 요소들과 높이 정렬 */
+    box-sizing: border-box; /* 테두리 포함 전체 크기 고정 */
+    outline: none;
+    transition: all 0.2s ease;
+}
+/* 검색창 전용 클래스 (Compact) */
+.field-sm {
+    width: 250px;
+    height: 40px; /* 높이 고정 */
+    padding: 0px 12px; /* 패딩을 줄여서 높이를 낮춤 */
+    line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    font-size: 13px; /* 폰트도 조금 작게 */
+    vertical-align: middle;
+    box-sizing: border-box; /* 테두리 포함 전체 크기 고정 */
 }
 select.field {
     background-position-x: right 1em;

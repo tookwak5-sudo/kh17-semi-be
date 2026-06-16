@@ -50,7 +50,7 @@ public class EmpDao {
 
 
 		public void connect(String empId, int attachNo) {
-			String sql = "insert into member_profile(emp_id, attach_no) values(?, ?)";
+			String sql = "insert into emp_profile(emp_id, attach_no) values(?, ?)";
 			Object[] params = { empId, attachNo };
 			jdbcTemplate.update(sql, params);
 		}
@@ -117,6 +117,50 @@ public class EmpDao {
 			return jdbcTemplate.queryForObject(sql, int.class, params);
 		}
 		
+		public boolean update(EmpDto empDto) {
+			String sql = "update emp "
+					+ "set emp_email=?,  emp_birth=?, "
+						+ "emp_contact=?, emp_post=?, emp_address1=?, "
+						+ "emp_address2=?"
+					+ "where emp_id=?";
+		Object[] params = {
+			empDto.getEmpEmail(),
+			empDto.getEmpBirth(), empDto.getEmpContact(),
+			empDto.getEmpPost(), empDto.getEmpAddress1(),
+			empDto.getEmpAddress2(), 
+			empDto.getEmpId()
+		};
+		return jdbcTemplate.update(sql, params) > 0;
+		}
+		
+		public EmpDto selectOneByEmail(String empEmail) {
+			String sql = "select * from emp where emp_email = ?";
+			Object[] params = {empEmail};
+			List<EmpDto> list = jdbcTemplate.query(sql, empMapper,params);
+			return list.isEmpty() ? null : list.get(0);
+		}
+		
+		public EmpDto selectOneById(String empId) {
+			String sql = "select * from emp where emp_id = ?";
+			Object[] params = {empId};
+			List<EmpDto> list = jdbcTemplate.query(sql,empMapper,params);
+			return list.isEmpty() ? null : list.get(0);
+		}
+		//비밀번호 대조용
+		public EmpDto selectOneByPassword(String empPassword) {
+			String sql ="select * from emp where emp_password =?";
+			Object[] params = {empPassword};
+			List<EmpDto> list = jdbcTemplate.query(sql, empMapper,params);
+			return list.isEmpty() ? null : list.get(0);
+		}
+		
+		public boolean changePassword(EmpDto empDto) {
+			String sql="update emp set emp_password = ? where emp_id = ?";
+			Object[] params = { empDto.getEmpPassword(), empDto.getEmpId()};
+			
+			return jdbcTemplate.update(sql,params)>0;
+		}
+
 	//관리자->사원정보 수정
 		public boolean updateByAdmin(EmpDto empDto, int empPositionNo) {
 			String sql = "UPDATE emp "

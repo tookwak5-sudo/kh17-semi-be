@@ -46,11 +46,11 @@
 	<li class="divider"></li>
 	
 	<li>
-	    <a href="/emp/mypage">
+	    <a href="/admin/manage">
 	        <i class="fa-solid fa-user"></i>
-	        <span>내정보</span>
+	        <span>관리메뉴</span>
 	    </a>
-	    <!-- 하위메뉴 -->
+	     <!-- 하위메뉴 -->
         <ul>
         	<li>
 			    <a href="/admin/emp/list">
@@ -64,13 +64,26 @@
 			        <span>부서관리</span>
 				</a>
 			</li>
-			<li>
-                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
-                 <span>출근</span>
+        </ul>
+    </li>
+    <li>
+	    <a href="/emp/mypage">
+	        <i class="fa-solid fa-user"></i>
+	        <span>내정보</span>
+	    </a>
+	    <!-- 하위메뉴 -->
+        <ul>
+            <li>
+            	<form action="/emp/work-in" method="post">
+	                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
+	                 <button type="submit">출근</button>
+                 </form>
             </li>
             <li>
-                 <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
-                 <span>퇴근</span>
+            	<form action="/emp/work-out" method="post">
+	                <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
+	                <button type="submit">퇴근</button>
+                </form>
             </li>
             <li>
                 <a href="/emp/logout">

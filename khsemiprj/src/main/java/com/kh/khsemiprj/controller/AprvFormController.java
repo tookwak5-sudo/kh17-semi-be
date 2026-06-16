@@ -1,7 +1,9 @@
 package com.kh.khsemiprj.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.AprvFormDao;
-
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.exception.TargetNotfoundException;
 import com.kh.khsemiprj.service.AprvFormService;
+import com.kh.khsemiprj.vo.AprvFormHeadNameVO;
+import com.kh.khsemiprj.vo.AprvFormHeadTypeVO;
+import com.kh.khsemiprj.vo.AprvFormSelectVO;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
@@ -34,38 +38,60 @@ public class AprvFormController {
 	// 1. 결재 양식 목록 조회
 	@GetMapping("/list")
 	public String list(@ModelAttribute PageVO pageVO, Model model) {
-		List<AprvFormDto> list = aprvFormDao.selectList(pageVO);
+		
+		List<AprvFormSelectVO> list = aprvFormDao.selectList(pageVO);
 		model.addAttribute("list", list);
+		//페이딩을 위해 추가로 전달할 값이 있다면 전달
+		int count = aprvFormDao.count(pageVO);
+		pageVO.setCount(count);
+		model.addAttribute("pageVO", pageVO);
 		return "aprvForm/list";
 	}
 
 	// 2. 결재 양식 상세 보기
 	@GetMapping("/detail")
 	public String detail(@RequestParam int formNo, Model model) {
-		AprvFormDto aprvFormDto = aprvFormDao.selectOne(formNo);
+		AprvFormSelectVO aprvFormSelectVO = aprvFormDao.selectOneUsingHead(formNo);
 		Integer attachNo = aprvFormDao.findAttachNo(formNo);
 		model.addAttribute("attachNo", attachNo);
-		model.addAttribute("aprvFormDto", aprvFormDto);
+		model.addAttribute("aprvFormSelectVO", aprvFormSelectVO);
 		return "aprvForm/detail";
 	}
 
 	// 3. 결재 양식 신규 등록 페이지 열기
 	@GetMapping("/insert")
-	public String insert() {
+	public String insert(Model model) {
+
+		List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
+		List<AprvFormHeadTypeVO> filteredTypeList = aprvFormDao.selectFilteredTypeList();
+
+		model.addAttribute("headList", filteredHeadList);
+		model.addAttribute("typeList", filteredTypeList);
+
 		return "aprvForm/insert";
 	}
 
 	// 4. 결재 양식 신규 등록 처리 (텍스트 + 파일)
 	@PostMapping("/insert")
-	public String insert(@ModelAttribute AprvFormDto aprvFormDto, @RequestParam(required = false) MultipartFile attach)
+	public String insert(@ModelAttribute AprvFormDto aprvFormDto, @RequestParam(value = "head_name") String headName,
+			@RequestParam(value = "head_type") String headType, @RequestParam(required = false) MultipartFile attach)
 			throws IllegalStateException, IOException {
-		AprvFormDto findNameDto = aprvFormDao.selectOneByName(aprvFormDto.getFormName());
-		if (findNameDto != null) {
-			return "redirect:/aprvForm/insert?duplicate";
+
+		// 1. 화면에서 넘어온 명칭과 타입으로 진짜 head_no를 DB에서 조회함
+		int headNo = aprvFormDao.findHeadNo(headName, headType);
+
+		if (headNo == 0) {
+			// DB에 없는 조합이면 강제로 인서트 막고 에러 방지용 리다이렉트 처리
+			return "redirect:/aprvForm/insert?error=invalid_head";
 		}
-		if (aprvFormDto.getFormUseYn() != null) {
-			aprvFormDto.setFormUseYn("Y");
-		}
+
+		// 2. 찾아온 번호를 DTO에 수동으로 수수료 넘기듯 꽂아넣음
+		aprvFormDto.setFormHeadNo(headNo);
+
+		// 3. 체크박스 null 처리 해주고
+		aprvFormDto.setFormUseYn(aprvFormDto.getFormUseYn() != null ? "Y" : "N");
+
+		// 4. 서비스 호출해서 인서트 진행
 		aprvFormService.registerFormFile(aprvFormDto, attach);
 
 		return "redirect:./list";
@@ -75,12 +101,29 @@ public class AprvFormController {
 	@GetMapping("/edit")
 	public String edit(@RequestParam int formNo, Model model) {
 		try {
+
 			AprvFormDto aprvFormDto = aprvFormDao.selectOne(formNo);
 			model.addAttribute("aprvFormDto", aprvFormDto);
+
+			AprvFormSelectVO findHeadName = aprvFormDao.selectOneUsingHead(formNo);
+			model.addAttribute("findHeadName", findHeadName);
+
+			AprvFormSelectVO findHeadType = aprvFormDao.selectOneUsingType(formNo);
+			model.addAttribute("findHeadType", findHeadType);
+
 			Integer attachNo = aprvFormDao.findAttachNo(formNo);
 			model.addAttribute("attachNo", attachNo);
+
+			List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
+			List<AprvFormHeadTypeVO> filteredTypeList = aprvFormDao.selectFilteredTypeList();
+
+			model.addAttribute("headList", filteredHeadList);
+			model.addAttribute("typeList", filteredTypeList);
+
 			return "aprvForm/edit";
+
 		}
+
 		catch (TargetNotfoundException e) {
 			return "redirect:/error/500";
 		}
@@ -89,13 +132,29 @@ public class AprvFormController {
 	// 6. 결재 양식 및 파일 수정 처리
 	@PostMapping("/edit")
 	public String edit(@ModelAttribute AprvFormDto aprvFormDto, @ModelAttribute AttachDto attachDto,
+			@RequestParam(value = "head_name") String headName, @RequestParam(value = "head_type") String headType,
 			@RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
 
-		// 1. 본문 텍스트 데이터 수정
+		int headNo = aprvFormDao.findHeadNo(headName, headType);
+
+		if (headNo == 0) {
+			// 이상한 조합이면 수정 안 시키고 에러 리다이렉트
+			return "redirect:/aprvForm/edit?formNo=" + aprvFormDto.getFormNo() + "&error=invalid_head";
+		}
+
+		// 2. 찾아온 외래키 번호를 세팅
+		aprvFormDto.setFormHeadNo(headNo);
+
+		// 3. 사용 여부 체크박스에 반영
+		aprvFormDto.setFormUseYn(aprvFormDto.getFormUseYn() != null ? "Y" : "N");
+
+		// 4. 본문 텍스트 데이터 수정
 		aprvFormDao.update(aprvFormDto);
 
-		// 2. 파일 교체 로직
-		aprvFormService.modifyFile(aprvFormDto, attachDto, attach);
+		// 5. 파일 교체 로직 (파일이 실제로 첨부됐을 때만 실행)
+		if (attach != null && !attach.isEmpty()) {
+			aprvFormService.modifyFile(aprvFormDto, attachDto, attach);
+		}
 
 		return "redirect:/aprvForm/detail?formNo=" + aprvFormDto.getFormNo(); // 수정 완료 후 상세 페이지로 이동
 	}
@@ -104,7 +163,7 @@ public class AprvFormController {
 	public String delete(@RequestParam int formNo) throws IllegalStateException, IOException {
 		try {
 			Integer attachNo = aprvFormDao.findAttachNo(formNo);
-			if (attachNo != null&& attachNo>0) {
+			if (attachNo != null && attachNo > 0) {
 				AprvFormDto aprvFormDto = new AprvFormDto();
 				aprvFormDto.setFormNo(formNo);
 
@@ -112,22 +171,22 @@ public class AprvFormController {
 				attachDto.setAttachNo(attachNo);
 
 				aprvFormService.deleteFile(aprvFormDto, attachNo);
-				
+
 			}
 			aprvFormDao.delete(formNo);
-		} 
-		
+		}
+
 		catch (TargetNotfoundException e) {
 			return "redirect:/error/500";
 		}
-		
+
 		return "redirect:/aprvForm/deleteFinish";
 	}
-	
+
 	// 8. 결재 양식 삭제 완료 페이지 열기
 	@GetMapping("/deleteFinish")
 	public String deleteFinish() {
-	   
-	    return "aprvForm/deleteFinish"; 
+
+		return "aprvForm/deleteFinish";
 	}
 }

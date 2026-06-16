@@ -4,13 +4,38 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 
 <script>
+$(function() {
 	
+	$(".togglebox").find("[type=checkbox]").on("input", function () {
+	    var check = $(this).prop("checked");
+	    $(".togglebox").find("[type=checkbox]").prop("checked", check);
+	
+	    $("[name=empPassword]").attr("type", check ? "text" : "password");
+	});
+
+});
 </script>
 
 <style>
 	.cell a {
 		text-decoration-line: none;
 		color: black;
+	}
+	
+	/* togglebox 디자인 */
+	.togglebox {
+		cursor: pointer;
+	}
+	
+	.togglebox>[type=checkbox], /*체크박스*/ .togglebox>[type=checkbox] ~.fa-eye,
+		/*평상시 체크박스 뒤 눈표시*/ .togglebox>[type=checkbox]:checked ~.fa-eye-slash
+		/*체크되었을 때 눈가림 표시*/ {
+		display: none;
+	}
+	
+	.togglebox>[type=checkbox]:checked ~.fa-eye, /*체크되었을 때 눈 표시*/ .togglebox>[type=checkbox]
+		 ~.fa-eye-slash /*평상시 체크박스 뒤 눈가림 표시*/ {
+		display: inline;
 	}	
 </style>
 
@@ -25,8 +50,14 @@
 		</div>
 		<div class="cell">
 			<label>비밀번호</label>
+			<label class="togglebox"> 
+			<input type="checkbox"> 
+			<i class="fa-solid fa-eye-slash"></i> 
+			<i class="fa-solid fa-eye"></i>
+			</label>
 			<input type="password" name="empPassword" maxlength="16" class="field w-100" />
 		</div>
+		
 		<div class="cell">
 			<div class="fail-feedback red" style="display:block !important;">
 			<c:choose>

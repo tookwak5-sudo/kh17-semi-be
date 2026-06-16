@@ -1,3 +1,4 @@
+
 package com.kh.khsemiprj.controller;
 
 import java.io.IOException;
@@ -25,7 +26,6 @@ import com.kh.khsemiprj.dao.AttachDao;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dto.AprvDto;
-import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
@@ -33,6 +33,8 @@ import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.service.AttachService;
 import com.kh.khsemiprj.vo.AprvDetailVO;
 import com.kh.khsemiprj.vo.AprvLineListVO;
+import com.kh.khsemiprj.vo.AprvFormVO;
+
 import com.kh.khsemiprj.vo.DeptVO;
 import com.kh.khsemiprj.vo.PageForAprvVO;
 
@@ -70,7 +72,7 @@ public class AprvController {
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
 		
-		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
 		
 		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
@@ -125,7 +127,7 @@ public class AprvController {
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("deptListJson", deptListJson);
 		
- 		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+ 		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
  		
 		return "aprv/insert";
@@ -269,7 +271,7 @@ public class AprvController {
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("deptListJson", deptListJson);
 		
- 		List<AprvFormDto> formList = aprvFormDao.selectListForInsert();
+ 		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
  		
 		return "aprv/edit";

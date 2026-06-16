@@ -20,9 +20,9 @@ public class LogAccessController {
 	
 	@RequestMapping("/list")
 	public String list(Model model, @ModelAttribute PageVO pageVO) {
-		
 		int count = logAccessDao.count(pageVO);
 		pageVO.setCount(count);//데이터 개수 설정
+		System.out.println(count);
 		model.addAttribute("pageVO", pageVO);
 		
 		List<LogAccessDto> logAccessList = logAccessDao.selectList(pageVO);

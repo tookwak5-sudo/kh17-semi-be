@@ -1,30 +1,31 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+<jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <style>
-    /* 레이아웃 구성 */
-    .dashboard-container {
-        display: flex;
-        gap: 20px; /* 좌우 간격 */
-        width: 1200px;
-        margin: 50px auto;
-    }
+/* 레이아웃 구성 */
+.dashboard-container {
+	display: flex;
+	gap: 20px; /* 좌우 간격 */
+	width: 1200px;
+	margin: 50px auto;
+}
 
-    /* 좌측 달력 영역 (비율 7) */
-    .left-section {
-        flex: 7;
-    }
+/* 좌측 달력 영역 (비율 7) */
+.left-section {
+	flex: 7;
+}
 
-    /* 우측 리스트 영역 (비율 3) */
-    .right-section {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        gap: 20px; /* 공지사항과 결재목록 사이 간격 */
-    }
+/* 우측 리스트 영역 (비율 3) */
+.right-section {
+	flex: 3;
+	display: flex;
+	flex-direction: column;
+	gap: 20px; /* 공지사항과 결재목록 사이 간격 */
+}
 
     .card {
         background: #fff;
@@ -51,10 +52,22 @@
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
     	z-index: 10000;
     }
+.list-area{
+		height:190px;
+	    overflow-y:auto;
+}
+	
+.list-area thead th{
+   position: sticky;
+   top: 0;
+   background: white;
+   z-index: 10;
+}
 </style>
 
 <!-- fullcalendar cdn -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
 <!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 
 <script type="text/template" id="write-template">
@@ -69,6 +82,9 @@
 			<div class="cell">
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<input type="hidden" name="planDeptNo" value="${deptNo}" class="field w-100">
 	        <div class="cell">
@@ -79,6 +95,9 @@
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
@@ -94,7 +113,7 @@
 	                <i class="fa-solid fa-minus ms-10 me-10"></i>
 	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
 	        </div>
-	        
+	       	
 	         <div class="cell">
 	            <label>내용</label>
 	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
@@ -112,7 +131,9 @@
 <div class="calendarModal" class="container w-600 mt-50">
     <div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 상세</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
     <div class="container w-500 mt-50">
         <div class="cell">
@@ -143,7 +164,9 @@
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
@@ -192,24 +215,73 @@
 
 <script type="text/javascript">
 	$(function(){
+	
+	});
+</script>
+
+<script type="text/javascript">
+	$(function(){
+		//상태객체
+        var state = {
+            planNameValid : false,
+            planTypeValid : false,
+            planHeadNoValid : true,
+            planSdateValid : true,
+            planEdateValid : true,
+            planExplainValid : true, // 선택항목
+            ok : function() {
+                return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
+                .filter(v => typeof v == "boolean") // boolean값만 추출해서
+                .every(v => v === true); //모두 true인지 확인해서 반환해라;
+            }
+        };
 		
-// 		//상태객체
-//         var state = {
-//             planNameValid : false,
-//             planTypeValid : false,
-//             planHeadNoValid : true,
-//             planSdateValid : true,
-//             planEdateValid : true,
-//             planExplainValid : true, // 선택항목
-//             ok : function() {
-//                 return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
-//                 .filter(v => typeof v == "boolean") // boolean값만 추출해서
-//                 .every(v => v === true); //모두 true인지 확인해서 반환해라;
-//             }
-//         };
+    	 // 항목검사 통합 함수
+        $(document).on("blur input", "[name=planName]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planName") state.planNameValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+        $(document).on("blur input", "[name=planType]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planType") state.planTypeValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+		 
 		//등록 버튼을 누르면 발생하는 등록 작업
 		$(document).on("click",".btn-plan", function(){
 			
+			// 모든 .field에 대해 검사
+		    $(".field").trigger("blur").trigger("input");
+		    
+		    if(!state.ok()) {
+		        alert("입력 오류를 확인하세요.");
+		        return;
+		    }
 			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
 			var planDeptNo = $("[name=planDeptNo]").val();
 			
@@ -267,7 +339,6 @@
 		
 	  //목표 : 수정버튼을 누르면 수정화면을 보여주도록 처리
 		$(document).on("click", "#modalEditBtn", function(){//영역 감시
-
 // 			기존 reply-viewer의 정보를 불러온다
 			var planNo = $(this).data("key");
 			var planTitle = $(this).data("plan-title");
@@ -544,39 +615,119 @@
 
 <!--  결재, 공지 보여주는 화면 -->
 <div class="dashboard-container">
-        <div class="left-section">
+       <div class="left-section">
             <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
-        </div>
+       </div>
 
-        <div class="right-section">
+       <div class="right-section">
             <div class="card p-20" style="height: 300px;">
+            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+            	<div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>결재 대기 목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>     
+                </div>
+                <div class="cell list-area">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>기안자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+							<!--리스트가 비어있지 않을때 -->
+			  				<c:if test="${not emptyReceivedList}">
+				  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${rAprvList.aprvNo}">
+							                	${rAprvList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${rAprvList.empName}</td>
+					  					<td>${rAprvList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+			  				</c:if>
+							<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyReceivedList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					결재 대기 중인 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
+			  			</tbody>
+                 	</table>
+                </div>
+            </c:if>
+            <c:if test="${sessionScope.empGrade == 0}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>결재사항</h3>
-                    <a href="#">더보기</a>
+                    <h3>내 결재목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>   
                 </div>
+                <div class="cell list-area">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>작성자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+							<!--내가쓴 결재가 있을때 -->
+				  			<c:if test="${not emptyMyList}">
+				  				<c:forEach var="myList" items="${myAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+							                	${myList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${myList.empName}</td>
+					  					<td>${myList.aprvStatus}</td>
+					  				</tr>
+				  				</c:forEach>
+				  			</c:if>
+				  			<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyMyList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					상신한 결재 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
+			  			</tbody>
+                 	</table>
                 </div>
-
-           <div class="card p-20" style="height: 300px; overflow-y: auto;">
-	            <h3>공지사항</h3>
-	            <hr>
-	            <c:forEach var="notice" items="${noticeList}">
-	                <div
-	                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-	                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
-	                    ${notice.boardTitle}
-	                </a>
-	
-	
-	                    <p style="color: #999; font-size: 12px;">작성자:
-	                        ${notice.boardWriter}</p>
-	                </div>
-	            </c:forEach>
-	
-	            <c:if test="${empty noticeList}">
-	                <div>등록된 공지사항이 없습니다.</div>
-	            </c:if>
-       		</div>
-		</div>
+            </c:if>
+			</div>
+	           	<div class="card p-20" style="height: 300px; overflow-y: auto;">
+		            <h3>공지사항</h3>
+		            <hr>
+		            <c:forEach var="notice" items="${noticeList}">
+		                <div
+		                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+		                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+		                    ${notice.boardTitle}
+		                </a>
+		                    <p style="color: #999; font-size: 12px;">작성자:
+		                        ${notice.boardWriter}</p>
+		                </div>
+		            </c:forEach>
+		
+		            <c:if test="${empty noticeList}">
+		                <div>등록된 공지사항이 없습니다.</div>
+		            </c:if>
+	       		</div>
+	</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />
+

@@ -17,4 +17,6 @@ public class ReplyDto {
 	private Timestamp replyEtime;
 	private Long replyParent;
 	private String replyStatus;
+	private long replyLikecount;
+	private long replyDislikecount;
 }

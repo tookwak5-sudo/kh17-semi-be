@@ -12,12 +12,7 @@ public class AprvFormMapper implements RowMapper<AprvFormDto>{
 
 	@Override
 	public AprvFormDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		String headName = "";
-		try {
-			headName = rs.getString("head_name");
-		} catch(Exception e) {
-			//e.printStackTrace();
-		}
+	
 		return AprvFormDto.builder()
                 .formNo(rs.getInt("form_no"))
                 .formName(rs.getString("form_name"))
@@ -25,8 +20,7 @@ public class AprvFormMapper implements RowMapper<AprvFormDto>{
                 .formUseYn(rs.getString("form_use_yn"))
                 .formWtime(rs.getTimestamp("form_wtime"))
                 .formHeadNo(rs.getInt("form_head_no"))
-                .headName(headName)
                 .build();
 	}
-
+//헤드 네임도 1대1 관계를 맞추기 위해 트라이 캐치 삭제 및 빌더에서 제외시켰습니다.
 }

@@ -1,55 +1,97 @@
 package com.kh.khsemiprj.service;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.kh.khsemiprj.dao.EmpLeaveDao;
-import com.kh.khsemiprj.dto.EmpDto;
+import com.kh.khsemiprj.vo.LeaveManageVO;
 
 @Service
 public class EmpLeaveService {
 	@Autowired
-	private EmpLeaveDao empleaveDao;  
+	private EmpLeaveDao empLeaveDao;  
 	
-	private int count = 15; // 초기 휴가 개수
-	
-	// 목표 회원가입이 되면 emp_leave테이블에 회원의 아이디가 저장이 되도록 처리
-	public void leaveInsert(String empId) {
-		
-		//회원가입이 일어나면, 여기로 들어와서 입력된 Id를 확인하고 그 아이디를 휴가 DB에 등록
-		empleaveDao.insert(empId);
+	/*
+	 * [스케줄러 메소드]
+	 * 매일 자정 0시 0분 0초에 자동 실행
+	 * */
+
+//@Scheduled(cron = "0 0 0 * * *")
+//	@Scheduled(fixedRate = 5000)
+	public void autoUpdateLeave() {
+		// 내부적으로 기존 로직 호출
+		// 시스템 작업이므로 empId를 "SYSTEM"등으로 지정
+		calculateLeaveDays("SYSTEM", null);
+ 		System.out.println("자동 휴가 갱신 로직 실행: " + LocalDate.now());
 	}
 	
-	// 목표: 관리자가 로그인 하면 전 직원의 휴가 기록을 계산
-	// 전 직원의 hireDate불러오기
-	
-	// 입사일 기준 계산
-	public double calculateLeave(EmpDto empDto) { //직원들의 입사일이 입력이되면
+	//휴가
+	public void calculateLeaveDays(String empId, String hireDateStr) {
+		//1. 오늘이 입사 기념일인 사원들 조회(1년차 이상)
+		List<LeaveManageVO> targets = empLeaveDao.selectTarget();
 		
-		LocalDate now = LocalDate.now();
-		LocalDate hireLocalDate = LocalDate.parse(empDto.getEmpHireDate());
-		
-		//입사 1개월 전
-		if(now.isBefore(hireLocalDate.plusMonths(1))) {
-			return 0;
+		//디버깅 용 로그
+		System.out.println("조회된 대상자 수: " + targets);
+		System.out.println("들어온 아이디" + empId);
+		for(LeaveManageVO target : targets) {
+			// 3. 휴가 개수 계산
+			double newTotal = calculateLeave(target.getEmpHireDate());
+			
+			// 4. 휴가 테이블 갱신 
+			target.setLeaveTotal(newTotal); //전체 휴가는 계산된 휴가로
+			target.setLeaveYear(String.valueOf(LocalDate.now().getYear())); //현재 연도를 입력
+			target.setLeaveUsed(0.0); // 사용휴가는 0
+			target.setLeaveRemain(newTotal); // 남은휴가수도 전체휴가와 동일하게
+			target.setLeaveUpdate(new Timestamp(System.currentTimeMillis())); // 현재시간으로 업데이트
+			empLeaveDao.updateLeave(target); // 업데이트
+			
+			// 5. 로그 테이블 기록
+			target.setLeaveType("갱신");
+			target.setLeaveLogId(target.getEmpId());
+			target.setLeaveAmount(newTotal);
+			target.setLeaveTotalAfter(newTotal);
+			target.setLeaveUsedAfter(0.0);
+			empLeaveDao.logInsert(target);
 		}
-		
-		// 고용일로부터 지금까지의 연계산
-		long year = ChronoUnit.YEARS.between(hireLocalDate, now);
-		
-		// 1,2년차
-		if(year < 2) {
-			return count;
-		}
-		
-		// 3년차부터 2년마다 + 1씩
-		int plusLeave = (int) ((year - 1) / 2);
-		
-		// 최대 25일 휴가 부여 가능
-		return Math.min(15+ plusLeave, 25);
-		
 	}
+	
+	//휴가 개수 계산식
+	private double calculateLeave(String hireDateStr) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate hireDate = LocalDate.parse(hireDateStr, formatter);
+		LocalDate today = LocalDate.now();
+		// 0. 입사 후 1개월이 지난 시점 계산
+		LocalDate oneMonthAfterHire = hireDate.plusMonths(1);
+		
+		// 1. 로직 적용
+		double newTotal;
+		if (today.isBefore(oneMonthAfterHire) ) {
+			newTotal = 0;
+		}
+		else {
+			//1개월 이상이면 근속년수 계산
+			long yearsOfService = ChronoUnit.YEARS.between(hireDate, today);
+			
+			
+			if(yearsOfService < 1) { // 1년차인 경우
+				newTotal = 15;
+			}
+			else { // 2년차 이상인 경우
+				//3년차부터 연차 증가 로직
+				int extra = (int)((yearsOfService - 1) / 2);
+				newTotal = Math.min(15 + extra, 25);
+			}
+		}
+		
+		return newTotal;
+	}
+	
+	
 }

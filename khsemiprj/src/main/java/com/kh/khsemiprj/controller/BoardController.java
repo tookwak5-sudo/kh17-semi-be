@@ -1,6 +1,5 @@
 package com.kh.khsemiprj.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,10 @@ public class BoardController {
 	//목록 및 검색 매핑
 	@RequestMapping("/list")
 	public String list(Model model, @ModelAttribute PageVO pageVO) {
+		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
+		int count = boardDao.count(pageVO);
+		pageVO.setCount(count);//데이터 개수 설정
+		
 		//공지사항 게시글
 		//List<BoardDto> noticeList = boardDao.selectList("board_head", "공지");
 		List<BoardDto> noticeList = boardDao.selectNoticeList();
@@ -40,9 +43,6 @@ public class BoardController {
 		//게시글 범주안에 공지가 포함 되어 있어서 공지 글을 올릴시 공지가 같은 번호로 두개가 올라가는 현상이 생겨서 수정했습니다.
 		model.addAttribute("noticeCount", noticeList.size());//공지사항 개수 전달
 		
-		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
-		int count = boardDao.count(pageVO);
-		pageVO.setCount(count);//데이터 개수 설정
 		model.addAttribute("pageVO", pageVO);
 		return "board/list";
 	}
@@ -50,14 +50,21 @@ public class BoardController {
 	
 	//상세 매핑
 	@RequestMapping("/detail")
-	public String detail(@RequestParam long boardNo, Model model) {
+	public String detail(@RequestParam long boardNo, Model model, @ModelAttribute PageVO pageVO) {
 		BoardDto boardDto = boardDao.selectOne(boardNo);
 		if(boardDto == null) throw new TargetNotfoundException("존재하지 않는 게시글");
 		model.addAttribute("boardDto", boardDto);
 		
 		//이전글과 다음글을 조회하여 첨부
-		model.addAttribute("prevBoardDto", boardDao.selectPreviousOne(boardNo));
-		model.addAttribute("nextBoardDto", boardDao.selectNextOne(boardNo));
+//		model.addAttribute("prevBoardDto", boardDao.selectPreviousOne(boardNo));
+//		model.addAttribute("nextBoardDto", boardDao.selectNextOne(boardNo));
+		if(pageVO.isList()) {
+			model.addAttribute("prevBoardDto", boardDao.selectPreviousOne(boardNo));
+			model.addAttribute("nextBoardDto", boardDao.selectNextOne(boardNo));
+		} else {
+			model.addAttribute("prevBoardDto", boardDao.selectPreviousOne(boardNo,pageVO));
+			model.addAttribute("nextBoardDto", boardDao.selectNextOne(boardNo,pageVO));
+		}
 		
 		return "board/detail";
 	}

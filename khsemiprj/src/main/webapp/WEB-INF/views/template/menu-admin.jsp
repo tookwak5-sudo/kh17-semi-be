@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
+
+
+
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
@@ -64,6 +67,39 @@
 			        <span>부서관리</span>
 				</a>
 			</li>
+            <li>
+                <a href="/admin/logAccess/list">
+                    <i class="fa-solid fa-server"></i>
+                    <span>접속로그</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/log-inout/list">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>근태로그</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li>
+	    <a href="/emp/mypage">
+	        <i class="fa-solid fa-user"></i>
+	        <span>내정보</span>
+	    </a>
+	    <!-- 하위메뉴 -->
+        <ul>
+            <li>
+            	<form action="/emp/work-in" method="post">
+	                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
+	                 <button type="submit">출근</button>
+                 </form>
+            </li>
+            <li>
+            	<form action="/emp/work-out" method="post">
+	                <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
+	                <button type="submit">퇴근</button>
+                </form>
+            </li>
             <li>
                 <a href="/emp/logout">
                     <i class="fa-solid fa-right-from-bracket"></i>

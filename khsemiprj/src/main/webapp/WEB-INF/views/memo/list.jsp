@@ -3,8 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
-
+<jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include> 
+  
 <style>
 	.table-hover tbody tr:hover {
 		background-color : #f8f9fa;
@@ -34,7 +34,7 @@
 	}
 </style>
 
-<div class="container w-950 mt-50 mb-50">
+<div class="container w-600 mt-0 mb-50">
 	<div class="cell">
 		<h1 class="mt-0 mb-0">받은 쪽지함</h1>
 	</div>
@@ -65,10 +65,9 @@
 			<table class="table table-hover" style="background-color: white; margin-bottom: 0;">
 				<thead>
 					<tr style="border-bottom: 2px solid #e9ecef;">
-						<th width="10%">상태</th>
 						<th width="10%">분류</th>
 						<th width="40%">제목</th>
-						<th width="15%">보낸사람</th>
+						<th width="25%">보낸사람</th>
 						<th width="25%">받은시간</th>
 					</tr>
 				</thead>
@@ -81,15 +80,7 @@
 						</c:when>
 						<c:otherwise>
 							<c:forEach var="memo" items="${list}">
-								<tr onclick="location.href='detail?memoNo=${memo.memoNo}'">
-									<td>
-										<c:if test="${memo.memoReadStatus == 'N'}">
-											<span class="unread-badge">New</span>
-										</c:if>
-										<c:if test="${memo.memoReadStatus == 'Y'}">
-											<span style="color: #adb5bd;">읽음</span>
-										</c:if>
-									</td>
+								<tr>
 									<td>
 										<c:choose>
 											<c:when test="${memo.memoType == '공지'}"><span style="color: #e84118; font-weight:bold;">[공지]</span></c:when>
@@ -98,9 +89,17 @@
 										</c:choose>
 									</td>
 									<td align="left" style="padding-left: 15px; font-weight: ${memo.memoReadStatus == 'N' ? 'bold' : 'normal'};">
-										${memo.memoTitle}
+										<c:if test="${memo.memoReadStatus == 'N'}">
+											<span class="unread-badge">New</span>
+										</c:if>
+										<c:if test="${memo.memoReadStatus == 'Y'}">
+											<span style="color: #adb5bd;">읽음</span>
+										</c:if>
+										<a href="./detail?memoNo=${memo.memoNo}">
+											${memo.memoTitle}										
+										</a>
 									</td>
-									<td>${memo.memoSenderId}</td>
+									<td>${memo.memoSenderId}(${memo.empName})</td>
 									<td>
 										<fmt:formatDate value="${memo.memoWtime}" pattern="yyyy-MM-dd HH:mm"/>
 									</td>
@@ -111,11 +110,12 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="cell right">
+				<a class="btn btn-positive" href="./write">쪽지쓰기</a>
+		</div>
 	</div>
 
 	<div class="cell">    
 		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
 	</div>
 </div>
-
-<jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

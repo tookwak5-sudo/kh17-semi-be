@@ -13,13 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.kh.khsemiprj.dao.AprvDao;
 import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dao.PlanDao;
+import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.BoardDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
+import com.kh.khsemiprj.vo.EmpAprvLineVO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -32,6 +35,8 @@ public class HomeController {
 	private BoardDao boardDao;
 	@Autowired
 	private EmpPositionDeptDao empPositionDeptDao;
+	@Autowired
+	private AprvDao aprvDao;
 	
 	@RequestMapping("/")
 	public String home(Model model
@@ -52,7 +57,8 @@ public class HomeController {
 			extendedProps.put("planNo", planDto.getPlanNo());
 			extendedProps.put("planHeadNo", planDto.getPlanHeadNo());
 			extendedProps.put("planType", planDto.getPlanType());
-			extendedProps.put("planExplain", planDto.getPlanExplain());
+			extendedProps.put("planEx"
+					+ "plain", planDto.getPlanExplain());
 			extendedProps.put("planDeptNo", planDto.getPlanDeptNo());
 			extendedProps.put("planEmpId", planDto.getPlanEmpId());
 			event.put("extendedProps", extendedProps);
@@ -94,6 +100,29 @@ public class HomeController {
 		}
 		
 		model.addAttribute("noticeList", noticeList);
+		
+		if (loginId != null) {
+			//내가 쓴 글 결재 목록
+			List<EmpAprvLineVO> myAprvList = aprvDao.selectMyList(loginId);
+			if(myAprvList == null || myAprvList.isEmpty()) {
+		        model.addAttribute("emptyMyList", true);
+		    } else {
+		        model.addAttribute("emptyMyList", false); // 데이터가 있다면 false
+		    }
+			model.addAttribute("myAprvList", myAprvList);
+			
+			//내가 승인해야 할 결재 목록
+			List<EmpAprvLineVO> receivedAprvList = aprvDao.selectReceivedList(loginId);
+			if(receivedAprvList == null || receivedAprvList.isEmpty()) {
+		        model.addAttribute("emptyReceivedList", true);
+		    } else {
+		        model.addAttribute("emptyReceivedList", false); // 데이터가 있다면 false
+		    }
+			model.addAttribute("receivedAprvList", receivedAprvList);
+		}
+		
+		
+		
 		
 		return "home";
 	}
