@@ -102,6 +102,6 @@ public class AdminEmpController {
 		empDao.approveEmp(empId, empHireDate, empPositionNo);
 		empDeptRelationDao.insertEmpDept(empId, deptNo);
 		
-		return "redirect:list";
+		return "redirect:/admin/emp/list?alarm=empApprove";
 	}
 }

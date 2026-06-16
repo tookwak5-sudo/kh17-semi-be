@@ -76,7 +76,7 @@
                }
            });
        });
-    </script>
+</script>
 <script>
 $(function() {
     var state = {
@@ -434,7 +434,7 @@ $(function() {
 			<div class="cert-message w-100"></div>
             <div class="fail-feedback w-100">인증번호를 다시 확인해주세요</div>
         </div>
-     </script>
+</script>
 
 <form action="./join" method="post" enctype="multipart/form-data"
 	autocomplete="off" class="form-check">

@@ -83,9 +83,19 @@
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >헤더 등록이 완료되었습니다.</a>
 						    </div>
 						</c:when>
+						<c:when test="${param.alarm == 'headDelete'}">
+							<div style="position: absolute;top: 590px;right: 20px;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >헤더가 삭제되었습니다.</a>
+						    </div>
+						</c:when>
 						<c:when test="${param.alarm == 'positionWriter'}">
 							<div style="position: absolute;top: 590px;right: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >직책 등록이 완료되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'positionDelete'}">
+							<div style="position: absolute;top: 590px;right: 20px;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >직책이 삭제되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'calendarWriter'}">
@@ -101,6 +111,11 @@
 						<c:when test="${param.alarm == 'calendarDelete'}">
 							<div style="position: absolute;top: 590px;right: 20px;">
 						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >일정이 삭제되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'empApprove'}">
+							<div style="position: absolute;top: 590px;right: 20px;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >사원이 승인되었습니다.</a>
 						    </div>
 						</c:when>
 					</c:choose>

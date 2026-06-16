@@ -19,6 +19,65 @@
 <!-- kakao postapi cdn -->
 <script
 	src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	
+<style>
+    /* 프로필 이미지를 동그랗게 만드는 스타일 */
+    .image-round {
+        width: 100px;         /* 너비 고정 */
+        height: 100px;        /* 높이를 너비와 똑같이 맞춰서 정정사각형 생성 */
+        border-radius: 50%;   /* 모서리를 50% 깎아서 완벽한 원형으로 변경 */
+        object-fit: cover;    /* 이미지가 일그러지지 않고 비율을 유지하며 원에 꽉 차게 함 */
+    }
+
+    /* (선택) 그림자 효과를 주고 싶다면 추가 */
+    .image-shadow {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* (선택) 미리보기 영역 정렬 */
+    .preview-area {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+    }
+</style>
+	
+	
+
+<script type="text/javascript">
+       //이미지 미리보기 처리 (개수 무관)
+       $(function(){
+           $(".preview-input").on("input", function(){
+               //미리보기를 생성하기 전에 기존에 .preview-area에 있는 이미지를 제거
+               // - 있을지 없을지 모르며 있다면 URL.revokeObjectURL()을 써서 회수까지 해줘야함
+               // - jQuery에서 제공하는 반복 함수 each를 사용 (for보다 편함)
+               $(".preview-area").find("img").each(function(){
+                   //this == 현재 순서의 이미지
+                   //이미지 주소 회수 + 이미지 태그 삭제 (or 영역 비우긴)
+                   var address = $(this).attr("src");
+                   URL.revokeObjectURL(address);//자원회수
+                   // $(this).remove();//이 태그 삭제 이미지 하나 지우기
+               });
+               $(".preview-area").empty();//영역 비우기
+
+               //미리보기 생성
+               if(this.files.length > 0) {//파일 선택
+                   for(var i=0; i < this.files.length; i++){//선택한 파일수만큼
+                   //이미지를 만들어서 .preview-area에 추가
+                       var img = $("<img>")
+                                   .addClass("image-shadow image-round")
+                                   .attr("src", URL.createObjectURL(this.files[i]))
+                                   .prop("width", 100);
+                       $(".preview-area").append(img);
+                   }
+               }
+
+               else{//파일 선택 취소 -> 미리보기 제거
+
+               }
+           });
+       });
+</script>
 
 <script>
 $(function() {
@@ -459,7 +518,7 @@ $(function() {
 			</label>
 		</div>
 		<div class="cell preview-area"></div>
-
+		
 		<div class="cell mt-50">
 			<button type="submit" class="btn btn-positive w-100">수정하기</button>
 		</div>
