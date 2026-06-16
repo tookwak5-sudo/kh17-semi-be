@@ -25,8 +25,6 @@ $(function() {
     var state = {
        // empIdValid: true, id는 내 정보 수정에서는 못 바꾸는 거 같아 주석 했습니다.
         empNameValid: false,
-        empPasswordValid: false,
-        empPasswordCheckValid: false,
         empEmailValid: false,
         empEmailCertValid: false, // 인증 통과했는지
         empBirthValid: false,
@@ -51,57 +49,33 @@ $(function() {
 
     
     //이름은 형식 검사만
-    $("[name=empName]").on("blur",function(){
-    	var regex =/^([가-힣a-zA-Z\.]{2,100})$/;
-    	var empName = $("[name=empName]").val();
-    	var valid = regex.test(empName);
-    	if(valid == false){
-    		$("[name=empName]").removeClass("success fail")
-    		.addClass("fail").attr("data-error","1");
-    		state.empNameValid = false;
-    		return;
-    	} 
-    	
-    	else{
-    		$("[name=empName]").removeClass("success fail").addClass("success");
-    		state.empNameValid=true;
-    	}
+    $("[name=empName]").on("blur", function(){
+        var regex = /^([가-힣a-zA-Z\.]{2,100})$/;
+        var empName = $(this).val();
+        var valid = regex.test(empName);
+        
+        $(this).removeClass("success fail").addClass(valid ? "success" : "fail");
+        state.empNameValid = valid;
     });
     
     //생일은 형식검사만
-    $("[name=empBirth]").on("blur",function(){
-    	var regex = /^([0-9]{4})-(((02)-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/
-    	var empBirth = $("[name=empBirth]").val();
-    	var valid = regex.test(empBirth);
-    	if(valid == false){
-    		$("[name=empBirth]").removeClass("success fail")
-    		.addClass("fail").attr("data-error","1");
-    		state.empBirthValid = false;
-    		return;
-    	}
-    	
-    	else{
-    		$("[name=empBirth]").removeClass("success fail").addClass("success");
-    		state.empBirthValid = true;
-    	}
+    $("[name=empBirth]").on("blur", function(){
+        var regex = /^([0-9]{4})-(((02)-(0[1-9]|1[0-9]|2[0-9]))|((0[469]|11)-(0[1-9]|1[0-9]|2[0-9]|30))|((0[13578]|1[02])-(0[1-9]|1[0-9]|2[0-9]|3[01])))$/
+        var empBirth = $(this).val();
+        var valid = regex.test(empBirth);
+        
+        $(this).removeClass("success fail").addClass(valid ? "success" : "fail");
+        state.empBirthValid = valid;
     });
     
     //전화 번호는 형식검사만
-    $("[name=empContact]").on("blur",function(){
-    	var regex = /^010[1-9][0-9]{7}$/
-    	var empContact = $("[name=empContact]").val();
-    	var valid = regex.test(empContact);
-    	if(valid == false){
-    		$("[name=empContact]").removeClass("success fail")
-    		.addClass("fail").attr("data-error","1");
-    		state.empContactValid = false;
-    		return;
-    	}
-    	
-    	else{
-    		$("[name=empContact]").removeClass("success fail").addClass("success");
-    		state.empContactValid = true;
-    	}
+    $("[name=empContact]").on("blur", function(){
+        var regex = /^010[1-9][0-9]{7}$/;
+        var empContact = $(this).val();
+        var valid = regex.test(empContact);
+        
+        $(this).removeClass("success fail").addClass(valid ? "success" : "fail");
+        state.empContactValid = valid;
     });
     
     //주소 부분 시작
@@ -333,10 +307,13 @@ $(function() {
     });
 
     // 폼검사
-    $(".form-check").on("submit", function(){
-        $(this).find("select[name]").trigger("input");
+    $(".form-check").on("submit", function(e){
         $(this).find("input[name], textarea[name]").trigger("blur");
-        return state.ok();
+        
+        if (!state.ok()) {
+            e.preventDefault();
+            window.alert("입력하신 정보를 다시 확인해주세요.");
+        }
     });
     
 }); 
@@ -361,54 +338,36 @@ $(function() {
 	<form action="edit" method="post" enctype="multipart/form-data">
 
 		<div class="cell mt-30">
-			<div class="gray mb-10">
-				<b>이름</b>
-			</div>
-			<input type="text" name="empName" class="field w-100"
-				placeholder="기존 이름" value="${empDto.empName}">
-		</div>
-
-		<div class="cell">
-    		<label>이메일</label>
-		</div>
+	        <div class="gray mb-10"><b>이름</b></div>
+	        <input type="text" name="empName" class="field w-100" placeholder="기존 이름" value="${empDto.empName}">
+	        <div class="success-feedback">사용 가능한 이름입니다.</div>
+	        <div class="fail-feedback">한글 또는 영문 2~100자로 입력해주세요.</div>
+	    </div>
+		<div class="cell mt-30">
+		    	<div class="gray mb-10"><b>이메일</b></div>
+	    	<div class="flex-area" style="flex-wrap: wrap;">
+		        <input type="text" name="empEmail" class="field flex-fill" inputmode="email">
 		
-			<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
-    			<input type="text" name="empId" class="field w-100" value="현재 이메일 : ${empDto.empEmail}" disabled>
-			</div>
+		        <button type="button" class="btn btn-neutral btn-cert-send ms-10">
+		             <i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
+		        </button>
+		        <button type="button" class="btn btn-negative btn-cert-retry ms-10" style="display: none;">
+		            <i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
+		        </button>
 		
-		<div class="cell">
-    		<label>변경할 이메일</label>
-		</div>
-		
-			<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
-    			<input type="text" name="empEmail" class="field" inputmode="email">
-    
-    		<button type="button" class="btn btn-neutral btn-cert-send ms-10">
-       			 <i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
-   			</button>
-    		<button type="button" class="btn btn-negative btn-cert-retry ms-10" style="display: none;">
-        		<i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
-    		</button>
-
-	    		<div class="success-feedback w-100 mt-5"></div>
-	    			<div class="fail-feedback w-100 mt-5">
-	        			<div>이메일이 형식에 맞지 않습니다.</div>
-	        			<div>중복된 이메일입니다.</div>
-	    			</div>
-			</div>
-
-			
-
-		<!-- 인증번호 입력 영역 -->
-		<div class="cell cert-area"></div>
-
-
-		<div class="cell">
-   			<label>생년월일</label> 
-    		<input type="text" name="empBirth" class="field w-100" 
-          		value="${empDto.empBirth}" readonly>
-    		<div class="fail-feedback">올바른 날짜 형식이 아닙니다</div>
-		</div>
+		        <div class="success-feedback w-100 mt-5">사용 가능한 이메일입니다.</div>
+	        <div class="fail-feedback w-100 mt-5"></div> </div>
+	    </div>
+	
+		<!-- 인증번호 영역 -->
+	    <div class="cell cert-area"></div>
+	
+	    <div class="cell">
+	        <div class="gray mb-10"><b>생년월일</b></div> 
+	        <input type="text" name="empBirth" class="field w-100" value="${empDto.empBirth}" readonly>
+	        <div class="success-feedback">올바른 날짜 형식입니다.</div>
+	        <div class="fail-feedback">올바른 날짜 형식이 아닙니다.</div>
+	    </div>
 
 
 		<div class="cell mt-30">
@@ -444,11 +403,11 @@ $(function() {
 		</div>
 
 		<div class="cell">
-			<label>개인 휴대전화 연락처 (대시(-)없이 입력 해 주세요)</label> <input type="text" inputmode="tel"
-				name="empContact" class="field field-numeric w-100"
-				value="${empDto.empContact}">
-			<div class="fail-feedback">올바른 전화번호 형식이 아닙니다</div>
-		</div>
+	        <label>개인 휴대전화 연락처 (대시(-)없이 입력 해 주세요)</label> 
+	        <input type="text" inputmode="tel" name="empContact" class="field field-numeric w-100" value="${empDto.empContact}">
+	        <div class="success-feedback">올바른 전화번호입니다.</div>
+	        <div class="fail-feedback">올바른 전화번호 형식이 아닙니다.</div>
+   		</div>
 
 
 		<div class="cell mt-40">

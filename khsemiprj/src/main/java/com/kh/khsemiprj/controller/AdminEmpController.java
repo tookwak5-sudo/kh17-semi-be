@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpDeptRelationDao;
+import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.EmpPositionDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dto.DeptDto;
@@ -35,6 +36,8 @@ public class AdminEmpController {
 	private EmpDeptRelationDao empDeptRelationDao;
 	@Autowired
 	private EmpPositionDao empPositionDao;
+	@Autowired
+	private EmpLeaveDao empLeaveDao;
 	
 	@RequestMapping("/list")
 	public String list(Model model, @ModelAttribute PageVO pageVO) {
@@ -48,6 +51,8 @@ public class AdminEmpController {
 		
 		List<EmpDto> wList = empDao.selectEmpByStatus(null);
 		model.addAttribute("wList", wList);
+		
+		//
 		
 		List<DeptDto> deptList = deptDao.deptList();
 		model.addAttribute("deptList", deptList);
@@ -99,8 +104,13 @@ public class AdminEmpController {
 						  @RequestParam String empHireDate,
 						  @RequestParam int deptNo,
 						  @RequestParam int empPositionNo) {
+		
+		//1.사원의 승인정보 업데이트
 		empDao.approveEmp(empId, empHireDate, empPositionNo);
+		//2. 부서 관계 테이블 등록
 		empDeptRelationDao.insertEmpDept(empId, deptNo);
+		//3. 휴가 테이블 등록
+		empLeaveDao.insert(empId);
 		
 		return "redirect:list";
 	}

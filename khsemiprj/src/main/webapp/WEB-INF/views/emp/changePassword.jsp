@@ -27,7 +27,7 @@
 $(function() {
 	
 	var state ={
-			empOriginPassowordValid: false,
+			empOriginPasswordValid: false,
 			empNewPasswordValid: false,
 			empNewPasswordCheckValid: false,
 	}
@@ -86,7 +86,7 @@ $(function() {
     	$.ajax({
     		url:"/rest/cert/checkPassword",
     		method:"post",
-    		data:{empPassword : empPassword},
+    		data:{empPassword : empOriginPassword},
     		success: function (response){
     			//같으면 성공시키고
     			if(response){
@@ -96,7 +96,7 @@ $(function() {
     			}
     			//다르면 false로
     			else{
-    				$("[name=empPassword]").removeClass("success fail")
+    				$("[name=empOriginPassword]").removeClass("success fail")
     						.addClass("fail")
     						.attr("data-error","2");
     				state.empOriginPasswordValid = false;
@@ -108,34 +108,60 @@ $(function() {
     //새 비번과 새 비번 확인 대조  
     $("[name=empNewPassword], .password-check").on("blur",function(){
    				var empNewPassword = $("[name=empNewPassword]").val()
+   				var empOriginPassword = $("[name=empOriginPassword]").val(); 
+        		var $failDiv = $("[name=empNewPassword]").siblings(".fail-feedback");
     				    	
     			var regex1 = /^[A-Za-z0-9!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\'\"`~\<\>\.\,\/\?\\\|]{8,16}$/;
     			var regex2 =/[A-Z]+/;
     			var regex3 =/[a-z]+/;
     			var regex4 =/[0-9]+/;
     				    	
-    		state.empNewPasswordValid = regex1.test(empNewPassword)
+    			isValidFormat = regex1.test(empNewPassword)
     				    			 && regex2.test(empNewPassword)
     				    			 && regex3.test(empNewPassword)
     				    			 && regex4.test(empNewPassword);
     				   
-    		$("[name=empNewPassword]").removeClass("success fail")
-    		.addClass(state.empNewPasswordValid ? "success" : "fail");
-    				    		
-    		state.empNewPasswordCheckValid = $("[name=empNewPassword]").val().length > 0 &&
-    				$("[name=empNewPassword]").val() == $(".password-check").val();
-    				$(".password-check").removeClass("success fail")
-    				    .addClass(state.empNewPasswordCheckValid ? "success" : "fail");
-    		})
-    		
-    		// edit와 join과의 통일성을 위해 토글박스를 가져왔습니다.
-    		$(".togglebox").find("[type=checkbox]").on("input", function () {
-    		    var check = $(this).prop("checked");
-    		    $(".togglebox").find("[type=checkbox]").prop("checked", check);
-
-    		    $("[name=empOriginPassword], [name=empNewPassword], .password-check-field")
-    		        .attr("type", check ? "text" : "password");
-    		});
+    			//정규식 판정
+    	        if (isValidFormat == false) {
+    	            $("[name=empNewPassword]").removeClass("success fail").addClass("fail");
+    	            $failDiv.text("영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여 8~16글자로 작성하세요.");
+    	            state.empNewPasswordValid = false;
+    	            return; 
+    	        } 
+    	        
+    	        //기존 비밀번호와 같은지
+    	        if (empNewPassword === empOriginPassword) {
+    	            $("[name=empNewPassword]").removeClass("success fail").addClass("fail");
+    	            $failDiv.text("현재 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
+    	            state.empNewPasswordValid = false;
+    	            return; // 튕겨냄
+    	        } 
+    	        
+    	        //다 통과했다면 성공
+    	        $("[name=empNewPassword]").removeClass("success fail").addClass("success");
+    	        state.empNewPasswordValid = true;
+    	        
+    	        // 새 비번 확인란 대조
+    	        var checkVal = $("[name=empNewPasswordCheck]").val();
+    	        state.empNewPasswordCheckValid = (empNewPassword.length > 0 && empNewPassword === checkVal);
+    	        $("[name=empNewPasswordCheck]").removeClass("success fail")
+    	                            .addClass(state.empNewPasswordCheckValid ? "success" : "fail");
+    	    });
+    	    		
+    	    // 토글박스 동기화
+    	    $(".togglebox").find("[type=checkbox]").on("input", function () {
+    	        var check = $(this).prop("checked");
+    	        $(".togglebox").find("[type=checkbox]").prop("checked", check);
+    	        $("[name=empOriginPassword], [name=empNewPassword], [name=empNewPasswordCheck]").attr("type", check ? "text" : "password");
+    	    });
+    	    
+    	    // (보너스) 최종 폼 전송 시, 3가지가 전부 true가 아니면 전송 막기
+    	    $(".password-check").on("submit", function(e) {
+    	        if (!state.empOriginPasswordValid || !state.empNewPasswordValid || !state.empNewPasswordCheckValid) {
+    	            e.preventDefault();
+    	            window.alert("비밀번호 형식을 다시 확인해주세요.");
+    	        }
+    	    });
 });
 
 // /emp/join , /emp/edit와의 통일성을 위하여 토글박스를 가져왔습니다.
@@ -173,36 +199,33 @@ $(function() {
 <!--         </div> -->
 			
 			<div class="cell">
-			<label>현재 비밀번호 입력 <i class="fa-solid fa-asterisk red"></i></label> <label
+			<label>현재 비밀번호 입력</label> <label
 				class="togglebox"> <input type="checkbox"> <i
 				class="fa-solid fa-eye-slash red"></i> <i
 				class="fa-solid fa-eye blue"></i>
 			</label> <input type="password" name="empOriginPassword" class="field w-100">
 			<div class="success-feedback">올바른 비밀 번호 입니다.</div>
-			<div class="fail-feedback">영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여
-				8~16글자로 작성하세요</div>
-			<div class="fail-feedback">입력하신 비밀번호와 등록된 비밀번호가 다릅니다.</div>
+			<div class="fail-feedback"></div>
 			</div>
 			
 			
 			<div class="cell">
-			<label>새로운 비밀번호 입력 <i class="fa-solid fa-asterisk red"></i></label> <label
+			<label>새로운 비밀번호 입력</label> <label
 				class="togglebox"> <input type="checkbox"> <i
 				class="fa-solid fa-eye-slash red"></i> <i
 				class="fa-solid fa-eye blue"></i>
-			</label> <input type="password" class="field w-100 empNewPassword">
+			</label> <input type="password" name="empNewPassword" class="field w-100 empNewPassword">
 				<div class="success-feedback">올바른 비밀 번호 입니다.</div>
-			<div class="fail-feedback">영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여
-				8~16글자로 작성하세요</div>
+			<div class="fail-feedback"></div>
 		</div>
 	
 		<div class="cell">
-			<label>새로운 비밀번호 확인 <i class="fa-solid fa-asterisk red"></i></label> <label
+			<label>새로운 비밀번호 확인</label> <label
 				class="togglebox"> <input type="checkbox"> <i
 				class="fa-solid fa-eye-slash red"></i> <i
 				class="fa-solid fa-eye blue"></i>
-			</label> <input type="password" class="field w-100 password-check">
-				<div class="success-feedback">비밀번호가 일치하지 않습니다.</div>
+			</label> <input type="password" name="empNewPasswordCheck" class="field w-100 password-check">
+				<div class="success-feedback">비밀번호가 일치합니다.</div>
 			<div class="fail-feedback">비밀번호가 공란이거나 일치하지 않습니다</div>
 		</div>	
 

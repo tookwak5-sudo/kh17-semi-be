@@ -111,7 +111,7 @@ public class EmpController {
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
-
+		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
 //		if(last == null) {
@@ -129,7 +129,6 @@ public class EmpController {
 		logInoutDto.setLogInoutEmpId(empDto.getEmpId());
 		logInoutDto.setLogInoutType("출근");
 		logInoutDao.insert(logInoutDto);
-		
 		return "redirect:/";
 	}
 
@@ -144,23 +143,25 @@ public class EmpController {
 
 	// 목표 출근버튼을 누르면 출근 처리
 	@PostMapping("/work-in")
-	public String workIn(HttpSession session) {
+	public String workIn(HttpSession session, Model model) {
 		String loginId = (String) session.getAttribute("loginId");
 
 		// 아이디를 조회해서 출퇴근 여부 확인
 		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-
+		
 		// 출근 상태라면 상태변화x
 		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
 			return "redirect:/?workIn";
 		}
-
-		// 퇴근 상태라면
+		
 		LogInoutDto newDto = new LogInoutDto();
 		newDto.setLogInoutEmpId(loginId);
 		newDto.setLogInoutType("출근");
-		System.out.println("출근" + newDto);
 		logInoutDao.insert(newDto);
+		
+		// [추가] 세션에 상태 저장
+	    session.setAttribute("logInoutType", "퇴근");
+		
 		return "redirect:/";
 	}
 
@@ -180,28 +181,36 @@ public class EmpController {
 		newDto.setLogInoutEmpId(loginId);
 		newDto.setLogInoutType("퇴근");
 		logInoutDao.insert(newDto);
-		System.out.println("퇴근" + newDto);
+		
+		// [추가] 세션에 상태 저장
+	    session.setAttribute("logInoutType", "출근");
+		
 		return "redirect:/";
 	}
 
 	// 로그아웃 및 퇴근
 	@RequestMapping("/logoutOut")
 	public String logoutOut(HttpSession session) {
+		// [1] 세션을 지우기 전에 현재 로그인 ID를 먼저 확보해야 합니다
+	    String loginId = (String) session.getAttribute("loginId");
+	    
+	    if (loginId != null) {
+	        // [2] 마지막 상태 확인
+	        LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+	        
+	        // 출근 상태인 경우에만 퇴근 처리
+	        if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
+	            LogInoutDto newDto = new LogInoutDto();
+	            newDto.setLogInoutEmpId(loginId);
+	            newDto.setLogInoutType("퇴근");
+	            logInoutDao.insert(newDto);
+	        }
+	    }
+	    
+	    //[3] 세션제거
 		session.removeAttribute("loginId");
 		session.removeAttribute("empGrade");
 
-		// 아이디를 조회해서 출퇴근 여부 확인
-		String loginId = (String) session.getAttribute("loginId");
-		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-		// 퇴근 상태라면 상태변화x 로그아웃 안됨
-		if ("퇴근".equals(logInoutDto.getLogInoutType().trim())) {
-			return "redirect:/?workOut";
-		}
-
-		// 출근 상태라면
-		LogInoutDto newDto = new LogInoutDto();
-		newDto.setLogInoutType("퇴근");
-		logInoutDao.insert(logInoutDto);
 		return "redirect:/emp/login";
 	}
 
@@ -217,7 +226,6 @@ public class EmpController {
 			throws IllegalStateException, IOException {
 
 		// 회원가입 정보 등록
-
 		empDao.join(empDto);
 
 
@@ -226,7 +234,7 @@ public class EmpController {
 			int attachNo = attachService.save(attach);
 			empDao.connect(empDto.getEmpId(), attachNo);
 		}
-
+		
 		return "redirect:./joinFinish";
 
 	}

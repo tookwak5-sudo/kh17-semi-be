@@ -23,6 +23,7 @@ import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.vo.EmpAprvLineVO;
+import com.kh.khsemiprj.vo.PlanHeadVO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -46,7 +47,6 @@ public class HomeController {
 		// 목표 아이디를 통해 일정에 부서번호 등록하기
 		// [1] 아이디 입력을 통해 부서번호 조회
 		Long deptNo = empPositionDeptDao.selectDeptbyId(loginId);  
-		
 		List<PlanDto> planList = planDao.selectList(loginId);
 		
 		List<Map<String, Object>> eventList = new ArrayList<>();
@@ -57,8 +57,7 @@ public class HomeController {
 			extendedProps.put("planNo", planDto.getPlanNo());
 			extendedProps.put("planHeadNo", planDto.getPlanHeadNo());
 			extendedProps.put("planType", planDto.getPlanType());
-			extendedProps.put("planEx"
-					+ "plain", planDto.getPlanExplain());
+			extendedProps.put("planExplain", planDto.getPlanExplain());
 			extendedProps.put("planDeptNo", planDto.getPlanDeptNo());
 			extendedProps.put("planEmpId", planDto.getPlanEmpId());
 			event.put("extendedProps", extendedProps);
@@ -71,17 +70,12 @@ public class HomeController {
 		model.addAttribute("deptNo", deptNo);
 		model.addAttribute("eventList", new Gson().toJson(eventList));
 		
-		
 		//목표: DB에 저장된 Head의 정보를 가져오기
 		//Map<Integer, HeadDto> DtoMap = new HashMap<>();
 		List<HeadDto> list = planDao.selectListHeader();
-//		for (HeadDto dto : list) {
-//			DtoMap.put(dto.getHeadNo(), dto);
-// 	    }
  	    // 3. 자바 객체를 JSP의 JavaScript가 인식할 수 있도록 JSON 문자열로 변환
  	    ObjectMapper objectMapper = new ObjectMapper();
  	    String planHeadJson = objectMapper.writeValueAsString(list);
- 	    
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("planHeadJson", planHeadJson);
  		

@@ -2,148 +2,202 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<style>
-	/* 마이페이지 정보 테이블 전체 감싸는 상자 */
-	.mypage-info-box {
-		border: 1px solid #dcdcdc;
-		border-radius: 8px;
-		overflow: hidden; /* 라운드 테두리 밖으로 배경색 안 삐져나가게 */
-		margin-bottom: 40px;
-	}
 
-	/* 마이페이지 전용 가로 정렬 행 (기존 flex-area 대체) */
-	.mypage-row {
-		display: flex;
-		align-items: center;
-		min-height: 48px;
-		border: none; /* 혹시 모를 기존 border 초기화 */
+<jsp:include page="/WEB-INF/views/template/header.jsp" />
+
+<style>
+/* 	/* 마이페이지 정보 테이블 전체 감싸는 상자 */ */
+/* 	.mypage-info-box { */
+/* 		border: 1px solid #dcdcdc; */
+/* 		border-radius: 8px; */
+/* 		overflow: hidden; /* 라운드 테두리 밖으로 배경색 안 삐져나가게 */ */
+/* 		margin-bottom: 40px; */
+/* 	} */
+
+/* 	/* 마이페이지 전용 가로 정렬 행 (기존 flex-area 대체) */ */
+/* 	.mypage-row { */
+/* 		display: flex; */
+/* 		align-items: center; */
+/* 		min-height: 48px; */
+/* 		border: none; /* 혹시 모를 기존 border 초기화 */ */
+/* 	} */
+	
+/* 	/* 행과 행 사이의 구분선 (마지막 줄은 제외) */ */
+/* 	.mypage-row:not(:last-child) { */
+/* 		border-bottom: 1px solid #e9e9e9; */
+/* 	} */
+	
+/* 	/* 왼쪽 항목 이름 (아이디, 이메일 등) */ */
+/* 	.mypage-label { */
+/* 		background-color: #f8fafc; */
+/* 		color: black; */
+/* 		font-weight: bold; */
+/* 		padding: 12px 20px; */
+/* 		border-right: 1px solid #e9e9e9; */
+/* 		text-align: left; */
+/* 	} */
+	
+/* 	/* 오른쪽 실제 데이터 값 */ */
+/* 	.mypage-value { */
+/* 		padding: 12px 20px; */
+/* 		font-weight: 500; */
+/* 	} */
+	/* 전체 컨테이너 여백 */
+	.mypage-container { max-width: 1000px; margin: 40px auto; }
+	
+	/* 정보 카드 그룹 */
+	.card-group {
+	    display: grid;
+	    grid-template-columns: 1fr 1fr; /* 2열 배치 */
+	    gap: 20px;
 	}
 	
-	/* 행과 행 사이의 구분선 (마지막 줄은 제외) */
-	.mypage-row:not(:last-child) {
-		border-bottom: 1px solid #e9e9e9;
+	/* 개별 정보 카드 */
+	.info-card {
+	    background: #ffffff;
+	    border-radius: 16px;
+	    padding: 24px;
+	    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	    border: 1px solid #e2e8f0;
 	}
 	
-	/* 왼쪽 항목 이름 (아이디, 이메일 등) */
-	.mypage-label {
-		background-color: #f8fafc;
-		color: black;
-		font-weight: bold;
-		padding: 12px 20px;
-		border-right: 1px solid #e9e9e9;
-		text-align: left;
+	/* 상세 행 스타일 */
+	.info-row {
+	    display: flex;
+	    padding: 12px 0;
+	    border-bottom: 1px solid #f1f5f9;
+	}
+	.info-row:last-child { border-bottom: none; }
+	.info-label { width: 125px; color: #64748b; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+	.info-value { color: #1e293b; font-weight: 600; }
+	
+	/* 테이블 헤더 색상 및 디자인 개선 */
+	.table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+	.table th { background-color: #f8fafc; padding: 14px; border-bottom: 2px solid #e2e8f0; color: #475569; }
+	.table td { padding: 14px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+	
+	/* 휴가 정보 카드 스타일 */
+	.vacation-card {
+	    background: #ffffff;
+	    border-radius: 16px;
+	    padding: 24px;
+	    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	    border: 1px solid #e2e8f0;
+	    margin-top: 30px;
 	}
 	
-	/* 오른쪽 실제 데이터 값 */
-	.mypage-value {
-		padding: 12px 20px;
-		font-weight: 500;
+	/* 테이블 디자인 개선 */
+	.vacation-table {
+	    width: 100%;
+	    border-collapse: separate;
+	    border-spacing: 0;
+	    margin-top: 15px;
+	}
+	.vacation-table th {
+	    background-color: #f8fafc;
+	    padding: 16px;
+	    border-bottom: 2px solid #e2e8f0;
+	    color: #475569;
+	    font-weight: 600;
+	}
+	.vacation-table td {
+	    padding: 16px;
+	    border-bottom: 1px solid #f1f5f9;
+	    text-align: center;
+	    color: #334155;
+	}
+	
+	/* 차트 영역 스타일 개선 */
+	.chart-box-left, .chart-box-right {
+	    background: #ffffff !important;
+	    border: 1px solid #e2e8f0;
+	    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	    border-radius: 16px;
+	}
+	
+	/* 섹션 제목 컨테이너 */
+	.section-header {
+	    display: flex;
+	    align-items: center;
+	    margin-bottom: 24px;
+	    padding-left: 8px;
+	    border-left: 4px solid #4f46e5; /* 좌측에 인디고 포인트 바 */
+	}
+	
+	/* 제목 텍스트 스타일 */
+	.section-title {
+	    font-size: 20px;
+	    font-weight: 700;
+	    color: #1e293b;
+	    margin: 0;
+	    letter-spacing: -0.5px; /* 자간을 좁혀 더 정돈된 느낌 */
+	}
+	
+	/* 부가적인 강조를 위한 서브 문구 (선택) */
+	.section-subtitle {
+	    font-size: 14px;
+	    color: #64748b;
+	    margin-left: 10px;
 	}
 </style>
-<jsp:include page="/WEB-INF/views/template/header.jsp" />
+
+
 
 <h1>마이 페이지</h1>
 
 <div class="container w-950 mt-50 mb-50">
-	<div class="cell">
-		<h1>${findEmpDto.empName}님의 정보</h1>
+	<div class="section-header">
+	    <h1 class="section-title">${findEmpDto.empName}님의 프로필 정보</h1>
+	    <span class="section-subtitle">기본 및 상세 설정 관리</span>
 	</div>
 
-	<div class="cell mypage-info-box">
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-user"></i></span>
-				아이디
-			</div>
-			<div class="w-75 mypage-value">${findEmpDto.empId}</div>
-		</div>
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-envelope"></i></span>
-				이메일
-			</div>
-			<div class="w-75 mypage-value">${findEmpDto.empEmail}</div>
-		</div>
-
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-cake-candles"></i></span>
-				생년월일
-			</div>
-			<div class="w-75 mypage-value">${findEmpDto.empBirth}</div>
-		</div>
-
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-phone"></i></span>
-				연락처
-			</div>
-			<div class="w-75 mypage-value">${findEmpDto.empContact}</div>
-		</div>
-
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-signs-post"></i></span>
-				우편번호
-			</div>
-			<div class="w-75 mypage-value">${findEmpDto.empPost}</div>
-		</div>
-
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-location-dot"></i></span>
-				주소
-			</div>
-			<div class="w-75 mypage-value">${findEmpDto.empAddress1}</div>
-		</div>
-
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-house"></i></span>
-				상세주소
-			</div>
-			<div class="w-75 mypage-value">${findEmpDto.empAddress2}</div>
-		</div>	
-		<div class="mypage-row">
-			<div class="w-25 mypage-label">
-				<span><i class="fa-solid fa-clock-rotate-left"></i></span>
-				로그인 이력
-			</div>
-			<div class="w-75 mypage-value">2026.06.01</div>
-		</div>
-	</div>
+	<div class="card-group">
+	    <div class="info-card" style="position: relative;">
+	        <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 8px;">
+	            <a href="/emp/checkPassword" class="btn btn-positive">내 정보 수정</a>
+	            <a href="/emp/changePassword" class="btn btn-neutral">비밀번호 수정</a>
+	        </div>
+	        
+	        <h3>기본 정보</h3>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-user"></i> 아이디</div><div class="info-value">${findEmpDto.empId}</div></div>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-envelope"></i> 이메일</div><div class="info-value">${findEmpDto.empEmail}</div></div>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-phone"></i> 연락처</div><div class="info-value">${findEmpDto.empContact}</div></div>
+	    </div>
 	
-	<div class="right">
-			<a href="/emp/checkPassword" class="btn btn-neutral" style="width : 140px;">내 정보 수정</a>
+	    <div class="info-card">
+	        <h3>상세 정보</h3>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-location-dot"></i>주소</div><div class="info-value">${findEmpDto.empAddress1}</div></div>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-cake-candles"></i>생년월일</div><div class="info-value">${findEmpDto.empBirth}</div></div>
+	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-clock-rotate-left"></i>마지막 로그인</div><div class="info-value">2026.06.01</div></div>
+	    </div>
 	</div>
-		
-	<div class="right mt-10 mb-50">
-		<a href="/emp/changePassword" class="btn btn-neutral" style="width : 140px;">비밀번호 수정</a>
-	</div>	
 
-	<div class="cell">
-		<h1>${findEmpDto.empName}님의 휴가 정보</h1>
+	<div class="section-header mt-50">
+	    <h1 class="section-title">휴가 현황</h1>
+	    <span class="section-subtitle">연차 사용 및 잔여 현황</span>
 	</div>
-	<table class="table">
-	    <thead>
-	        <tr>
-	            <th>연도</th>
-	            <th>총 연차</th>
-	            <th>사용 연차</th>
-	            <th>잔여 연차</th>
-	        </tr>
-	    </thead>
-	    <tbody>
-	        <c:forEach var="leave" items="${empLeaveList}">
+	<div class="vacation-card">
+	    <table class="vacation-table">
+	        <thead>
 	            <tr>
-	                <td>${leave.leaveYear}년</td>
-	                <td>${leave.leaveTotal}일</td>
-	                <td>${leave.leaveUsed}일</td>
-	                <td>${leave.leaveRemain}일</td>
+	                <th>연도</th>
+	                <th>총 연차</th>
+	                <th>사용 연차</th>
+	                <th>잔여 연차</th>
 	            </tr>
-	        </c:forEach>
-	    </tbody>
-	</table>
+	        </thead>
+	        <tbody>
+	            <c:forEach var="leave" items="${empLeaveList}">
+	                <tr>
+	                    <td><strong>${leave.leaveYear}년</strong></td>
+	                    <td>${leave.leaveTotal}일</td>
+	                    <td><span style="color: #ef4444;">${leave.leaveUsed}일</span></td>
+	                    <td><strong>${leave.leaveRemain}일</strong></td>
+	                </tr>
+	            </c:forEach>
+	        </tbody>
+	    </table>
+	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -161,6 +215,10 @@
 	</style>
 
 	<div class="chart-section">
+		<div class="section-header">
+	    <h1 class="section-title">${findEmpDto.empName}님의 근태 정보</h1>
+	    <span class="section-subtitle">휴가 관련 정보</span>
+		</div>
 		<div class="chart-header">
 			<span class="btn-arrow" id="prevMonthBtn">&lt;</span>
 			<span class="period-text" id="periodDisplay">2026. 05 ~ 2026. 06</span>
