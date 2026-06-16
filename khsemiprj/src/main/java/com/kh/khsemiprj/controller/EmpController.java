@@ -21,12 +21,14 @@ import com.kh.khsemiprj.dao.EmpExitDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.LogAccessDao;
 import com.kh.khsemiprj.dao.LogInoutDao;
+import com.kh.khsemiprj.dao.MemoDao;
 import com.kh.khsemiprj.dto.CertDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpExitDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.dto.LogAccessDto;
 import com.kh.khsemiprj.dto.LogInoutDto;
+import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
@@ -59,6 +61,9 @@ public class EmpController {
 	@Autowired
 	private LogAccessDao logAccessDao;
 
+	@Autowired
+	private MemoDao memoDao;
+	
 	@GetMapping("/login")
 	public String login() {
 		return "emp/login";
@@ -230,12 +235,26 @@ public class EmpController {
 		// 회원가입 정보 등록
 		empDao.join(empDto);
 
-
 		// 프로필이 있으면 추가 등록 및 연결
 		if (!attach.isEmpty()) {
 			int attachNo = attachService.save(attach);
 			empDao.connect(empDto.getEmpId(), attachNo);
 		}
+		
+		List<EmpDto> adminList = empDao.selectAdminList();
+		for(int i = 0; i < adminList.size(); i++) {			
+			MemoDto memoDto = MemoDto.builder()
+					.memoNo(memoDao.sequence())
+					.memoReceiverId(adminList.get(i).getEmpId())
+					.memoSenderId("system")
+					.memoTitle("신규 사원 등록 알림")
+					.memoContent("<a href='/admin/emp/list' class='btn btn-positive' target='_blank'>사원 관리 확인</a>")
+					.memoReadStatus("N")
+					.memoType("일반")
+					.build();
+			memoDao.insert(memoDto);
+		}
+		
 		return "redirect:/emp/login?alarm=join";
 	}
 

@@ -190,4 +190,11 @@ public class EmpDao {
 		Object[] params = { empId, exitDate };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
+	
+	//관리자 목록 가져오기
+	public List<EmpDto> selectAdminList() {
+		String sql = "select * from emp where emp_valid = 'Y' and emp_grade = 2 ";
+		Object[] params = {};
+		return jdbcTemplate.query(sql, empMapper, params);
+	}
 }

@@ -17,7 +17,7 @@
 	}
 </style>
 
-<div class="container w-100 mt-50 mb-50">
+<div class="container w-80 mt-50 mb-50">
 
 	<div class="cell center mb-0">
 		<h1 class="mb-0">결재 목록</h1>
@@ -31,8 +31,14 @@
         </div>
 		<div class="w-80 flex-area flex-center">
 			<form action="./list" method="get">
+				<select name="aprvHead" class="field">
+					<option value="" ${param.formHeadNo=="" ? "selected" : ""}>전체분류</option>
+					<c:forEach var="head" items="${headList}">
+					<option value="${head.headName}" ${param.aprvHead == head.headName ? "selected" : ""} >${head.headName}</option>
+					</c:forEach>
+				</select>
 				<select name="aprvStatus" class="field">
-					<option value="" ${param.aprvStatus=="" ? "selected" : ""}>전체</option>
+					<option value="" ${param.aprvStatus=="" ? "selected" : ""}>전체상태</option>
 					<option value="대기" ${param.aprvStatus=="대기" ? "selected" : ""}>대기</option>
 					<option value="승인" ${param.aprvStatus=="승인" ? "selected" : ""} class="blue">승인</option>
 					<option value="반려" ${param.aprvStatus=="반려" ? "selected" : ""} class="red">반려</option>
@@ -103,7 +109,7 @@
 	</div>
 	<!-- 페이지네이션 -->
 	<div class="cell mt-40">
-		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+		<jsp:include page="/WEB-INF/views/template/paginationForAprvList.jsp"></jsp:include>
 	</div>
 </div>
 
@@ -164,11 +170,10 @@
 		if(!memberId) return; // 탈퇴한 사용자 등 아이디가 없으면 무시
 	
 		// 작성 글 보기 링크의 href 주소를 변경
-		var searchUrl = "/aprv/list?aprvStatus=&column=aprv_writer&keyword=" + memberId;
+		var searchUrl = "/aprv/list?aprvHead=&aprvStatus=&column=aprv_writer&keyword=" + memberId;
 		$("#link-view-posts").attr("href", searchUrl);
 	
-		// 쪽지 보내기 링크의 주소를 변경
-		var searchUrl = "/aprv/list?aprvStatus=&column=aprv_writer&keyword=" + memberId;
+		// 쪽지 보내기 링크의 아이디를 변경
 		$("#link-send-memo").attr("onclick", "sendMemo('" + memberId + "')");
 		
 		// 마우스가 클릭된 좌표를 계산하여 메뉴를 이동

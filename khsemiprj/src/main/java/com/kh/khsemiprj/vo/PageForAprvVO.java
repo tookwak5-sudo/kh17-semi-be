@@ -7,6 +7,7 @@ import lombok.Data;
 //- 자바에서 배웠던 클래스와 가장 유사한 형태
 @Data
 public class PageForAprvVO {
+	private String aprvHead;
 	private String aprvStatus;
 	private String column;//파라미터에 있는 검색항목
 	private String keyword;//파라미터에 있는 검색키워드
@@ -37,9 +38,9 @@ public class PageForAprvVO {
 	//목록 및 검색 유지용 파라미터 생성
 	public String getSearchParams() {
 		if(isList())
-			return "size="+size;
+			return "size="+size+"&aprvHead="+aprvHead+"&aprvStatus="+aprvStatus;
 		else
-			return "size="+size+"&column="+column+"&keyword="+keyword;
+			return "size="+size+"&aprvHead="+aprvHead+"&aprvStatus="+aprvStatus+"&column="+column+"&keyword="+keyword;
 	}
 	//현재 페이지에 맞는 첫 블록 번호를 반환하는 메소드
 	public int getBeginBlock() {

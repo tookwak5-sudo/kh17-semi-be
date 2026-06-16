@@ -35,6 +35,7 @@ import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.service.AttachService;
 import com.kh.khsemiprj.vo.AprvDetailVO;
+import com.kh.khsemiprj.vo.AprvFormHeadNameVO;
 import com.kh.khsemiprj.vo.AprvFormVO;
 import com.kh.khsemiprj.vo.AprvLineListVO;
 import com.kh.khsemiprj.vo.DeptVO;
@@ -80,14 +81,18 @@ public class AprvController {
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
 		
+		List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
+		model.addAttribute("headList", filteredHeadList);
+		
 		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
+		
 		
 		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
 		int count = aprvDao.count(pageForAprvVO, loginId);
 		pageForAprvVO.setCount(count);//데이터 개수 설정
 		model.addAttribute("pageVO", pageForAprvVO);
-		
+		System.out.println(pageForAprvVO);
 		List<AprvDetailVO> aprvList = aprvDao.selectList(pageForAprvVO, loginId);
 		model.addAttribute("aprvList", aprvList);
 		return "aprv/list";
@@ -170,6 +175,9 @@ public class AprvController {
 				aprvDao.connect(aprvDto.getAprvNo(), attachNo);
 			}
 			
+			//결재상태 확인
+			AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvNo);
+			
 			//결재라인1 등록
 			for(int i = 0; i < aprvLine1IdList.size(); i++) {
 				int aprvLineNo = aprvLineDao.sequence();
@@ -181,14 +189,13 @@ public class AprvController {
 				aprvLineDto.setAprvLineStatus("대기");
 				aprvLineDao.insertAprvLine(aprvLineDto);
 
-				//EmpPositionDeptVO empPositionDeptVO = empPositionDeptDao.selectOne(aprvLine1IdList.get(i));
 				if(aprvDto.getAprvStatus().equals("대기")) {
 					MemoDto memoDto = MemoDto.builder()
 							.memoNo(memoDao.sequence())
 							.memoReceiverId(aprvLine1IdList.get(i))
 							.memoSenderId("system")
-							.memoTitle("신규 결재 알림")
-							.memoContent("신규 결재가 기안되었습니다.<br><br>제목 : " + aprvDto.getAprvTitle() + "<br><br>기안자 : " + aprvLine1IdList.get(i) + "<br><br><a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
+							.memoTitle("신규 결재 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+							.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 							.memoReadStatus("N")
 							.memoType("결재")
 							.build();
@@ -213,8 +220,8 @@ public class AprvController {
 								.memoNo(memoDao.sequence())
 								.memoReceiverId(aprvLine2IdList.get(i))
 								.memoSenderId("system")
-								.memoTitle("신규 결재 알림")
-								.memoContent("[" + aprvDto.getAprvTitle() + "] 결재가 기안되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
+								.memoTitle("신규 결재 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+								.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 								.memoReadStatus("N")
 								.memoType("결재")
 								.build();
@@ -349,6 +356,9 @@ public class AprvController {
 			//기존 결재라인 삭제
 			aprvLineDao.deleteAprvLine(aprvNo);
 			
+			//결재상태 확인
+			AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvNo);
+			
 			//결재라인1 등록
 			for(int i = 0; i < aprvLine1IdList.size(); i++) {
 				int aprvLineNo = aprvLineDao.sequence();
@@ -365,8 +375,8 @@ public class AprvController {
 							.memoNo(memoDao.sequence())
 							.memoReceiverId(aprvLine1IdList.get(i))
 							.memoSenderId("system")
-							.memoTitle("신규 결재 알림")
-							.memoContent("[" + aprvDto.getAprvTitle() + "] 결재가 기안되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+							.memoTitle("신규 결재 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+							.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 							.memoReadStatus("N")
 							.memoType("결재")
 							.build();
@@ -391,8 +401,8 @@ public class AprvController {
 								.memoNo(memoDao.sequence())
 								.memoReceiverId(aprvLine2IdList.get(i))
 								.memoSenderId("system")
-								.memoTitle("신규 결재 알림")
-								.memoContent("[" + aprvDto.getAprvTitle() + "] 결재가 기안되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+								.memoTitle("신규 결재 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+								.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 								.memoReadStatus("N")
 								.memoType("결재")
 								.build();
@@ -420,8 +430,8 @@ public class AprvController {
 						.memoNo(memoDao.sequence())
 						.memoReceiverId(aprvLine1List.get(i).getEmpId())
 						.memoSenderId("system")
-						.memoTitle("신규 결재 알림")
-						.memoContent("[" + aprvDetailVO.getAprvTitle() + "] 결재가 기안되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+						.memoTitle("신규 결재 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+						.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 						.memoReadStatus("N")
 						.memoType("결재")
 						.build();
@@ -434,8 +444,8 @@ public class AprvController {
 						.memoNo(memoDao.sequence())
 						.memoReceiverId(aprvLine2List.get(i).getEmpId())
 						.memoSenderId("system")
-						.memoTitle("신규 결재 알림")
-						.memoContent("[" + aprvDetailVO.getAprvTitle() + "] 결재가 기안되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvNo + "' target='_blank'>결재 문서 확인</a>")
+						.memoTitle("신규 결재 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+						.memoContent("<a href='/aprv/detail?aprvNo=" + aprvNo + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 						.memoReadStatus("N")
 						.memoType("결재")
 						.build();

@@ -47,7 +47,7 @@
 
 </script>
 
-<div class="container w-1200 mt-50 mb-50">
+<div class="container w-80 mt-50 mb-50">
 	<div class="cell">
 		<div class="flex-area" style="align-items:end">
 			<div>
@@ -116,8 +116,8 @@
 	        			<tr>
 		        			<th width="25%">부서</th>
 		        			<th width="25%">결재자</th>
-		        			<th width="25%">직책</th>
-		        			<th width="25%">상태</th>
+		        			<th width="20%">직책</th>
+		        			<th width="30%">상태</th>
 	        			</tr>
 	        		</thead>
 	        		<tbody id="line1List" class="lineList">
@@ -157,8 +157,8 @@
 	        			<tr>
 		        			<th width="25%">부서</th>
 		        			<th width="25%">결재자</th>
-		        			<th width="25%">직책</th>
-		        			<th width="25%">상태</th>
+		        			<th width="20%">직책</th>
+		        			<th width="30%">상태</th>
 	        			</tr>
 	        		</thead>
 	        		<tbody id="line2List" class="lineList">
@@ -200,13 +200,13 @@
 	</div>
 	<div class="cell right">
 		<form method="post" class="form-check">
+		<a class="btn btn-neutral" href="./list">목록으로</a>
 		<input type="hidden" name="aprvNo" value="${param.aprvNo}" />
 		<c:if test="${aprvDetailVO.aprvStatus == '임시저장' && aprvDetailVO.aprvWriter == sessionScope.loginId}">
 		<button class="btn btn-positive aprv-save">기안하기</button>
 		<a class="btn btn-negative" href="./edit?aprvNo=${aprvDetailVO.aprvNo}">수정</a>
 		<button class="btn btn-negative aprv-delete">삭제</button>
 		</c:if>
-		<a class="btn btn-neutral" href="./list">목록으로</a>
 		</form>
 	</div>
 </div>

@@ -164,8 +164,8 @@ public class AprvRestController {
 										.memoNo(memoDao.sequence())
 										.memoReceiverId(aprvDetailVO.getAprvWriter())
 										.memoSenderId("system")
-										.memoTitle("결재 승인 알림")
-										.memoContent("[" + aprvDetailVO.getAprvTitle() + "] 결재가 승인되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvDetailVO.getAprvNo() + "' target='_blank'>결재 문서 확인</a>")
+										.memoTitle("결재 승인 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+										.memoContent("<a href='/aprv/detail?aprvNo=" + aprvDetailVO.getAprvNo() + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 										.memoReadStatus("N")
 										.memoType("결재")
 										.build();
@@ -179,8 +179,8 @@ public class AprvRestController {
 									.memoNo(memoDao.sequence())
 									.memoReceiverId(aprvDetailVO.getAprvWriter())
 									.memoSenderId("system")
-									.memoTitle("결재 반려 알림")
-									.memoContent("[" + aprvDetailVO.getAprvTitle() + "] 결재가 반려되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvDetailVO.getAprvNo() + "' target='_blank'>결재 문서 확인</a>")
+									.memoTitle("결재 반려 알림 - [" + aprvDetailVO.getHeadName() + "] " + aprvDetailVO.getAprvTitle())
+									.memoContent("<a href='/aprv/detail?aprvNo=" + aprvDetailVO.getAprvNo() + "' class='btn btn-positive' target='_blank'>결재 문서 확인</a>")
 									.memoReadStatus("N")
 									.memoType("결재")
 									.build();
