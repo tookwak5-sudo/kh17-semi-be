@@ -89,9 +89,6 @@ public class EmpLeaveService {
 				newTotal = Math.min(15 + extra, 25);
 			}
 		}
-		
 		return newTotal;
 	}
-	
-	
 }
