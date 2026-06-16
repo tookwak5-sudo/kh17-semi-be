@@ -16,11 +16,13 @@ import com.kh.khsemiprj.dao.AprvLineDao;
 import com.kh.khsemiprj.dao.AttachDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
+import com.kh.khsemiprj.dao.MemoDao;
 import com.kh.khsemiprj.dao.PlanDao;
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
+import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.vo.AprvDetailVO;
 import com.kh.khsemiprj.vo.AprvLineListVO;
@@ -50,6 +52,9 @@ public class AprvRestController {
 	
 	@Autowired
 	private EmpDao empDao;
+	
+	@Autowired
+	private MemoDao memoDao;
 	
 	@Autowired
 	private AttachDao attachDao;
@@ -98,13 +103,12 @@ public class AprvRestController {
 				if(aprvLineVO.getAprvLineStatus().equals("대기")) {//상태값 비교
 					boolean dbResult = aprvLineDao.setAprvLineStatus(aprvLineDto);
 					if(dbResult) {
+						//결재상태 확인
+						AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvLineVO.getAprvDocumentNo());
 						if(aprvLineDto.getAprvLineStatus().equals("승인")) {
 							System.out.println("aprv_no : " + aprvLineVO.getAprvDocumentNo() + ", aprvLineCurrentSeq : " + aprvLineVO.getAprvLineCurrentSeq());
 							//현재 순서의 결재가 모두 처리되었는지 확인 후 변경
 							aprvLineDao.setAprvStatus(aprvLineVO.getAprvDocumentNo(), aprvLineVO.getAprvLineCurrentSeq());
-							
-							//결재상태 확인
-							AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvLineVO.getAprvDocumentNo());
 							//상태값이 승인으로 변경되었다면
 							if(aprvDetailVO.getAprvStatus().equals("승인")) {
 								String headName = aprvDetailVO.getHeadName();
@@ -154,10 +158,33 @@ public class AprvRestController {
 										empDao.insertEmpExit(aprvDetailVO.getAprvWriter(), aprvDetailVO.getAprvSdate());
 									}
 								}
+								
+								//승인 결과 기안자에게 쪽지 보내기
+								MemoDto memoDto = MemoDto.builder()
+										.memoNo(memoDao.sequence())
+										.memoReceiverId(aprvDetailVO.getAprvWriter())
+										.memoSenderId("system")
+										.memoTitle("결재 승인 알림")
+										.memoContent("[" + aprvDetailVO.getAprvTitle() + "] 결재가 승인되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvDetailVO.getAprvNo() + "' target='_blank'>결재 문서 확인</a>")
+										.memoReadStatus("N")
+										.memoType("결재")
+										.build();
+								memoDao.insert(memoDto);
 							}
 						} else {
 							//반려라면 결재의 상태값도 반려로 변경
 							aprvDao.setAprvDeny(aprvLineVO.getAprvDocumentNo());
+							//반려 결과 기안자에게 쪽지 보내기
+							MemoDto memoDto = MemoDto.builder()
+									.memoNo(memoDao.sequence())
+									.memoReceiverId(aprvDetailVO.getAprvWriter())
+									.memoSenderId("system")
+									.memoTitle("결재 반려 알림")
+									.memoContent("[" + aprvDetailVO.getAprvTitle() + "] 결재가 반려되었습니다.<br><br><a href='/aprv/detail?aprvNo=" + aprvDetailVO.getAprvNo() + "' target='_blank'>결재 문서 확인</a>")
+									.memoReadStatus("N")
+									.memoType("결재")
+									.build();
+							memoDao.insert(memoDto);
 						}
 						result.put("result", "Success");						
 					} else {
