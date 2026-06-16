@@ -295,7 +295,7 @@ public class AprvDao {
 	               + "from aprv_line l "
 	               + "join aprv_document d on l.aprv_document_no = d.aprv_no "
 	               + "join emp e on d.aprv_writer = e.emp_id " //l.emp_id가 아니라 d.aprv_writer와 조인!
-	               + "where l.emp_id = ? and l.aprv_line_status = '대기' "
+	               + "where l.emp_id = ? and l.aprv_line_status = '대기' and d.aprv_status = '대기' "
 	               + "order by l.aprv_document_no asc";         
 	    Object[] params = { empId };
 	    return jdbcTemplate.query(sql, empAprvLineMapper, params);
