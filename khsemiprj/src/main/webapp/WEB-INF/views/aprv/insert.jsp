@@ -9,189 +9,243 @@
 <!-- 부서 목록 디자인 css -->
 <link rel="stylesheet" type="text/css" href="/css/dept/list.css">
 <script>
-	const deptList = JSON.parse('${deptListJson}');
-	
-	$(function () {
-		var formNo = '${param.formNo}';
-		getAprmFormAttach(formNo);
-		var formName = $(".aprv-form-list option:selected").attr("data-name");
-		var formHead = $(".aprv-form-list option:selected").attr("data-head");
-		
-		switch(formHead) {
-			case "연차":
-			case "병가":
-			case "기타":
-			default:
-				if(formHead == "연차") $(".date-title").text("기한 [잔여휴가일수 : ${leaveRemain}일]");
-				else $(".date-title").text("기한");
-				$(".timeTilde").show();
-				$(".picker-edate").show();
-				var picker1 = new Lightpick({ 
-				    field : $(".picker-sdate")[0],
-					secondField : $(".picker-edate")[0],
-					singleDate : true, //단일 날짜 선택 불가(범위 선택 가능)
-				    format : "YYYY-MM-DD",
-					firstDay : 7,
-					disableWeekends: true,
-					// 1. 달력이 화면에 열렸을 때 마우스 움직임 감지 셋팅
-				    onOpen: function() {
-				        // Lightpick 달력의 날짜 칸(td)들에 마우스가 올라갈 때 이벤트 리스너 추가
-				        const calendarEl = document.querySelector('.lightpick__months');
-				        
-				        calendarEl.addEventListener('mouseenter', function(e) {
-				            // 마우스가 올라간 날짜 엘리먼트가 실제 날짜(day) 칸인지 확인
-				            if (e.target.classList.contains('lightpick__day') && !e.target.classList.contains('is-disabled')) {
-				                
-				                // Lightpick이 내부적으로 계산을 마친 직후(아주 잠깐의 뒤)에 가로채기 위해 setTimeout 사용
-				                setTimeout(function() {
-				                    // 시작일은 선택되었고 종료일은 아직 마우스만 올라가 있는 상태(is-in-range 상태)일 때
-				                    const start = picker1.getStartDate();
-				                    
-				                    // 마우스가 올라가 있는 칸의 timestamp 데이터를 가져와 moment 객체로 변환
-				                    const hoverTimestamp = parseInt(e.target.getAttribute('data-time'));
-				                    
-				                    if (start && hoverTimestamp) {
-				                        const hoverDate = moment(hoverTimestamp);
-				                        
-				                        // 시작일과 마우스가 올라간 날짜 사이의 평일 수 계산
-				                        // (시작일이 호버일보다 미래일 경우를 대비해 순서 정렬)
-				                        const firstDate = start.isBefore(hoverDate) ? start : hoverDate;
-				                        const secondDate = start.isBefore(hoverDate) ? hoverDate : start;
-				                        
-				                        const weekdaysCount = getWeekdaysCount(firstDate, secondDate);
-				                        
-				                        // 툴팁 텍스트 강제 변경
-				                        const tooltip = document.querySelector('.lightpick__tooltip');
-				                        if (tooltip) {
-				                            tooltip.innerText = weekdaysCount + ' 일 (평일 기준)';
-				                        }
-				                    }
-				                }, 5);
-				            }
-				        }, true); // 이벤트 캡처링 사용으로 개별 td의 이벤트를 부모에서 감지
-				    },
-					onSelect: function(start, end){
-				        // 날짜 선택 시 실행될 코드
-						var formHead = $(".aprv-form-list:selected").attr("data-head");
-						var sDate = $(".picker-sdate").val();
-						var eDate = $(".picker-edate").val();
-						if(formHead == "연차" && sDate != "" && eDate != "") {
-					        if(sDate == eDate) {
-								$(".vacationType").show();
-								var template = $("#vacation-type-template").text();
-								const div = $.parseHTML(template)[1];
-								$(".vacationType").append(div);
-							} else {
-								$(".vacationType").hide();
-								$(".vacationType").empty();
-							}
-						} else {
-							$(".vacationType").hide();
-							$(".vacationType").empty();
-						}
-						
-						var formHead = $(".aprv-form-list option:selected").attr("data-head");
-						if(formHead == "연차") {
-							var count = getWeekdaysCount(moment(sDate), moment(eDate));
-							if(count > ${leaveRemain}) {
-								alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
-								picker1.setDateRange(null, null);
-								$(".picker-sdate").val("");
-								$(".picker-edate").val("");
-								$('input[name=aprvLeave]').val("");
-							} else {
-								$('input[name=aprvLeave]').val(count);
-							}
-						}
-				    }
-				});
-			
-				break;
-			case "사직":
-				$(".date-title").text("퇴사일자");
-				$(".picker-sdate").attr("placeholder", "퇴사일");
-				$(".timeTilde").hide();
-				$(".picker-edate").hide();
-				var picker1 = new Lightpick({ 
-				    field : $(".picker-sdate")[0],
-				    format : "YYYY-MM-DD",
-					firstDay : 7,
-					disableWeekends: true,
-					onSelect: function(start, end){
-				        // 날짜 선택 시 실행될 코드
-				        $(".picker-edate").val($(".picker-sdate").val());//시작일만 선택 가능하므로 종료일도 동일하게 설정
-				    }
-				});
-				break;
-			case "비용":
-				$(".date-title").text("지출일자");
-				$(".picker-sdate").attr("placeholder", "지출일");
-				$(".timeTilde").hide();
-				$(".picker-edate").hide();
-				var picker1 = new Lightpick({ 
-				    field : $(".picker-sdate")[0],
-				    format : "YYYY-MM-DD",
-					firstDay : 7,
-					disableWeekends: true,
-					onSelect: function(start, end){
-				        // 날짜 선택 시 실행될 코드
-				        $(".picker-edate").val($(".picker-sdate").val());//시작일만 선택 가능하므로 종료일도 동일하게 설정
-				    }
-				});
-				break;
-		}
-		
-		var state = {
-				aprvFormNoValid: true,
-				aprvTitleValid: true,
-				aprvContentValid: true,
-				aprvSdateValid: true,
-				aprvEdateValid: true,
-				attachFileValid: true,
-				aprvLineNo1Valid: true,
-				aprvLineNo2Valid: true,
-				ok: function(){
-					return Object.values(this)
-					.filter(v => typeof v==="boolean")
-					.every(v => v === true);
-				}
-		};
-		
-		//폼검사
-		$(".form-check").on("submit", function(e){
-        	$(this).find("select[name]").trigger("input");
-            $(this).find("input[name], textarea[name]").trigger("blur");
-            
-         	// submit을 유발한 버튼 객체 가져오기
-            var clickedButton = e.originalEvent.submitter; 
+const deptList = JSON.parse('${deptListJson}');
 
-            // 특정 버튼일 때만 다르게 처리하고 싶다면?
-            if ($(clickedButton).hasClass("aprv-insert")) {
-            	$(".aprv-status").val("대기");
-            } else {
-            	$(".aprv-status").val("임시저장");
-            }
-           	return state.ok();
-        });
-		
-		function getWeekdaysCount(startDate, endDate) {
-		    let count = 0;
-		    // Moment.js를 활용하여 시작일부터 종료일까지 1일씩 증가
-		    let current = startDate.clone(); 
-		    
-		    while (current.isSameOrBefore(endDate, 'day')) {
-		        // 요일 확인: 0(일요일) ~ 6(토요일)
-		        let dayOfWeek = current.day(); 
-		        
-		        // 일요일(0)도 토요일(6)도 아닌 경우에만 카운트 증가
-		        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-		            count++;
-		        }
-		        current.add(1, 'day');
-		    }
-		    return count;
+// 유효성 검사 상태 객체
+var state = {
+	aprvTitleValid: false,
+	aprvContentValid: false,
+	aprvSdateValid: false,
+	aprvEdateValid: false,
+	aprvLineNo1Valid: false,
+	aprvLineNo2Valid: false,
+	ok: function(){
+		return Object.values(this)
+		.filter(v => typeof v==="boolean")
+		.every(v => v === true);
+	}
+};
+
+// 평일(주말 제외) 일수 계산 함수 (호이스팅을 위해 상단 정의 또는 바깥 배치)
+function getWeekdaysCount(startDate, endDate) {
+	let count = 0;
+	let current = startDate.clone(); 
+	
+	while (current.isSameOrBefore(endDate, 'day')) {
+		let dayOfWeek = current.day(); 
+		if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+			count++;
 		}
-	});
+		current.add(1, 'day');
+	}
+	return count;
+}
+
+$(function () {
+	var formNo = '${param.formNo}';
+	getAprmFormAttach(formNo);
+	var formName = $(".aprv-form-list option:selected").attr("data-name");
+	var formHead = $(".aprv-form-list option:selected").attr("data-head");
+	
+	switch(formHead) {
+		case "연차":
+		case "병가":
+		case "기타":
+		default:
+			if(formHead == "연차") $(".date-title").text("기한 [잔여휴가일수 : ${leaveRemain}일]");
+			else $(".date-title").text("기한");
+			$(".timeTilde").show();
+			$(".picker-edate").show();
+			var picker1 = new Lightpick({ 
+			    field : $(".picker-sdate")[0],
+				secondField : $(".picker-edate")[0],
+				singleDate : true,
+			    format : "YYYY-MM-DD",
+				firstDay : 7,
+				disableWeekends: true,
+			    onOpen: function() {
+			        const calendarEl = document.querySelector('.lightpick__months');
+			        if(!calendarEl) return;
+			        
+			        calendarEl.addEventListener('mouseenter', function(e) {
+			            if (e.target.classList.contains('lightpick__day') && !e.target.classList.contains('is-disabled')) {
+			                setTimeout(function() {
+			                    const start = picker1.getStartDate();
+			                    const hoverTimestamp = parseInt(e.target.getAttribute('data-time'));
+			                    
+			                    if (start && hoverTimestamp) {
+			                        const hoverDate = moment(hoverTimestamp);
+			                        const firstDate = start.isBefore(hoverDate) ? start : hoverDate;
+			                        const secondDate = start.isBefore(hoverDate) ? hoverDate : start;
+			                        
+			                        const weekdaysCount = getWeekdaysCount(firstDate, secondDate);
+			                        const tooltip = document.querySelector('.lightpick__tooltip');
+			                        if (tooltip) {
+			                            tooltip.innerText = weekdaysCount + ' 일 (평일 기준)';
+			                        }
+			                    }
+			                }, 5);
+			            }
+			        }, true);
+			    },
+				onSelect: function(start, end){
+					// ⚠️ 선택자 수정 (:selected -> option:selected)
+					var currentFormHead = $(".aprv-form-list option:selected").attr("data-head");
+					var sDate = $(".picker-sdate").val();
+					var eDate = $(".picker-edate").val();
+					
+					if(currentFormHead == "연차" && sDate != "" && eDate != "") {
+				        if(sDate == eDate) {
+							$(".vacationType").show();
+							var template = $("#vacation-type-template").text();
+							const div = $.parseHTML(template)[1];
+							$(".vacationType").html(div); // 중복 append 방지를 위해 html() 사용 권장
+						} else {
+							$(".vacationType").hide().empty();
+						}
+					} else {
+						$(".vacationType").hide().empty();
+					}
+					
+					if(currentFormHead == "연차" && sDate && eDate) {
+						var count = getWeekdaysCount(moment(sDate), moment(eDate));
+						if(count > ${leaveRemain}) {
+							alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+							picker1.setDateRange(null, null);
+							$(".picker-sdate").val("");
+							$(".picker-edate").val("");
+							$('input[name=aprvLeave]').val("");
+						} else {
+							$('input[name=aprvLeave]').val(count);
+						}
+					}
+					
+                    if($(".picker-sdate").val().trim().length > 0) $(".picker-sdate").removeClass("fail");
+                    if($(".picker-edate").val().trim().length > 0) $(".picker-edate").removeClass("fail");
+                    
+                    // 날짜 변경 시 실시간 상태 동기화
+                    state.aprvSdateValid = $(".picker-sdate").val().trim().length > 0;
+                    state.aprvEdateValid = $(".picker-edate").val().trim().length > 0;
+			    }
+			});
+			break;
+			
+		case "사직":
+			$(".date-title").text("퇴사일자");
+			$(".picker-sdate").attr("placeholder", "퇴사일");
+			$(".timeTilde").hide();
+			$(".picker-edate").hide();
+			var picker1 = new Lightpick({ 
+			    field : $(".picker-sdate")[0],
+			    format : "YYYY-MM-DD",
+				firstDay : 7,
+				disableWeekends: true,
+				onSelect: function(start, end){
+			        $(".picker-edate").val($(".picker-sdate").val());
+                    state.aprvSdateValid = true;
+                    state.aprvEdateValid = true;
+			    }
+			});
+			break;
+			
+		case "비용":
+			$(".date-title").text("지출일자");
+			$(".picker-sdate").attr("placeholder", "지출일");
+			$(".timeTilde").hide();
+			$(".picker-edate").hide();
+			var picker1 = new Lightpick({ 
+			    field : $(".picker-sdate")[0],
+			    format : "YYYY-MM-DD",
+				firstDay : 7,
+				disableWeekends: true,
+				onSelect: function(start, end){
+			        $(".picker-edate").val($(".picker-sdate").val());
+                    state.aprvSdateValid = true;
+                    state.aprvEdateValid = true;
+			    }
+			});
+			break;
+	}
+	
+	// 블러/체인지 이벤트 핸들러들
+    $("[name=aprvTitle]").on("blur", function(){
+        state.aprvTitleValid = $(this).val().trim().length > 0;
+    });
+    $("[name=aprvContent]").on("change keyup", function(){ // keyup 추가로 실시간 검사 보완
+        state.aprvContentValid = $(this).val().trim().length > 0;
+    });
+    $("[name=aprvEdate]").on("blur", function(){
+        state.aprvEdateValid = $(this).val().trim().length > 0;
+    });
+    $("[name=aprvSdate]").on("blur", function(){
+        state.aprvSdateValid = $(this).val().trim().length > 0;
+    });
+    $("[name=aprvLineNo1]").on("blur", function(){
+        state.aprvLineNo1Valid = $(this).val().trim().length > 0;
+    });
+    $("[name=aprvLineNo2]").on("blur", function(){
+        state.aprvLineNo2Valid = $(this).val().trim().length > 0;
+    });
+ 
+ // 9. 최종 전송(submit) 시 검사
+    $(".form-check").on("submit", function(e){
+        
+        // [1] 전송 직전 입력값 기준으로 state 갱신
+        state.aprvTitleValid = $("[name=aprvTitle]").val().trim().length > 0;
+        state.aprvContentValid = $("[name=aprvContent]").val().trim().length > 0;
+        state.aprvSdateValid = $("[name=aprvSdate]").val().trim().length > 0;
+        state.aprvEdateValid = $("[name=aprvEdate]").val().trim().length > 0;
+        
+        // [2] 결재 라인 테이블(tbody)에 추가된 행(tr) 개수로 결재자 등록 여부 체크
+        state.aprvLineNo1Valid = ($("#line1List tr").length > 0);
+        state.aprvLineNo2Valid = ($("#line2List tr").length > 0);
+
+        // [3] 순차적 유효성 검사 및 경고창 출력
+        if(!state.aprvTitleValid) {
+            window.alert("결재명을 입력하세요.");
+            $("[name=aprvTitle]").focus();
+            return false; 
+        }
+        if(!state.aprvContentValid) {
+            window.alert("결재 내용을 입력하세요.");
+            $("[name=aprvContent]").focus();
+            return false; 
+        }
+        if(!state.aprvSdateValid) {
+            window.alert("결재 시작일을 입력하세요.");
+            $("[name=aprvSdate]").focus();
+            return false; 
+        }
+        if(!state.aprvEdateValid) {
+            window.alert("결재 종료일을 입력하세요.");
+            $("[name=aprvEdate]").focus();
+            return false; 
+        }
+        
+        // 🚨 결재자 미선택 시 명확하게 경고창을 띄우고 전송 중단
+        if(!state.aprvLineNo1Valid) {
+            window.alert("첫 번째 결재자를 입력하세요.");
+            $(".aprv-line-1").focus(); 
+            return false; // 무조건 전송 차단
+        }
+        if(!state.aprvLineNo2Valid) {
+            window.alert("두 번째 결재자를 입력하세요.");
+            $(".aprv-line-2").focus(); 
+            return false; // 무조건 전송 차단
+        }
+        
+        // [4] 기안 / 임시저장 상태 값 세팅
+        var clickedButton = e.originalEvent.submitter; 
+        if ($(clickedButton).hasClass("aprv-insert")) {
+        	$(".aprv-status").val("대기");
+        } else {
+        	$(".aprv-status").val("임시저장");
+        }
+
+        // 위의 모든 if문을 통과했다면 완벽하게 검증된 것이므로 무조건 true 반환
+        return true; 
+    });
+});
 </script>
 
 <!-- 화면에 나오지 않으면서 언제든지 불러서 쓸 수 있는 화면 조각(템플릿) -->
@@ -208,12 +262,14 @@
 </script>
 <script type="text/template" id="emp-template">
 <tr>
-	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp"></td>
-	<td></td>
-	<td></td>
-	<td></td>
-	<td></td>
-	<td></td>
+    <td>
+        <input type="checkbox" name="emp" class="emp-checkbox checkbox-custom" id="emp_DYNAMIC">
+        <label for="emp_DYNAMIC" class="my-checkbox-label"></label> </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
 </tr>
 </script>
 <script type="text/template" id="emp-empty-template">
