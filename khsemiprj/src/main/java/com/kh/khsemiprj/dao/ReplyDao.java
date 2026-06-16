@@ -38,19 +38,22 @@ public class ReplyDao {
 		};
 		jdbcTemplate.update(sql, params);
 	}
-	//목록 - 전체목록이 없고 replyOrigin별 목록이 존재
-	public List<ReplyVO> selectList(long replyOrigin, String empId) {
-		String sql = "SELECT "
-				+ "    r.*"
-				+ "    , CASE WHEN rl.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_liked "
-				+ "    , CASE WHEN rd.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_disliked "
-				+ "FROM reply r "
-				+ "LEFT JOIN reply_like rl ON rl.reply_no = r.reply_no AND rl.emp_id = ? "
-				+ "LEFT JOIN reply_dislike rd ON rd.reply_no = r.reply_no AND rd.emp_id = ? "
-				+ "WHERE r.reply_origin = ?";
-		Object[] params = { empId, empId, empId, empId, replyOrigin };
-		return jdbcTemplate.query(sql, replyVOMapper, params);
-	}
+	// 목록 - 전체목록이 없고 replyOrigin별 목록이 존재
+		public List<ReplyVO> selectList(long replyOrigin, String empId) {
+			String sql = "select "
+					+ "r.*"
+					+ ", CASE WHEN rl.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_liked "
+					+ ", CASE WHEN rd.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_disliked "
+					+ ", rf.attach_no "
+					+ "from reply r "
+					+ "LEFT JOIN reply_like rl ON rl.reply_no = r.reply_no AND rl.emp_id = ? "
+					+ "LEFT JOIN reply_dislike rd ON rd.reply_no = r.reply_no AND rd.emp_id = ? "
+					+ "LEFT JOIN reply_file rf ON rf.reply_no = r.reply_no "
+					+ "where r.reply_origin = ? "
+					+ "order by r.reply_no asc";
+			Object[] params = { empId, empId, empId, empId, replyOrigin };
+			return jdbcTemplate.query(sql, replyVOMapper, params);
+		}
 	//삭제
 	public boolean delete(long replyNo) {
 		String sql = "update reply set reply_status='Y' where reply_no = ?";
@@ -70,7 +73,7 @@ public class ReplyDao {
 	
 	//상세 조회
 	public ReplyDto selectOne(long replyNo) {
-		String sql = "select * from reply where reply_no = ?";
+		String sql = "select * from reply where reply_no=?";
 		Object[] params = { replyNo };
 		List<ReplyDto> list = jdbcTemplate.query(sql, replyMapper, params);
 		return list.isEmpty() ? null : list.get(0);
@@ -91,6 +94,33 @@ public class ReplyDao {
 		Object[] params = { replyNo, replyNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
+	
+	//AprvFormDao 파쿠리
+		public void connect(long replyNo, int attachNo) {
+			String sql = "insert into reply_file(reply_no,attach_no) values(?, ?)";
+			Object[] params = { replyNo, attachNo };
+			jdbcTemplate.update(sql, params);
+		}
+		
+		// 파일 연결 관계 끊어 버리는 메소드
+		//AprvFormDao 파쿠리
+			public boolean disconnect(long replyNo, int attachNo) {
+				String sql = "delete from reply_file where reply_no = ? and attach_no = ?";
+				Object[] params = { replyNo, attachNo };
+				return jdbcTemplate.update(sql, params) > 0;
+			}
+
+			//AprvFormDao 파쿠리
+			public Integer findAttachNo(long replyNo) {
+				String sql = "select attach_no from reply_file where reply_no=?";
+				Object[] params = { replyNo };
+				try {
+					return jdbcTemplate.queryForObject(sql, Integer.class, params);
+				} catch (Exception e) {
+					e.getMessage();
+					return null;
+				}
+			}
 }
 
 

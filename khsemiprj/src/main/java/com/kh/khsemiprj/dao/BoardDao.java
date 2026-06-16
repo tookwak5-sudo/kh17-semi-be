@@ -240,14 +240,37 @@ public class BoardDao {
 	}
 
 	public int count(PageVO pageVO) {
-		if (pageVO.isList())
-			return count();
-		if (!allowColumns.contains(pageVO.getColumn()))
-			return count();
+		//말머리와 검색어가 각각 존재하는지 확인
+		boolean hasBoardHead = pageVO.getBoardHead() != null && !pageVO.getBoardHead().equals("");
+		boolean hasSearch = pageVO.getKeyword() != null && !pageVO.getKeyword().equals("");
+		
+		//검색어가 있는데 허용되지 않은 컬럼이면 검색 취소 처리
+		if (hasSearch && !allowColumns.contains(pageVO.getColumn())) {
+			hasSearch = false;
+		}
 
-		String sql = "select count(*) from board " + "where instr(" + pageVO.getColumn() + ", ?) > 0";
-		Object[] params = { pageVO.getKeyword() };
-		return jdbcTemplate.queryForObject(sql, int.class, params);
+		// 말머리도 있고, 검색어도 있을 때
+		if (hasBoardHead && hasSearch) {
+			String sql = "select count(*) from board where board_head = ? and instr(" + pageVO.getColumn() + ", ?) > 0";
+			Object[] params = { pageVO.getBoardHead(), pageVO.getKeyword() };
+			return jdbcTemplate.queryForObject(sql, int.class, params);
+		} 
+		//말머리만 있을 때
+		else if (hasBoardHead) {
+			String sql = "select count(*) from board where board_head = ?";
+			Object[] params = { pageVO.getBoardHead() };
+			return jdbcTemplate.queryForObject(sql, int.class, params);
+		} 
+		//검색어만 있을 때
+		else if (hasSearch) {
+			String sql = "select count(*) from board where instr(" + pageVO.getColumn() + ", ?) > 0";
+			Object[] params = { pageVO.getKeyword() };
+			return jdbcTemplate.queryForObject(sql, int.class, params);
+		} 
+		//둘 다 없을 때
+		else {
+			return count();
+		}
 	}
 
 	public boolean updateBoardLikecount(long boardNo) {
@@ -271,4 +294,31 @@ public class BoardDao {
 		Object[] params = { boardNo, boardNo };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
+	
+	//AprvFormDao 파쿠리
+	public void connect(long boardNo, int attachNo) {
+		String sql = "insert into board_file(board_no,attach_no) values(?, ?)";
+		Object[] params = { boardNo, attachNo };
+		jdbcTemplate.update(sql, params);
+	}
+	
+	// 파일 연결 관계 끊어 버리는 메소드
+	//AprvFormDao 파쿠리
+		public boolean disconnect(long boardNo, int attachNo) {
+			String sql = "delete from board_file where board_no = ? and attach_no = ?";
+			Object[] params = { boardNo, attachNo };
+			return jdbcTemplate.update(sql, params) > 0;
+		}
+
+		//AprvFormDao 파쿠리
+		public Integer findAttachNo(long boardNo) {
+			String sql = "select attach_no from board_file where board_no=?";
+			Object[] params = { boardNo };
+			try {
+				return jdbcTemplate.queryForObject(sql, Integer.class, params);
+			} catch (Exception e) {
+				e.getMessage();
+				return null;
+			}
+		}
 }
