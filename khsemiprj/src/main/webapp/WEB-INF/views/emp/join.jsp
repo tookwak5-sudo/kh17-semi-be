@@ -388,7 +388,7 @@ $(function() {
 <script type="text/template" id="cert-template">
 
         <div class="cert-wrapper flex-area" style="flex-wrap: wrap;">
-            <input type="text" inputmode="numeric" class="field field-cert" 
+            <input type="text" inputmode="numeric" class="field field-ph field-cert" 
                     placeholder="인증번호 입력" size="6" maxlength="6">
             <button type="button" class="btn btn-positive btn-cert-check ms-10">
                 <i class="fa-solid fa-lock"></i>

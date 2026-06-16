@@ -329,7 +329,6 @@
 		        alert("입력 오류를 확인하세요.");
 		        return;
 		    }
-			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
 			var planDeptNo = $("[name=planDeptNo]").val();
 			
 			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
@@ -342,15 +341,6 @@
 				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
 			
-			//console.log(data);
-			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
-// 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
-// 			if(check) return;
-			
-			//[1]결재문서
-			//planType(개인, 부서, 회사)이 부서이고, planAprvNo가 null이 아닌 경우
-			
-			//[2]결재문서가 아닌 경우 planAprvNo가 null인 경우
 			$.ajax({
 				url: "/rest/plan/write",
 				method: "post",
@@ -394,31 +384,35 @@
 		    var planSdate = $(this).data("plan-sdate");
 		    var planEdate = $(this).data("plan-edate");
 		    var planExplain = $(this).data("plan-explain");
-		    var planHeadNo = $(this).data("plan-head_no");
-			
+		    var planHeadNo = $(this).data("planHead-no");
 // 			현재 수정하려는 수정 화면에 대한 처리		
-
-			// 수정 화면 가져오기
+			//템플릿 생성
 			var template = $("#edit-template").text();
             $("#modal-body").html(template);
+			
+            //헤더 목록 생성
+		    var headList = JSON.parse('${planHeadJson}');
+            var options = "<option value=''>선택하세요</option>";
+            for(var i = 0; i < headList.length; i++) {
+            	if(headList[i].headType === '일반') {
+                    options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+                }
+            }
+            //가져온 option을 헤더 select 아래에 append 
+            $("select[name='planHeadNo']").html(options);
+		    
+        	// 값 세팅
+			
 			$("#modal-body").find("[name=planName]").val(planTitle);
 			$("#modal-body").find("[name=planType]").val(planType);
-			$("#modal-body").find("[name=planHead_no]").val(planHeadNo);
+			$("#modal-body").find("[name=planHeadNo]").val(planHeadNo);
 		    $("#modal-body").find("[name=planSdate]").val(planSdate);
 		    $("#modal-body").find("[name=planEdate]").val(planEdate);
 		    $("#modal-body").find("[name=planExplain]").val(planExplain);
 			
 		    //수정 눌렀을때 고유키 심어주기
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
-			
-		    var headList = JSON.parse('${planHeadJson}');
-            var options = "";
-            for(var i = 0; i < headList.length; i++) {
-        		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
-            }
-            //가져온 option을 헤더 select 아래에 append 
-            $("select[name='planHeadNo']").empty().append(options);
-		    
+            
 		    $(".calendarModal").show();
 		});
 		
@@ -468,6 +462,7 @@
 	        	    right: 'btnAll,btnDept,btnPersonal' 
 	        	},
 	        	
+	        	// 일정이 1개만 보이도록 그 외에는 more(더보기) 표시
 	            dayMaxEvents: 1, 
 
 	            selectable: true,
@@ -477,11 +472,15 @@
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
 	            
-	            // 부서 번호 넣기
+	            // controller에서 저장한 plan정보 가져오기
+	            
+	            // 부서 번호 가져오기
 	            var headList = JSON.parse('${planHeadJson}');
 	            var options = "<option value=''>선택하세요</option>";
 	            for(var i = 0; i < headList.length; i++) {
-            		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	            	if(headList[i].headType === '일반') {
+	                    options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	                }
 	            }
 	            //가져온 option을 헤더 select 아래에 append 
 	            $("select[name='headNo']").empty().append(options);
@@ -522,7 +521,6 @@
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
                 var planHeadNo = info.event.extendedProps.planHeadNo;
-                
                 var sdateObj = new Date(planSdate);
                 var edateObj = new Date(planEdate);
                 
@@ -545,7 +543,7 @@
                 var eResult = eYear + '-' + eMonth + '-' + eDay;
                 
                 
-            	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
+            	// 1. 상세조회 템플릿을 불러와 #modal-body에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
             	 // 2. 로그인 아이디
@@ -572,8 +570,7 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
-                $("#modalEditBtn").data("plan-head-no", planHeadNo);
-            	
+                $("#modalEditBtn").data("planHead-no", planHeadNo);
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
                 

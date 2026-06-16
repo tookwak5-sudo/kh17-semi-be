@@ -215,6 +215,10 @@
 	</style>
 
 	<div class="chart-section">
+		<div class="section-header">
+	    <h1 class="section-title">${findEmpDto.empName}님의 근태 정보</h1>
+	    <span class="section-subtitle">휴가 관련 정보</span>
+		</div>
 		<div class="chart-header">
 			<span class="btn-arrow" id="prevMonthBtn">&lt;</span>
 			<span class="period-text" id="periodDisplay">2026. 05 ~ 2026. 06</span>
