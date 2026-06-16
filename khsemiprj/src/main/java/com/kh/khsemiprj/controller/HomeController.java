@@ -13,13 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.kh.khsemiprj.dao.AprvDao;
 import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dao.PlanDao;
+import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.BoardDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
+import com.kh.khsemiprj.vo.EmpAprvLineVO;
+import com.kh.khsemiprj.vo.PlanHeadVO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -32,6 +36,8 @@ public class HomeController {
 	private BoardDao boardDao;
 	@Autowired
 	private EmpPositionDeptDao empPositionDeptDao;
+	@Autowired
+	private AprvDao aprvDao;
 	
 	@RequestMapping("/")
 	public String home(Model model
@@ -41,7 +47,6 @@ public class HomeController {
 		// 목표 아이디를 통해 일정에 부서번호 등록하기
 		// [1] 아이디 입력을 통해 부서번호 조회
 		Long deptNo = empPositionDeptDao.selectDeptbyId(loginId);  
-		
 		List<PlanDto> planList = planDao.selectList(loginId);
 		
 		List<Map<String, Object>> eventList = new ArrayList<>();
@@ -65,17 +70,12 @@ public class HomeController {
 		model.addAttribute("deptNo", deptNo);
 		model.addAttribute("eventList", new Gson().toJson(eventList));
 		
-		
 		//목표: DB에 저장된 Head의 정보를 가져오기
 		//Map<Integer, HeadDto> DtoMap = new HashMap<>();
 		List<HeadDto> list = planDao.selectListHeader();
-//		for (HeadDto dto : list) {
-//			DtoMap.put(dto.getHeadNo(), dto);
-// 	    }
  	    // 3. 자바 객체를 JSP의 JavaScript가 인식할 수 있도록 JSON 문자열로 변환
  	    ObjectMapper objectMapper = new ObjectMapper();
  	    String planHeadJson = objectMapper.writeValueAsString(list);
- 	    
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("planHeadJson", planHeadJson);
  		
@@ -94,6 +94,29 @@ public class HomeController {
 		}
 		
 		model.addAttribute("noticeList", noticeList);
+		
+		if (loginId != null) {
+			//내가 쓴 글 결재 목록
+			List<EmpAprvLineVO> myAprvList = aprvDao.selectMyList(loginId);
+			if(myAprvList == null || myAprvList.isEmpty()) {
+		        model.addAttribute("emptyMyList", true);
+		    } else {
+		        model.addAttribute("emptyMyList", false); // 데이터가 있다면 false
+		    }
+			model.addAttribute("myAprvList", myAprvList);
+			
+			//내가 승인해야 할 결재 목록
+			List<EmpAprvLineVO> receivedAprvList = aprvDao.selectReceivedList(loginId);
+			if(receivedAprvList == null || receivedAprvList.isEmpty()) {
+		        model.addAttribute("emptyReceivedList", true);
+		    } else {
+		        model.addAttribute("emptyReceivedList", false); // 데이터가 있다면 false
+		    }
+			model.addAttribute("receivedAprvList", receivedAprvList);
+		}
+		
+		
+		
 		
 		return "home";
 	}

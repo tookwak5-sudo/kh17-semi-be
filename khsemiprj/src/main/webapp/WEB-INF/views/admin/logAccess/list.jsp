@@ -13,12 +13,12 @@
 		<!-- 검색창 -->
         <div class="cell center">
             <form autocomplete="off">
-                <select name="column" class="field">
+                <select name="column" class="field-ph">
                     <option value="access_emp_id">접근자 아이디</option>
                     <option value="access_url">접속 URL</option>
                 </select>
                 <input type="text" name="keyword"
-                    class="field" placeholder="검색어 입력">
+                    class="field-sm" placeholder="검색어 입력">
                 <button type="submit" class="btn btn-positive">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span>검색</span>
@@ -56,7 +56,6 @@
 	   		</table>
 	   </div>
 	</div>
-	
 	<div class="cell">    
 		<!-- 페이지네이션 -->
 		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>

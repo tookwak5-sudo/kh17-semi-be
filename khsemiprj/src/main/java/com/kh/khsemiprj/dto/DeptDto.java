@@ -19,8 +19,8 @@ public class DeptDto {
 	private String deptEmpId;
 	
 	// 이 부서에 속한 사원 목록
-    private List<EmpPositionDeptDto> empList = new ArrayList<>();
+    //private List<EmpPositionDeptDto> empList = new ArrayList<>();
     
     // 이 부서의 하위 부서 목록 (셀프 참조 구조)
-    private List<DeptDto> children = new ArrayList<>();
+    //private List<DeptDto> children = new ArrayList<>();
 }

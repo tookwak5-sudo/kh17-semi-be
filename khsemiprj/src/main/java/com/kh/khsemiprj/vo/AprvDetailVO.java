@@ -28,4 +28,5 @@ public class AprvDetailVO {
 	private long deptNo;
 	private String empName;
 	private String empPositionName;
+	private String deptName;
 }

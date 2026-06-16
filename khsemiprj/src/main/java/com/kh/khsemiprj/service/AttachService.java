@@ -35,7 +35,7 @@ public class AttachService {
 		File target = new File(dir, String.valueOf(attachNo));//시퀀스 번호로 실제 저장
 		attach.transferTo(target);
 		
-		System.out.println("파일 생성 : " + attachNo);
+		//System.out.println("파일 생성 : " + attachNo);
 		
 		return attachNo;
 	}

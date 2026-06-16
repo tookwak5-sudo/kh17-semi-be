@@ -32,6 +32,7 @@ public class AprvDetailMapper implements RowMapper<AprvDetailVO> {
 				.deptNo(rs.getLong("dept_no"))
 				.empName(rs.getString("emp_name"))
 				.empPositionName(rs.getString("emp_position_name"))
+				.deptName(rs.getString("dept_name"))
 				.build();
 	}
 }

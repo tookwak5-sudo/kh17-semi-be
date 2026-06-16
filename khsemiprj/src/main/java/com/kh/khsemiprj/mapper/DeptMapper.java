@@ -21,7 +21,7 @@ public class DeptMapper implements RowMapper<DeptDto> {
 	
 	@Override
 	public DeptDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		List<EmpPositionDeptDto> list = empPositionDeptDao.selectDepthEmp(rs.getLong("dept_no"));
+		//List<EmpPositionDeptDto> list = empPositionDeptDao.selectDepthEmp(rs.getLong("dept_no"));
 		
 		return DeptDto.builder()
 				.deptNo(rs.getLong("dept_no"))
@@ -30,8 +30,8 @@ public class DeptMapper implements RowMapper<DeptDto> {
 				.deptDepth(rs.getInt("dept_depth"))
 				.deptUseYn(rs.getString("dept_use_yn"))
 				.deptEmpId(rs.getString("dept_emp_id"))
-				.empList(list)
-				.children(new ArrayList<>())
+				//.empList(list)
+				//.children(new ArrayList<>())
 			.build();
 	}
 }

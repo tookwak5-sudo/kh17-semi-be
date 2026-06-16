@@ -68,7 +68,10 @@
 .w-1100 { width:1100px !important; }
 .w-1150 { width:1150px !important; }
 .w-1200 { width:1200px !important; }
-
+.w-1300 { width:1300px !important; }
+.w-1400 { width:1400px !important; }
+.w-1500 { width:1500px !important; }
+.w-1600 { width:1600px !important; }
 /* 폭 비율 설정 */
 .w-100 { width:100% !important; }
 .w-80 { width:80% !important; }
@@ -132,18 +135,17 @@
 
 
 /* 컴포넌트(Component) 디자인 */
-
 /* 입력창(field) 디자인 */
-.field {
-    outline: none; /* 기본 강조선 제거 */
-    font-size: 20px;
-    padding: 0.35em 0.75em;
-    border: 1px solid #636e72;
-    border-radius: 0.1em;
-}
-textarea.field {
-    resize: none;
-}
+/* .field { */
+/*     outline: none; 기본 강조선 제거 */
+/*     font-size: 20px; */
+/*     padding: 0.35em 0.75em; */
+/*     border: 1px solid #636e72; */
+/*     border-radius: 0.1em; */
+/* } */
+/* textarea.field { */
+/*     resize: none; */
+/* } */
 .field:focus { /*조건부 디자인 : 입력 상태일 경우 */
     border-color: #2d3436;
 }
@@ -168,12 +170,34 @@ textarea.field {
         - 부정버튼 : btn-negative 클래스를 추가로 부여
 */
 .btn {
-    outline: none;
-    font-size: 18px;
-    padding: 0.5em 0.75em;
-    border: 1px solid #636e72;
-    border-radius: 0.1em;
+/*     outline: none; */
+/*     font-size: 18px; */
+/*     padding: 0.5em 0.75em; */
+/*     border: 1px solid #636e72; */
+/*     border-radius: 0.1em; */
+/*     cursor: pointer; */
+/*     height: 40px; */
+/*     padding: 0px 20px; */
+/*     border-radius: 6px; */
+/*     font-size: 14px; */
+/*     font-weight: 600; */
+/*     cursor: pointer; */
+/*     border: 1px solid #E2E8F0; */
+/*     transition: all 0.2s; */
+	height: 40px;            /* 입력창과 동일 */
+    padding: 0 20px;         /* 상하 패딩 0, 좌우 패딩만 조절 */
+    box-sizing: border-box;  /* 테두리(2px) 포함하여 크기 계산 */
+    display: inline-flex;    /* 내부 아이콘과 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 주변 요소와 정렬 */
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s;
+    
+    justify-content: center;  /* 가로 중앙 정렬 */
+    align-items: center;      /* 세로 중앙 정렬 */
 }
 a.btn {
     display: inline-block;
@@ -183,21 +207,63 @@ a.btn {
 .btn:hover { /* 조건부 디자인 : 마우스가 올라갔을 때 */
     filter: brightness(0.95);
 }
-.btn.btn-positive {/* 긍정버튼 */
-    /* background-color: #0984e3;
-    border-color: #0984e3; */
-    background-color: #739BED;
-    border-color: #739BED;
+.btn.btn-positive {
+    background-color: transparent;
+    border: 2px solid #5A86E3;
+    color: #5A86E3;
+    font-weight: bold;
+    display: inline-flex;    /* flex를 사용하여 내부 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 부모 요소와 수직 정렬 */
+    line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */
+    
+    white-space: nowrap; /* 자동 줄바꿈 방지 */
+}
+/* 마우스를 올렸을 때만 색상이 채워지게 */
+.btn.btn-positive:hover {
+    background-color: #5A86E3;
     color: white;
 }
 .btn.btn-neutral {/* 중립버튼 */
-    background-color: #AAB7C9;
-    border-color: #AAB7C9;
+	background-color: transparent;
+    border: 2px solid black;
+    color: black;
+    font-weight: bold;
+    display: inline-flex;    /* flex를 사용하여 내부 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 부모 요소와 수직 정렬 */
+    line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */
+}
+.btn.btn-neutral:hover {
+    background-color: black;
     color: white;
 }
 .btn.btn-negative {/* 부정버튼 */
+	background-color: transparent;
+    border: 2px solid #E86A7A;
+    color: #E86A7A;
+    font-weight: bold;
+    display: inline-flex;    /* flex를 사용하여 내부 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 부모 요소와 수직 정렬 */
+    line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */
+}
+.btn.btn-negative:hover {
     background-color: #E86A7A;
-    border-color: #E86A7A;
+    color: white;
+}
+.btn.btn-save {/* 임시저장버튼 */
+	background-color: transparent;
+    border: 2px solid #F4C47A;
+    color: #F4C47A;
+    font-weight: bold;
+    display: inline-flex;    /* flex를 사용하여 내부 텍스트 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    vertical-align: middle;  /* 부모 요소와 수직 정렬 */
+    line-height: normal;     /* 텍스트가 위로 쏠리는 것 방지 */;
+}
+.btn.btn-save:hover {
+	background-color: #F4C47A;
     color: white;
 }
 
@@ -245,11 +311,16 @@ a.btn {
     - .table > thead > tr > th 과 같이 부등호 표시로 연결
 */
 .table {
+/*     width: 100%; */
+/*     border: 1px solid #2d3436; */
+/*     border: none; */
+/*     border-bottom: 1px solid #ebebeb; */
+/*     border-collapse: collapse; */
+    
     width: 100%;
-    /* border: 1px solid #2d3436; */
-    border: none;
-    border-bottom: 1px solid #ebebeb;
-    border-collapse: collapse;
+    border-collapse: separate; /* border-radius를 위해 separate 사용 */
+    border-spacing: 0;
+    margin-top: 10px;
 }
 
 .table > thead > tr > th, 
@@ -269,8 +340,8 @@ a.btn {
 
 .table > thead > tr > th
 {
-	background-color: #739BED;
-	color: white;
+	background-color: #EFF6FF;
+	color: #334155;
 }
 
 .table > tbody > tr > td > a
@@ -612,21 +683,108 @@ a.btn {
     display: block;
 }
 
+/* 입력창 공통 스타일 */
 .field {
-    background-size: 1em;
-    background-repeat: no-repeat;
-    background-position-x: right 0.5em;
-    background-position-y: center;
-    padding-right: 2em;
+    width: 90px;            /* 100% 대신 고정 너비 지정 */
+    height: 40px;           /* .field-sm과 높이 통일 */
+    padding: 0px 10px;       /* 내부 여백을 주어 답답하지 않게 */
+    line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
+    border: 1px solid #E2E8F0; /* 연한 회색 테두리 */
+    border-radius: 6px; /* 둥근 모서리 */
+    background-color: #FFFFFF;
+    font-size: 13px;         /* 글자 크기 조정 */
+    color: #1E293B;
+    vertical-align: middle;  /* 옆 요소들과 높이 정렬 */
+    box-sizing: border-box; /* 테두리 포함 전체 크기 고정 */
+    outline: none;
+    transition: all 0.2s ease;
+}
+/* 2. textarea 전용 스타일 */
+textarea.field {
+    height: 100px;          /* 원하는 고정 높이 지정 */
+    padding: 10px;
+    resize: none;           /* 이 속성이 핸들을 제거합니다 */
+    line-height: normal;    /* textarea는 line-height를 높이와 동일하게 하면 안 됩니다 */
+    vertical-align: top;    /* 텍스트가 상단부터 시작되도록 설정 */
+}
+/* 검색창 전용 클래스 (Compact) */
+.field-sm {
+    width: 400px;
+    height: 40px; /* 높이 고정 */
+    padding: 0px 12px; /* 패딩을 줄여서 높이를 낮춤 */
+    line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    font-size: 13px; /* 폰트도 조금 작게 */
+    vertical-align: middle;
+    box-sizing: border-box; /* 테두리 포함 전체 크기 고정 */
+}
+.field-ph {
+    width: 110px;
+    height: 40px; /* 높이 고정 */
+    padding: 0px 12px; /* 패딩을 줄여서 높이를 낮춤 */
+    line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    font-size: 13px; /* 폰트도 조금 작게 */
+    vertical-align: middle;
+    box-sizing: border-box; /* 테두리 포함 전체 크기 고정 */
 }
 select.field {
     background-position-x: right 1em;
 }
+
+/* 바로위에있는 .field로 커지는거방지 */
 .field.success {
+    transition: none !important; 
     background-image: url("https://cdn.jsdelivr.net/gh/hiphop5782/cdn2/valid.png");
+    border-color: #0984e3;
+    background-repeat: no-repeat !important;      /* 아이콘 반복 방지 */
+    background-position: right 12px center !important; /* 우측 정렬 */
+    background-size: 16px 16px !important;         /* 거대 반원을 16px 조그만 아이콘으로 압축 */
+    padding-right: 40px !important;
     border-color: #0984e3;
 }
 .field.fail {
+    transition: none !important; 
     background-image: url("https://cdn.jsdelivr.net/gh/hiphop5782/cdn2/invalid.png");
+    border-color: #0984e3;
+    background-repeat: no-repeat !important;      /* 아이콘 반복 방지 */
+    background-position: right 12px center !important; /* 우측 정렬 */
+    background-size: 16px 16px !important;         /* 거대 반원을 16px 조그만 아이콘으로 압축 */
+    padding-right: 40px !important;
     border-color: #d63031;
+}
+
+/* -----------------------------------------
+   커스텀 체크박스 클래스 (.checkbox-custom) [형태 체크박스]
+----------------------------------------- */
+/* 1. 실제 체크박스는 숨김 */
+.checkbox-custom {
+    display: none;
+}
+
+/* 2. 체크박스 모양 (label::before를 생성하여 디자인) */
+/* 주의: 체크박스 바로 뒤에 오는 label 태그를 대상으로 합니다. */
+.checkbox-custom + label::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    margin-right: 8px; /* 체크박스와 글자 사이 간격 */
+    flex-shrink: 0;    /* 박스가 찌그러지지 않게 함 */
+    transition: all 0.2s;
+    background-color: white;
+    vertical-align: middle; /* 글자와 수직 정렬 */
+    cursor: pointer;
+}
+
+/* 3. 체크 시 스타일 */
+.checkbox-custom:checked + label::before {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+    background-size: 100% 100%;
 }

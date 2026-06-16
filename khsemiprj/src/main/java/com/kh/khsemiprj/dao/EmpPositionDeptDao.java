@@ -1,26 +1,32 @@
 package com.kh.khsemiprj.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
-import com.kh.khsemiprj.mapper.EmpMapper;
 import com.kh.khsemiprj.mapper.EmpPositionDeptMapper;
+
+import com.kh.khsemiprj.vo.PageVO;
+import com.kh.khsemiprj.mapper.EmpPositionDeptVOMapper;
+import com.kh.khsemiprj.vo.EmpPositionDeptVO;
 
 @Repository
 public class EmpPositionDeptDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
-	private EmpPositionDeptMapper empPositionDepthMapper;
+	private EmpPositionDeptMapper empPositionDeptMapper;
+	@Autowired
+	private EmpPositionDeptVOMapper empPositionDeptVOMapper;
 			
 	// 부서넘버를 통해 사원의 직책, 부서 조회 //  부서가 입력되면  그 부서에 해당되는 사원 출력
 
-	public List<EmpPositionDeptDto> selectDepthEmp(Long deptNo) {
-		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
+	public List<EmpPositionDeptVO> selectDepthEmp(Long deptNo) {
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, e.emp_email, e.emp_contact, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
@@ -28,7 +34,7 @@ public class EmpPositionDeptDao {
 				+ "where d.dept_no = ? "
 				+ "order by e.emp_grade desc, p.emp_position_no asc, e.emp_name asc";
 		Object[] params = {deptNo};
-		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+		return jdbcTemplate.query(sql, empPositionDeptVOMapper, params);
 	}
 	
 	// 아이디를 통해 사원의 부서 조회
@@ -44,26 +50,33 @@ public class EmpPositionDeptDao {
 	}
 	
 	//부서 없는 사원 목록 조회
-	public List<EmpPositionDeptDto> selectDepthEmpByNull() {
-		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
+	public List<EmpPositionDeptVO> selectDepthEmpByNull() {
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id, e.emp_email, e.emp_contact "
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
 				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no is null";
 		Object[] params = {};
-		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+		return jdbcTemplate.query(sql, empPositionDeptVOMapper, params);
 	}
 	
-	//결재라인 사원목록 가져오기(조회사원의 직급보다 상급자만 가져오도록)
-	public List<EmpPositionDeptDto> selectDepthEmpForAprv(Long deptNo, Integer empPosition) {
+	//결재라인 부서장목록 가져오기
+	public List<EmpPositionDeptDto> selectDepthEmpForAprv(long deptNo) {
+//		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
+//				+ "FROM emp e "
+//				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no and e.emp_position_no IS NOT NULL "
+//				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+//				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ? and e.emp_position_no >= ?"
+//				+ "order by e.emp_grade desc, p.emp_position_no desc, e.emp_name asc";
 		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
-				+ "FROM emp e "
+				+ "FROM dept d "
+				+ "INNER JOIN emp e ON e.emp_id = d.dept_emp_id "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no and e.emp_position_no IS NOT NULL "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
-				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ? and e.emp_position_no >= ?"
+				+ "where d.dept_no = ? "
 				+ "order by e.emp_grade desc, p.emp_position_no desc, e.emp_name asc";
-		Object[] params = {deptNo,empPosition};
-		return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+		Object[] params = { deptNo };
+		return jdbcTemplate.query(sql, empPositionDeptMapper, params);
 	}
 	
 	//해당 부서 부서장 아이디 조회
@@ -129,7 +142,7 @@ public class EmpPositionDeptDao {
 						+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
 						+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no = ?";
 				Object[] params = {deptNo};
- 				return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+ 				return jdbcTemplate.query(sql, empPositionDeptMapper, params);
 		}
 		
 	//사원 목록 조회
@@ -141,27 +154,69 @@ public class EmpPositionDeptDao {
 				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
 				+ "ORDER BY e.emp_id asc";
 		
-		return jdbcTemplate.query(sql, empPositionDepthMapper);
+		return jdbcTemplate.query(sql, empPositionDeptMapper);
 	}
 	
 	
 	//사원 목록 검색
-		public List<EmpPositionDeptDto> selectList(String column, String keyword) {
-			if (column == null || keyword == null || column.isEmpty() || keyword.isEmpty()) {
-				return selectList();
+//		public List<EmpPositionDeptDto> selectList(String column, String keyword) {
+//			if (column == null || keyword == null || column.isEmpty() || keyword.isEmpty()) {
+//				return selectList();
+//			}
+//			
+//			String sql = "SELECT e.emp_id, e.emp_name, e.emp_position_no, e.emp_grade, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
+//					+ "FROM emp e "
+//					+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+//					+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+//					+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
+//					+ "WHERE instr(" + column + ", ?) >0 "
+//					+ "ORDER BY " + column + " asc, e.emp_id asc";
+//			
+//			Object[] params = {keyword};
+//			return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+//		}
+	
+	public List<EmpPositionDeptDto> selectList(PageVO pageVO) {
+		String sql;
+		Object[] params;
+
+		if (pageVO.isList()) {
+			sql = "SELECT * FROM ("
+				+ "  SELECT ROWNUM rn, TMP.* FROM ("
+				+ "    SELECT e.emp_id, e.emp_name, e.emp_position_no, e.emp_grade, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
+				+ "    FROM emp e "
+				+ "    LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+				+ "    LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+				+ "    LEFT JOIN dept d ON edr.dept_no = d.dept_no "
+				+ "    ORDER BY e.emp_id asc"
+				+ "  ) TMP"
+				+ ") WHERE rn BETWEEN ? AND ?";
+			
+			params = new Object[] { pageVO.getBeginRownum(), pageVO.getEndRownum() };
+			
+		} else {
+			String targetColumn = pageVO.getColumn();
+			if ("emp_id".equals(targetColumn)) {
+				targetColumn = "e.emp_id"; 
 			}
 			
-			String sql = "SELECT e.emp_id, e.emp_name, e.emp_position_no, e.emp_grade, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
-					+ "FROM emp e "
-					+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
-					+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
-					+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
-					+ "WHERE instr(" + column + ", ?) >0 "
-					+ "ORDER BY " + column + " asc, e.emp_id asc";
+			sql = "SELECT * FROM ("
+					+ "  SELECT ROWNUM rn, TMP.* FROM ("
+					+ "    SELECT e.emp_id, e.emp_name, e.emp_position_no, e.emp_grade, p.emp_position_name, p.emp_position_level, d.dept_no, d.dept_name, d.dept_emp_id "
+					+ "    FROM emp e "
+					+ "    LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+					+ "    LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+					+ "    LEFT JOIN dept d ON edr.dept_no = d.dept_no "
+					+ "    WHERE instr(" + targetColumn + ", ?) > 0 "
+					+ "    ORDER BY " + targetColumn + " asc, e.emp_id asc"
+					+ "  ) TMP"
+					+ ") WHERE rn BETWEEN ? AND ?";
 			
-			Object[] params = {keyword};
-			return jdbcTemplate.query(sql, empPositionDepthMapper, params);
+			params = new Object[] { pageVO.getKeyword(), pageVO.getBeginRownum(), pageVO.getEndRownum() };
+
 		}
+		return jdbcTemplate.query(sql, empPositionDeptMapper, params);
+	}
 		
 	//사원 상세
 		public EmpPositionDeptDto selectOne(String empId) {
@@ -173,9 +228,34 @@ public class EmpPositionDeptDao {
 					+ "WHERE e.emp_id = ?";
 			
 			Object[] params = {empId};
-			List<EmpPositionDeptDto> list = jdbcTemplate.query(sql, empPositionDepthMapper, params);
+			List<EmpPositionDeptDto> list = jdbcTemplate.query(sql, empPositionDeptMapper, params);
 			
 			return list.isEmpty() ? null : list.get(0);
+		}
+		
+		private Set<String> allowColumns = Set.of("emp_id", "emp_name", "emp_position_name", "dept_name");
+
+		public int count(PageVO pageVO) {
+		    if(pageVO.isList()) {
+		        String sql = "SELECT count(*) FROM emp"; 
+		        return jdbcTemplate.queryForObject(sql, int.class);
+		    }
+		    
+		    if(!allowColumns.contains(pageVO.getColumn())) {
+		        String sql = "SELECT count(*) FROM emp";
+		        return jdbcTemplate.queryForObject(sql, int.class);
+		    }
+		    
+		    String sql = "SELECT count(*) FROM ("
+		               + "  SELECT e.emp_id, e.emp_name, p.emp_position_name, d.dept_name "
+		               + "  FROM emp e "
+		               + "  LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+		               + "  LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+		               + "  LEFT JOIN dept d ON edr.dept_no = d.dept_no"
+		               + ") WHERE instr(" + pageVO.getColumn() + ", ?) > 0";
+		               
+		    Object[] params = { pageVO.getKeyword() };
+		    return jdbcTemplate.queryForObject(sql, int.class, params);
 		}
 		
 	//직책 수정

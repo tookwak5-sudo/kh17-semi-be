@@ -21,6 +21,8 @@ public class ReplyMapper implements RowMapper<ReplyDto>{
 					.replyEtime(rs.getTimestamp("reply_etime"))
 					.replyParent(rs.getObject("reply_parent", Long.class))
 					.replyStatus(rs.getString("reply_status"))
+					.replyLikecount(rs.getLong("reply_likecount"))
+					.replyDislikecount(rs.getLong("reply_dislikecount"))
 				.build();
 	}
 }

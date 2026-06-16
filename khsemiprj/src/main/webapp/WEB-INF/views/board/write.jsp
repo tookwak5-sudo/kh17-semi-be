@@ -19,20 +19,24 @@
 		<label>제목 <i class="fa-solid fa-asterisk red"></i></label>
 		<input type="text" name="boardTitle" required class="field w-100">
 	</div>
-	<c:if test="${sessionScope.empGrade != '0'}">
 		<div class="cell mb-0">
 			<label>구분</label>
 		</div>
 	
 		<div class="cell mt-0">
-			<select name="boardHead" class="field">
-				<option value="">선택 안함</option>
+			<select name="boardHead" class="field" required>
+				<option value="" >선택 안함</option>
 				<!-- 공지는 관리자에게만 보이도록 해야함 -->
+			<c:if test="${sessionScope.empGrade == '0'}">
 				<option>공지</option>
-				<option>자유</option>		
+			</c:if>
+				<option>자유</option>
+				<option>유머</option>
+				<option>정보</option>
+				<option>질문</option>
+				<option>나눔</option>		
 			</select>
 		</div>
-	</c:if>
 	
 	<div class="cell">
 		<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
@@ -99,7 +103,7 @@ function sendImageFile(file, editor) {
     data.append("uploadFile", file);
 
     $.ajax({
-        url: "${pageContext.request.contextPath}/board/uploadImage",
+        url: "/rest/file/upload",
         type: "POST",
         data: data,
         contentType: false,    

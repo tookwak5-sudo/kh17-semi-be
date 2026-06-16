@@ -16,5 +16,5 @@ public class AprvFormDto {
     private Timestamp formWtime; 
     private int formHeadNo;
     
-    private String headName;
+   // private String headName; 테이블과 1대1을 맞추기 위해 주석 처리 했습니다.
 }

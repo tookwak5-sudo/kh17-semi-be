@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpDeptRelationDao;
+import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.EmpPositionDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.EmpPositionDto;
+import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
 @RequestMapping("/admin/emp")
@@ -34,24 +36,29 @@ public class AdminEmpController {
 	private EmpDeptRelationDao empDeptRelationDao;
 	@Autowired
 	private EmpPositionDao empPositionDao;
+	@Autowired
+	private EmpLeaveDao empLeaveDao;
 	
 	@RequestMapping("/list")
-	public String list(Model model, 
-			@RequestParam(required = false) String column,
-			@RequestParam(required = false) String keyword) {
+	public String list(Model model, @ModelAttribute PageVO pageVO) {
 		
-		List<EmpPositionDeptDto> list = empPositionDeptDao.selectList(column, keyword);
+		int count = empPositionDeptDao.count(pageVO);
+		pageVO.setCount(count);
+		model.addAttribute("pageVO", pageVO);
+		
+		List<EmpPositionDeptDto> list = empPositionDeptDao.selectList(pageVO);
 		model.addAttribute("list", list);
 		
 		List<EmpDto> wList = empDao.selectEmpByStatus(null);
 		model.addAttribute("wList", wList);
+		
+		//
 		
 		List<DeptDto> deptList = deptDao.deptList();
 		model.addAttribute("deptList", deptList);
 		
 		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
 		model.addAttribute("positionList", positionList);
-		
 		
 		return "admin/emp/list"; 
 	}
@@ -70,11 +77,19 @@ public class AdminEmpController {
 		return "admin/emp/detail";
 	}
 	
-	@PostMapping("/detail")
-	public String detail(@ModelAttribute EmpPositionDeptDto empPositionDeptDto) {
-		empPositionDeptDao.updateByMaster(empPositionDeptDto);
+//	@PostMapping("/detail")
+//	public String detail(@ModelAttribute EmpPositionDeptDto empPositionDeptDto) {
+//		empPositionDeptDao.updateByMaster(empPositionDeptDto);
+//		
+//		return "redirect:detail?empId=" + empPositionDeptDto.getEmpId();
+//	}
+	
+	@PostMapping("/edit")
+	public String edit(@ModelAttribute EmpDto empDto, @RequestParam Integer empPositionNo) {
 		
-		return "redirect:detail?empId=" + empPositionDeptDto.getEmpId();
+		empDao.updateByAdmin(empDto, empPositionNo);
+		
+		return "redirect:detail?empId=" + empDto.getEmpId();
 	}
 	
 	@GetMapping("/reject")
@@ -89,9 +104,14 @@ public class AdminEmpController {
 						  @RequestParam String empHireDate,
 						  @RequestParam int deptNo,
 						  @RequestParam int empPositionNo) {
-		empDao.approveEmp(empId, empHireDate, empPositionNo);
-		empDeptRelationDao.insertEmpDept(empId, deptNo);
 		
-		return "redirect:list";
+		//1.사원의 승인정보 업데이트
+		empDao.approveEmp(empId, empHireDate, empPositionNo);
+		//2. 부서 관계 테이블 등록
+		empDeptRelationDao.insertEmpDept(empId, deptNo);
+		//3. 휴가 테이블 등록
+		empLeaveDao.insert(empId);
+		
+		return "redirect:/admin/emp/list?alarm=empApprove";
 	}
 }

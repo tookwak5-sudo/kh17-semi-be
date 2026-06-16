@@ -100,4 +100,20 @@ public class LogInoutDao {
 		return jdbcTemplate.queryForObject(sql, int.class, params);
 	}
 	
+	
+	// 특정 회원의 마지막 출퇴근 기록 하나만 조회 (조인 추가 버전)
+	public LogInoutDto getLastLogin(String empId) {
+	    String sql = "select * from ("
+	            + "  select l.*, e.emp_name, d.dept_name "
+	            + "  from log_inout l "
+	            + "  left outer join emp e on l.log_inout_emp_id = e.emp_id "
+	            + "  left outer join emp_dept_relation r on e.emp_id = r.emp_id "
+	            + "  left outer join dept d on r.dept_no = d.dept_no "
+	            + "  where l.log_inout_emp_id = ? "
+	            + "  order by l.log_inout_no desc"
+	            + ") where rownum = 1";
+	    Object[] params = { empId };
+	    List<LogInoutDto> list = jdbcTemplate.query(sql, logInoutMapper, params);
+	    return list.isEmpty() ? null : list.get(0);
+	}
 }

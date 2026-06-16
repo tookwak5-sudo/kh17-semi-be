@@ -1,36 +1,52 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<jsp:include page="/WEB-INF/views/template/header.jsp"/>
+<jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <style>
-    /* 레이아웃 구성 */
-    .dashboard-container {
-        display: flex;
-        gap: 20px; /* 좌우 간격 */
-        width: 1200px;
-        margin: 50px auto;
-    }
+/* 레이아웃 구성 */
+.dashboard-container {
+	display: flex;
+	gap: 20px; /* 좌우 간격 */
+	width: 1400px;
+	margin: 50px auto;
+}
 
-    /* 좌측 달력 영역 (비율 7) */
-    .left-section {
-        flex: 7;
-    }
+/* 좌측 달력 영역 (비율 7) */
+.left-section {
+	flex: 7;
+}
 
-    /* 우측 리스트 영역 (비율 3) */
-    .right-section {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        gap: 20px; /* 공지사항과 결재목록 사이 간격 */
-    }
-
-    .card {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
+/* 우측 리스트 영역 (비율 3) */
+/* 우측 리스트 영역 (비율 3) */
+	.right-section {
+	    flex: 3;
+	    display: flex;
+	    flex-direction: column;
+	    gap: 20px; /* 두 카드 사이의 정밀한 간격 */
+	    height: 662px; /* 💡 핵심: 좌측 달력 카드(620px + 패딩40px + 테두리2px)와 전체 높이를 완벽히 일치시킴 */
+	}
+	
+	.card {
+	    background: #fff;
+	    border: 1px solid #ddd;
+	    border-radius: 8px;
+	    box-sizing: border-box; /* 패딩과 테두리가 높이에 포함되도록 고정 */
+	}
+	
+	/* 두 카드가 우측 영역을 정확히 5:5 반씩 나눠 가지도록 설정 */
+	.right-section > .card {
+	    flex: 1; 
+	    height: 0; /* flex-fill 처럼 균등 분배를 위해 기본 높이 초기화 */
+	}
+	
+	/* 카드 내부 제목의 기본 마진이 위쪽 공백을 만드므로 초기화 */
+	.card h3 {
+	    margin-top: 0;
+	    margin-bottom: 15px;
+	}
     
     .lightpick {
     z-index: 20000 !important;
@@ -51,12 +67,71 @@
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
     	z-index: 10000;
     }
+.list-area{
+		height:190px;
+	    overflow-y:auto;
+}
+	
+.list-area thead th{
+   position: sticky;
+   top: 0;
+   background: white;
+   z-index: 10;
+}
+
+/* 일요일 날짜 텍스트 색상 변경 */
+    .fc .fc-day-sun a {
+        color: #ff4d4d !important; /* 빨간색 계열 */
+    }
+
+    /* 토요일 날짜 텍스트 색상 변경 */
+    .fc .fc-day-sat a {
+        color: #739BED !important; /* 파란색 계열 */
+    }
+    
+    /* 혹시 헤더(월,화,수...)의 글씨 색도 바꾸고 싶다면 */
+    .fc-col-header-cell.fc-day-sun {
+        color: #ff4d4d;
+    }
+    .fc-col-header-cell.fc-day-sat {
+        color: #739BED;
+    }
+    
+   /* 모든 날짜 영역의 투명도를 1로 강제 고정 */
+	.fc .fc-daygrid-day, 
+	.fc .fc-daygrid-day-frame, 
+	.fc .fc-daygrid-day-top, 
+	.fc .fc-popover,
+	.fc-day-other, 
+	.fc-day-sun, 
+	.fc-day-sat {
+	    opacity: 1 !important;
+	}
+	/* 1. 팝업 박스(Popover) 전체를 선명하게 */
+	.fc .fc-popover {
+	    opacity: 1 !important;
+	    background-color: #ffffff !important; /* 배경을 흰색으로 고정 */
+	    border: 1px solid #ddd !important;
+	    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+	}
+
+	/* 2. 팝업 박스 안의 날짜 및 일정 텍스트 선명하게 */
+	.fc .fc-popover .fc-daygrid-day-number,
+	.fc .fc-popover .fc-daygrid-event {
+	    opacity: 1 !important;
+	    color: #333 !important; /* 글자색을 진하게 */
+	}
+	
+	/* 3. 혹시 모를 내부 요소의 투명도 제거 */
+	.fc .fc-popover .fc-daygrid-event-harness {
+	    opacity: 1 !important;
+	}
 </style>
 
 <!-- fullcalendar cdn -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
 <!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
-
 <script type="text/template" id="write-template">
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10 w-100">
@@ -69,6 +144,9 @@
 			<div class="cell">
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<input type="hidden" name="planDeptNo" value="${deptNo}" class="field w-100">
 	        <div class="cell">
@@ -79,6 +157,9 @@
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
@@ -94,10 +175,10 @@
 	                <i class="fa-solid fa-minus ms-10 me-10"></i>
 	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
 	        </div>
-	        
+	       	
 	         <div class="cell">
 	            <label>내용</label>
-	            <textarea name="planExplain" class="field w-100" rows="5"></textarea>
+	            <textarea name="planExplain" class="field w-100"></textarea>
 	        </div>
 	        <div class="cell mt-40 right">
 	            <button type="submit" class="btn btn-positive btn-plan">
@@ -112,7 +193,9 @@
 <div class="calendarModal" class="container w-600 mt-50">
     <div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 상세</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
     <div class="container w-500 mt-50">
         <div class="cell">
@@ -143,12 +226,17 @@
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
-	        <button type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">&times;</button>
+	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
+    		<i class="fa-solid fa-x"></i>
+		</button>
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        <div class="cell">
 	        	<label>유형</label>
@@ -160,6 +248,9 @@
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        </div>
 			<div class="cell">
@@ -192,25 +283,73 @@
 
 <script type="text/javascript">
 	$(function(){
+	
+	});
+</script>
+
+<script type="text/javascript">
+	$(function(){
+		//상태객체
+        var state = {
+            planNameValid : false,
+            planTypeValid : false,
+            planHeadNoValid : true,
+            planSdateValid : true,
+            planEdateValid : true,
+            planExplainValid : true, // 선택항목
+            ok : function() {
+                return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
+                .filter(v => typeof v == "boolean") // boolean값만 추출해서
+                .every(v => v === true); //모두 true인지 확인해서 반환해라;
+            }
+        };
 		
-// 		//상태객체
-//         var state = {
-//             planNameValid : false,
-//             planTypeValid : false,
-//             planHeadNoValid : true,
-//             planSdateValid : true,
-//             planEdateValid : true,
-//             planExplainValid : true, // 선택항목
-//             ok : function() {
-//                 return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
-//                 .filter(v => typeof v == "boolean") // boolean값만 추출해서
-//                 .every(v => v === true); //모두 true인지 확인해서 반환해라;
-//             }
-//         };
+    	 // 항목검사 통합 함수
+        $(document).on("blur input", "[name=planName]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planName") state.planNameValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+        $(document).on("blur input", "[name=planType]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planType") state.planTypeValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+		 
 		//등록 버튼을 누르면 발생하는 등록 작업
 		$(document).on("click",".btn-plan", function(){
 			
-			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
+			// 모든 .field에 대해 검사
+		    $(".field").trigger("blur").trigger("input");
+		    
+		    if(!state.ok()) {
+		        alert("입력 오류를 확인하세요.");
+		        return;
+		    }
 			var planDeptNo = $("[name=planDeptNo]").val();
 			
 			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
@@ -220,25 +359,18 @@
 				planSdate : $("[name=planSdate]").val(),
 				planEdate : $("[name=planEdate]").val(),
 				planExplain : $("[name=planExplain]").val(),
+				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
 			
-			//console.log(data);
-			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
-// 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
-// 			if(check) return;
-			
-			//[1]결재문서
-			//planType(개인, 부서, 회사)이 부서이고, planAprvNo가 null이 아닌 경우
-			
-			//[2]결재문서가 아닌 경우 planAprvNo가 null인 경우
 			$.ajax({
 				url: "/rest/plan/write",
 				method: "post",
 				data: data,
 				success : function(response) {
+					var planType = $("[name=planType]").val();
 					closeCalendarModal();
 					//홈 화면 새로고침
-					location.reload();
+					location.href = "/?alarm=calendarWriter&planType=" + planType;
 				}
 			});
 		});
@@ -258,16 +390,16 @@
 	            data: { planNo : planNo },
 	            success: function(response){
 	                alert("삭제되었습니다.");
+	                var planType = $("[name=planType]").val();
 	                closeCalendarModal();
 	                //홈 화면 새로고침
-	                location.reload();
+	                location.href = "/?alarm=calendarDelete&planType=" + planType;
 	            }
 	        });
 	    });
 		
 	  //목표 : 수정버튼을 누르면 수정화면을 보여주도록 처리
 		$(document).on("click", "#modalEditBtn", function(){//영역 감시
-
 // 			기존 reply-viewer의 정보를 불러온다
 			var planNo = $(this).data("key");
 			var planTitle = $(this).data("plan-title");
@@ -275,31 +407,35 @@
 		    var planSdate = $(this).data("plan-sdate");
 		    var planEdate = $(this).data("plan-edate");
 		    var planExplain = $(this).data("plan-explain");
-		    var planHeadNo = $(this).data("plan-head_no");
-			
+		    var planHeadNo = $(this).data("planHead-no");
 // 			현재 수정하려는 수정 화면에 대한 처리		
-
-			// 수정 화면 가져오기
+			//템플릿 생성
 			var template = $("#edit-template").text();
             $("#modal-body").html(template);
+			
+            //헤더 목록 생성
+		    var headList = JSON.parse('${planHeadJson}');
+            var options = "<option value=''>선택하세요</option>";
+            for(var i = 0; i < headList.length; i++) {
+            	if(headList[i].headType === '일반') {
+                    options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+                }
+            }
+            //가져온 option을 헤더 select 아래에 append 
+            $("select[name='planHeadNo']").html(options);
+		    
+        	// 값 세팅
+			
 			$("#modal-body").find("[name=planName]").val(planTitle);
 			$("#modal-body").find("[name=planType]").val(planType);
-			$("#modal-body").find("[name=planHead_no]").val(planHeadNo);
+			$("#modal-body").find("[name=planHeadNo]").val(planHeadNo);
 		    $("#modal-body").find("[name=planSdate]").val(planSdate);
 		    $("#modal-body").find("[name=planEdate]").val(planEdate);
 		    $("#modal-body").find("[name=planExplain]").val(planExplain);
 			
 		    //수정 눌렀을때 고유키 심어주기
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
-			
-		    var headList = JSON.parse('${planHeadJson}');
-            var options = "";
-            for(var i = 0; i < headList.length; i++) {
-        		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
-            }
-            //가져온 option을 헤더 select 아래에 append 
-            $("select[name='planHeadNo']").empty().append(options);
-		    
+            
 		    $(".calendarModal").show();
 		});
 		
@@ -322,9 +458,11 @@
 				method:"post",
 				data: data,
 				success: function(response){
+					var planType = $("[name=planType]").val();
 					closeCalendarModal();
 					//홈 화면 새로고침
-					location.reload();
+					//location.reload();
+					location.href = "/?alarm=calendarEdit&planType=" + planType;
 				}
 			});
 		});
@@ -349,6 +487,7 @@
 	        	    right: 'btnAll,btnDept,btnPersonal' 
 	        	},
 	        	
+	        	// 일정이 1개만 보이도록 그 외에는 more(더보기) 표시
 	            dayMaxEvents: 1, 
 
 	            selectable: true,
@@ -358,11 +497,15 @@
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
 	            
-	            // 부서 번호 넣기
+	            // controller에서 저장한 plan정보 가져오기
+	            
+	            // 부서 번호 가져오기
 	            var headList = JSON.parse('${planHeadJson}');
 	            var options = "<option value=''>선택하세요</option>";
 	            for(var i = 0; i < headList.length; i++) {
-            		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	            	if(headList[i].headType === '일반') {
+	                    options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	                }
 	            }
 	            //가져온 option을 헤더 select 아래에 append 
 	            $("select[name='headNo']").empty().append(options);
@@ -403,7 +546,6 @@
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
                 var planHeadNo = info.event.extendedProps.planHeadNo;
-                
                 var sdateObj = new Date(planSdate);
                 var edateObj = new Date(planEdate);
                 
@@ -426,7 +568,7 @@
                 var eResult = eYear + '-' + eMonth + '-' + eDay;
                 
                 
-            	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
+            	// 1. 상세조회 템플릿을 불러와 #modal-body에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
             	 // 2. 로그인 아이디
@@ -453,8 +595,7 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
-                $("#modalEditBtn").data("plan-head-no", planHeadNo);
-            	
+                $("#modalEditBtn").data("planHead-no", planHeadNo);
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
                 
@@ -500,7 +641,7 @@
         //날짜 클릭시 클릭한 날짜와 함께 
         calendar.render();
         //처음 로드 될때 회사 디폴트
-        filterCalendarEvents("회사");
+        filterCalendarEvents("${param.planType == null ? '회사' : param.planType}");
 		
         document.addEventListener('click', function(e) {
             // 클릭된 요소가 '+더보기' 링크인지 확인
@@ -531,6 +672,8 @@
                 }
             });
         }
+        
+        
     });
     
     function closeCalendarModal() {
@@ -544,39 +687,145 @@
 
 <!--  결재, 공지 보여주는 화면 -->
 <div class="dashboard-container">
-        <div class="left-section">
+       <div class="left-section">
             <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
-        </div>
+       </div>
 
-        <div class="right-section">
+       <div class="right-section">
             <div class="card p-20" style="height: 300px;">
+            <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+            	<div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>결재 대기 목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>     
+                </div>
+                <div class="cell list-area">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>기안자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+							<!--리스트가 비어있지 않을때 -->
+			  				<c:if test="${not emptyReceivedList}">
+				  				<c:forEach var="rAprvList" items="${receivedAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${rAprvList.aprvNo}">
+							                	${rAprvList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${rAprvList.empName}</td>
+									    <td>
+										   	<div class="cell" style="color: black; font-weight:bold; text-align: center;">
+												${rAprvList.aprvStatus} 					    	 
+										   	</div>
+										</td>
+					  				</tr>
+				  				</c:forEach>
+			  				</c:if>
+							<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyReceivedList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					결재 대기 중인 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
+			  			</tbody>
+                 	</table>
+                </div>
+            </c:if>
+            <c:if test="${sessionScope.empGrade == 0}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>결재사항</h3>
-                    <a href="#">더보기</a>
+                    <h3>내 결재목록</h3>
+                    <a href="/aprv/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a>   
                 </div>
+                <div class="cell list-area">
+                 	<table class="table">
+                  		<thead>
+			               <tr> 
+			                   <th>결재 제목</th> 
+			                   <th>작성자</th> 
+			                   <th>결재 상태</th> 
+			               </tr> 
+		  				</thead>
+			  			<tbody>
+							<!--내가쓴 결재가 있을때 -->
+				  			<c:if test="${not emptyMyList}">
+				  				<c:forEach var="myList" items="${myAprvList}">
+					  				<tr>
+					  					<td>
+							                <a href="/aprv/detail?aprvNo=${myList.aprvNo}">
+							                	${myList.aprvTitle}
+							                </a>
+			                            </td>
+					  					<td>${myList.empName}</td>
+					  					<td>
+										    <c:if test="${myList.aprvStatus == '승인'}">
+										        <div class="cell" style="color: #5A86E3; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '반려'}">
+										        <div class="cell" style="color: #E86A7A; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										    
+										    <c:if test="${myList.aprvStatus == '대기'}">
+										        <div class="cell" style="color: black; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
+										</td>
+					  				</tr>
+				  				</c:forEach>
+				  			</c:if>
+				  			<!--리스트가 비어있을때 -->
+			  				<c:if test="${emptyMyList}">
+			  					<tr>
+			  						<td colspan="3" style="text-align: center; color: #888; padding: 30px 0;">
+                    					상신한 결재 문서가 없습니다.
+                					</td>
+			  					</tr>
+			  				</c:if>
+			  			</tbody>
+                 	</table>
                 </div>
-
-           <div class="card p-20" style="height: 300px; overflow-y: auto;">
-	            <h3>공지사항</h3>
-	            <hr>
-	            <c:forEach var="notice" items="${noticeList}">
-	                <div
-	                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-	                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
-	                    ${notice.boardTitle}
-	                </a>
-	
-	
-	                    <p style="color: #999; font-size: 12px;">작성자:
-	                        ${notice.boardWriter}</p>
-	                </div>
-	            </c:forEach>
-	
-	            <c:if test="${empty noticeList}">
-	                <div>등록된 공지사항이 없습니다.</div>
-	            </c:if>
-       		</div>
-		</div>
+            </c:if>
+			</div>
+	           	<div class="card p-20" style="height: 300px; overflow-y: auto;">
+		            <div style="display: flex; justify-content: space-between; align-items: center;">
+		            <h3>공지사항</h3>
+		            <a href="/board/list">
+                    	<span><i class="fa-solid fa-list black"></i></span>
+                    </a> 
+                    </div>  
+		            <c:forEach var="notice" items="${noticeList}">
+		                <div
+		                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+		                    <a href="/board/detail?boardNo=${notice.boardNo}" style="text-decoration: none; color: black;">
+		                    ${notice.boardTitle}
+		                </a>
+		                    <p style="color: #999; font-size: 12px;">작성자:
+		                        ${notice.boardWriter}</p>
+		                </div>
+		            </c:forEach>
+		
+		            <c:if test="${empty noticeList}">
+		                <div>등록된 공지사항이 없습니다.</div>
+		            </c:if>
+	       		</div>
+	</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />
+

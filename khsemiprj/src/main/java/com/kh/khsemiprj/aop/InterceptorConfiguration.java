@@ -21,6 +21,8 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 	private AdminOnlyInterceptor adminOnlyInterceptor;
 	@Autowired
 	private MasterOnlyInterceptor masterOnlyInterceptor;
+	@Autowired
+	private MemoCountInterceptor memoCountInterceptor;
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -33,8 +35,20 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 		registry.addInterceptor(boardReadInterceptor)
 				.addPathPatterns("/board/detail");
 		
-		
+		//나한테온 메모 카운트
+		registry.addInterceptor(memoCountInterceptor)
+			.addPathPatterns("/**")
+			.excludePathPatterns(
+					"/css/**", 
+					"/js/**", 
+					"/images/**", 
+					"/static/**", 
+					"/error",
+					"/memo/**"
+					);
+			
 		//비회원이 들어갈수 있는 페이지 설정
+
 		registry.addInterceptor(empOnlyInterceptor)
 			    .addPathPatterns(
 			        "/**"
@@ -45,7 +59,10 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 			        ,"/emp/joinFinish"
 			        ,"/emp/findId"
 			        ,"/emp/findPassword"
-			        
+			        ,"/rest/cert/checkEmail"//회원 가입 때 이메일 인증 거쳐야 해서 넣었습니다.
+			        ,"/rest/cert/check"//인증번호 검사 할 떄 거치는 페이지
+			        ,"/rest/cert/checkId"//아이디 중복 검사 시 거치는 페이지
+			        ,"/rest/cert/send"//인증 이메일 보낼 시 필요합니다.
 			        ,"/css/**"  
 			        ,"/js/**"   
 			        ,"/images/**"

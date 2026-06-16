@@ -1,4 +1,4 @@
-package com.kh.khsemiprj.restcontroller;
+	package com.kh.khsemiprj.restcontroller;
 
 import java.util.List;
 
@@ -74,5 +74,4 @@ public class PlanRestController {
 		
 		planDao.update(planDto);
 	}
-
 }

@@ -15,7 +15,7 @@ public class CertService {
 	private CertDao certDao;
 	@Scheduled(cron = "0 0 * * * *")
 	public void clear() {
-		System.out.println("청소시작! " + LocalDateTime.now());
+		//System.out.println("청소시작! " + LocalDateTime.now());
 	}
 
 }

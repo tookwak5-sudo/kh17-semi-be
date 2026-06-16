@@ -34,7 +34,8 @@ public class PlanDao {
 		String sql = "insert into plan "
 				+ "(plan_no, plan_emp_id, plan_aprv_no, plan_dept_no, plan_head_no, plan_name, "
 				+ "plan_type, plan_explain, plan_sdate, plan_edate) "
-				+ "values(?, ?, ?, ?, ?, ? ,?, ? ,? ,?)";
+				+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
 		Object[] params = { planDto.getPlanNo(), 
 				planDto.getPlanEmpId(), planDto.getPlanAprvNo(), planDto.getPlanDeptNo(), planDto.getPlanHeadNo(),
 				planDto.getPlanName(), planDto.getPlanType(), planDto.getPlanExplain(), 
@@ -87,7 +88,13 @@ public class PlanDao {
 				+ "left join aprv_head h on p.plan_head_no = h.HEAD_NO "
 				+ "order by p.plan_no desc";
 		return jdbcTemplate.query(sql, planHeadMapper);
-	}
+	}	
+	
+	//plan head type ='일반'조인 조회
+	public List<PlanHeadVO> selectListPlanHeadType() {
+		String sql = "select * from head where head_type = '일반'";
+		return jdbcTemplate.query(sql, planHeadMapper);
+	}	
 	
 	//전체 일정 조회
     public List<PlanDto> selectList(String empId) {
@@ -98,5 +105,21 @@ public class PlanDao {
     			+ "(SELECT * FROM plan p WHERE p.PLAN_TYPE = '회사')";
         Object[] params = { empId, empId };
         return jdbcTemplate.query(sql,  planMapper, params);
+    }
+    
+    //일정제목 중복검사 조회
+    public PlanDto selectOnePlanName(String planName) {
+    	String sql = "select * from plan where plan_name = ?";
+		Object[] params = { planName };
+		List<PlanDto> list = jdbcTemplate.query(sql, planMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+    }
+    
+  //일정유형 중복검사 조회
+    public PlanDto selectOnePlanType(String planType) {
+    	String sql = "select * from plan where plan_type = ?";
+		Object[] params = { planType };
+		List<PlanDto> list = jdbcTemplate.query(sql, planMapper, params);
+		return list.isEmpty() ? null : list.get(0);
     }
 }

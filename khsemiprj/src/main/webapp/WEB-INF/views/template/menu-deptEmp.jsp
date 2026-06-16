@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
@@ -46,11 +48,11 @@
 	<li class="divider"></li>
 	
 	<li>
-	    <a href="/emp/mypage">
+	    <a href="/admin/manage">
 	        <i class="fa-solid fa-user"></i>
-	        <span>내정보</span>
+	        <span>관리메뉴</span>
 	    </a>
-	    <!-- 하위메뉴 -->
+	     <!-- 하위메뉴 -->
         <ul>
         	<li>
 			    <a href="/admin/emp/list">
@@ -64,20 +66,40 @@
 			        <span>부서관리</span>
 				</a>
 			</li>
-			<li>
-                 <i class="fa-solid fa-right-from-bracket btn btn-in"></i>
-                 <span>출근</span>
-            </li>
-            <li>
-                 <i class="fa-solid fa-right-from-bracket btn bt-out"></i>
-                 <span>퇴근</span>
-            </li>
-            <li>
-                <a href="/emp/logout">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>로그아웃</span>
-                </a>
-            </li>
         </ul>
+    </li>
+    <li>
+	    <a href="/emp/mypage">
+	        <i class="fa-solid fa-user"></i>
+	        <span>내정보</span>
+	    </a>
+	     <!-- 하위메뉴 -->
+		<ul>
+			<c:if test="${logInoutType.trim() eq '퇴근'}">
+		    <li>
+		        <form id="workInForm" action="/emp/work-in" method="post"></form>
+		        <a href="#" onclick="document.getElementById('workInForm').submit(); return false;">
+		             <i class="fa-solid fa-right-from-bracket"></i>
+		             <span>출근</span>
+		        </a>
+		    </li>
+		    </c:if>
+		    <c:if test="${logInoutType.trim() eq '출근'}">
+		    <li>
+		        <form id="workOutForm" action="/emp/work-out" method="post"></form>
+		        
+		        <a href="#" onclick="document.getElementById('workOutForm').submit(); return false;">
+		            <i class="fa-solid fa-right-from-bracket"></i>
+		            <span>퇴근</span>
+		        </a>
+		    </li>
+		    </c:if>
+		    <li>
+		        <a href="/emp/logout">
+		            <i class="fa-solid fa-right-from-bracket"></i>
+		            <span>로그아웃</span>
+		        </a>
+		    </li>
+		</ul>
     </li>
 </ul>

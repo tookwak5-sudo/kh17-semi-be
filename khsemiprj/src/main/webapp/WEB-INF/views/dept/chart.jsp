@@ -26,6 +26,16 @@
 	        <div class="tree" id="deptChart">
 	            <!-- JavaScript로 트리 구조가 생성됩니다. -->
 	        </div>
+	        
+	        <div id="empDetailCard" class="emp-detail-popup" style="display: none;">
+			    <div class="popup-close" onclick="closeDetailCard()">×</div>
+			    <div class="popup-row"><span id="popDeptName" class="popup-value"></span></div>
+			    <div class="popup-row" style="display:flex;"><span id="popEmpName" class="popup-value"></span><div id="popEmpId"></div></div>
+			    <hr>
+			    <div class="popup-row"><span class="popup-label">직급:</span> <span id="popEmpPositionName" class="popup-value"></span></div>
+			    <div class="popup-row"><span class="popup-label">연락처:</span> <span id="popEmpContact" class="popup-value"></span></div>
+			    <div class="popup-row"><span class="popup-label">이메일:</span> <span id="popEmpEmail" class="popup-value"></span></div>
+			</div>
 	    </div>
     </div>
 	
