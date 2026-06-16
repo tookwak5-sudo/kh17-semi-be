@@ -161,7 +161,6 @@ public class DeptController {
  	    
  	    // 4. Model에 담아서 jsp로 전달
  		model.addAttribute("deptChartJson", deptChartJson);
-		System.out.println(deptChartJson);
 		return "dept/chart";
 	}
 }

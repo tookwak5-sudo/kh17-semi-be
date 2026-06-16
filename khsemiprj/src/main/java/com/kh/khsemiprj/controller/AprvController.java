@@ -97,7 +97,7 @@ public class AprvController {
 		
 		EmpLeaveDto empLeaveDto = empLeaveDao.selectOne(loginId);
 		double leaveRemain = empLeaveDto == null ? 0 : empLeaveDto.getLeaveRemain();
-		System.out.println("loginId - " + loginId + ", empLeaveDto - " + empLeaveDto);
+	//	System.out.println("loginId - " + loginId + ", empLeaveDto - " + empLeaveDto);
 		model.addAttribute("leaveRemain", leaveRemain);
 		
 		// 1. 부서 목록 가져오기

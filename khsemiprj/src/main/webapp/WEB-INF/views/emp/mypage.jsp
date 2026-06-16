@@ -336,10 +336,11 @@
 		pieChartInstance = new Chart(ctx, {
 			type: 'doughnut',
 			data: {
+				
 				labels: ['지정 근무완료', '잔여 의무시간'],
 				datasets: [{
 					data: [totalHours, remaining],
-					backgroundColor: ['#22c55e', '#e2e8f0'],
+					backgroundColor: ['#91D2FF', '#EBEFF5'],
 					borderWidth: 0
 				}]
 			},

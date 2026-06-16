@@ -99,7 +99,7 @@ public class AprvRestController {
 					boolean dbResult = aprvLineDao.setAprvLineStatus(aprvLineDto);
 					if(dbResult) {
 						if(aprvLineDto.getAprvLineStatus().equals("승인")) {
-							System.out.println("aprv_no : " + aprvLineVO.getAprvDocumentNo() + ", aprvLineCurrentSeq : " + aprvLineVO.getAprvLineCurrentSeq());
+							//System.out.println("aprv_no : " + aprvLineVO.getAprvDocumentNo() + ", aprvLineCurrentSeq : " + aprvLineVO.getAprvLineCurrentSeq());
 							//현재 순서의 결재가 모두 처리되었는지 확인 후 변경
 							aprvLineDao.setAprvStatus(aprvLineVO.getAprvDocumentNo(), aprvLineVO.getAprvLineCurrentSeq());
 							

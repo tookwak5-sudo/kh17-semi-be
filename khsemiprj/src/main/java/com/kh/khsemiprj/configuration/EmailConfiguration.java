@@ -21,10 +21,9 @@ public class EmailConfiguration {
 		//1. 메일 전송 도구 생성
 				JavaMailSenderImpl sender = new JavaMailSenderImpl();
 				
-				System.out.println("★ HOST: " + emailProperties.getHost());
-			    System.out.println("★ USERNAME: " + emailProperties.getUsername());
-			    System.out.println("★ PASSWORD_LEN: " + (emailProperties.getPassword() != null ? emailProperties.getPassword().length() : "NULL"));
-				
+//				System.out.println("★ HOST: " + emailProperties.getHost());
+//			    System.out.println("★ USERNAME: " + emailProperties.getUsername());
+//			    System.out.println("★ PASSWORD_LEN: " + (emailProperties.getPassword() != null ? emailProperties.getPassword().length() : "NULL"));
 				//+ 메일 전송 도구의 정보 설정
 				sender.setHost(emailProperties.getHost());//이용할 업체의 호스트 정보
 				sender.setPort(emailProperties.getPort());//이용할 업체의 포트 번호

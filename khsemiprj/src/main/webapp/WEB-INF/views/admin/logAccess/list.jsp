@@ -13,7 +13,7 @@
 		<!-- 검색창 -->
         <div class="cell center">
             <form autocomplete="off">
-                <select name="column" class="field">
+                <select name="column" class="field-ph">
                     <option value="access_emp_id">접근자 아이디</option>
                     <option value="access_url">접속 URL</option>
                 </select>

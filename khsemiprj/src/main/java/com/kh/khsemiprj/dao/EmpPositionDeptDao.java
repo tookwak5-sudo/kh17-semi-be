@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.mapper.EmpPositionDeptMapper;
+
 import com.kh.khsemiprj.vo.PageVO;
 import com.kh.khsemiprj.mapper.EmpPositionDeptVOMapper;
 import com.kh.khsemiprj.vo.EmpPositionDeptVO;
@@ -212,8 +213,8 @@ public class EmpPositionDeptDao {
 					+ ") WHERE rn BETWEEN ? AND ?";
 			
 			params = new Object[] { pageVO.getKeyword(), pageVO.getBeginRownum(), pageVO.getEndRownum() };
+
 		}
-		
 		return jdbcTemplate.query(sql, empPositionDeptMapper, params);
 	}
 		

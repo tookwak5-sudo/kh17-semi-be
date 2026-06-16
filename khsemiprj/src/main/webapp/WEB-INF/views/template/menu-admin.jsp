@@ -3,6 +3,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+
+
+
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
@@ -66,6 +69,18 @@
 			        <span>부서관리</span>
 				</a>
 			</li>
+            <li>
+                <a href="/admin/logAccess/list">
+                    <i class="fa-solid fa-server"></i>
+                    <span>접속로그</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/log-inout/list">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>근태로그</span>
+                </a>
+            </li>
         </ul>
     </li>
     <li>

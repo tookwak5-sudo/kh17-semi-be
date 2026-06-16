@@ -46,7 +46,6 @@ public class MemoController {
 	@PostMapping("/write")
 	public String write(@ModelAttribute MemoDto memoDto, HttpSession session) {
 		int memoNo = memoDao.sequence();
-		System.out.println(memoNo);
 		//로그인 여부 확인
 		String loginId = (String)session.getAttribute("loginId");
 		if (loginId == null) {

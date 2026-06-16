@@ -3,19 +3,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
-<script>
-$(function() {
-    var state = {
-        formNameValid: false,
-        headNameValid: false,
-        formExplainValid: false, 
-        
-        ok: function(){
-            return Object.values(this)
-            .filter(v => typeof v==="boolean")
-            .every(v => v === true);
-        }
-    };
 
 <style>
 /* -----------------------------------------
@@ -65,6 +52,20 @@ input[type="checkbox"]:checked + label::after {
     transform: translateX(24px);
 }
 </style>
+
+<script>
+$(function() {
+    var state = {
+        formNameValid: false,
+        headNameValid: false,
+        formExplainValid: false, 
+        
+        ok: function(){
+            return Object.values(this)
+            .filter(v => typeof v==="boolean")
+            .every(v => v === true);
+        }
+    };
 
     $(".preview-input").on("change", function(){
         $(".file-info-area").empty(); 
@@ -212,9 +213,9 @@ input[type="checkbox"]:checked + label::after {
 			</select> 
 		</div>
 
-		<div class="cell mt-0">
-        	<input type="checkbox" id="formUseYn" name="formUseYn" value="Y">
-        	<label for="formUseYn">부서 사용 여부</label>
+		 <div class="cell mt-0">
+            <input type="checkbox" id="formUseYn" name="formUseYn" value="Y">
+            <label for="formUseYn">부서 사용 여부</label>
         </div>
 		
 		<div class="cell mt-20">

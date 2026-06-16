@@ -83,6 +83,14 @@
 		    align-items: center;
 		    justify-content: center;
 		}
+		
+		/* 고정 헤더 */
+		.sticky-header {
+		    position: sticky;
+		    top: 0; 
+		    z-index: 9999; 
+		    background-color: #ffffff; 
+		}
 		body {
 		    background-color: #F8F9FA; /* 네이버 스타일의 밝은 회색 */
 		    color: #202124; /* 구글 스타일의 다크 그레이 */
@@ -123,39 +131,41 @@
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-1400">
         <div class="flex-area flex-vertical">
-            <!-- 헤더 영역 -->
-            <div class="flex-area">
-                <div class="w-25 flex-area flex-center">
-                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
-                </div>
-                <div class="w-50 flex-area flex-center">
-                    <h1>　                        </h1>
-                </div>
-                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-	                <div class="w-25 flex-area" style="justify-content: right; align-items: center;">
-	                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 42px; text-align: center;" class="notification-box"> 
-	                    	<a href="/memo/list" 
-					           style="font-size:20px; text-decoration: none;" 
-					           onclick="
-					               var w = 650; 
-					               var h = 650; 
-					               var left = (screen.width/2) - (w/2); 
-					               var top = (screen.height/2) - (h/2); 
-					               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
-					               return false;
-					        		 ">
-					            <i class="fa-solid fa-bell bell-icon">
-					            	<c:if test="${not empty countMemo && countMemo != 0}">
-						            	<span class="badge">${countMemo}</span>					            	
-					            	</c:if>
-					            </i>
-					        </a>
-	                    </div>
+        	<div class="sticky-header">
+            	<!-- 헤더 영역 -->
+	            <div class="flex-area">
+	                <div class="w-25 flex-area flex-center">
+	                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
 	                </div>
-                </c:if>
-            </div>
-            <!-- 메뉴 -->
-           <div> 
+	                <div class="w-50 flex-area flex-center">
+	                    <h1>　                        </h1>
+	                </div>
+	                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+		                <div class="w-25 flex-area" style="justify-content: right; align-items: center;">
+		                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 42px; text-align: center;" class="notification-box"> 
+		                    	<a href="/memo/list" 
+						           style="font-size:20px; text-decoration: none;" 
+						           onclick="
+						               var w = 650; 
+						               var h = 650; 
+						               var left = (screen.width/2) - (w/2); 
+						               var top = (screen.height/2) - (h/2); 
+						               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+						               return false;
+						        		 ">
+						            <i class="fa-solid fa-bell bell-icon">
+						            	<c:if test="${not empty countMemo && countMemo != 0}">
+							            	<span class="badge">${countMemo}</span>					            	
+						            	</c:if>
+						            </i>
+						        </a>
+		                    </div>
+		                </div>
+	                </c:if>
+	            </div>
+	
+	            <!-- 메뉴 -->
+	           <div> 
            		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
 	            	<c:if test="${sessionScope.empGrade == '2'}">
 	            	<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
@@ -168,7 +178,7 @@
 					</c:if>
 				</c:if>
             </div>
-
-            <!-- 사이드바 및 컨텐츠 -->
-            <div style="min-height: 450px;" class="flex-area">
-                <div class="w-200 flex-fill">
+         </div>
+	            <!-- 사이드바 및 컨텐츠 -->
+	            <div style="min-height: 450px;" class="flex-area">
+	                <div class="w-200 flex-fill">

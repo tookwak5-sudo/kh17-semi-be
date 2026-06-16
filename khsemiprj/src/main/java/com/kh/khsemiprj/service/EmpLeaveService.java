@@ -29,7 +29,7 @@ public class EmpLeaveService {
 		// 내부적으로 기존 로직 호출
 		// 시스템 작업이므로 empId를 "SYSTEM"등으로 지정
 		calculateLeaveDays("SYSTEM", null);
- 		System.out.println("자동 휴가 갱신 로직 실행: " + LocalDate.now());
+ 		//System.out.println("자동 휴가 갱신 로직 실행: " + LocalDate.now());
 	}
 	
 	//휴가
@@ -38,8 +38,8 @@ public class EmpLeaveService {
 		List<LeaveManageVO> targets = empLeaveDao.selectTarget();
 		
 		//디버깅 용 로그
-		System.out.println("조회된 대상자 수: " + targets);
-		System.out.println("들어온 아이디" + empId);
+//		System.out.println("조회된 대상자 수: " + targets);
+//		System.out.println("들어온 아이디" + empId);
 		for(LeaveManageVO target : targets) {
 			// 3. 휴가 개수 계산
 			double newTotal = calculateLeave(target.getEmpHireDate());
