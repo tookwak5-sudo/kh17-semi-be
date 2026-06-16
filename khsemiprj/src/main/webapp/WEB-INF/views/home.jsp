@@ -128,11 +128,6 @@
 	}
 </style>
 
-<!-- fullcalendar cdn -->
-<script
-	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
-<!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
-
 <script type="text/template" id="write-template">
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10 w-100">
@@ -278,12 +273,6 @@
 
 <script type="text/javascript">
 	$(function(){
-	
-	});
-</script>
-
-<script type="text/javascript">
-	$(function(){
 		//상태객체
         var state = {
             planNameValid : false,
@@ -358,15 +347,6 @@
 				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
 			
-			//console.log(data);
-			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
-// 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
-// 			if(check) return;
-			
-			//[1]결재문서
-			//planType(개인, 부서, 회사)이 부서이고, planAprvNo가 null이 아닌 경우
-			
-			//[2]결재문서가 아닌 경우 planAprvNo가 null인 경우
 			$.ajax({
 				url: "/rest/plan/write",
 				method: "post",
@@ -474,10 +454,9 @@
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
 			
-	    	//var currentPlanType = "회사"
-	    	
-	        var calendarEl = document.getElementById('calendar');
-	        var calendar = new FullCalendar.Calendar(calendarEl, {
+		      var calendarEl = document.getElementById('calendar');
+		      
+		      var calendar = new FullCalendar.Calendar(calendarEl, {
 	        	slotMinTime: '09:00',
 	        	slotMaxTime: '19:00',
 	        	slotDuration: '02:00:00',
@@ -487,12 +466,12 @@
 	        	    center: 'title', 
 	        	    right: 'btnAll,btnDept,btnPersonal' 
 	        	},
-	        	
 	            dayMaxEvents: 1, 
-
 	            selectable: true,
+	            
+	            
 	       		select: function(info) { // select : 날짜 시간을 선택할 때 사용
-	       			
+							       		
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
@@ -630,27 +609,38 @@
  			    }
  			},
  			
- 			events: ${eventList},
+ 			dayCellContent: function(arg) {
+ 	            // lunar-javascript 사용법
+ 	            const d = Lunar.fromDate(arg.date);
+ 	            return {
+ 	                html: `<div class="date-cell">
+ 	                         <span class="solar">` + arg.dayNumberText + `</span>
+ 	                         <span class="lunar" style="display:block; font-size:0.7em; color:#888;">
+ 	                           ` + d.getMonth() + `.` + d.getDay() + `
+ 	                         </span>
+ 	                       </div>`
+ 	            };
+ 	        },
+ 			
+ 			events: JSON.parse('${eventList}'),
         	initialView: 'dayGridMonth', 
             height: '100%', // 부모 div 높이에 맞춤
             displayEventTime: false, 
             locale: 'ko'
         });
-        //날짜 클릭시 클릭한 날짜와 함께 
-        calendar.render();
-        //처음 로드 될때 회사 디폴트
-        filterCalendarEvents("${param.planType == null ? '회사' : param.planType}");
-		
-        document.addEventListener('click', function(e) {
+      		//날짜 클릭시 클릭한 날짜와 함께 
+	        calendar.render();
+			
+	        document.addEventListener('click', function(e) {
             // 클릭된 요소가 '+더보기' 링크인지 확인
             if (e.target.matches('.fc-daygrid-more-link')) {
                 e.preventDefault(); // 기본 줌인 동작 방지
                 
-                // 클릭한 날짜 정보 가져오기 (가까운 날짜 셀에서 data-date 속성 추출)
-                var dateStr = e.target.closest('.fc-daygrid-day').getAttribute('data-date');
-                // 여기에 모달을 띄우는 로직(예: openCalendarModal) 호출
-                // 또는 상세 조회 화면을 모달로 보여주는 로직 실행
-            }
+            // 클릭한 날짜 정보 가져오기 (가까운 날짜 셀에서 data-date 속성 추출)
+            var dateStr = e.target.closest('.fc-daygrid-day').getAttribute('data-date');
+            // 여기에 모달을 띄우는 로직(예: openCalendarModal) 호출
+            // 또는 상세 조회 화면을 모달로 보여주는 로직 실행
+           	}
         });
         
         //함수 정의
@@ -670,7 +660,6 @@
                 }
             });
         }
-        
         
     });
     
