@@ -7,8 +7,8 @@ import lombok.Data;
 //- 자바에서 배웠던 클래스와 가장 유사한 형태
 @Data
 public class PageForAprvVO {
-	private String aprvHead;
-	private String aprvStatus;
+	private String aprvHead = "";
+	private String aprvStatus = "";
 	private String column;//파라미터에 있는 검색항목
 	private String keyword;//파라미터에 있는 검색키워드
 	private Integer page = 1;//파라미터에 있는 페이지번호 (없으면 1페이지)

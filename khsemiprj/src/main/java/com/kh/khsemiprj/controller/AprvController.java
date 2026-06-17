@@ -231,8 +231,7 @@ public class AprvController {
 			}
 		}
 		
-		
-		return "redirect:./list";
+		return "redirect:./detail?aprvNo=" + aprvNo + "&alarm=" + (aprvDto.getAprvStatus().equals("대기") ? "aprvSave" : "aprvTempSave");
 	}
 	
 	@RequestMapping("/detail")
@@ -412,8 +411,7 @@ public class AprvController {
 			}
 		}
 		
-		
-		return "redirect:./detail?aprvNo=" + aprvNo;
+		return "redirect:./detail?aprvNo=" + aprvNo + "&alarm=" + (aprvDto.getAprvStatus().equals("대기") ? "aprvSave" : "aprvTempSave");
 	}
 	
 	@PostMapping("/save")
@@ -453,7 +451,7 @@ public class AprvController {
 			}
 		}
 		
-		return "redirect:./detail?aprvNo=" + aprvNo;
+		return "redirect:./detail?aprvNo=" + aprvNo + "&alarm=aprvSave";
 	}
 	
 	@PostMapping("/delete")
@@ -469,6 +467,6 @@ public class AprvController {
 		} else {
 			throw new GetOutException("삭제 할 수 없는 결재문서입니다.");
 		}
-		return "redirect:./list";
+		return "redirect:./list?alarm=aprvDelete";
 	}
 }

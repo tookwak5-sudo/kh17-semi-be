@@ -461,6 +461,7 @@
             <button class="btn btn-positive aprv-update">
                 기안하기
             </button>
+            <a href="./detail?aprvNo=${param.aprvNo}" class="btn btn-negative">취소</a>
         </div>
     </div>
 </form>

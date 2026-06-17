@@ -203,33 +203,33 @@ $(function () {
         // [3] 순차적 유효성 검사 및 경고창 출력
         if(!state.aprvTitleValid) {
             //window.alert("제목을 입력하세요.");
-            showAjaxAlarm('필수', 'btn-negative', '[name=aprvTitle]', 'left');
+            showAjaxAlarm('제목을 입력하세요', 'btn-negative', '[name=aprvTitle]', 'left');
             $("[name=aprvTitle]").focus();
             return false; 
         }
         
         if(!state.aprvSdateValid) {
             //window.alert("결재 시작일을 입력하세요.");
-            showAjaxAlarm('필수', 'btn-negative', '[name=aprvSdate]', 'left');
+            showAjaxAlarm('결재 시작일을 입력하세요', 'btn-negative', '[name=aprvSdate]', 'left');
             $("[name=aprvSdate]").focus();
             return false; 
         }
         if(!state.aprvEdateValid) {
             //window.alert("결재 종료일을 입력하세요.");
-            showAjaxAlarm('필수', 'btn-negative', '[name=aprvEdate]', 'right');
+            showAjaxAlarm('결재 종료일을 입력하세요', 'btn-negative', '[name=aprvEdate]', 'right');
             $("[name=aprvEdate]").focus();
             return false; 
         }
         if(!state.aprvContentValid) {
             //window.alert("내용을 입력하세요.");
-            showAjaxAlarm('필수', 'btn-negative', '[name=aprvContent]', 'left');
+            showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=aprvContent]', 'left');
             $("[name=aprvContent]").focus();
             return false;
         }
         // 🚨 결재자 미선택 시 명확하게 경고창을 띄우고 전송 중단
         if(!state.aprvLineNo1Valid) {
             //window.alert("1차 결재 라인 결재자를 추가하세요.");
-            showAjaxAlarm('필수', 'btn-negative', '.aprv-line-1', 'left');
+            showAjaxAlarm('1차 결재 라인 결재자를 추가하세요', 'btn-negative', '.aprv-line-1', 'left');
             //$(".aprv-line-1").click();
             return false; // 무조건 전송 차단
         }
@@ -322,7 +322,7 @@ $(function () {
 
 <form action="./insert" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
 
-	<div class="container w-1200 mt-50">
+	<div class="container w-80 mt-50">
 		
     	<div class="cell center">
             <h1 class="h1-title">결재 등록</h1>

@@ -10,7 +10,7 @@
 		        /* [1] 버튼 기본 스타일 */
 		        #send-alarm {
 		            position: fixed; /* 화면 하단에 고정 */
-		            bottom: 20px;
+		            bottom: 40px;
 		            left: 20px;
 		            padding: 15px 25px;
 		            /* background-color: transparent; */
@@ -149,64 +149,140 @@
 	                	$('#div-alarm').removeClass("is-visible");
 	                }, 500); // CSS 애니메이션 시간과 맞춤
 				}
+				
+				// 얼럿 열기
+				function openAlert(message) {
+					$('#alertMessage').text(message);
+					var alert = document.getElementById('modalAlert');
+					alert.classList.add('active');
+				}
+
+				// 얼럿 닫기
+				function closeAlert() {
+					var alert = document.getElementById('modalAlert');
+					alert.classList.remove('active');
+				}
+				
+				// 컨펌 열기
+				function openConfirm(message, clickScript) {
+					$('#confirmMessage').text(message);
+					$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
+					var confirm = document.getElementById('modalConfirm');
+					confirm.classList.add('active');
+				}
+
+				// 컨펌 닫기
+				function closeConfirm() {
+					var confirm = document.getElementById('modalConfirm');
+					confirm.classList.remove('active');
+					$('#btnConfirmAction').attr("onclick", '');
+				}
 			</script>
 			<c:choose>
 				<c:when test="${param.alarm != null}">
 					<c:choose>
 						<c:when test="${param.alarm == 'join'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >회원가입이 완료되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'headWriter'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >헤더 등록이 완료되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'headDelete'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >헤더가 삭제되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'positionWriter'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >직책 등록이 완료되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'positionDelete'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >직책이 삭제되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'calendarWriter'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >일정이 등록되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'calendarEdit'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >일정이 수정되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'calendarDelete'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >일정이 삭제되었습니다.</a>
 						    </div>
 						</c:when>
 						<c:when test="${param.alarm == 'empApprove'}">
-							<div style="position: absolute;top: 590px;right: 20px;">
+							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >사원이 승인되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'aprvTempSave'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >결재가 임시저장 되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'aprvSave'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >결재가 기안되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'aprvDelete'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >결재가 삭제되었습니다.</a>
 						    </div>
 						</c:when>
 					</c:choose>
 				</c:when>
-				<c:otherwise>
-					<!-- 비동기용 알림 -->
-					<div id="div-alarm" style="position: absolute;top: 590px;right: 20px;opacity: 0;visibility: hidden;width: fit-content;">
-				        <a id="send-ajax-alarm" class="btn btn-positive btn-slide-hidden" onclick="hideAjaxAlarm(this)" >알림</a>
-				    </div>
-				</c:otherwise>
 	    	</c:choose>
+	    	<!-- 비동기용 알림 -->
+			<div id="div-alarm" style="position: absolute;top: 590px;right: 20px;opacity: 0;visibility: hidden;width: fit-content;">
+		        <a id="send-ajax-alarm" class="btn btn-positive btn-slide-hidden" onclick="hideAjaxAlarm(this)" >알림</a>
+		    </div>
+		    
+		    <!-- 커스텀 얼럿 -->
+		    <div class="modal-overlay" id="modalAlert">
+			    <div class="modal-box">
+			        <!-- <div class="modal-header center"></div> -->
+			        <div class="modal-body">
+			            <form id="popupFormAlert" class="flex-area">
+			            	<div class="cell w-100">
+			            		<span id="alertMessage"></span>
+							</div>
+			            </form>
+			        </div>
+			        <div class="modal-footer" style="txt-align:center;">
+			        	<button type="button" class="btn btn-positive" onclick="closeAlert()">확인</button>
+			        </div>
+			    </div>
+			</div>
+			
+		    <!-- 커스텀 컨펌 -->
+		    <div class="modal-overlay" id="modalConfirm">
+			    <div class="modal-box">
+			        <!-- <div class="modal-header center"></div> -->
+			        <div class="modal-body">
+			            <form id="popupFormConfirm" class="flex-area">
+			            	<div class="cell w-100">
+			            		<span id="confirmMessage"></span>
+							</div>
+			            </form>
+			        </div>
+			        <div class="modal-footer" style="txt-align:center;">
+			        	<button id="btnConfirmAction" type="button" class="btn btn-positive" onclick="">확인</button>
+			        	<button type="button" class="btn btn-neutral" onclick="closeConfirm()">취소</button>
+			        </div>
+			    </div>
+			</div>
         </div>
     </div>
 </body>

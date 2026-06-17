@@ -27,9 +27,9 @@
 	
 	
 	<div class="cell center flex-area">
-		<div class="w-20 flex-area flex-center">
+		<div class="w-15 flex-area flex-center">
         </div>
-		<div class="w-80 flex-area flex-center">
+		<div class="w-70 flex-area flex-center">
 			<form action="./list" method="get">
 				<select name="aprvHead" class="field">
 					<option value="" ${param.formHeadNo=="" ? "selected" : ""}>전체분류</option>
@@ -55,9 +55,9 @@
 				</button>
 			</form>
 		</div>
-		<div class="w-20 flex-area" style="justify-content: right; align-items: center;">
+		<div class="w-15 flex-area" style="justify-content: right; align-items: center;">
 			<c:if test="${sessionScope.loginId != null}">
-				<button type="button" onclick="openModal();" class="btn btn-neutral">결재 등록</button>
+				<button type="button" onclick="openModal();" class="btn btn-neutral">신규 결재 등록하기</button>
 			</c:if>
 		</div>
 	</div>

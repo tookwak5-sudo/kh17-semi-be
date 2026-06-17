@@ -88,7 +88,8 @@
 		.sticky-header {
 		    position: sticky;
 		    top: 0; 
-		    z-index: 9999; 
+		    /* z-index: 9999; */ 
+		    z-index: 999;
 		    background-color: #ffffff; 
 		}
 		body {
