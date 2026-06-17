@@ -89,8 +89,7 @@
 		    position: sticky;
 		    top: 0; 
 		    z-index: 9999; 
-		    background: transparent;
-		    /* background-color: #ffffff; */ 
+		    background-color: #ffffff; 
 		}
 		body {
 		    background-color: #F8F9FA; /* 네이버 스타일의 밝은 회색 */
@@ -131,60 +130,54 @@
 
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-1400">
-    <div class="flex-area flex-vertical">
-        <div class="sticky-header flex-area" style="background-color: #739BED; align-items: center; padding: 0 10px;">
-                
-                <a href="/" style="display: flex; align-items: center; padding: 0 10px; flex-shrink: 0; position: relative; z-index: 9999; margin-right: 100px;">
-                    <img src="/images/kh정보교육원 로고.png" alt="홈" style="height: 35px; width: auto; transform: scale(2.8); transform-origin: left center; position: relative; top: 5px;">
-                </a>
-
-                <div style="flex-grow: 1;">
-                    <style>
-                        .sticky-header .bell-icon {
-                            color: #ffffff !important;
-                        }
-                        .sticky-header .notification-box {
-                            background: transparent !important;
-                            border: none !important;
-                            box-shadow: none !important;
-                            padding: 0 !important;
-                            margin: 0 15px !important;
-                        }
-                    </style>
-
-                    <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-                        <c:if test="${sessionScope.empGrade == '2'}">
-                            <jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
-                        </c:if>
-                        <c:if test="${sessionScope.empGrade == '1'}">
-                            <jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
-                        </c:if>
-                        <c:if test="${sessionScope.empGrade == '0'}">           	
-                            <jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
-                        </c:if>
-                    </c:if>
-                </div>
-
-                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-                    <div class="notification-box" style="flex-shrink: 0;"> 
-                        <a href="/memo/list" 
-                           style="font-size:20px; text-decoration: none;" 
-                           onclick="
-                               var w = 650; 
-                               var h = 650; 
-                               var left = (screen.width/2) - (w/2); 
-                               var top = (screen.height/2) - (h/2); 
-                               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
-                               return false;
-                                 ">
-                            <i class="fa-solid fa-bell bell-icon">
-                                <c:if test="${not empty countMemo && countMemo != 0}">
-                                    <span class="badge" style="top: -8px; right: -12px;">${countMemo}</span>					            	
-                                </c:if>
-                            </i>
-                        </a>
-                    </div>
-                </c:if>
+        <div class="flex-area flex-vertical">
+        	<div class="sticky-header">
+            	<!-- 헤더 영역 -->
+	            <div class="flex-area">
+	                <div class="w-25 flex-area flex-center">header.jsp
+	                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
+	                </div>
+	                <div class="w-50 flex-area flex-center">
+	                    <h1>　                        </h1>
+	                </div>
+	                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+		                <div class="w-25 flex-area" style="justify-content: right; align-items: center;">
+		                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 42px; text-align: center;" class="notification-box"> 
+		                    	<a href="/memo/list" 
+						           style="font-size:20px; text-decoration: none;" 
+						           onclick="
+						               var w = 650; 
+						               var h = 650; 
+						               var left = (screen.width/2) - (w/2); 
+						               var top = (screen.height/2) - (h/2); 
+						               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+						               return false;
+						        		 ">
+						            <i class="fa-solid fa-bell bell-icon">
+						            	<c:if test="${not empty countMemo && countMemo != 0}">
+							            	<span class="badge">${countMemo}</span>					            	
+						            	</c:if>
+						            </i>
+						        </a>
+		                    </div>
+		                </div>
+	                </c:if>
+	            </div>
+	
+	            <!-- 메뉴 -->
+	           <div> 
+           		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+	            	<c:if test="${sessionScope.empGrade == '2'}">
+	            	<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
+					</c:if>
+					<c:if test="${sessionScope.empGrade == '1'}">
+						<jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
+					</c:if>
+					<c:if test="${sessionScope.empGrade == '0'}">           	
+					<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
+					</c:if>
+				</c:if>
+            </div>
          </div>
 	            <!-- 사이드바 및 컨텐츠 -->
 	            <div style="min-height: 450px;" class="flex-area">
