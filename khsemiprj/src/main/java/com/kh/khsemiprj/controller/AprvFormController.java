@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.AprvFormDao;
+import com.kh.khsemiprj.dao.AttachDao;
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.exception.TargetNotfoundException;
@@ -32,6 +33,9 @@ public class AprvFormController {
 
 	@Autowired
 	private AprvFormDao aprvFormDao;
+	
+	@Autowired
+	private AttachDao attachDao;
 
 	@GetMapping("/list")
 	public String list(@ModelAttribute PageVO pageVO, Model model) {
@@ -56,6 +60,12 @@ public class AprvFormController {
 		Integer attachNo = aprvFormDao.findAttachNo(formNo);
 		model.addAttribute("attachNo", attachNo);
 		model.addAttribute("aprvFormSelectVO", aprvFormSelectVO);
+		
+		if(attachNo != null) {
+			AttachDto attachDto = attachDao.selectOne(attachNo);
+			model.addAttribute("attachDto",attachDto);
+		}
+		
 		return "aprvForm/detail";
 	}
 

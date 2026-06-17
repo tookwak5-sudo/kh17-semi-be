@@ -54,6 +54,13 @@ public class EmpDao {
 		jdbcTemplate.update(sql, params);
 	}
 
+	//프사 삭제
+	public boolean deleteProfile(String empId) {
+	    String sql = "delete from emp_profile where emp_id=?";
+	    Object[] params = { empId };
+	    return jdbcTemplate.update(sql, params) > 0;
+	}
+	
 	/*
 	 * public List<EmpDto> selectList(){ String sql =
 	 * "select * from emp order by emp_id asc"; return jdbcTemplate.query(sql,
@@ -189,5 +196,12 @@ public class EmpDao {
 		String sql = "insert into emp_exit(emp_id, emp_exit_time) values(?, ?)";
 		Object[] params = { empId, exitDate };
 		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
+	//관리자 목록 가져오기
+	public List<EmpDto> selectAdminList() {
+		String sql = "select * from emp where emp_valid = 'Y' and emp_grade = 2 ";
+		Object[] params = {};
+		return jdbcTemplate.query(sql, empMapper, params);
 	}
 }

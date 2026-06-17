@@ -77,6 +77,7 @@
            });
        });
 </script>
+
 <script>
 $(function() {
     var state = {
@@ -419,6 +420,9 @@ $(function() {
 	           return state.ok();
 	      	 });
 	});
+	
+	
+	
 	</script>
 
 <!-- 인증번호 입력창 템플릿 -->
@@ -438,10 +442,15 @@ $(function() {
 
 <form action="./join" method="post" enctype="multipart/form-data"
 	autocomplete="off" class="form-check">
-	<div class="container w-600 mt-50 mb-50">
-		<div class="cell center">
-			<h1>회원 가입</h1>
-		</div>
+	<div class="container w-600 mt-20 mb-50 background-card">
+		<div class="w-100 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            회원가입
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+        </div>
 
 		<div class="cell">
 			<label>아이디<i class="fa-solid fa-asterisk red"></i></label> <input
@@ -549,15 +558,14 @@ $(function() {
 
 
 		<div class="cell mt-40">
-			<label> <i class="fa-solid fa-image"></i> <span>클릭해서
-					프로필 이미지를 선택하세요</span> 
-				<input type="file" name="attach" class="field w-100 preview-input" accept=".png, .jpg"
-				style="display: none;">
-			</label>
+    	<label class="btn btn-neutral w-100" style="cursor: pointer; padding: 15px; font-size: 16px;">
+        <i class="fa-solid fa-image"></i> 
+        <span>클릭해서 프로필 이미지를 선택하세요 (.jpg , .png)</span> 
+        <input type="file" name="attach" class="field preview-input" accept="image/png, image/jpeg" style="display: none;">
+    	</label>
 		</div>
 
-
-		<div class="cell preview-area"></div>
+		<div class="cell preview-area" style="display: flex; justify-content: center; margin-top: 20px;"></div>
 
 
 		<div class="cell mt-50">

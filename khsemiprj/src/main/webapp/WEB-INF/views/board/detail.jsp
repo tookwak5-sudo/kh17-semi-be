@@ -6,7 +6,7 @@
 
 <style>
 	.reply-viewer, .reply-editor { display:flex; padding:15px; box-shadow: 0 0 0 1px lightgray; }
-	.reply-viewer > .profile-wrapper, .reply-editor > .profile-wrapper { width:100px; }
+	.reply-viewer > .profile-wrapper, .reply-editor > .profile-wrapper { width:100px; flex-shrink: 0; }
 	.reply-viewer > .profile-wrapper > img, .reply-editor > .profile-wrapper > img { width:100%; aspect-ratio:1/1; }
 	.reply-viewer > .content-wrapper, .reply-editor > .content-wrapper { flex-grow: 1; }
 	
@@ -78,7 +78,7 @@
 	</div>
 </script>
 
-<div class="container w-950 mt-50 mb-50">
+<div class="container w-950 mt-20 mb-50 background-card">
 	<div class="cell">
 		<div class="flex-area" style="align-items: end">
 			<div>
@@ -88,19 +88,19 @@
 					<c:if test="${boardDto.boardEtime != null}">(수정됨)</c:if>
 				</h1>
 			</div>
-			<div class="ms-40">
-				<c:if test="${boardDto.boardWriter == null}">(탈퇴한사용자)</c:if>
-				<c:if test="${boardDto.boardWriter != null}">
-					<span class="writer-name" data-id="${boardDto.boardWriter}" style="cursor: pointer; font-weight: bold;">
-  						${boardDto.boardWriter}
-					</span>
-				</c:if>
-			</div>
 		</div>
 	</div>
 
 	<div class="cell mt-20 flex-area">
-		<div><fmt:formatDate value="${boardDto.boardWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
+		<div class="ms-10">
+			<c:if test="${boardDto.boardWriter == null}">(탈퇴한사용자)</c:if>
+			<c:if test="${boardDto.boardWriter != null}">
+				<span class="writer-name" data-id="${boardDto.boardWriter}" style="cursor: pointer; font-weight: bold;">
+					${boardDto.boardWriter}
+				</span>
+			</c:if>
+		</div>
+		<div class="ms-200" style="margin-left: auto;"><fmt:formatDate value="${boardDto.boardWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
 		<div class="ms-20">조회수 ${boardDto.boardReadcount}</div>
 	</div>
 
@@ -127,13 +127,12 @@
 
 	<div class="cell reply-area"></div>
 
-	<c:if test="${sessionScope.loginId != null}">
-		<div class="cell">
+<c:if test="${sessionScope.loginId != null}">
+		<div class="cell mt-20">
 			<div id="reply-image-preview" style="display:none; margin-bottom:10px; position:relative;">
 				<img id="preview-img" src="" style="max-width: 150px; max-height: 150px; border-radius: 5px; border: 1px solid #ccc;">
 				<i class="fa-solid fa-circle-xmark red btn-preview-remove" style="position:absolute; top:-8px; right:-8px; cursor:pointer; font-size:20px; background:white; border-radius:50%;"></i>
 			</div>
-		
 			<textarea class="field w-100 field-reply" rows="4" placeholder="댓글 내용 작성"></textarea>
 			
 			<div class="flex-area mt-10">
@@ -142,40 +141,44 @@
 					<i class="fa-solid fa-camera"></i> 사진 첨부
 				</button>
 				<button type="button" class="btn btn-positive w-100 ms-10 btn-reply">
-					<i class="fa-solid fa-pen"></i> <span>댓글 작성하기</span>
+					<i class="fa-solid fa-pen"></i>
+					<span>댓글 작성하기</span>
 				</button>
 			</div>
 		</div>
 	</c:if>
 
 	<c:if test="${sessionScope.loginId == null}">
-		<div class="cell">
+		<div class="cell mt-20">
 			<h3>댓글 작성을 원하시면 <a href="/emp/login">로그인</a>하세요</h3>
 		</div>
 	</c:if>
 
-	<hr>
 
-	<div class="cell">
-		<span class="badge blue me-20">다음글</span>
-		<c:if test="${param.column!=null || param.boardHead!=null}">
+	<hr>
+	
+		<div class="cell" style="margin-top: 10px; margin-bottom: 10px;">
+			<span class="blue me-20" style="display: inline-block; color: white; padding: 4px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">다음글</span>
+			<c:if test="${param.column!=null || param.boardHead!=null}">
 			<a href="./detail?boardNo=${nextBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${nextBoardDto.boardTitle}</a>
-		</c:if>
-		<c:if test="${param.column==null && param.boardHead==null}">
+			</c:if>
+			<c:if test="${param.column==null && param.boardHead==null}">
 			<a href="./detail?boardNo=${nextBoardDto.boardNo}" class="link">${nextBoardDto.boardTitle}</a>
-		</c:if>
-	</div>
-	<div class="cell">
-		<span class="badge blue me-20">이전글</span> 
-		<c:if test="${param.column!=null || param.boardHead!=null}">
+			</c:if>
+		</div>
+		
+		<div class="cell" style="margin-bottom: 10px;">
+			<span class="blue me-20" style="display: inline-block; color: black; padding: 4px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">이전글</span> 
+			<c:if test="${param.column!=null || param.boardHead!=null}">
 			<a href="./detail?boardNo=${prevBoardDto.boardNo}&column=${param.column}&keyword=${param.keyword}" class="link">${prevBoardDto.boardTitle}</a>
-		</c:if>
-		<c:if test="${param.column==null && param.boardHead==null}">
+			</c:if>
+			<c:if test="${param.column==null && param.boardHead==null}">
 			<a href="./detail?boardNo=${prevBoardDto.boardNo}" class="link">${prevBoardDto.boardTitle}</a>
-		</c:if>
-	</div>
+			</c:if>
+		</div>
 
 	<hr>
+
 	<div class="cell right">
 		<c:if test="${sessionScope.loginId != null}">
 			<a class="btn btn-positive" href="./write">글쓰기</a>
@@ -183,21 +186,33 @@
 		
 		<c:if test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
 			<a class="btn btn-negative" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
-			<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}"  onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+			<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
 		</c:if>
 		
-		<c:if test="${param.column==null && param.boardHead==null}">
+		<c:if test="${param.column == null && param.boardHead == null}">
 			<a class="btn btn-neutral" href="./list">목록으로</a>
 		</c:if>
-		<c:if test="${param.column!=null || param.boardHead!=null}">
+		<c:if test="${param.column != null || param.boardHead != null}">
 			<a class="btn btn-neutral" href="./list?boardHead=${param.boardHead}&column=${param.column}&keyword=${param.keyword}">목록으로</a>
 		</c:if>
 	</div>
 </div>
 
+
+<!-- 닉네임 클릭 시 나타날 창 -->
 <div id="user-context-menu" style="display: none;">
     <a href="#" id="link-view-posts">
         <i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
+    </a>
+    <a href="#"  id="link-send-memo"
+			onclick="
+				var w = 650; 
+				var h = 650; 
+				var left = (screen.width/2) - (w/2); 
+				var top = (screen.height/2) - (h/2); 
+				window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+				return false;">
+        <i class="fa-solid fa-message"></i> 쪽지 보내기
     </a>
 </div>
 
@@ -211,6 +226,9 @@
 
         	var searchUrl = "/board/list?column=board_writer&keyword=" + memberId;
         	$("#link-view-posts").attr("href", searchUrl);
+        	
+        	var memoUrl = "/memo/write?memoSenderId=" + memberId;
+        	$("#link-send-memo").attr("href", memoUrl);
 
         	$("#user-context-menu").css({
             	top: e.pageY + 10 + "px", 
@@ -336,26 +354,22 @@
 				data: {replyOrigin : boardNo},
 				success: function(response) {
 				    
-				    var displayLimit = 15; //15개 단위로 그룹화
-				    
+				    var displayLimit = 15; 
 				    var totalValidCount = response.filter(function(r) { return r.replyStatus !== 'Y'; }).length;
 				    
 				    var currentChunkContainer = null; 
-				    var chunkIndex = 0;         //그룹 박스 번호
-				    var validCounter = 0;       //현재 그룹 박스 안에 들어간 정상 댓글 수
-				    var globalValidCounter = 0; //전체 진행된 정상 댓글 수
+				    var chunkIndex = 0;         
+				    var validCounter = 0;       
+				    var globalValidCounter = 0; 
 					
 					for(var i=0; i < response.length; i++) {
 					    if (currentChunkContainer === null || (validCounter === displayLimit && globalValidCounter < totalValidCount)) {
-					        //이미 박스가 있는데 새로 여는 거라면 카운트 리셋
 					        if (currentChunkContainer !== null) {
 					            chunkIndex++;
 					            validCounter = 0; 
 					        }
-					        
 					        var startNum = chunkIndex * displayLimit + 1;
 					        var endNum = Math.min((chunkIndex + 1) * displayLimit, totalValidCount);
-					        
 					        var isOpen = (chunkIndex === 0);
 					        var iconClass = isOpen ? "fa-minus" : "fa-plus";
 					        var displayStyle = isOpen ? "block" : "none";
@@ -369,24 +383,15 @@
 					            `;
 					            $(".reply-area").append(chunkHeader);
 					        }
-					        
 					        currentChunkContainer = $(`<div id="chunk-` + chunkIndex + `" class="reply-chunk-container" style="display: ` + (totalValidCount > displayLimit ? displayStyle : 'block') + `; margin-bottom: 20px;"></div>`);
 					        $(".reply-area").append(currentChunkContainer);
 					    }
 					    
-						var template = $("#reply-viewer-template").text();
-						var html = $.parseHTML(template);
+						var template = $("#reply-viewer-template").text().trim();
+						var html = $(template);
 						$(html).attr("data-key", response[i].replyNo);
 						
-						if (response[i].replyParent) { 
-						    $(html).css("margin-left", "50px"); 
-						    $(html).find(".profile-wrapper").before(
-						        $('<div class="ms-10 me-10" style="display:flex; padding-top:15px;"><i class="fa-solid fa-turn-up fa-rotate-90 gray"></i></div>')
-						    );
-						    $(html).find(".btn-nested-reply").remove(); 
-						}
-						
-						//삭제된 댓글 처리
+						// 삭제된 댓글 처리
 						if(response[i].replyStatus=='Y'){
 							$(html).find(".reply-writer").text("(알수없음)").removeClass("writer-name").css("cursor", "default");
 							$(html).find(".reply-content").text("(삭제된 댓글입니다)").addClass("gray");
@@ -398,7 +403,17 @@
 							$(html).find(".reply-thumbs-down-count").remove();
 							$(html).find(".reply-image-wrapper").hide(); 
 						} else {
-						    //정상 댓글 처리
+						    // 정상 댓글 처리
+							if (response[i].profileAttachNo != null && response[i].profileAttachNo > 0) {
+							    var profileUrl = "/download/modern?attachNo=" + response[i].profileAttachNo;
+							    $(html).find(".image-profile").attr("src", profileUrl);
+							} else {
+								var blankWhiteSvg = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221%22%20height%3D%221%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E";
+							    $(html).find(".image-profile")
+							           .attr("src", blankWhiteSvg)
+							           .css("background-color", "white")
+							           .css("border", "1px solid #e0e0e0");
+							}
 							$(html).find(".reply-writer").text(response[i].replyWriter).attr("data-id", response[i].replyWriter);
 							$(html).find(".reply-thumbs-up-count").text(response[i].replyLikecount);
 							$(html).find(".reply-thumbs-down-count").text(response[i].replyDislikecount);
@@ -414,16 +429,14 @@
 
 							if (response[i].empLiked=='Y') {
 					    		$(html).find(".reply-btn-like").removeClass("fa-regular").addClass("fa-solid");
-					    	} else{
+					    	} else {
 					    		$(html).find(".reply-btn-like").removeClass("fa-solid").addClass("fa-regular");
 					    	}
 					    	if (response[i].empDisliked=='Y') {
 					    		$(html).find(".reply-btn-dislike").removeClass("fa-regular").addClass("fa-solid");
-					    	} else{
+					    	} else {
 					    		$(html).find(".reply-btn-dislike").removeClass("fa-solid").addClass("fa-regular");
 					    	}
-					    	
-					    	//정상 댓글일 때만 카운트를 센다
 					    	validCounter++;
 					    	globalValidCounter++;
 						}
@@ -442,8 +455,30 @@
 							$(html).find(".btn-nested-reply").remove();
 						}
 						
-						//완성된 댓글을 그룹 박스에 추가
-						currentChunkContainer.append(html);
+						if (response[i].replyParent) { 
+						    $(html).find(".btn-nested-reply").remove(); 
+						    $(html).css({
+						        "padding-left": "60px",
+						        "position": "relative"
+						    }); 
+						    var arrowHtml = `
+						        <div class="nested-reply-arrow" style="position: absolute; left: 20px; top: 25px;">
+						            <i class="fa-solid fa-turn-up fa-rotate-90 gray" style="font-size: 20px;"></i>
+						        </div>
+						    `;
+						    var wrapper = $(`
+						        <div style="display: flex; margin-bottom: 10px;">
+						            <div style="width: 50px; flex-shrink: 0; text-align: right; padding-top: 15px; padding-right: 15px;">
+						                <i class="fa-solid fa-turn-up fa-rotate-90 gray" style="font-size: 20px;"></i>
+						            </div>
+						            <div style="flex-grow: 1;"></div>
+						        </div>
+						    `);
+						    wrapper.find("div:last-child").append(html);
+						    currentChunkContainer.append(wrapper);
+						} else {
+						    currentChunkContainer.append(html);
+						}
 					}
 				}
 			});

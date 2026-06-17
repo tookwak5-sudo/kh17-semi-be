@@ -52,14 +52,14 @@ public class AprvFormDao {
 		this.aprvMapper = aprvMapper;
 	}
 
-	// 개별 파일 필요시
+	// 개별 파일 필요시(폼번호로)
 	public AprvFormDto selectOne(int formNo) {
 		String sql = "select * from aprv_form where form_no = ?";
 		Object[] params = { formNo };
 		List<AprvFormDto> list = jdbcTemplate.query(sql, aprvFormMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
-
+	
 	// 개별 파일인데 헤드 필요시(현재 타입네임과 결합 되어있는데 이거 제가 나중에 분리 하겠습니다.)
 	public AprvFormSelectVO selectOneUsingHead(int formNo) {
 

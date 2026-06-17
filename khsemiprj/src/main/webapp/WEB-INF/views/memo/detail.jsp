@@ -5,7 +5,7 @@
 
 <jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include>
 
-<div class="container w-600 mt-0 mb-0 memo-card">
+<div class="container w-600 mt-20 mb-0 memo-card background-card">
 <!-- 	제목, 타입, 작성자 -->
 	<div class="cell">
 		<div class="flex-area" style="align-items:end">

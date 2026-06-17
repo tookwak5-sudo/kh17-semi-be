@@ -4,6 +4,28 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
+<style>
+.preview-area img {
+    aspect-ratio: 1/1;
+    border-radius: 50% !important;
+}
+        
+/* togglebox 디자인 */
+.togglebox {
+	cursor: pointer;
+}
+
+.togglebox>[type=checkbox], /*체크박스*/ .togglebox>[type=checkbox] ~.fa-eye,
+	/*평상시 체크박스 뒤 눈표시*/ .togglebox>[type=checkbox]:checked ~.fa-eye-slash
+	/*체크되었을 때 눈가림 표시*/ {
+	display: none;
+}
+
+.togglebox>[type=checkbox]:checked ~.fa-eye, /*체크되었을 때 눈 표시*/ .togglebox>[type=checkbox]
+	 ~.fa-eye-slash /*평상시 체크박스 뒤 눈가림 표시*/ {
+	display: inline;
+}
+</style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
@@ -12,7 +34,7 @@ $(function() {
         empPasswordValid: false
     };
 
-    $("[name=empPassword]").on("blur", function(){
+    $("[name=empPassword]").on("input", function(){
         var empPassword = $(this).val();
         var $failDiv = $(this).siblings(".fail-feedback");
 
@@ -41,11 +63,22 @@ $(function() {
             e.preventDefault();
         }
     });
+	
+    //togglebox에 대한 제어
+    $(".togglebox").find("[type=checkbox]").on("input", function () {
+        //this는 체크된 체크박스
+        var check = $(this).prop("checked");//체크 여부를 확인해서
+        $(".togglebox").find("[type=checkbox]").prop("checked", check);//전파하세요!
+
+        $("[name=empPassword]")
+            .attr("type", check ? "text" : "password");//체크되면 password, 아니면 text
+    });
+
 });
 </script>
 
 
-<div class="container w-500 mt-50 mb-50">
+<div class="container w-500 mt-20 mb-50 background-card">
 	<div class="cell center">
 	
 		<h1>비밀번호 확인</h1>
@@ -56,7 +89,10 @@ $(function() {
 	
 			<div class="cell mt-40">
 	
-				<label>비밀번호 입력</label> 
+				<label>비밀번호 입력<i class="fa-solid fa-asterisk red"></i></label> <label
+				class="togglebox"> <input type="checkbox"> 
+				<i class="fa-solid fa-eye-slash red"></i> 
+				<i class="fa-solid fa-eye blue"></i></label> 
 				<input type="password" name="empPassword" class="field w-100">
 				<div class="success-feedback">비밀번호가 확인되었습니다.</div>
 	            <div class="fail-feedback"></div>

@@ -5,27 +5,34 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 	
-	<div class="container w-1200 mt-50 mb-50">
-		<div class="cell center mb-0">
-			<h1 class="mb-0">출퇴근 기록</h1>
+	<div class="container w-1200 mt-20 mb-50 background-card">
+		<div class="cell center flex-area">
+			<div class="w-15 flex-area" style="justify-content: left">
+				<div>
+			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+			            출퇴근 로그
+			            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+			        </h1>
+				</div>
+	        </div>
+	        <div class="w-70 flex-area flex-center">
+				<!-- 검색창 -->
+		        <div class="cell center">
+		            <form autocomplete="off">
+		                <select name="column" class="field">
+		                    <option value="log_inout_emp_id">사원아이디</option>
+		                    <option value="log_inout_type">분류</option>
+		                </select>
+		                <input type="text" name="keyword"
+		                    class="field-sm" placeholder="검색어 입력">
+		                <button type="submit" class="btn btn-positive">
+		                    <i class="fa-solid fa-magnifying-glass"></i>
+		                    <span>검색</span>
+		                </button>
+		            </form>
+		        </div>
+	        </div>
 		</div>
-		
-		<!-- 검색창 -->
-        <div class="cell center">
-            <form autocomplete="off">
-                <select name="column" class="field">
-                    <option value="log_inout_emp_id">사원아이디</option>
-                    <option value="log_inout_type">분류</option>
-                </select>
-                <input type="text" name="keyword"
-                    class="field-sm" placeholder="검색어 입력">
-                <button type="submit" class="btn btn-positive">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <span>검색</span>
-                </button>
-            </form>
-        </div>
-		
 		<div class="cell right mt-0">
 	      <!-- 출퇴근 목록 -->
 			<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총 ${pageVO.count}개</span>

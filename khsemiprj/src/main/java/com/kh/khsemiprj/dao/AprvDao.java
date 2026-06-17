@@ -29,7 +29,7 @@ public class AprvDao {
 	AprvDetailMapper aprvDetailMapper;
 	
 	//검색 허용할 컬럼
-	private Set<String> allowColumns = Set.of("aprv_writer", "aprv_title", "aprv_status");
+	private Set<String> allowColumns = Set.of("aprv_writer", "aprv_title");
 	
 	public int sequence() {
 		String sql = "select aprv_no_seq.nextval from dual";
@@ -144,7 +144,7 @@ public class AprvDao {
 		return list.isEmpty() ? null : list.get(0);
 	}
 	
-	public List<AprvDetailVO> selectList(int page, int size, String aprvStatus, String empId) {
+	public List<AprvDetailVO> selectList(int page, int size, String aprvHead, String aprvStatus, String empId) {
 		String sql = "select * from ("
 					+ "select rownum rn, TMP.* from ( "
 					+ "select a.* "
@@ -164,20 +164,21 @@ public class AprvDao {
 					//임시저장은 작성자만 볼 수 있도록
 					+ "where ((a.aprv_status = '임시저장' and a.aprv_writer = ?) or a.aprv_status in ('대기','승인','반려')) "
 					+ "and a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
+					+ "and ah.head_name = CASE WHEN ? IS NULL THEN ah.head_name ELSE ? END "
 					+ "order by a.aprv_no desc"
 				+ ") TMP"
 			+ ") where rn between ? and ?";
 		int beginRow = page * size - (size-1);
 		int endRow = page * size;
-		Object[] params = { empId, aprvStatus, aprvStatus, beginRow , endRow };
+		Object[] params = { empId, aprvStatus, aprvStatus, aprvHead, aprvHead, beginRow , endRow };
 		return jdbcTemplate.query(sql, aprvDetailMapper, params);
 	}
 	
 	public List<AprvDetailVO> selectList(PageForAprvVO pageForAprvVO, String empId) {
 		if(pageForAprvVO.isList())
-			return selectList(pageForAprvVO.getPage(), pageForAprvVO.getSize(), pageForAprvVO.getAprvStatus(), empId);
+			return selectList(pageForAprvVO.getPage(), pageForAprvVO.getSize(), pageForAprvVO.getAprvHead(), pageForAprvVO.getAprvStatus(), empId);
 		if(!allowColumns.contains(pageForAprvVO.getColumn()))
-			return selectList(pageForAprvVO.getPage(), pageForAprvVO.getSize(), pageForAprvVO.getAprvStatus(), empId);
+			return selectList(pageForAprvVO.getPage(), pageForAprvVO.getSize(), pageForAprvVO.getAprvHead(), pageForAprvVO.getAprvStatus(), empId);
 		
 		String sql = "select * from ("
 						+ "select rownum rn, TMP.* from ( "
@@ -196,17 +197,27 @@ public class AprvDao {
 							+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
 							+ "LEFT JOIN dept d ON d.dept_no = edr.dept_no "
 							+ "where a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
-							+ "and instr(a."+pageForAprvVO.getColumn()+", ?) > 0 "
+							+ "and ah.head_name = CASE WHEN ? IS NULL THEN ah.head_name ELSE ? END "
+							//+ "and instr(a."+pageForAprvVO.getColumn()+", ?) > 0 "
 							//임시저장은 작성자만 볼 수 있도록
 							+ "and ((a.aprv_status = '임시저장' and a.aprv_writer = ?) or a.aprv_status in ('대기','승인','반려')) "
 							+ "order by a.aprv_no desc"
-						+ ") TMP"
+						+ ") TMP "
+						+ "where (instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "aprv_writer" : pageForAprvVO.getColumn())+", ?) > 0 "
+						+ "   or instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "emp_name" : pageForAprvVO.getColumn())+", ?) > 0"
+						+ "   or instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "emp_position_name" : pageForAprvVO.getColumn())+", ?) > 0"
+						+ "   or instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "dept_name" : pageForAprvVO.getColumn())+", ?) > 0)"
 					+ ") where rn between ? and ?";
 		Object[] params = { 
 			pageForAprvVO.getAprvStatus(),
 			pageForAprvVO.getAprvStatus(),
-			pageForAprvVO.getKeyword(),
+			pageForAprvVO.getAprvHead(),
+			pageForAprvVO.getAprvHead(),
 			empId,
+			pageForAprvVO.getKeyword(),
+			pageForAprvVO.getKeyword(),
+			pageForAprvVO.getKeyword(),
+			pageForAprvVO.getKeyword(),
 			pageForAprvVO.getBeginRownum(),
 			pageForAprvVO.getEndRownum()
 		};
@@ -215,7 +226,7 @@ public class AprvDao {
 	
 	//목록과 검색의 상황별 카운트 메소드
 	//→ 화면에서 마지막 페이지가 어딘지 알기 위해 필요한 데이터 
-	public int count(String empId, String aprvStatus) {
+	public int count(String empId, String aprvHead, String aprvStatus) {
 		//String sql = "select count(*) from aprv_document";
 		String sql = "select count(*) "
 				+ "from aprv_document a "
@@ -225,30 +236,66 @@ public class AprvDao {
 				+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
 				+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
 				+ "where a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
+				+ "and ah.head_name = CASE WHEN ? IS NULL THEN ah.head_name ELSE ? END "
 				+ "and ((a.aprv_status = '임시저장' and a.aprv_writer = ?) or a.aprv_status in ('대기','승인','반려')) ";
-		Object[] params = { aprvStatus, aprvStatus, empId };
+		Object[] params = { aprvStatus, aprvStatus, aprvHead, aprvHead, empId };
 		return jdbcTemplate.queryForObject(sql, int.class, params);
 	}
 	
 	public int count(PageForAprvVO pageForAprvVO, String empId) {
-		if(pageForAprvVO.isList()) return count(empId, pageForAprvVO.getAprvStatus());
-		if(!allowColumns.contains(pageForAprvVO.getColumn())) return count(empId, pageForAprvVO.getAprvStatus());
+		if(pageForAprvVO.isList()) return count(empId, pageForAprvVO.getAprvHead(), pageForAprvVO.getAprvStatus());
+		if(!allowColumns.contains(pageForAprvVO.getColumn())) return count(empId, pageForAprvVO.getAprvHead(), pageForAprvVO.getAprvStatus());
 		
-//		String sql = "select count(*) from aprv_document "
-//					+ "where instr("+pageVO.getColumn()+", ?) > 0";
-		String sql = ""
-				+ "select count(*) "
-				+ "from aprv_document a "
-				+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
-				+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
-				+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
-				+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
-				+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
-				+ "where instr(a."+pageForAprvVO.getColumn()+", ?) > 0 "
-				+ "and a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
-				//임시저장은 작성자만 볼 수 있도록
-				+ "and ((a.aprv_status = '임시저장' and a.aprv_writer = ?) or a.aprv_status in ('대기','승인','반려')) ";
-		Object[] params = { pageForAprvVO.getKeyword(), pageForAprvVO.getAprvStatus(), pageForAprvVO.getAprvStatus(), empId };
+//		String sql = ""
+//				+ "select count(*) "
+//				+ "from aprv_document a "
+//				+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
+//				+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
+//				+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+//				+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
+//				+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
+//				+ "where instr(a."+pageForAprvVO.getColumn()+", ?) > 0 "
+//				+ "and a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
+//				+ "and ah.head_name = CASE WHEN ? IS NULL THEN ah.head_name ELSE ? END "
+//				//임시저장은 작성자만 볼 수 있도록
+//				+ "and ((a.aprv_status = '임시저장' and a.aprv_writer = ?) or a.aprv_status in ('대기','승인','반려')) ";
+		String sql = "select count(*) from ( "
+					+ "select a.* "
+					+ ", e.emp_name "
+					+ ", ep.emp_position_name "
+					+ ", ah.head_no "
+					+ ", ah.head_name "
+					+ ", edr.dept_no "
+					+ ", d.dept_name "
+					+ "from aprv_document a "
+					+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
+					+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
+					+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+					+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
+					+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
+					+ "LEFT JOIN dept d ON d.dept_no = edr.dept_no "
+					+ "where a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
+					+ "and ah.head_name = CASE WHEN ? IS NULL THEN ah.head_name ELSE ? END "
+					//+ "and instr(a."+pageForAprvVO.getColumn()+", ?) > 0 "
+					//임시저장은 작성자만 볼 수 있도록
+					+ "and ((a.aprv_status = '임시저장' and a.aprv_writer = ?) or a.aprv_status in ('대기','승인','반려')) "
+					+ "order by a.aprv_no desc"
+				+ ") TMP "
+				+ "where (instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "aprv_writer" : pageForAprvVO.getColumn())+", ?) > 0 "
+				+ "   or instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "emp_name" : pageForAprvVO.getColumn())+", ?) > 0"
+				+ "   or instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "emp_position_name" : pageForAprvVO.getColumn())+", ?) > 0"
+				+ "   or instr(TMP."+(pageForAprvVO.getColumn().equals("aprv_writer") ? "dept_name" : pageForAprvVO.getColumn())+", ?) > 0)";
+		Object[] params = {
+				pageForAprvVO.getAprvStatus()
+				, pageForAprvVO.getAprvStatus()
+				, pageForAprvVO.getAprvHead()
+				, pageForAprvVO.getAprvHead()
+				, empId
+				, pageForAprvVO.getKeyword()
+				, pageForAprvVO.getKeyword()
+				, pageForAprvVO.getKeyword()
+				, pageForAprvVO.getKeyword()
+		};
 		return jdbcTemplate.queryForObject(sql, int.class, params);
 	}
 	

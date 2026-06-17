@@ -34,26 +34,31 @@
 	}
 </style>
 
-<div class="container w-600 mt-0 mb-50">
-	<div class="cell">
-		<h1 class="mt-0 mb-0">받은 쪽지함</h1>
-	</div>
-	
-	<div class="cell" style="display: flex; justify-content: flex-end;">
-		<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
-			<select name="column" class="field" style="padding: 5px 10px; font-size: 16px;">
-				<option value="memo_sender_id" ${pageVO.column == 'memo_sender_id' ? 'selected' : ''}>보낸사람</option>
-				<option value="memo_title" ${pageVO.column == 'memo_title' ? 'selected' : ''}>제목</option>
-				<option value="memo_content" ${pageVO.column == 'memo_content' ? 'selected' : ''}>내용</option>
-			</select>
-			<input type="text" name="keyword" class="field-sm" value="${pageVO.keyword}" placeholder="검색어를 입력하세요" style="padding: 8px 18px; font-size: 16px;">
-			<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
-				<i class="fa-solid fa-magnifying-glass"></i> 
-				<span>검색</span>
-			</button>
-		</form>
-	</div>
-	
+<div class="container w-600 mt-20 mb-50 background-card">
+	<div class="cell center flex-area">
+		<div class="w-25 flex-area" style="justify-content: left">
+				<div>
+			        <h1 style="font-size: 24px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+			            받은 쪽지함
+			            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+			        </h1>
+				</div>
+	    </div>
+		<div class="w-70 flex-area flex-center">
+			<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
+				<select name="column" class="field" style="padding: 5px 10px; font-size: 16px;">
+					<option value="memo_sender_id" ${pageVO.column == 'memo_sender_id' ? 'selected' : ''}>보낸사람</option>
+					<option value="memo_title" ${pageVO.column == 'memo_title' ? 'selected' : ''}>제목</option>
+					<option value="memo_content" ${pageVO.column == 'memo_content' ? 'selected' : ''}>내용</option>
+				</select>
+				<input type="text" name="keyword" class="field-sm" value="${pageVO.keyword}" placeholder="검색어를 입력하세요" style="padding: 8px 18px; font-size: 16px;">
+				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
+					<i class="fa-solid fa-magnifying-glass"></i> 
+					<span>검색</span>
+				</button>
+			</form>
+		</div>
+	</div>	
 	<c:if test="${pageVO.keyword != null && pageVO.keyword != ''}">
 	<div class="cell">
 		<h3>총 <span class="blue">${pageVO.count}</span>개의 쪽지가 검색되었습니다</h3>
