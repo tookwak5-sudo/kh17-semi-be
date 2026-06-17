@@ -77,6 +77,7 @@
            });
        });
 </script>
+
 <script>
 $(function() {
     var state = {
@@ -419,6 +420,9 @@ $(function() {
 	           return state.ok();
 	      	 });
 	});
+	
+	
+	
 	</script>
 
 <!-- 인증번호 입력창 템플릿 -->
@@ -550,7 +554,7 @@ $(function() {
 
 		<div class="cell mt-40">
 			<label> <i class="fa-solid fa-image"></i> <span>클릭해서
-					프로필 이미지를 선택하세요</span> 
+					프로필 이미지를 선택하세요 (.jpg , .png)</span> 
 				<input type="file" name="attach" class="field w-100 preview-input" accept=".png, .jpg"
 				style="display: none;">
 			</label>
