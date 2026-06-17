@@ -6,12 +6,7 @@
 
 <!-- 관리자일 때 보여줄 메뉴 -->
 <ul class="menu">
-	<li>
-	    <a href="/">
-	        <i class="fa-solid fa-house"></i>
-	        <span>홈</span>
-	    </a>
-	</li>
+	
 	<li>
 	    <a href="/aprv/list">
 	    	<i class="fa-solid fa-file-signature"></i>
@@ -31,6 +26,12 @@
 	    </a>
 	</li>
 	<li>
+	    <a href="/plan/list">
+	        <i class="fa-solid fa-calendar"></i>
+	        <span>일정</span>
+	    </a>
+	</li>
+	<li>
 		<a href="/memo/list" style="font-size:20px; text-decoration: none;" onclick="
              var w = 650; 
              var h = 650; 
@@ -46,12 +47,6 @@
           </i>
           <span>쪽지</span>
       	</a>
-	</li>
-	<li>
-	    <a href="/plan/list">
-	        <i class="fa-solid fa-calendar"></i>
-	        <span>일정</span>
-	    </a>
 	</li>
 	
 	<li class="divider"></li>
@@ -108,25 +103,6 @@
 	    </a>
 	     <!-- 하위메뉴 -->
 		<ul>
-			<c:if test="${logInoutType.trim() eq '퇴근'}">
-		    <li>
-		        <form id="workInForm" action="/emp/work-in" method="post"></form>
-		        <a href="#" onclick="document.getElementById('workInForm').submit(); return false;">
-		             <i class="fa-solid fa-right-from-bracket"></i>
-		             <span>출근</span>
-		        </a>
-		    </li>
-		    </c:if>
-		    <c:if test="${logInoutType.trim() eq '출근'}">
-		    <li>
-		        <form id="workOutForm" action="/emp/work-out" method="post"></form>
-		        
-		        <a href="#" onclick="document.getElementById('workOutForm').submit(); return false;">
-		            <i class="fa-solid fa-right-from-bracket"></i>
-		            <span>퇴근</span>
-		        </a>
-		    </li>
-		    </c:if>
 		    <li>
 		        <a href="/emp/logout">
 		            <i class="fa-solid fa-right-from-bracket"></i>

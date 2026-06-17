@@ -132,8 +132,8 @@
 	        <a href="./list?boardHead=질문&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '질문' ? 'active' : ''}">질문</a>
 	        <a href="./list?boardHead=나눔&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '나눔' ? 'active' : ''}">나눔</a>
 	    </div>
-		<div class="right">
-			${pageVO.getBeginRownum()}-${pageVO.endRownum} / 총 ${pageVO.count}개의 글
+		<div class="right" style="font-size: 14px; color: #666;">
+		    <strong style="color: #007bff;">${pageVO.count}</strong>개의 글
 		</div>
 	</div>
 

@@ -171,32 +171,39 @@
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-clamp">
         <div class="flex-area flex-vertical">
-        	<div class="sticky-header">
-            	<!-- 헤더 영역 -->
-	            <!-- <div class="flex-area" style="background: #f8f9fa">
-	                <div class="w-25 flex-area flex-center">
-	                    <img src="/images/kh.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
-	                </div>
-	                <div class="w-50 flex-area flex-center">
-	                    <h1>　                        </h1>
-	                </div>
-	            </div> -->
-	
-	            <!-- 메뉴 -->
-	           <div> 
-           		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-	            	<c:if test="${sessionScope.empGrade == '2'}">
-	            	<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
-					</c:if>
-					<c:if test="${sessionScope.empGrade == '1'}">
-						<jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
-					</c:if>
-					<c:if test="${sessionScope.empGrade == '0'}">           	
-					<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
-					</c:if>
-				</c:if>
-            </div>
-         </div>
+        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center; padding: 0 10px;">
+                
+                <a href="/" style="display: flex; align-items: center; padding: 0 10px; flex-shrink: 0; position: relative; z-index: 9999; margin-right: 100px;">
+                    <img src="/images/kh정보교육원 로고.png" alt="홈" style="height: 35px; width: auto; transform: scale(2.8); transform-origin: left center; position: relative; top: 5px;">
+                </a>
+
+                <div style="flex-grow: 1;">
+                    <style>
+                        .sticky-header .bell-icon {
+                            color: #ffffff !important;
+                        }
+                        .sticky-header .notification-box {
+                            background: transparent !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                            padding: 0 !important;
+                            margin: 0 15px !important;
+                        }
+                    </style>
+
+                    <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+                        <c:if test="${sessionScope.empGrade == '2'}">
+                            <jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
+                        </c:if>
+                        <c:if test="${sessionScope.empGrade == '1'}">
+                            <jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
+                        </c:if>
+                        <c:if test="${sessionScope.empGrade == '0'}">           	
+                            <jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
+                        </c:if>
+                    </c:if>
+                </div>
+	         </div>
 	            <!-- 사이드바 및 컨텐츠 -->
 	            <div style="min-height: 450px;" class="flex-area">
 					    <div class="profile-card">
