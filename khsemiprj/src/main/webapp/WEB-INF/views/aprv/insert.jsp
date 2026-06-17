@@ -320,11 +320,20 @@ $(function () {
 
 <style>
 	.cell { min-height: 32px; }
+	
+	.custom-card {
+	    background: #ffffff;
+	    border-radius: 12px; /* 모서리를 부드럽게 라운딩 */
+	    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 은은하고 부드러운 그림자 효과 */
+	    padding: 24px; /* 상자 내부 여백 */
+	    box-sizing: border-box;
+	    transition: all 0.3s ease; /* 마우스 올렸을 때 자연스러운 효과용 (선택) */
+	}
 </style>
 
 <form action="./insert" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
 
-	<div class="container w-80 mt-50">
+	<div class="container w-80 mt-50 custom-card">
 		
     	<div class="cell center">
             <h1 class="h1-title">결재 등록</h1>
@@ -388,7 +397,7 @@ $(function () {
 		<div class="cell flex-area">
 			<div class="cell flex-vertical w-50 me-10">
 		        <div class="cell mb-0">
-		            <label>1차 결재 라인</label>
+		            <label>1차 결재 라인 <i class="fa-solid fa-asterisk red"></i></label>
 		        </div>
 		        <div class="cell w-100 mt-0">
 		        	<table class="table">
@@ -433,7 +442,7 @@ $(function () {
 		        </div>
 			</div>
         </div>
-        <div class="cell mt-40 mb-50 right">
+        <div class="cell mt-40 right">
         	<input type="hidden" name="aprvStatus" class="aprv-status" value="">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
         	<button class="btn btn-save aprv-temp-insert">

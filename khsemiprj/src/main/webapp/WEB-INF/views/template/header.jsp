@@ -135,7 +135,7 @@
         	<div class="sticky-header">
             	<!-- 헤더 영역 -->
 	            <div class="flex-area">
-	                <div class="w-25 flex-area flex-center">
+	                <div class="w-25 flex-area flex-center" style="justify-content: left;margin-left: 15px;">
 	                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
 	                </div>
 	                <div class="w-50 flex-area flex-center">
