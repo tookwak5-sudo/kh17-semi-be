@@ -112,7 +112,7 @@ empGrade : ${sessionScope.empGrade}
                 </div>
                 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
 	                <div class="w-25 flex-area" style="justify-content: right; align-items: end;">
-	                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 50px;background-color: #739BED;text-align: center;" class="notification-box"> 
+	                    <div style="padding-top: 10px;padding-right: 10px;width: 100px;height: 50px;background-color: #739BED;text-align: center;" class="notification-box"> 
 	                    	<a href="/memo/list" 
 					           style="font-size:20px; text-decoration: none;" 
 					           onclick="
