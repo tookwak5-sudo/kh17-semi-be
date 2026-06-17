@@ -29,4 +29,5 @@ public class ReplyVO {
 	private String empDisliked;
 	//첨부파일 번호를 확인하는 필드, 없을수도 있기때문에 Integer 사용
 	private Integer attachNo;
+	private Integer profileAttachNo;
 }
