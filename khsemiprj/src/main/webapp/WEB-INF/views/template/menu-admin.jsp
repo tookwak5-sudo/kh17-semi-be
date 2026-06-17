@@ -4,9 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
-
-
-<!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
+<!-- 관리자일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
 	    <a href="/">
@@ -49,6 +47,13 @@
           <span>쪽지</span>
       	</a>
 	</li>
+	<li>
+	    <a href="/plan/list">
+	        <i class="fa-solid fa-calendar"></i>
+	        <span>일정</span>
+	    </a>
+	</li>
+	
 	<li class="divider"></li>
 	
 	<li>
