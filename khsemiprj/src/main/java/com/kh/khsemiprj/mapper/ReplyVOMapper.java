@@ -26,6 +26,7 @@ public class ReplyVOMapper implements RowMapper<ReplyVO>{
 					.empLiked(rs.getString("emp_liked"))
 					.empDisliked(rs.getString("emp_disliked"))
 					.attachNo(rs.getObject("attach_no", Integer.class))
+					.profileAttachNo(rs.getObject("profile_attach_no", Integer.class))
 				.build();
 	}
 }

@@ -163,22 +163,28 @@ $(function() {
     });
 
     $("form").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+    	
         var canSubmit = false;
 
         if(state.formNameValid == false) {
-            window.alert("양식명을 입력하세요.");
+            //window.alert("양식명을 입력하세요.");
+            showAjaxAlarm('양식명을 입력하세요', 'btn-negative', '[name=formName]', 'left');
             $("[name=formName]").focus();
             return canSubmit; 
         }
 
         if(state.headNameValid == false) {
-            window.alert("구분을 선택하세요.");
+            //window.alert("구분을 선택하세요.");
+            showAjaxAlarm('구분을 선택하세요', 'btn-negative', '[name=headName]', 'left');
             $("[name=headName]").focus();
             return canSubmit; 
         }
 
         if(state.formExplainValid == false) {
-            window.alert("양식 내용을 입력하세요.");
+            //window.alert("양식 내용을 입력하세요.");
+            showAjaxAlarm('양식 내용을 입력하세요', 'btn-negative', '[name=formExplain]', 'left');
             $("[name=formExplain]").focus();
             return canSubmit; 
         }

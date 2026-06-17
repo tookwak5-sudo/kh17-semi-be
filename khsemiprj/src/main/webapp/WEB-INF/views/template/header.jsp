@@ -94,7 +94,8 @@
 		.sticky-header {
 		    position: sticky;
 		    top: 0; 
-		    z-index: 9999; 
+		    /* z-index: 9999; */ 
+		    z-index: 999;
 		    background-color: #ffffff; 
 		}
 		body {
@@ -165,7 +166,7 @@
 <%-- 부서 정보 : ${sessionScope.empDept} --%>
 <%-- 직책 정보 : ${sessionScope.empPosition} --%>
     <!-- 메인 컨테이너1 + 내부영역4 -->
-    <div class="container w-1400">
+    <div class="container w-clamp">
         <div class="flex-area flex-vertical">
         	<div class="sticky-header">
             	<!-- 헤더 영역 -->
@@ -227,4 +228,65 @@
 					        </c:choose>
 					    </div>
 	            	
+	            	<!-- 
+	            	사이드 바
+	            	<nav class="sidebar">
+						<div class="sidebar-header">메뉴</div>
+						<ul class="menu-list">
+							<li><a href="#">홈</a></li>
+				  			<li><a href="#">결재</a></li>
+				  			<li><a href="#">조직도</a></li>
+				  			<li><a href="#">게시판</a></li>
+				  			<li><a href="#">관리메뉴</a></li>
+				  			<li><a href="#">내정보</a></li>
+				  		</ul>
+					</nav>
+					
+					<style>
+					  /* 사이드바 스타일 */
+					  .sidebar {
+					    width: 200px;
+					    background-color: #ffffff;
+					    border-right: 1px solid #e0e0e0;
+					    height: 100vh;
+					    padding: 20px;
+					    font-family: 'Segoe UI', sans-serif;
+					  }
+					
+					  .sidebar-header {
+					    font-size: 1.2rem;
+					    font-weight: bold;
+					    color: #333;
+					    margin-bottom: 20px;
+					    padding-bottom: 10px;
+					    border-bottom: 2px solid #0056b3; /* 메인 색상 포인트 */
+					  }
+					
+					  .menu-list {
+					    list-style: none;
+					    padding: 0;
+					  }
+					
+					  .menu-list li {
+					    margin-bottom: 15px;
+					  }
+					
+					  .menu-list li a {
+					    text-decoration: none;
+					    color: #555;
+					    font-weight: 500;
+					    display: block;
+					    padding: 10px;
+					    border-radius: 5px;
+					    transition: background 0.3s;
+					  }
+					
+					  /* 호버 효과 */
+					  .menu-list li a:hover {
+					    background-color: #f0f7ff;
+					    color: #0056b3;
+					  }
+					</style>
+	            	 -->
+	            	<!-- 컨텐츠 -->
 	                <div class="w-200 flex-fill">

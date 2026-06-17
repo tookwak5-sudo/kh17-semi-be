@@ -18,7 +18,7 @@ var state = {
 	aprvSdateValid: false,
 	aprvEdateValid: false,
 	aprvLineNo1Valid: false,
-	aprvLineNo2Valid: false,
+	aprvLineNo2Valid: true,
 	ok: function(){
 		return Object.values(this)
 		.filter(v => typeof v==="boolean")
@@ -110,7 +110,8 @@ $(function () {
 					if(currentFormHead == "연차" && sDate && eDate) {
 						var count = getWeekdaysCount(moment(sDate), moment(eDate));
 						if(count > ${leaveRemain}) {
-							alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+							//alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+							showAjaxAlarm("휴가 잔여일 : ${leaveRemain}일 / 휴가 선택일 : " + count + "일 / 휴가 잔여일보다 휴가 선택일이 많습니다. 다시 선택하세요.", 'btn-negative', '[name=aprvEdate]', 'right');
 							picker1.setDateRange(null, null);
 							$(".picker-sdate").val("");
 							$(".picker-edate").val("");
@@ -171,7 +172,7 @@ $(function () {
     $("[name=aprvTitle]").on("blur", function(){
         state.aprvTitleValid = $(this).val().trim().length > 0;
     });
-    $("[name=aprvContent]").on("change keyup", function(){ // keyup 추가로 실시간 검사 보완
+    $("[name=aprvContent]").on("blur", function(){
         state.aprvContentValid = $(this).val().trim().length > 0;
     });
     $("[name=aprvEdate]").on("blur", function(){
@@ -187,8 +188,10 @@ $(function () {
         state.aprvLineNo2Valid = $(this).val().trim().length > 0;
     });
  
- // 9. 최종 전송(submit) 시 검사
+	// 9. 최종 전송(submit) 시 검사
     $(".form-check").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
         
         // [1] 전송 직전 입력값 기준으로 state 갱신
         state.aprvTitleValid = $("[name=aprvTitle]").val().trim().length > 0;
@@ -198,52 +201,56 @@ $(function () {
         
         // [2] 결재 라인 테이블(tbody)에 추가된 행(tr) 개수로 결재자 등록 여부 체크
         state.aprvLineNo1Valid = ($("#line1List tr").length > 0);
-        state.aprvLineNo2Valid = ($("#line2List tr").length > 0);
 
         // [3] 순차적 유효성 검사 및 경고창 출력
         if(!state.aprvTitleValid) {
-            window.alert("결재명을 입력하세요.");
+            //window.alert("제목을 입력하세요.");
+            showAjaxAlarm('제목을 입력하세요', 'btn-negative', '[name=aprvTitle]', 'left');
             $("[name=aprvTitle]").focus();
             return false; 
         }
-        if(!state.aprvContentValid) {
-            window.alert("결재 내용을 입력하세요.");
-            $("[name=aprvContent]").focus();
-            return false; 
-        }
+        
         if(!state.aprvSdateValid) {
-            window.alert("결재 시작일을 입력하세요.");
+            //window.alert("결재 시작일을 입력하세요.");
+            showAjaxAlarm('결재 시작일을 입력하세요', 'btn-negative', '[name=aprvSdate]', 'left');
             $("[name=aprvSdate]").focus();
             return false; 
         }
         if(!state.aprvEdateValid) {
-            window.alert("결재 종료일을 입력하세요.");
+            //window.alert("결재 종료일을 입력하세요.");
+            showAjaxAlarm('결재 종료일을 입력하세요', 'btn-negative', '[name=aprvEdate]', 'right');
             $("[name=aprvEdate]").focus();
             return false; 
         }
-        
+        if(!state.aprvContentValid) {
+            //window.alert("내용을 입력하세요.");
+            showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=aprvContent]', 'left');
+            $("[name=aprvContent]").focus();
+            return false;
+        }
         // 🚨 결재자 미선택 시 명확하게 경고창을 띄우고 전송 중단
         if(!state.aprvLineNo1Valid) {
-            window.alert("첫 번째 결재자를 입력하세요.");
-            $(".aprv-line-1").focus(); 
+            //window.alert("1차 결재 라인 결재자를 추가하세요.");
+            showAjaxAlarm('1차 결재 라인 결재자를 추가하세요', 'btn-negative', '.aprv-line-1', 'left');
+            //$(".aprv-line-1").click();
             return false; // 무조건 전송 차단
         }
-        if(!state.aprvLineNo2Valid) {
+        /* if(!state.aprvLineNo2Valid) {
             window.alert("두 번째 결재자를 입력하세요.");
             $(".aprv-line-2").focus(); 
             return false; // 무조건 전송 차단
-        }
+        } */
         
         // [4] 기안 / 임시저장 상태 값 세팅
         var clickedButton = e.originalEvent.submitter; 
         if ($(clickedButton).hasClass("aprv-insert")) {
         	$(".aprv-status").val("대기");
+        	return confirm("문서를 기안하시겠습니까?");
         } else {
         	$(".aprv-status").val("임시저장");
         }
 
-        // 위의 모든 if문을 통과했다면 완벽하게 검증된 것이므로 무조건 true 반환
-        return true; 
+        return state.ok();
     });
 });
 </script>
@@ -313,11 +320,20 @@ $(function () {
 
 <style>
 	.cell { min-height: 32px; }
+	
+	.custom-card {
+	    background: #ffffff;
+	    border-radius: 12px; /* 모서리를 부드럽게 라운딩 */
+	    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 은은하고 부드러운 그림자 효과 */
+	    padding: 24px; /* 상자 내부 여백 */
+	    box-sizing: border-box;
+	    transition: all 0.3s ease; /* 마우스 올렸을 때 자연스러운 효과용 (선택) */
+	}
 </style>
 
 <form action="./insert" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
 
-	<div class="container w-1200 mt-50">
+	<div class="container w-80 mt-50 custom-card">
 		
     	<div class="cell center">
             <h1 class="h1-title">결재 등록</h1>
@@ -353,9 +369,9 @@ $(function () {
 		        </div>
 		        <div class="cell mt-0">
 		        	<input type="hidden" name="aprvLeave" value="" />
-		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일">
+		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일" readonly>
 		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일">
+		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" readonly>
 		        </div>
 	        </div>
 	        <div class="w-66 vacationType">
@@ -381,7 +397,7 @@ $(function () {
 		<div class="cell flex-area">
 			<div class="cell flex-vertical w-50 me-10">
 		        <div class="cell mb-0">
-		            <label>1차 결재 라인</label>
+		            <label>1차 결재 라인 <i class="fa-solid fa-asterisk red"></i></label>
 		        </div>
 		        <div class="cell w-100 mt-0">
 		        	<table class="table">
@@ -426,7 +442,7 @@ $(function () {
 		        </div>
 			</div>
         </div>
-        <div class="cell mt-40 mb-50 right">
+        <div class="cell mt-40 right">
         	<input type="hidden" name="aprvStatus" class="aprv-status" value="">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
         	<button class="btn btn-save aprv-temp-insert">

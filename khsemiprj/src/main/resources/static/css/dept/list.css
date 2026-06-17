@@ -189,7 +189,7 @@
 
 /* 마지막 자식 노드의 세로선은 체크박스 중앙 높이까지만 내려옴 */
 .dept-tree ul li:last-child::before {
-    height: 18px; /* .dept-row의 높이 절반 지점에서 딱 끊기도록 고정 */
+    height: 20px; /* .dept-row의 높이 절반 지점에서 딱 끊기도록 고정 */
 }
 
 /* 2. 가로 연결선 (★ li가 아니라 .dept-row의 가상요소로 배치 ★)

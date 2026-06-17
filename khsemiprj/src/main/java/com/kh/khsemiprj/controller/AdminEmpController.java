@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.kh.khsemiprj.dao.DeptDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpDeptRelationDao;
+import com.kh.khsemiprj.dao.EmpExitDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.EmpPositionDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
@@ -21,6 +22,7 @@ import com.kh.khsemiprj.dto.DeptDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.EmpPositionDto;
+import com.kh.khsemiprj.vo.EmpExitVO;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
@@ -38,6 +40,8 @@ public class AdminEmpController {
 	private EmpPositionDao empPositionDao;
 	@Autowired
 	private EmpLeaveDao empLeaveDao;
+	@Autowired
+	private EmpExitDao empExitDao;
 	
 	@RequestMapping("/list")
 	public String list(Model model, @ModelAttribute PageVO pageVO) {
@@ -113,5 +117,21 @@ public class AdminEmpController {
 		empLeaveDao.insert(empId);
 		
 		return "redirect:/admin/emp/list?alarm=empApprove";
+	}
+	
+
+	// 퇴사자 목록
+	@RequestMapping("/exitList")
+	public String exitList(@ModelAttribute PageVO pageVO, Model model) {
+	   
+	    int count = empExitDao.count(pageVO);
+	    pageVO.setCount(count);
+	    model.addAttribute("pageVO", pageVO);
+
+	  
+	    List<EmpExitVO> exitList = empExitDao.selectList(pageVO);
+	    model.addAttribute("exitList", exitList);
+	    
+	    return "/admin/emp/exitList";
 	}
 }

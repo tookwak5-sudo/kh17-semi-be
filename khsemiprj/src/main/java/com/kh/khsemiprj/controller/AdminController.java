@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.khsemiprj.dao.AprvHeadDao;
-import com.kh.khsemiprj.dao.EmpExitDao;
 import com.kh.khsemiprj.dao.EmpPositionDao;
 import com.kh.khsemiprj.dto.AprvHeadDto;
 import com.kh.khsemiprj.dto.EmpPositionDto;
-import com.kh.khsemiprj.vo.EmpExitVO;
+
 import com.kh.khsemiprj.vo.PageVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -27,8 +26,7 @@ public class AdminController {
 	AprvHeadDao aprvHeadDao;
 	@Autowired
 	EmpPositionDao empPositionDao;
-	@Autowired
-	EmpExitDao empExitDao;
+
 	
 	@RequestMapping("/manage")
 	public String list(Model model, HttpSession session ,PageVO pageVO ) {
@@ -79,16 +77,7 @@ public class AdminController {
 		return "redirect:/admin/manage?alarm=positionDelete";
 	}
 	
-	//퇴사자 목록
-		@RequestMapping("/exitList")
-		public String exitList(@ModelAttribute PageVO pageVO, Model model) {
-			List<EmpExitVO> exitList = empExitDao.selectList(pageVO);
-			model.addAttribute("exitList", exitList);
-			int count = empExitDao.count(pageVO);
-			pageVO.setCount(count);
-			model.addAttribute("pageVO",pageVO);
-			return "emp/exitList";
-		}
+	
 		
 	
 }

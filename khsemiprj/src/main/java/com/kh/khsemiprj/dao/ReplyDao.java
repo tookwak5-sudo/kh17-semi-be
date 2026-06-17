@@ -39,21 +39,23 @@ public class ReplyDao {
 		jdbcTemplate.update(sql, params);
 	}
 	// 목록 - 전체목록이 없고 replyOrigin별 목록이 존재
-		public List<ReplyVO> selectList(long replyOrigin, String empId) {
-			String sql = "select "
-					+ "r.*"
-					+ ", CASE WHEN rl.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_liked "
-					+ ", CASE WHEN rd.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_disliked "
-					+ ", rf.attach_no "
-					+ "from reply r "
-					+ "LEFT JOIN reply_like rl ON rl.reply_no = r.reply_no AND rl.emp_id = ? "
-					+ "LEFT JOIN reply_dislike rd ON rd.reply_no = r.reply_no AND rd.emp_id = ? "
-					+ "LEFT JOIN reply_file rf ON rf.reply_no = r.reply_no "
-					+ "where r.reply_origin = ? "
-					+ "order by r.reply_no asc";
-			Object[] params = { empId, empId, empId, empId, replyOrigin };
-			return jdbcTemplate.query(sql, replyVOMapper, params);
-		}
+	public List<ReplyVO> selectList(long replyOrigin, String empId) {
+		String sql = "select "
+				+ "r.*"
+				+ ", CASE WHEN rl.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_liked "
+				+ ", CASE WHEN rd.emp_id = ? THEN 'Y' ELSE 'N' END AS emp_disliked "
+				+ ", rf.attach_no " //댓글 자체의 첨부파일 번호
+				+ ", ep.attach_no AS profile_attach_no " //작성자의 프사 파일 번호
+				+ "from reply r "
+				+ "LEFT JOIN reply_like rl ON rl.reply_no = r.reply_no AND rl.emp_id = ? "
+				+ "LEFT JOIN reply_dislike rd ON rd.reply_no = r.reply_no AND rd.emp_id = ? "
+				+ "LEFT JOIN reply_file rf ON rf.reply_no = r.reply_no "
+				+ "LEFT JOIN emp_profile ep ON ep.emp_id = r.reply_writer "//프사 장부와 연결
+				+ "where r.reply_origin = ? "
+				+ "order by r.reply_no asc";
+		Object[] params = { empId, empId, empId, empId, replyOrigin };
+		return jdbcTemplate.query(sql, replyVOMapper, params);
+	}
 	//삭제
 	public boolean delete(long replyNo) {
 		String sql = "update reply set reply_status='Y' where reply_no = ?";

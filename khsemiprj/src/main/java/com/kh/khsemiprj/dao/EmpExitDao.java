@@ -1,116 +1,108 @@
 package com.kh.khsemiprj.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.EmpExitDto;
 import com.kh.khsemiprj.mapper.EmpExitMapper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import com.kh.khsemiprj.mapper.EmpExitVOMapper;
 import com.kh.khsemiprj.vo.EmpExitVO;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Repository
 public class EmpExitDao {
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	@Autowired
-	private EmpExitMapper empExitMapper;
-	@Autowired
-	private EmpExitVOMapper empExitVOMapper;
 
-	// JSP에서 넘겨주는 column 히든태그 값이 "emp_name" 이므로 일치시킴
-	private Set<String> allowColumns = Set.of("emp_name", "emp_exit_time");
-	
-	// 전체 목록 조회
-	public List<EmpExitVO> selectList(int page, int size) {
-		String sql = "select * from ("
-				+ "select rownum rn, TMP.* from ("
-				+ "select X.emp_id, E.emp_name, X.emp_exit_time "
-				+ "from emp_exit X "
-				+ "left join emp E on X.emp_id = E.emp_id "
-				+ "order by X.emp_exit_time desc, X.emp_id asc"
-				+ ") TMP"
-				+ ") where rn between ? and ?";
-		int beginRow = page * size - (size - 1);
-		int endRow = page * size;
-		Object[] params = { beginRow, endRow };
-		return jdbcTemplate.query(sql, empExitVOMapper, params);
-	}
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-	// 메인 동적 검색 및 페이징 목록 메서드
-	public List<EmpExitVO> selectList(PageVO pageVO) {
-		// 1. 검색어가 없는 기본 일반 목록 요청이면 위의 조인 페이징 메서드로 토스
-		if (pageVO.isList()) {
-			return selectList(pageVO.getPage(), pageVO.getSize());
-		}
-		// 2. 허용되지 않은 컬럼 접근 시 방어 처리
-		if (!allowColumns.contains(pageVO.getColumn())) {
-			return selectList(pageVO.getPage(), pageVO.getSize());
-		}
-		
-		//선 조인
-		String sql = "select * from ("
-				   + "select rownum rn, TMP.* from ("
-				   + "select X.emp_id, E.emp_name, X.emp_exit_time "
-				   + "from emp_exit X "
-				   + "left join emp E on X.emp_id = E.emp_id ";
+    @Autowired
+    private EmpExitVOMapper empExitVOMapper;
 
-		//페이지 처음과 끝 담을 리스트를 만들고
-		List<Object> paramList = new ArrayList<>();
+    @Autowired
+    private EmpExitMapper empExitMapper;
+    // 1. 전체 데이터 개수(Count) 조회
+    public int count(PageVO pageVO) {
+        String sql = "";
+        List<Object> params = new ArrayList<>();
 
-		// 3. 이름 검색 조건 동적 조립 
-		if (pageVO.getColumn() != null && pageVO.getKeyword() != null && !pageVO.getKeyword().isEmpty()) {
-			if (pageVO.getColumn().equals("emp_name")) {
-				sql += " where instr(E.emp_name, ?) > 0 "; 
-				paramList.add(pageVO.getKeyword());
-			}
-		}
+        // 날짜 검색 조건이 있을 때와 없을 때로 명확하게 if-else 분기
+        if (pageVO.isDateSearch()) {
+            // 날짜 검색용 쿼리 (WHERE 절 추가)
+            sql = "select count(*) "
+                + "from emp_exit X "
+                + "left join emp E on X.emp_id = E.emp_id "
+                + "left join aprv_document D on E.emp_id = D.aprv_writer "
+                + "where X.emp_exit_time >= to_date(?, 'YYYY-MM-DD HH24:MI:SS') "
+                + "and X.emp_exit_time <= to_date(?, 'YYYY-MM-DD HH24:MI:SS')";
+            
+            params.add(pageVO.getStartDate() + " 00:00:00");
+            params.add(pageVO.getEndDate() + " 23:59:59");
+        } 
+        else {
+            // 전체 조회용 쿼리 (WHERE 절 없음)
+            sql = "select count(*) "
+                + "from emp_exit X "
+                + "left join emp E on X.emp_id = E.emp_id "
+                + "left join aprv_document D on E.emp_id = D.aprv_writer";
+        }
 
-		// 4. 정렬 및 서브쿼리 마감 페이징 연산
-		sql += " order by X.emp_exit_time desc, X.emp_id asc"
-			 + ") TMP"
-			 + ") where rn between ? and ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, params.toArray());
+    }
 
-		paramList.add(pageVO.getBeginRownum());
-		paramList.add(pageVO.getEndRownum());
+    // 2. 3중 조인 목록 조회 (페이징 포함)
+    public List<EmpExitVO> selectList(PageVO pageVO) {
+        String sql = "";
+        List<Object> params = new ArrayList<>();
 
-		//리스트를 배열화 해서 params로
-		Object[] params = paramList.toArray();
-		return jdbcTemplate.query(sql, empExitVOMapper, params);
-	}
-	
-	// 전체 퇴사자 수 카운트 (emp_exit 테이블로 수정 완)
-	public int count() {
-		String sql = "select count(*) from emp_exit"; 
-		return jdbcTemplate.queryForObject(sql, int.class);
-	}
-	
-	// 검색 시 퇴사자 수 동적 카운트 (조인 쿼리로 수정 완)
-	public int count(PageVO pageVO) {
-		if (pageVO.isList()) return count();
-		if (!allowColumns.contains(pageVO.getColumn())) return count();
-		
-		String sql = "select count(*) from emp_exit X "
-				   + "left join emp E on X.emp_id = E.emp_id ";
-				   
-		if (pageVO.getColumn().equals("emp_name")) {
-			sql += "where instr(E.emp_name, ?) > 0";
-		}
-		
-		Object[] params = { pageVO.getKeyword() };
-		return jdbcTemplate.queryForObject(sql, int.class, params);
-	}
-	
-	public EmpExitDto selectOne(String empId) {
-		String sql = "select * from emp_exit where emp_id = ? ";
-		Object[] params = { empId };
-		List<EmpExitDto> list = jdbcTemplate.query(sql, empExitMapper, params);
-		return list.isEmpty() ? null : list.get(0);
-	}
+        // 3중 서브쿼리 골격은 유지하되, 내부 WHERE 절만 if-else로 제어
+        if (pageVO.isDateSearch()) {
+            // 날짜 검색 조건이 포함된 쿼리 문자열 조립
+            sql = "select * from ("
+                + "select rownum rn, TMP.* from ("
+                + "select X.emp_id, E.emp_name, X.emp_exit_time, D.aprv_etime "
+                + "from emp_exit X "
+                + "left join emp E on X.emp_id = E.emp_id "
+                + "left join aprv_document D on E.emp_id = D.aprv_writer "
+                + "where X.emp_exit_time >= to_date(?, 'YYYY-MM-DD HH24:MI:SS') "
+                + "and X.emp_exit_time <= to_date(?, 'YYYY-MM-DD HH24:MI:SS') "
+                + "order by X.emp_exit_time desc, X.emp_id asc"
+                + ") TMP"
+                + ") where rn between ? and ?";
+
+            // 파라미터 순서 주의: 날짜 시작일 -> 날짜 종료일 -> 페이징 시작번호 -> 페이징 끝번호
+            params.add(pageVO.getStartDate() + " 00:00:00");
+            params.add(pageVO.getEndDate() + " 23:59:59");
+        } 
+        else {
+            // 기존에 네가 쓰던 날짜 조건 없는 쿼리 형태 그대로 유지
+            sql = "select * from ("
+                + "select rownum rn, TMP.* from ("
+                + "select X.emp_id, E.emp_name, X.emp_exit_time, D.aprv_etime "
+                + "from emp_exit X "
+                + "left join emp E on X.emp_id = E.emp_id "
+                + "left join aprv_document D on E.emp_id = D.aprv_writer "
+                + "order by X.emp_exit_time desc, X.emp_id asc"
+                + ") TMP"
+                + ") where rn between ? and ?";
+        }
+
+        // 페이징 번호는 날짜 검색 여부와 상관없이 무조건 마지막에 공통으로 들어감
+        params.add(pageVO.getBeginRownum());
+        params.add(pageVO.getEndRownum());
+
+        return jdbcTemplate.query(sql, empExitVOMapper, params.toArray());
+    }
+    
+    
+ // 5. 단일 퇴사 정보 상세 조회 (기존 유지)
+ 	public EmpExitDto selectOne(String empId) {
+ 		String sql = "select * from emp_exit where emp_id = ? ";
+ 		Object[] params = { empId };
+ 		List<EmpExitDto> list = jdbcTemplate.query(sql, empExitMapper, params);
+ 		return list.isEmpty() ? null : list.get(0);
+ 	}
 }

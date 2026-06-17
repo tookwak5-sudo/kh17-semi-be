@@ -73,8 +73,8 @@
         	var searchUrl = "/board/list?column=board_writer&keyword=" + memberId;
         	$("#link-view-posts").attr("href", searchUrl);
         	
-        	var memoUrl = "/board/list?column=board_writer&keyword=" + memberId;
-        	$("#link-view-posts").attr("href", searchUrl);
+        	var memoUrl = "/memo/write?memoSenderId=" + memberId;
+        	$("#link-send-memo").attr("href", memoUrl);
 
         // 3) 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
         	$("#user-context-menu").css({
@@ -159,7 +159,9 @@
 	                    (${boardDto.boardHead})
 	                </c:if> <a href="./detail?boardNo=${boardDto.boardNo}">${boardDto.boardTitle}
 	                <c:if test="${boardDto.boardReplycount > 0}">
-	                    [${boardDto.boardReplycount}]
+						<span style="color: #f94b4b">
+							[${boardDto.boardReplycount}]
+						</span>
 	                </c:if> 
 	                </a>
 	
@@ -188,13 +190,17 @@
                 <c:if test="${param.column!=null || param.boardHead!=null}">
                 <a href="./detail?boardNo=${boardDto.boardNo}&boardHead=${param.boardHead}&column=${param.column}&keyword=${param.keyword}">${boardDto.boardTitle}
                 <c:if test="${boardDto.boardReplycount > 0}">
-                    [${boardDto.boardReplycount}]
+                	<span style="color: #f94b4b">
+                    	[${boardDto.boardReplycount}]
+                    </span>
                 </c:if></a>
 				</c:if>
 				 <c:if test="${param.column==null && param.boardHead==null}">
                 <a href="./detail?boardNo=${boardDto.boardNo}">${boardDto.boardTitle}
                 <c:if test="${boardDto.boardReplycount > 0}">
-                    [${boardDto.boardReplycount}]
+                    <span style="color: #f94b4b">
+                    	[${boardDto.boardReplycount}]
+                    </span>
                 </c:if></a>
 				</c:if>
 							</td>
@@ -243,8 +249,15 @@
     <a href="#" id="link-view-posts">
         <i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
     </a>
-    <a href="#" id="link-memo-write">
-        <i class="fa-solid fa-memo"></i> 쪽지 보내기
+    <a href="#"  id="link-send-memo"
+			onclick="
+				var w = 650; 
+				var h = 650; 
+				var left = (screen.width/2) - (w/2); 
+				var top = (screen.height/2) - (h/2); 
+				window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+				return false;">
+        <i class="fa-solid fa-message"></i> 쪽지 보내기
     </a>
 </div>
 

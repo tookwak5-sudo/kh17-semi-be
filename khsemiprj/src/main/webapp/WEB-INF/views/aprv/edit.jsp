@@ -130,26 +130,93 @@
 				break;
 		}
 		
+		// 유효성 검사 상태 객체
 		var state = {
-				aprvFormNoValid: true,
-				aprvTitleValid: true,
-				aprvContentValid: true,
-				aprvSdateValid: true,
-				aprvEdateValid: true,
-				attachFileValid: true,
-				aprvLineNo1Valid: true,
-				aprvLineNo2Valid: true,
-				ok: function(){
-					return Object.values(this)
-					.filter(v => typeof v==="boolean")
-					.every(v => v === true);
-				}
+			aprvTitleValid: false,
+			aprvContentValid: false,
+			aprvSdateValid: false,
+			aprvEdateValid: false,
+			aprvLineNo1Valid: false,
+			aprvLineNo2Valid: true,
+			ok: function(){
+				return Object.values(this)
+				.filter(v => typeof v==="boolean")
+				.every(v => v === true);
+			}
 		};
+		
+		// 블러/체인지 이벤트 핸들러들
+	    $("[name=aprvTitle]").on("blur", function(){
+	        state.aprvTitleValid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=aprvContent]").on("change keyup", function(){ // keyup 추가로 실시간 검사 보완
+	        state.aprvContentValid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=aprvEdate]").on("blur", function(){
+	        state.aprvEdateValid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=aprvSdate]").on("blur", function(){
+	        state.aprvSdateValid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=aprvLineNo1]").on("blur", function(){
+	        state.aprvLineNo1Valid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=aprvLineNo2]").on("blur", function(){
+	        state.aprvLineNo2Valid = $(this).val().trim().length > 0;
+	    });
 		
 		//폼검사
 		$(".form-check").on("submit", function(e){
         	$(this).find("select[name]").trigger("input");
             $(this).find("input[name], textarea[name]").trigger("blur");
+            
+         // [1] 전송 직전 입력값 기준으로 state 갱신
+            state.aprvTitleValid = $("[name=aprvTitle]").val().trim().length > 0;
+            state.aprvContentValid = $("[name=aprvContent]").val().trim().length > 0;
+            state.aprvSdateValid = $("[name=aprvSdate]").val().trim().length > 0;
+            state.aprvEdateValid = $("[name=aprvEdate]").val().trim().length > 0;
+            
+            // [2] 결재 라인 테이블(tbody)에 추가된 행(tr) 개수로 결재자 등록 여부 체크
+            state.aprvLineNo1Valid = ($("#line1List tr").length > 0);
+
+            // [3] 순차적 유효성 검사 및 경고창 출력
+            if(!state.aprvTitleValid) {
+                //window.alert("제목을 입력하세요.");
+                showAjaxAlarm('필수', 'btn-negative', '[name=aprvTitle]', 'left');
+                $("[name=aprvTitle]").focus();
+                return false; 
+            }
+            
+            if(!state.aprvSdateValid) {
+                //window.alert("결재 시작일을 입력하세요.");
+                showAjaxAlarm('필수', 'btn-negative', '[name=aprvSdate]', 'left');
+                $("[name=aprvSdate]").focus();
+                return false; 
+            }
+            if(!state.aprvEdateValid) {
+                //window.alert("결재 종료일을 입력하세요.");
+                showAjaxAlarm('필수', 'btn-negative', '[name=aprvEdate]', 'right');
+                $("[name=aprvEdate]").focus();
+                return false; 
+            }
+            if(!state.aprvContentValid) {
+                //window.alert("내용을 입력하세요.");
+                showAjaxAlarm('필수', 'btn-negative', '[name=aprvContent]', 'left');
+                $("[name=aprvContent]").focus();
+                return false;
+            }
+            // 🚨 결재자 미선택 시 명확하게 경고창을 띄우고 전송 중단
+            if(!state.aprvLineNo1Valid) {
+                //window.alert("1차 결재 라인 결재자를 추가하세요.");
+                showAjaxAlarm('필수', 'btn-negative', '.aprv-line-1', 'left');
+                //$(".aprv-line-1").click();
+                return false; // 무조건 전송 차단
+            }
+            /* if(!state.aprvLineNo2Valid) {
+                window.alert("두 번째 결재자를 입력하세요.");
+                $(".aprv-line-2").focus(); 
+                return false; // 무조건 전송 차단
+            } */
             
          	// submit을 유발한 버튼 객체 가져오기
             var clickedButton = e.originalEvent.submitter; 
@@ -157,6 +224,7 @@
             // 특정 버튼일 때만 다르게 처리하고 싶다면?
             if ($(clickedButton).hasClass("aprv-update")) {
             	$(".aprv-status").val("대기");
+            	return confirm("문서를 기안하시겠습니까?");
             } else {
             	$(".aprv-status").val("임시저장");
             }
@@ -387,12 +455,13 @@
         <div class="cell mt-40 mb-50 right">
         	<input type="hidden" name="aprvStatus" class="aprv-status" value="">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
-        	<button class="btn aprv-temp-update" style="background-color:#fdcb6e;">
+        	<button class="btn btn-save aprv-temp-update">
                 임시저장
             </button>
             <button class="btn btn-positive aprv-update">
                 기안하기
             </button>
+            <a href="./detail?aprvNo=${param.aprvNo}" class="btn btn-negative">취소</a>
         </div>
     </div>
 </form>
