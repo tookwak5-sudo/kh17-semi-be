@@ -178,7 +178,7 @@ public class EmpController {
 		// [추가] 세션에 상태 저장
 		session.setAttribute("logInoutType", "퇴근");
 
-		return "redirect:/";
+		return "redirect:/?alarm=workIn";
 	}
 
 	// 목표 퇴근 버튼을 누르면 퇴근 처리
@@ -201,7 +201,7 @@ public class EmpController {
 		// [추가] 세션에 상태 저장
 		session.setAttribute("logInoutType", "출근");
 
-		return "redirect:/";
+		return "redirect:/?alarm=workOut";
 	}
 
 	// 로그아웃 및 퇴근

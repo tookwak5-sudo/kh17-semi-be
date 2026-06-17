@@ -24,24 +24,26 @@
 			
 			// submit을 유발한 버튼 객체 가져오기
             var clickedButton = e.originalEvent.submitter; 
-
-            // 특정 버튼일 때만 다르게 처리하고 싶다면?
-            if ($(clickedButton).hasClass("aprv-save")) {
-            	$(".form-check").attr("action", "./save");
-            	/* if(confirm("문서를 기안하시겠습니까?")) {
-    				state.aprvValid = true;
-    			} */
-    			openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-save").click();');
-            } else if($(clickedButton).hasClass("aprv-delete")) {
-            	$(".form-check").attr("action", "./delete");
-            	/* if(confirm("문서를 삭제하시겠습니까?")) {
-    				state.aprvValid = true;
-    			} */
-            	openConfirm('문서를 삭제하시겠습니까?', 'state.aprvValid = true; $(".aprv-delete").click();');
-            } else {
-            	alert("잘못된 접근입니다. 페이지를 새로고침합니다.");
-            	location.reload();
-            }
+	
+			if(!state.aprvValid) {
+	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
+	            if ($(clickedButton).hasClass("aprv-save")) {
+	            	$(".form-check").attr("action", "./save");
+	            	/* if(confirm("문서를 기안하시겠습니까?")) {
+	    				state.aprvValid = true;
+	    			} */
+	    			openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-save").click();');
+	            } else if($(clickedButton).hasClass("aprv-delete")) {
+	            	$(".form-check").attr("action", "./delete");
+	            	/* if(confirm("문서를 삭제하시겠습니까?")) {
+	    				state.aprvValid = true;
+	    			} */
+	            	openConfirm('문서를 삭제하시겠습니까?', 'state.aprvValid = true; $(".aprv-delete").click();');
+	            } else {
+	            	alert("잘못된 접근입니다. 페이지를 새로고침합니다.");
+	            	location.reload();
+	            }
+			}
 			
 			return state.ok();
 		});

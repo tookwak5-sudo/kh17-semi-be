@@ -168,6 +168,47 @@
 <%-- empGrade : ${sessionScope.empGrade} --%>
 <%-- 부서 정보 : ${sessionScope.empDept} --%>
 <%-- 직책 정보 : ${sessionScope.empPosition} --%>
+
+	<script>
+		var workInState = {
+			workInValid: false,
+			ok: function(){
+				return Object.values(this)
+				.filter(v => typeof v==="boolean")
+				.every(v => v === true);
+			}
+		};
+		
+		var workOutState = {
+			workOutValid: false,
+			ok: function(){
+				return Object.values(this)
+				.filter(v => typeof v==="boolean")
+				.every(v => v === true);
+			}
+		};
+		
+		$(function () {
+			$("#workInForm").on("submit", function(e){
+				
+				if(!workInState.workInValid) {
+	            	openConfirm('출근하시겠습니까?', 'workInState.workInValid = true; $("#btnWorkIn").click();');
+				}
+				
+				return workInState.ok();
+			});
+			
+			$("#workOutForm").on("submit", function(e){
+				
+				if(!workOutState.workOutValid) {
+	            	openConfirm('퇴근하시겠습니까?', 'workOutState.workOutValid = true; $("#btnWorkOut").click();');
+				}
+				
+				return workOutState.ok();
+			});
+		});
+	</script>
+
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-clamp">
         <div class="flex-area flex-vertical">
@@ -224,16 +265,18 @@
 					
 					        <c:choose>
 					            <c:when test="${logInoutType.trim() eq '퇴근'}">
-					                <form id="workInForm" action="/emp/work-in" method="post"></form>
-					                <a href="#" class="btn btn-positive btn-work" onclick="document.getElementById('workInForm').submit(); return false;">
+					                <form id="workInForm" action="/emp/work-in" method="post">
+					                <button id="btnWorkIn" class="btn btn-positive btn-work">
 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 출근
-					                </a>
+					                </button>
+					                </form>
 					            </c:when>
 					            <c:otherwise>
-					                <form id="workOutForm" action="/emp/work-out" method="post"></form>
-					                <a href="#" class="btn btn-negative btn-work" onclick="document.getElementById('workOutForm').submit(); return false;">
+					                <form id="workOutForm" action="/emp/work-out" method="post">
+					                <button id="btnWorkOut" class="btn btn-negative btn-work">
 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근
-					                </a>
+					                </button>
+					                </form>
 					            </c:otherwise>
 					        </c:choose>
 					    </div>

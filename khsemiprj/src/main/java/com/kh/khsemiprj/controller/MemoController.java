@@ -55,7 +55,11 @@ public class MemoController {
 		memoDto.setMemoNo(memoNo);
 		memoDto.setMemoSenderId(loginId);
 		
-		memoDao.insert(memoDto);
+		if(memoDto.getMemoType().equals("공지")) {
+			memoDao.insertAll(memoDto);
+		} else {
+			memoDao.insert(memoDto);	
+		}
 		return "redirect:./list?send";
 	}
 	
