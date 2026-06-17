@@ -356,7 +356,6 @@ public class EmpController {
 
 		try {
 			int profileAttachNo = empDao.searchProfile(loginId);
-			System.out.println("가져온 프사번호: " + profileAttachNo);
 			model.addAttribute("profileAttachNo", profileAttachNo);
 		} catch (Exception e) {
 			// 프로필 사진이 없으면 번호를 안 넘김

@@ -44,40 +44,51 @@
 <script
 	src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/javascript">
-       //이미지 미리보기 처리 (개수 무관)
-       $(function(){
-           $(".preview-input").on("input", function(){
-               //미리보기를 생성하기 전에 기존에 .preview-area에 있는 이미지를 제거
-               // - 있을지 없을지 모르며 있다면 URL.revokeObjectURL()을 써서 회수까지 해줘야함
-               // - jQuery에서 제공하는 반복 함수 each를 사용 (for보다 편함)
-               $(".preview-area").find("img").each(function(){
-                   //this == 현재 순서의 이미지
-                   //이미지 주소 회수 + 이미지 태그 삭제 (or 영역 비우긴)
-                   var address = $(this).attr("src");
-                   URL.revokeObjectURL(address);//자원회수
-                   // $(this).remove();//이 태그 삭제 이미지 하나 지우기
-               });
-               $(".preview-area").empty();//영역 비우기
+$(function(){
+    var defaultIcon = '<i class="fa-solid fa-user-circle" style="font-size: 100px; color: #e2e8f0;"></i>';
 
-               //미리보기 생성
-               if(this.files.length > 0) {//파일 선택
-                   for(var i=0; i < this.files.length; i++){//선택한 파일수만큼
-                   //이미지를 만들어서 .preview-area에 추가
-                       var img = $("<img>")
-                                   .addClass("image-shadow image-round")
-                                   .attr("src", URL.createObjectURL(this.files[i]))
-                                   .prop("width", 100);
-                       $(".preview-area").append(img);
-                   }
-               }
+    // 처음에 페이지 켜지면 무조건 기본 아이콘 박아넣음
+    $(".preview-area").html(defaultIcon);
 
-               else{//파일 선택 취소 -> 미리보기 제거
+    // 이미지 미리보기 처리
+    $(".preview-input").on("input", function(){
+        $(".preview-area").find("img").each(function(){
+            var address = $(this).attr("src");
+            URL.revokeObjectURL(address);
+        });
+        $(".preview-area").empty();
 
-               }
-           });
-       });
+        if(this.files.length > 0) {
+            var img = $("<img>")
+                        .addClass("image-shadow image-round")
+                        .attr("src", URL.createObjectURL(this.files[0]))
+                        .css({"width": "100px", "height": "100px", "object-fit": "cover"});
+            $(".preview-area").append(img);
+            
+            // 사진 올렸으니까 기본 이미지로 변경 버튼 띄움
+            $(".btn-delete-profile").show();
+        } else {
+            // 파일 선택창에서 취소 눌렀을 때도 기본 아이콘 복구
+            $(".preview-area").html(defaultIcon);
+            $(".btn-delete-profile").hide();
+        }
+    });
+
+    // 기본 이미지로 변경 버튼 눌렀을 때
+    $(document).on("click", ".btn-delete-profile", function(e){
+        e.preventDefault();
+        
+        // input file에 들어간 파일 찌꺼기 날려버림 (이래야 서버로 안 넘어감)
+        $(".preview-input").val("");
+        
+        // 화면 비우고 기본 아이콘으로 원상복구
+        $(".preview-area").html(defaultIcon);
+        
+        // 삭제 버튼 다시 숨김
+        $(this).hide();
+    });
+});
 </script>
-
 <script>
 $(function() {
     var state = {
@@ -288,7 +299,7 @@ $(function() {
                     $("[name=empEmail]").removeClass("success fail")
                                        .addClass("success");
                     state.empEmailValid = true; 
-                    $("[name=empEmail]").removeClass("success fail")
+                   
                 }
             }
         });
@@ -385,11 +396,12 @@ $(function() {
 	         $(".btn-cert-send").show();
 	         $("[name=empEmail]").removeClass("success fail")
 	                                 .prop("readonly", false).val("");
-	         state.empEmailValid = true;
+	         state.empEmailValid = false;
 	         state.empEmailCertValid = false;
 	         
 	         certFailCount = 0;//0으로 초기화
 	         $(".cert-message").text(""); // 메시지 비우기
+	         $(".cert-area").empty();
 	
 	         $("[name=empEmail]").trigger("focus");//커서 옮김
 	     });
@@ -500,7 +512,7 @@ $(function() {
 				<i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
 			</button>
 
-			<div class="success-feedback w-100 mt-5"></div>
+			<div class="success-feedback w-100 mt-5">사용 가능한 이메일입니다.</div>
 			<div class="fail-feedback w-100 mt-5">
 				<div>이메일이 형식에 맞지 않습니다.</div>
 				<div>중복된 이메일입니다.</div>
@@ -558,14 +570,20 @@ $(function() {
 
 
 		<div class="cell mt-40">
-    	<label class="btn btn-neutral w-100" style="cursor: pointer; padding: 15px; font-size: 16px;">
-        <i class="fa-solid fa-image"></i> 
-        <span>클릭해서 프로필 이미지를 선택하세요 (.jpg , .png)</span> 
-        <input type="file" name="attach" class="field preview-input" accept="image/png, image/jpeg" style="display: none;">
-    	</label>
+    	    <label class="btn btn-neutral w-100" style="cursor: pointer; padding: 15px; font-size: 16px;">
+                <i class="fa-solid fa-image"></i> 
+                <span>클릭해서 프로필 이미지를 선택하세요 (.jpg , .png)</span> 
+                <input type="file" name="attach" class="field preview-input" accept="image/png, image/jpeg" style="display: none;">
+    	    </label>
 		</div>
 
-		<div class="cell preview-area" style="display: flex; justify-content: center; margin-top: 20px;"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+            <div class="cell preview-area" style="display: flex; justify-content: center; margin-top: 0;"></div>
+            
+            <a class="btn-delete-profile" style="display: none; margin-top: 12px; font-size: 13px; color: #ef4444; text-decoration: none; font-weight: 600; cursor: pointer;">
+                <i class="fa-solid fa-trash-can"></i> 기본 이미지로 변경
+            </a>
+        </div>
 
 
 		<div class="cell mt-50">

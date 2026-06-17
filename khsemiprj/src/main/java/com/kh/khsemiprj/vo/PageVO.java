@@ -85,6 +85,8 @@ public class PageVO {
 	
 	public String endDate;
 	
+	
+	
 	public boolean isDateSearch() { //날짜가 맞다면
         return startDate != null && endDate != null && !startDate.trim().isEmpty() && !endDate.trim().isEmpty();
     }

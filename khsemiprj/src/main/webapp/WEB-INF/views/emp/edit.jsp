@@ -205,24 +205,26 @@ $(function() {
             return;
         } 
         
+        // 정규식 통과했으면 백엔드로 중복 검사 요청
         $.ajax({
             url: "/rest/cert/checkEmail",
             method: "post",
             data: { empEmail : empEmail }, 
             success: function (response){
                 if(response === true){ 
-                    $("[name=empEmail]").removeClass("success fail").addClass("fail");
-                    $wrapper.find(".fail-feedback").text("이미 존재하는 이메일입니다.");
+                    $("[name=empEmail]").removeClass("success fail")
+                                       .addClass("fail").attr("data-error","2");
                     state.empEmailValid = false; 
-                } else { 
-                    $("[name=empEmail]").removeClass("success fail").addClass("success");
-                    $wrapper.find(".success-feedback").text("사용 가능한 이메일입니다.");
+                }
+                else { 
+                    $("[name=empEmail]").removeClass("success fail")
+                                       .addClass("success");
                     state.empEmailValid = true; 
+                   
                 }
             }
         });
     });
-    
     // 인증메일 보내기 버튼
     $(".btn-cert-send").on("click", function(){
         var empEmail = $("[name=empEmail]").val();
@@ -350,24 +352,26 @@ $(function() {
 	        <div class="fail-feedback">한글 또는 영문 2~100자로 입력해주세요.</div>
 	    </div>
 
-		<div class="cell mt-30">
-            <div class="gray mb-10">
-                <b>이메일</b> <span style="font-size: 13px; color: #666;">(기존: ${empDto.empEmail})</span>
-            </div>
-	    	<div class="flex-area" style="flex-wrap: wrap;">
-		        <input type="text" name="empEmail" class="field flex-fill" inputmode="email" placeholder="새로운 이메일을 입력하세요">
-		
-		        <button type="button" class="btn btn-neutral btn-cert-send ms-10">
-		             <i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
-		        </button>
-		        <button type="button" class="btn btn-negative btn-cert-retry ms-10" style="display: none;">
-		            <i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
-		        </button>
-		
-		        <div class="success-feedback w-100 mt-5">사용 가능한 이메일입니다.</div>
-	            <div class="fail-feedback w-100 mt-5"></div> 
-            </div>
-	    </div>
+		<div class="cell">
+			<label>이메일<i class="fa-solid fa-asterisk red"></i></label>
+		</div>
+		<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
+			<input type="text" name="empEmail" class="field field-sm" inputmode="email">
+
+			<button type="button" class="btn btn-neutral btn-cert-send ms-10">
+				<i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
+			</button>
+			<button type="button" class="btn btn-negative btn-cert-retry ms-10"
+				style="display: none;">
+				<i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
+			</button>
+
+			<div class="success-feedback w-100 mt-5">사용 가능한 이메일입니다.</div>
+			<div class="fail-feedback w-100 mt-5">
+				<div>이메일이 형식에 맞지 않습니다.</div>
+				<div>중복된 이메일입니다.</div>
+			</div>
+		</div>
 	
 		<div class="cell cert-area"></div>
 	
