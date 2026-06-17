@@ -52,21 +52,19 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
-<div class="container w-800 mt-50 mb-50">
-
-    <div class="cell mb-40">
-        <h1 style="font-size: 36px; font-weight: bold; color: #333;">${aprvFormSelectVO.formName}</h1>
+<div class="container w-800 mt-20 mb-50 background-card">
+	<div class="w-100 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            ${aprvFormSelectVO.formName}
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
     </div>
 
     <div class="cell mb-10">
         <span class="font-bold" style="color: #666;">양식 기본정보</span>
     </div>
-    
-    
-    
-    
-    
-    
     
     <form action="edit" method="post" id="editForm">
 		<input type="hidden" name="empId" value="${empDto.empId}">

@@ -740,7 +740,7 @@ textarea.field {
 }
 /* 검색창 전용 클래스 (Compact) */
 .field-sm {
-    width: 400px;
+    width: 200px;
     height: 40px; /* 높이 고정 */
     padding: 0px 12px; /* 패딩을 줄여서 높이를 낮춤 */
     line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */

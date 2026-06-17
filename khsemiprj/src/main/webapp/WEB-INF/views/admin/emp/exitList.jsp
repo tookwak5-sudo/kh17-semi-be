@@ -27,15 +27,18 @@ $(function() {
 });
 </script>
 
-<body>
-
-    <div class="container w-1000 mt-50">
-        
-        <div class="cell">
-            <h2>퇴사자 조회</h2>
+    <div class="container w-1000 mt-20 mb-50 background-card">
+      <div class="cell center flex-area">
+		<div class="w-20 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            퇴사자 조회
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
         </div>
-
-        <div class="cell flex-area flex-vertical" style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+	 
+        <div class="w-80 flex-area flex-center">
             <form action="exitList" method="get" class="w-100">
                 <input type="hidden" name="size" value="${pageVO.size}">
                 
@@ -65,7 +68,7 @@ $(function() {
                 </div>
             </form>
         </div>
-
+	</div>
         <div class="cell">
             <table class="table table-hover">
                 <thead>
@@ -135,7 +138,5 @@ $(function() {
 
     </div>
 
-</body>
-</html>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

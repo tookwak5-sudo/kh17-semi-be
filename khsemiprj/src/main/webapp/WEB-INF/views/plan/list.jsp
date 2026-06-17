@@ -26,26 +26,30 @@
 }
 </style>
 
-<div class="container w-1200 mt-50 mb-50">
-	<div class="cell center mb-0">
-		<h1 class="mb-0">일정 리스트</h1>
+<div class="container w-1200 mt-20 mb-50 background-card">
+	<div class="cell center flex-area">
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            일정
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+		</div>
+		<div class="w-70 flex-area flex-center">
+			<form autocomplete="off">
+				<select name="column" class="field-ph">
+					<option value="emp_name">작성자</option>
+					<option value="dept_name">부서명</option>
+					<option value="plan_name">일정명</option>
+					<option value="plan_type">일정타입</option>
+				</select> <input type="text" name="keyword" class="field-sm"
+					placeholder="검색어 입력">
+				<button type="submit" class="btn btn-positive">
+					<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+				</button>
+			</form>
+		</div>
 	</div>
-
-	<div class="cell center">
-		<form autocomplete="off">
-			<select name="column" class="field-ph">
-				<option value="emp_name">작성자</option>
-				<option value="dept_name">부서명</option>
-				<option value="plan_name">일정명</option>
-				<option value="plan_type">일정타입</option>
-			</select> <input type="text" name="keyword" class="field-sm"
-				placeholder="검색어 입력">
-			<button type="submit" class="btn btn-positive">
-				<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
-			</button>
-		</form>
-	</div>
-
+	
 	<div class="cell right mt-0">
 		<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총
 			${pageVO.count}개 로그</span>

@@ -92,36 +92,38 @@
 
 
 <div class="container w-90 mt-20 mb-50 background-card">
-
-	<div class="cell center mb-0">
-		<h1 class="mb-0">${param.boardHead} 게시판</h1>
-	</div>
-
-	<!-- <div class="cell center">타인에 대한 무분별한 비방글은 예고 없이 삭제될 수 있습니다.</div> -->
-		<div class="cell center">
-	    <form action="./list" method="get">
-	        
-	        <c:if test="${param.boardHead != null}">
-	            <input type="hidden" name="boardHead" value="${param.boardHead}">
-	        </c:if>
-	        <select name="column" class="field">
-	            <option value="board_title" ${param.column == 'board_title' ? "selected" : ""}>제목</option>
-	            <option value="board_writer" ${param.column == 'board_writer' ? "selected" : ""}>작성자</option>
-	        </select> 
-	        <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
-	        
-	        <button type="submit" class="btn btn-positive">
-	            <i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
-	        </button>
-	    </form>
-	</div>
-
-	<div class="cell right">
-		<c:if test="${sessionScope.loginId != null}">
-			<a href="write" class="btn btn-neutral">신규 글 등록하기</a>
-		</c:if>
-	</div>
+	<div class="cell center flex-area">
+		<div class="w-15 flex-area" style="justify-content: left">
+				<div>
+			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+					${param.boardHead} 게시판
+			 		<span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+			        </h1>
+				</div>
+		</div>
+		<div class="w-70 flex-area flex-center">
+		    <form action="./list" method="get">
+		        <c:if test="${param.boardHead != null}">
+		            <input type="hidden" name="boardHead" value="${param.boardHead}">
+		        </c:if>
+		        <select name="column" class="field">
+		            <option value="board_title" ${param.column == 'board_title' ? "selected" : ""}>제목</option>
+		            <option value="board_writer" ${param.column == 'board_writer' ? "selected" : ""}>작성자</option>
+		        </select> 
+		        <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
+		        
+		        <button type="submit" class="btn btn-positive">
+		            <i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+		        </button>
+		    </form>
+		</div>
 	
+		<div class="w-15 flex-area flex-center" style="justify-content: right;">
+			<c:if test="${sessionScope.loginId != null}">
+				<a href="write" class="btn btn-neutral">글쓰기</a>
+			</c:if>
+		</div>
+	</div>
 	<div class="flex-area ms-20" style="justify-content: space-between; align-items: center;">
 		<div class="left category-menu">
 	        <a href="./list" class="ms-20 ${empty pageVO.boardHead ? 'active' : ''}">전체</a>

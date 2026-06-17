@@ -48,39 +48,45 @@
 	}
 </style>
 
-<div class="container w-950 mt-50 mb-50">
-	<div class="cell">
-			<h1 class="mt-0 mb-0">회원 관리</h1>
+<div class="container w-950 mt-20 mb-50 background-card">
+	<div class="cell center flex-area">
+		<div class="w-15 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            회원 관리
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+        </div>
 	</div>
-	
 			
-				<c:if test="${sessionScope.empGrade == 2 && wList.size() > 0}">
-				<div class="cell">
-						<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3>
-							<table class="table" style="background-color: white; margin-bottom: 0;">
-								<thead>
-									<tr style="border-bottom: 2px solid #e9ecef;">
-										<th style="padding: 10px;">아이디</th>
-										<th style="padding: 10px;">이름</th>
-										<th style="padding: 10px;">관리</th>
-									</tr>
-								</thead>
-								<tbody align="center">
-									<c:forEach var="waitEmp" items="${wList}">
-									<tr>
-										<td style="padding: 12px 0;">${waitEmp.empId}</td>
-										<td style="padding: 12px 0;">${waitEmp.empName}</td>
-										<td>
-											<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
-											<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="text-decoration: none; padding: 6px 12px; font-size: 18px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
-										</td>
-									</tr>
-									</c:forEach>
-								</tbody>
-							</table>
-						</div>
-				<hr class="mt-30 mb-30">
-				</c:if>
+		<c:if test="${sessionScope.empGrade == 2 && wList.size() > 0}">
+		<div class="cell">
+				<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3>
+					<table class="table" style="background-color: white; margin-bottom: 0;">
+						<thead>
+							<tr style="border-bottom: 2px solid #e9ecef;">
+								<th style="padding: 10px;">아이디</th>
+								<th style="padding: 10px;">이름</th>
+								<th style="padding: 10px;">관리</th>
+							</tr>
+						</thead>
+						<tbody align="center">
+							<c:forEach var="waitEmp" items="${wList}">
+							<tr>
+								<td style="padding: 12px 0;">${waitEmp.empId}</td>
+								<td style="padding: 12px 0;">${waitEmp.empName}</td>
+								<td>
+									<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
+									<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="text-decoration: none; padding: 6px 12px; font-size: 18px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
+								</td>
+							</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+		<hr class="mt-30 mb-30">
+		</c:if>
 				
 				
 		<div class="cell" style="display: flex; justify-content: flex-end;">

@@ -130,12 +130,16 @@ $(function() {
 }); 
 </script>
 
-<div class="container w-800 mt-50 mb-50">
+<div class="container w-800 mt-20 mb-50 background-card">
 
-	<div class="cell mb-40">
-		<h1 style="font-size: 36px; font-weight: bold; color: #333;">결재양식
-			수정</h1>
-	</div>
+	<div class="w-100 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            결재양식 수정
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+    </div>
 
 	<form action="./edit" method="post" enctype="multipart/form-data">
 

@@ -11,8 +11,9 @@
 /* 은은한 그림자가 들어간 부드러운 상자 스타일 */
 .custom-card {
     background: #ffffff;
+    border: 1px solid #E2E8F0; /* 아주 연한 회색 테두리 */
     border-radius: 12px; /* 모서리를 부드럽게 라운딩 */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 은은하고 부드러운 그림자 효과 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* 아주 연한 그림자 */
     padding: 24px; /* 상자 내부 여백 */
     box-sizing: border-box;
     transition: all 0.3s ease; /* 마우스 올렸을 때 자연스러운 효과용 (선택) */
@@ -103,10 +104,15 @@
     </td>
 </tr>
 </script>
-
-	<div class="cell flex-area">
-		<h1>부서관리</h1>
-	</div>
+<div class="container w-100 mt-20 mb-50 background-card">
+	<div class="w-15 flex-area" style="justify-content: left">
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            부서관리
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+		</div>
+    </div>
 	<div class="cell flex-area">
 		<div class="cell w-25 custom-card">
 			<div class="cell card-header">
@@ -173,5 +179,5 @@
 		</div>
 		</div>
 	</div>
-	
+</div>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

@@ -40,7 +40,7 @@ $(function() {
 </style>
 
 <form action="./login" method="post">
-	<div class="container w-400 mt-50 mb-50">
+	<div class="container w-500 mt-20 mb-50 background-card">
 		<div class="cell center">
 			<h1>로그인</h1>
 		</div>

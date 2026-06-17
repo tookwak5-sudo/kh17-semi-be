@@ -7,10 +7,15 @@
 <form id="boardEditForm" action="./edit" method="post" novalidate autocomplete="off">
 <input type="hidden" name="boardNo" value="${boardDto.boardNo}">
 
-<div class="container w-950 mt-50 mb-50">
-	<div class="cell">
-		<h1 class="mt-0 mb-0">게시글 수정</h1>
-	</div>
+<div class="container w-950 mt-20 mb-50 background-card">
+	<div class="w-100 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		           	게시글 수정
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+        </div>
 	<div class="cell">
 		타인에 대한 무분별한 비방글은 경고 없이 삭제될 수 있습니다
 	</div>

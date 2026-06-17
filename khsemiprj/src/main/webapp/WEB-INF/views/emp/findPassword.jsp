@@ -201,10 +201,15 @@
 
 
 <form action="./findPassword" method="post" autocomplete="off" class="form-check">
-<div class="container w-600 mt-50 mb-50">
-	<div class="cell center">
-		<h1>비밀번호 찾기</h1>
-	</div>
+<div class="container w-600 mt-20 mb-50 background-card">
+	<div class="w-100 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            비밀번호 찾기
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+        </div>
 	
 	<div class="cell">
 		<label>아이디</label> <input

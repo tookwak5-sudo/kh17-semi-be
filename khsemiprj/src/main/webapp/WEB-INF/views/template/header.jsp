@@ -171,7 +171,7 @@
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-clamp">
         <div class="flex-area flex-vertical">
-        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center; padding: 0 10px;">
+        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center;">
                 
                 <a href="/" style="display: flex; align-items: center; padding: 0 10px; flex-shrink: 0; position: relative; z-index: 9999; margin-right: 100px;">
                     <img src="/images/kh정보교육원 로고.png" alt="홈" style="height: 35px; width: auto; transform: scale(2.8); transform-origin: left center; position: relative; top: 5px;">
