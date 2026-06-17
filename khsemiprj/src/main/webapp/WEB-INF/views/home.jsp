@@ -10,7 +10,7 @@
 .dashboard-container {
 	display: flex;
 	gap: 20px; /* 좌우 간격 */
-	width: 1400px;
+	width: 100%;
 	margin: 50px auto;
 	margin-top: 20px !important;
 }

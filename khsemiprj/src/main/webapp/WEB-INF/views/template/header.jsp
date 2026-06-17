@@ -212,7 +212,7 @@
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-clamp">
         <div class="flex-area flex-vertical">
-        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center;">
+        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center; height: 49px">
                 
                 <a href="/" style="display: flex; align-items: center; padding: 0 10px; flex-shrink: 0; position: relative; z-index: 9999; margin-right: 100px;">
                     <img src="/images/kh정보교육원 로고.png" alt="홈" style="height: 35px; width: auto; transform: scale(2.8); transform-origin: left center; position: relative; top: 5px;">
@@ -247,6 +247,7 @@
 	         </div>
 	            <!-- 사이드바 및 컨텐츠 -->
 	            <div style="min-height: 450px;" class="flex-area">
+	        		 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
 					    <div class="profile-card">
 					        <div class="image-hover image-circle image-shadow" style="width: 120px; margin: 0 auto;">
 					            <img src="https://picsum.photos/200">
@@ -280,7 +281,7 @@
 					            </c:otherwise>
 					        </c:choose>
 					    </div>
-	            	
+	        		 </c:if>   	
 	            	<!-- 
 	            	사이드 바
 	            	<nav class="sidebar">
