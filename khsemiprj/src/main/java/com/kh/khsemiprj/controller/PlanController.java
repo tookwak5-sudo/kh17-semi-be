@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.kh.khsemiprj.dao.PlanDao;
-import com.kh.khsemiprj.vo.PageVO;
+import com.kh.khsemiprj.vo.PageForPlanVO;
 import com.kh.khsemiprj.vo.PlanEmpDeptVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -23,7 +23,7 @@ public class PlanController {
 	private PlanDao planDao;
 	
 	@RequestMapping("/list")
-	public String list(HttpSession session,Model model, @ModelAttribute PageVO pageVO) {
+	public String list(HttpSession session,Model model, @ModelAttribute PageForPlanVO pageVO) {
 		String loginId = (String)session.getAttribute("loginId");
 		
 	    int count = planDao.count(pageVO, loginId);
