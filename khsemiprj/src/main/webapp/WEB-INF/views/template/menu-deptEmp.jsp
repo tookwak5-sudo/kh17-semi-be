@@ -44,6 +44,12 @@
 	        <span>게시판</span>
 	    </a>
 	</li>
+	<li>
+	    <a href="/plan/list">
+	        <i class="fa-solid fa-calendar"></i>
+	        <span>일정</span>
+	    </a>
+	</li>
 	
 	<li class="divider"></li>
 	
