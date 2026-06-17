@@ -19,11 +19,11 @@
 			<!-- 검색창 -->
 	            <form autocomplete="off">
 	                <select name="column" class="field-ph">
-	                    <option value="access_emp_id">접근자 아이디</option>
-	                    <option value="access_url">접속 URL</option>
+	                    <option value="access_emp_id" ${param.column == 'access_emp_id' ? 'selected' : ''}>접근자 아이디</option>
+	                    <option value="access_url" ${param.column == 'access_url' ? 'selected' : ''}>접속 URL</option>
 	                </select>
 	                <input type="text" name="keyword"
-	                    class="field-sm" placeholder="검색어 입력">
+	                    class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
 	                <button type="submit" class="btn btn-positive">
 	                    <i class="fa-solid fa-magnifying-glass"></i>
 	                    <span>검색</span>

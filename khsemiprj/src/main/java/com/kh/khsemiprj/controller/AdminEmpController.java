@@ -122,7 +122,7 @@ public class AdminEmpController {
 
 	// 퇴사자 목록
 	@RequestMapping("/exitList")
-	public String exitList(@ModelAttribute PageVO pageVO, Model model) {
+	public String exitList(@ModelAttribute PageVO pageVO, Model model, @RequestParam String empName ) {
 	   
 	    int count = empExitDao.count(pageVO);
 	    pageVO.setCount(count);

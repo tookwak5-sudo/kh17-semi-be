@@ -79,15 +79,15 @@ public class EmpExitDao {
         } 
         else {
             // 기존에 네가 쓰던 날짜 조건 없는 쿼리 형태 그대로 유지
-            sql = "select * from ("
-                + "select rownum rn, TMP.* from ("
-                + "select X.emp_id, E.emp_name, X.emp_exit_time, D.aprv_etime "
-                + "from emp_exit X "
-                + "left join emp E on X.emp_id = E.emp_id "
-                + "left join aprv_document D on E.emp_id = D.aprv_writer "
-                + "order by X.emp_exit_time desc, X.emp_id asc"
-                + ") TMP"
-                + ") where rn between ? and ?";
+        	 sql = "select * from ("
+                     + "select rownum rn, TMP.* from ("
+                     + "select X.emp_id, E.emp_name, X.emp_exit_time, D.aprv_etime "
+                     + "from emp_exit X "
+                     + "left join emp E on X.emp_id = E.emp_id "
+                     + "left join aprv_document D on E.emp_id = D.aprv_writer "
+                     + "order by X.emp_exit_time desc, X.emp_id asc"
+                     + ") TMP"
+                     + ") where rn between ? and ?";
         }
 
         // 페이징 번호는 날짜 검색 여부와 상관없이 무조건 마지막에 공통으로 들어감
