@@ -553,15 +553,14 @@ $(function() {
 
 
 		<div class="cell mt-40">
-			<label> <i class="fa-solid fa-image"></i> <span>클릭해서
-					프로필 이미지를 선택하세요 (.jpg , .png)</span> 
-				<input type="file" name="attach" class="field w-100 preview-input" accept=".png, .jpg"
-				style="display: none;">
-			</label>
+    	<label class="btn btn-neutral w-100" style="cursor: pointer; padding: 15px; font-size: 16px;">
+        <i class="fa-solid fa-image"></i> 
+        <span>클릭해서 프로필 이미지를 선택하세요 (.jpg , .png)</span> 
+        <input type="file" name="attach" class="field preview-input" accept="image/png, image/jpeg" style="display: none;">
+    	</label>
 		</div>
 
-
-		<div class="cell preview-area"></div>
+		<div class="cell preview-area" style="display: flex; justify-content: center; margin-top: 20px;"></div>
 
 
 		<div class="cell mt-50">

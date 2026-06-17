@@ -54,6 +54,13 @@ public class EmpDao {
 		jdbcTemplate.update(sql, params);
 	}
 
+	//프사 삭제
+	public boolean deleteProfile(String empId) {
+	    String sql = "delete from emp_profile where emp_id=?";
+	    Object[] params = { empId };
+	    return jdbcTemplate.update(sql, params) > 0;
+	}
+	
 	/*
 	 * public List<EmpDto> selectList(){ String sql =
 	 * "select * from emp order by emp_id asc"; return jdbcTemplate.query(sql,

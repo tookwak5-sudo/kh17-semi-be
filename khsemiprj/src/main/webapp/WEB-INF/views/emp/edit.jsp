@@ -47,39 +47,40 @@
 <script>
 $(function() {
 	
-	 //이미지 미리보기 처리 (개수 무관)
-    $(function(){
-        $(".preview-input").on("input", function(){
-            //미리보기를 생성하기 전에 기존에 .preview-area에 있는 이미지를 제거
-            // - 있을지 없을지 모르며 있다면 URL.revokeObjectURL()을 써서 회수까지 해줘야함
-            // - jQuery에서 제공하는 반복 함수 each를 사용 (for보다 편함)
-            $(".preview-area").find("img").each(function(){
-                //this == 현재 순서의 이미지
-                //이미지 주소 회수 + 이미지 태그 삭제 (or 영역 비우긴)
-                var address = $(this).attr("src");
-                URL.revokeObjectURL(address);//자원회수
-                // $(this).remove();//이 태그 삭제 이미지 하나 지우기
-            });
-            $(".preview-area").empty();//영역 비우기
+	// 프사 미리보기 및 삭제 플래그 제어
+	$(".preview-input").on("input", function(){
+	    $(".profile-view-container").find("img").each(function(){
+	        URL.revokeObjectURL($(this).attr("src"));
+	    });
+	    $(".profile-view-container").empty(); 
 
-            //미리보기 생성
-            if(this.files.length > 0) {//파일 선택
-                for(var i=0; i < this.files.length; i++){//선택한 파일수만큼
-                //이미지를 만들어서 .preview-area에 추가
-                    var img = $("<img>")
-                                .addClass("image-shadow image-round")
-                                .attr("src", URL.createObjectURL(this.files[i]))
-                                .prop("width", 100);
-                    $(".preview-area").append(img);
-                }
-            }
+	    if(this.files.length > 0) {
+	        for(var i=0; i < this.files.length; i++){
+	            var img = $("<img>").addClass("image-shadow image-round")
+	                        .attr("src", URL.createObjectURL(this.files[i]))
+	                        .css({"width": "100px", "height": "100px", "object-fit": "cover"});
+	            $(".profile-view-container").append(img);
+	        }
+	        $(".delete-profile-flag").val("N");
+	        $(".btn-delete-profile").show();
+	    } else {
+	        var defaultIcon = $("<i>").addClass("fa-solid fa-user-circle").css({"font-size": "100px", "color": "#e2e8f0"});
+	        $(".profile-view-container").html(defaultIcon);
+	    }
+	});
 
-            else{//파일 선택 취소 -> 미리보기 제거
-
-            }
-        });
-    });
-
+	// 기본 이미지로 변경 버튼 클릭 이벤트
+	// on("click", ...) 안에 이벤트 객체 e를 넣어서 방어
+	$(document).on("click", ".btn-delete-profile", function(e) {
+	    e.preventDefault(); // 쓸데없는 링크 이동이나 새로고침 완전 차단
+	    $(".delete-profile-flag").val("Y");
+	    $(".preview-input").val("");
+	    
+	    var defaultIcon = $("<i>").addClass("fa-solid fa-user-circle").css({"font-size": "100px", "color": "#e2e8f0"});
+	    $(".profile-view-container").html(defaultIcon);
+	    
+	    $(this).hide();
+	});
 	
 	var state = {
        // empIdValid: true, id는 내 정보 수정에서는 못 바꾸는 거 같아 주석 했습니다.
@@ -374,9 +375,47 @@ $(function() {
             window.alert("입력하신 정보를 다시 확인해주세요.");
         }
     });
-    
 
-}); 
+ // 기본 이미지로 변경 버튼을 클릭했을 때
+    $(".btn-delete-profile").on("click", function() {
+        // 1. 플래그 값을 Y로 변경 (서버에 지우라고 신호 보냄)
+        $(".delete-profile-flag").val("Y");
+        
+        // 2. 파일 선택 창에 들어있던 값도 초기화
+        $(".preview-input").val("");
+        
+        // 3. 화면의 프사 이미지를 기본 대머리 아이콘으로 강제 변경
+        var defaultIcon = $("<i>")
+            .addClass("fa-solid fa-user-circle")
+            .css({"font-size": "100px", "color": "#e2e8f0"});
+            
+        $(".profile-view-container").html(defaultIcon);
+        
+        // 4. 이미 지웠으므로 '기본 이미지로 변경' 버튼은 숨김 처리
+        $(this).hide();
+    });
+
+    // 만약 유저가 기본 이미지로 변경을 눌렀다가 다시 새 파일을 고르면?
+    $(".preview-input").on("input", function() {
+        if(this.files.length > 0) {
+            $(".delete-profile-flag").val("N");
+            $(".btn-delete-profile").show(); 
+        }
+    });
+
+    // [수정] 폼 검사할 때 var valid를 써서 전송 막기
+    $(".form-check").on("submit", function(){
+        $(this).find("input[name], textarea[name]").trigger("blur");
+        
+        // state.ok() 검사 결과를 var valid 변수에 담음
+        var valid = state.ok();
+        
+        // 만약 유효성 검사 통과 못하면 return false로 form 전송 차단
+        if (valid == false) {
+            window.alert("입력하신 정보를 다시 확인해주세요.");
+            return false;
+        }
+    });
 </script>
 
 <!-- 인증번호 입력창 템플릿 -->
@@ -395,7 +434,7 @@ $(function() {
 <div class="container w-600 mt-50 mb-50">
 	<h1 class="left black mb-40">내 정보 수정</h1>
 
-	<form action="edit" method="post" enctype="multipart/form-data">
+	<form action="edit" method="post" enctype="multipart/form-data" class=>
 
 		<div class="cell mt-30">
 	        <div class="gray mb-10"><b>이름</b></div>
@@ -470,19 +509,47 @@ $(function() {
    		</div>
 
 
-		<div class="cell mt-40">
-			<label> <i class="fa-solid fa-image"></i> <span>클릭해서
-					프로필 이미지를 선택하세요 (.jpg , .png)</span> 
-				<input type="file" name="attach" class="field w-100 preview-input" accept=".png, .jpg"
-				style="display: none;">
-			</label>
-		</div>
-		
-		<div class="preview-area"></div>
-		
-		<div class="cell mt-50">
-			<button type="submit" class="btn btn-positive w-100">수정하기</button>
-		</div>
-
-	</form>
+	<div class="cell mt-40">
+    <label class="btn btn-neutral w-100" style="cursor: pointer;">
+        <i class="fa-solid fa-image"></i> 
+        <span>클릭해서 프로필 이미지를 선택하세요 (.jpg , .png)</span> 
+        <input type="file" name="attach" class="field preview-input" accept="image/png, image/jpeg" style="display: none;">
+    </label>
 </div>
+
+<input type="hidden" name="deleteProfileFlag" class="delete-profile-flag" value="N">
+
+<div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+    <div class="profile-view-container" style="display: flex; justify-content: center;">
+        
+        <c:if test="${not empty profileAttachNo}">
+            <img src="/download/modern?attachNo=${profileAttachNo}" class="image-shadow image-round" style="width: 100px; height: 100px; object-fit: cover;">
+        </c:if>
+        
+        <c:if test="${empty profileAttachNo}">
+            <i class="fa-solid fa-user-circle" style="font-size: 100px; color: #e2e8f0;"></i>
+        </c:if>
+        
+    </div>
+    
+    <c:if test="${not empty profileAttachNo}">
+        <a class="btn-delete-profile" style="margin-top: 12px; font-size: 13px; color: #ef4444; text-decoration: none; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-trash-can"></i> 기본 이미지로 변경
+        </a>
+    </c:if>
+</div>
+
+<div class="cell mt-50">
+    <button type="submit" class="btn btn-positive w-100">수정하기</button>
+</div>
+<div class="cell mt-50">
+    <button type="submit" class="btn btn-positive w-100">수정하기</button>
+</div>
+        
+        <div class="cell mt-50">
+            <button type="submit" class="btn btn-positive w-100">수정하기</button>
+        </div>
+
+    </form>
+</div>
+<jsp:include page="/WEB-INF/views/template/footer.jsp" />
