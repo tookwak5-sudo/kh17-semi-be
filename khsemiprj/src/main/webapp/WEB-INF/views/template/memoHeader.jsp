@@ -25,13 +25,13 @@
         background-color: #F8F9FA; /* 마이페이지 배경색 확인 후 수정 */
     }
 
-    /* 카드 스타일 */
-    .memo-card {
-        background-color: #ffffff; /* 카드 내부 색상은 흰색 */
-        border: 1px solid #e1e4e6;
-        border-radius: 6px;
-        padding: 30px;
-        margin: 20px; /* 카드 주변 간격 */
-    }
+   /* 카드 스타일 */
+.memo-card {
+    background-color: #ffffff;
+    border: 1px solid #e1e4e6;
+    border-radius: 6px;
+    padding: 30px;
+    margin: 20px auto;
+}
 </style>
 </head>
