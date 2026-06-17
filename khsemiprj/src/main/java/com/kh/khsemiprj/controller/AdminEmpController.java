@@ -122,16 +122,20 @@ public class AdminEmpController {
 
 	// 퇴사자 목록
 	@RequestMapping("/exitList")
-	public String exitList(@ModelAttribute PageVO pageVO, Model model) {
+	public String exitList(
+	        @ModelAttribute PageVO pageVO, 
+	        Model model, 
+	        @RequestParam(required = false, defaultValue = "") String empName) {
 	   
-	    int count = empExitDao.count(pageVO);
+	    // DAO 호출 시 empName도 같이 넘김
+	    int count = empExitDao.count(pageVO, empName);
 	    pageVO.setCount(count);
 	    model.addAttribute("pageVO", pageVO);
 
-	  
-	    List<EmpExitVO> exitList = empExitDao.selectList(pageVO);
+	    List<EmpExitVO> exitList = empExitDao.selectList(pageVO, empName);
 	    model.addAttribute("exitList", exitList);
 	    
 	    return "/admin/emp/exitList";
 	}
 }
+
