@@ -119,8 +119,11 @@
 		    border: 1px solid #E2E8F0;
 		    border-radius: 12px;
 		    padding: 20px;
+		    margin-top: 20px;
+		    margin-right:10px;
 		    text-align: center;
 		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+		    height:fit-content;
 		}
 		
 		/* 프로필 정보 텍스트 */
@@ -170,14 +173,14 @@
         <div class="flex-area flex-vertical">
         	<div class="sticky-header">
             	<!-- 헤더 영역 -->
-	            <div class="flex-area" style="background: #f8f9fa">
+	            <!-- <div class="flex-area" style="background: #f8f9fa">
 	                <div class="w-25 flex-area flex-center">
 	                    <img src="/images/kh.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
 	                </div>
 	                <div class="w-50 flex-area flex-center">
 	                    <h1>　                        </h1>
 	                </div>
-	            </div>
+	            </div> -->
 	
 	            <!-- 메뉴 -->
 	           <div> 

@@ -78,7 +78,7 @@ $(function() {
 </script>
 
 
-<div class="container w-500 mt-50 mb-50">
+<div class="container w-500 mt-20 mb-50 background-card">
 	<div class="cell center">
 	
 		<h1>비밀번호 확인</h1>

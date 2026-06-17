@@ -318,7 +318,7 @@
 
 <form action="./edit" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
 	<input type="hidden" name="aprvNo" value="${aprvDto.aprvNo}">
-	<div class="container w-1200 mt-50">
+	<div class="container w-80 mt-20 background-card">
 		
     	<div class="cell center">
             <h1 class="h1-title">결재 등록</h1>

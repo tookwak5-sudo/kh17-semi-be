@@ -12,6 +12,7 @@
 	gap: 20px; /* 좌우 간격 */
 	width: 1400px;
 	margin: 50px auto;
+	margin-top: 20px !important;
 }
 
 /* 좌측 달력 영역 (비율 7) */
@@ -69,7 +70,7 @@
     	z-index: 10000;
     }
 	.list-area{
-		height:300px;
+		height:0px;
 	    overflow-y:auto;
 	}
 	

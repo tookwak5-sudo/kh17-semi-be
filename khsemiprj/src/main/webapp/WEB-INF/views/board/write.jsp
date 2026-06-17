@@ -5,7 +5,7 @@
 
 <form id="boardWriteForm" action="./write" method="post" class="form-check" novalidate autocomplete="off">
 
-<div class="container w-950 mt-50 mb-50">
+<div class="container w-950 mt-20 mb-50 background-card">
 	<div class="cell">
 		<h1 class="mt-0 mb-0">신규 글 작성</h1>
 	</div>

@@ -338,7 +338,7 @@ $(function() {
     </div>
 </script>
 
-<div class="container w-600 mt-50 mb-50">
+<div class="container w-600 mt-20 mb-50 background-card">
 	<h1 class="left black mb-40">내 정보 수정</h1>
 
 	<form action="edit" method="post" enctype="multipart/form-data" class="form-check">

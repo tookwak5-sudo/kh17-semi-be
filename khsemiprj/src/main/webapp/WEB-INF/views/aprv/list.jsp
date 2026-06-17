@@ -17,17 +17,23 @@
 	}
 </style>
 
-<div class="container w-80 mt-50 mb-50">
+<div class="container w-100 mt-20 mb-50 background-card">
 
-	<div class="cell center mb-0">
+	<!-- <div class="cell center mb-0">
 		<h1 class="mb-0">결재 목록</h1>
-	</div>
+	</div> -->
 
 	<!-- <div class="cell center">타인에 대한 무분별한 비방글은 예고 없이 삭제될 수 있습니다.</div> -->
 	
 	
 	<div class="cell center flex-area">
-		<div class="w-15 flex-area flex-center">
+		<div class="w-15 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            결재 목록
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
         </div>
 		<div class="w-70 flex-area flex-center">
 			<form action="./list" method="get">

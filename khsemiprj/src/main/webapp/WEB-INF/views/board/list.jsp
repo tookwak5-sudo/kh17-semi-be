@@ -91,7 +91,7 @@
 </script>
 
 
-<div class="container w-1200 mt-50 mb-50">
+<div class="container w-90 mt-20 mb-50 background-card">
 
 	<div class="cell center mb-0">
 		<h1 class="mb-0">${param.boardHead} 게시판</h1>

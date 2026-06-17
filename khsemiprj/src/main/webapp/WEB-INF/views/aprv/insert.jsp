@@ -333,7 +333,7 @@ $(function () {
 
 <form action="./insert" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
 
-	<div class="container w-80 mt-50 custom-card">
+	<div class="container w-80 mt-20 custom-card">
 		
     	<div class="cell center">
             <h1 class="h1-title">결재 등록</h1>
