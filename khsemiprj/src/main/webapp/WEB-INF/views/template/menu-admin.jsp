@@ -88,6 +88,12 @@
                     <span>근태로그</span>
                 </a>
             </li>
+            <li>
+			    <a href="/admin/emp/exitList">
+			        <i class="fa-solid fa-people-group"></i>
+			        <span>퇴사자목록</span>
+			    </a>
+			</li>
         </ul>
     </li>
     <li>
