@@ -163,6 +163,9 @@ $(function() {
     });
 
     $("form").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+    	
         var canSubmit = false;
 
         if(state.formNameValid == false) {

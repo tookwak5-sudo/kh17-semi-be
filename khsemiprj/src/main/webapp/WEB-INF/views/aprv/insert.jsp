@@ -172,7 +172,7 @@ $(function () {
     $("[name=aprvTitle]").on("blur", function(){
         state.aprvTitleValid = $(this).val().trim().length > 0;
     });
-    $("[name=aprvContent]").on("change keyup", function(){ // keyup 추가로 실시간 검사 보완
+    $("[name=aprvContent]").on("blur", function(){
         state.aprvContentValid = $(this).val().trim().length > 0;
     });
     $("[name=aprvEdate]").on("blur", function(){
@@ -190,6 +190,8 @@ $(function () {
  
 	// 9. 최종 전송(submit) 시 검사
     $(".form-check").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
         
         // [1] 전송 직전 입력값 기준으로 state 갱신
         state.aprvTitleValid = $("[name=aprvTitle]").val().trim().length > 0;

@@ -4,7 +4,7 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
-<form action="./write" method="post" onsubmit="return checkContent()">
+<form action="./write" method="post" class="form-check">
 
 <div class="container w-950 mt-50 mb-50">
 	<div class="cell">
@@ -17,14 +17,14 @@
 	
 	<div class="cell mt-40">
 		<label>제목 <i class="fa-solid fa-asterisk red"></i></label>
-		<input type="text" name="boardTitle" required class="field w-100">
+		<input type="text" name="boardTitle" class="field w-100">
 	</div>
 		<div class="cell mb-0">
 			<label>구분</label>
 		</div>
 	
 		<div class="cell mt-0">
-			<select name="boardHead" class="field" required>
+			<select name="boardHead" class="field">
 				<option value="" >선택 안함</option>
 				<!-- 공지는 관리자에게만 보이도록 해야함 -->
 			<c:if test="${sessionScope.empGrade == '0'}">
@@ -40,7 +40,7 @@
 	
 	<div class="cell">
 		<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-		<textarea id="summernote" name="boardContent" rows="10" required class="field w-100"></textarea>
+		<textarea id="summernote" name="boardContent" rows="10" class="field w-100"></textarea>
 	</div>
 	
 	<div class="cell mt-50 right">
@@ -64,6 +64,19 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ko-KR.min.js"></script>
 
 <script>
+
+//유효성 검사 상태 객체
+var state = {
+	boardTitleValid: false,
+	boardHeadValid: false,
+	boardContentValid: false,
+	ok: function(){
+		return Object.values(this)
+		.filter(v => typeof v==="boolean")
+		.every(v => v === true);
+	}
+};
+
 $(document).ready(function() {
     $('#summernote').summernote({
         height: 400,                 
@@ -96,6 +109,41 @@ $(document).ready(function() {
         }
     });
     $('#summernote').summernote('code', '');
+    
+    $("[name=boardTitle]").on("blur", function(){
+        state.boardTitleValid = $(this).val().trim().length > 0;
+    });
+    $("[name=boardHead]").on("blur", function(){
+        state.boardHeadValid = $(this).val().trim().length > 0;
+    });
+    $("[name=boardContent]").on("blur", function(){
+        state.boardContentValid = $(this).val().trim().length > 0;
+    });
+    
+    $(".form-check").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+        
+        if(!state.boardTitleValid) {
+            showAjaxAlarm('제목을 입력하세요', 'btn-negative', '[name=boardTitle]', 'left');
+            $("[name=boardTitle]").focus();
+            return false; 
+        }
+        
+        if(!state.boardHeadValid) {
+            showAjaxAlarm('구분을 선택하세요', 'btn-negative', '[name=boardHead]', 'left');
+            $("[name=boardHead]").focus();
+            return false; 
+        }
+        
+        if(!state.boardContentValid) {
+            showAjaxAlarm('내용을 입력하세요', 'btn-negative', '.note-editing-area', 'left');
+            $('#summernote').summernote('focus');
+            return false; 
+        }
+
+        return state.ok();
+    });
 });
 
 function sendImageFile(file, editor) {
