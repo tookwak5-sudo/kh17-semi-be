@@ -15,25 +15,10 @@
 	    </a>
 	</li>
 	<li>
-	    <a href="#">
+	    <a href="/aprv/list">
 	    	<i class="fa-solid fa-file-signature"></i>
 	        <span>결재</span>
 		</a>
-        <!-- 하위 메뉴 -->
-        <ul>
-            <li>
-                <a href="/aprv/list">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>결재 목록</span>
-                </a>
-            </li>
-            <li>
-                <a href="/aprvForm/list">
-                    <i class="fa-solid fa-box"></i>
-                    <span>결재 양식</span>
-                </a>
-            </li>
-        </ul>
 	</li>
 	<li>
         <a href="/dept/chart">
@@ -47,7 +32,23 @@
 	        <span>게시판</span>
 	    </a>
 	</li>
-	
+	<li>
+		<a href="/memo/list" style="font-size:20px; text-decoration: none;" onclick="
+             var w = 650; 
+             var h = 650; 
+             var left = (screen.width/2) - (w/2); 
+             var top = (screen.height/2) - (h/2); 
+             window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+             return false;
+      		 ">
+          <i class="fa-solid fa-bell bell-icon">
+          	<c:if test="${not empty countMemo && countMemo != 0}">
+           	<span class="badge">${countMemo}</span>					            	
+          	</c:if>
+          </i>
+          <span>쪽지</span>
+      	</a>
+	</li>
 	<li class="divider"></li>
 	
 	<li>
@@ -69,6 +70,12 @@
 			        <span>부서관리</span>
 				</a>
 			</li>
+			<li>
+                <a href="/aprvForm/list">
+                    <i class="fa-solid fa-box"></i>
+                    <span>결재 양식</span>
+                </a>
+            </li>
             <li>
                 <a href="/admin/logAccess/list">
                     <i class="fa-solid fa-server"></i>

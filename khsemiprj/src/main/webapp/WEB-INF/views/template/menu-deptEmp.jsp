@@ -12,25 +12,10 @@
 	    </a>
 	</li>
 	<li>
-	    <a href="#">
+	    <a href="/aprv/list">
 	        <i class="fa-solid fa-file-signature"></i>
 	        <span>결재</span>
 		</a>
-        <!-- 하위 메뉴 -->
-        <ul>
-            <li>
-                <a href="/aprv/list">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>결재 목록</span>
-                </a>
-            </li>
-            <li>
-                <a href="/aprvForm/list">
-					<i class="fa-solid fa-box"></i>
-                    <span>결재 양식</span>
-                </a>
-            </li>
-        </ul>
 	</li>
 	<li>
         <a href="/dept/chart">
@@ -66,6 +51,12 @@
 			        <span>부서관리</span>
 				</a>
 			</li>
+			<li>
+                <a href="/aprvForm/list">
+					<i class="fa-solid fa-box"></i>
+                    <span>결재 양식</span>
+                </a>
+            </li>
         </ul>
     </li>
     <li>

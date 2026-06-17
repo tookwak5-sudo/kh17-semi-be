@@ -19,6 +19,7 @@ import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpExitDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
+import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dao.LogAccessDao;
 import com.kh.khsemiprj.dao.LogInoutDao;
 import com.kh.khsemiprj.dto.CertDto;
@@ -30,6 +31,7 @@ import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
+import com.kh.khsemiprj.vo.EmpPositionDeptVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -58,7 +60,9 @@ public class EmpController {
 
 	@Autowired
 	private LogAccessDao logAccessDao;
-
+	@Autowired
+	private EmpPositionDeptDao empPositionDemptDao;
+	
 	@GetMapping("/login")
 	public String login() {
 		return "emp/login";
@@ -113,6 +117,11 @@ public class EmpController {
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
+		
+		// 직책 
+		EmpPositionDeptVO empPositionDeptVO = empPositionDemptDao.selectDeptPositionbyId(empDto.getEmpId());
+		session.setAttribute("empPosition", empPositionDeptVO.getEmpPositionName());
+		session.setAttribute("empDept", empPositionDeptVO.getDeptName());
 		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();

@@ -13,19 +13,10 @@
 	    </a>
 	</li>
 	<li>
-	    <a href="#">
+	    <a href="/aprv/list">
 	        <i class="fa-solid fa-database"></i>
 	        <span>결재</span>
 		</a>
-        <!-- 하위 메뉴 -->
-        <ul>
-            <li>
-                <a href="/aprv/list">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>결재 목록</span>
-                </a>
-            </li>
-        </ul>
 	</li>
 	<li>
         <a href="/dept/chart">

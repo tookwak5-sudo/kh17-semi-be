@@ -63,14 +63,14 @@
 		/* 2. 종 아이콘 스타일 */
 		.bell-icon {
 		    font-size: 20px;       /* 아이콘 크기 (상단바에 맞게 조절 가능) */
-		 	color: #739BED;
+		 	color: white;
 		}
 		
 		/* 3. 🔥 핵심: 빨간색 알림 뱃지 */
 		.badge {
 		    position: absolute;    /* 💡 중요: 부모 상자를 기준으로 자유롭게 배치 */
-		    top: 10px;             /* 위에서부터의 위치 */
-		    right: 30px;           /* 우측에서부터의 위치 */
+		    top: 3px;             /* 위에서부터의 위치 */
+		    right: 75px;           /* 우측에서부터의 위치 */
 		    
 		    background-color: #ff4d4d; /* 선명하고 트렌디한 빨간색 */
 		    color: #ffffff;        /* 숫자 색상은 흰색 */
@@ -103,14 +103,43 @@
 		    font-family: 'Pretendard', sans-serif;
 		}
 		.flex-center h1 {
-    font-size: 26px;
-    font-weight: 800;
-    /* 그라데이션 텍스트 처리 */
-    background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -1px;
-}
+		    font-size: 26px;
+		    font-weight: 800;
+		    /* 그라데이션 텍스트 처리 */
+		    background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+		    -webkit-background-clip: text;
+		    -webkit-text-fill-color: transparent;
+		    letter-spacing: -1px;
+		}
+		
+		/* 사이드바 프로필 카드 스타일 */
+		.profile-card {
+		    background: #FFFFFF;
+		    border: 1px solid #E2E8F0;
+		    border-radius: 12px;
+		    padding: 20px;
+		    text-align: center;
+		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+		}
+		
+		/* 프로필 정보 텍스트 */
+		.profile-info {
+		    font-size: 0.95em;
+		    color: #475569;
+		    margin-top: 15px;
+		    line-height: 1.6;
+		}
+		
+		/* 출퇴근 버튼 전용 클래스 (기존 btn 스타일 계승) */
+		.btn-work {
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    gap: 8px;
+		    width: 100%;
+		    margin-top: 15px;
+		    font-weight: 600;
+		}
     </style>
     
     <!-- jQuery CDN -->
@@ -133,7 +162,8 @@
 <%-- 세션ID : ${pageContext.session.id} --%>
 <%-- loginId : ${sessionScope.loginId} --%>
 <%-- empGrade : ${sessionScope.empGrade} --%>
-
+<%-- 부서 정보 : ${sessionScope.empDept} --%>
+<%-- 직책 정보 : ${sessionScope.empPosition} --%>
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-1400">
         <div class="flex-area flex-vertical">
@@ -141,33 +171,11 @@
             	<!-- 헤더 영역 -->
 	            <div class="flex-area" style="background: #f8f9fa">
 	                <div class="w-25 flex-area flex-center">
-	                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
+	                    <img src="/images/kh.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
 	                </div>
 	                <div class="w-50 flex-area flex-center">
 	                    <h1>　                        </h1>
 	                </div>
-	                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-		                <div class="w-25 flex-area" style="justify-content: right; align-items: center;">
-		                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 42px; text-align: center;" class="notification-box"> 
-		                    	<a href="/memo/list" 
-						           style="font-size:20px; text-decoration: none;" 
-						           onclick="
-						               var w = 650; 
-						               var h = 650; 
-						               var left = (screen.width/2) - (w/2); 
-						               var top = (screen.height/2) - (h/2); 
-						               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
-						               return false;
-						        		 ">
-						            <i class="fa-solid fa-bell bell-icon">
-						            	<c:if test="${not empty countMemo && countMemo != 0}">
-							            	<span class="badge">${countMemo}</span>					            	
-						            	</c:if>
-						            </i>
-						        </a>
-		                    </div>
-		                </div>
-	                </c:if>
 	            </div>
 	
 	            <!-- 메뉴 -->
@@ -187,4 +195,36 @@
          </div>
 	            <!-- 사이드바 및 컨텐츠 -->
 	            <div style="min-height: 450px;" class="flex-area">
+					    <div class="profile-card">
+					        <div class="image-hover image-circle image-shadow" style="width: 120px; margin: 0 auto;">
+					            <img src="https://picsum.photos/200">
+					            <div class="content">
+					                <a href="/emp/mypage" class="white">
+					                    <i class="fa-solid fa-user"></i> 내정보
+					                </a>
+					            </div>
+					        </div>
+					
+					        <div class="profile-info">
+					            <div style="font-weight: bold; color: #1E293B;">${sessionScope.loginId}</div>
+					            <div>${sessionScope.empDept}</div>
+					            <div>${sessionScope.empPosition}</div>
+					        </div>
+					
+					        <c:choose>
+					            <c:when test="${logInoutType.trim() eq '퇴근'}">
+					                <form id="workInForm" action="/emp/work-in" method="post"></form>
+					                <a href="#" class="btn btn-positive btn-work" onclick="document.getElementById('workInForm').submit(); return false;">
+					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 출근
+					                </a>
+					            </c:when>
+					            <c:otherwise>
+					                <form id="workOutForm" action="/emp/work-out" method="post"></form>
+					                <a href="#" class="btn btn-negative btn-work" onclick="document.getElementById('workOutForm').submit(); return false;">
+					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근
+					                </a>
+					            </c:otherwise>
+					        </c:choose>
+					    </div>
+	            	
 	                <div class="w-200 flex-fill">

@@ -26,7 +26,7 @@
 	    display: flex;
 	    flex-direction: column;
 	    gap: 20px; /* 두 카드 사이의 정밀한 간격 */
-	    height: 662px; /* 💡 핵심: 좌측 달력 카드(620px + 패딩40px + 테두리2px)와 전체 높이를 완벽히 일치시킴 */
+	    height: auto; /* 고정 높이 삭제 */
 	}
 	
 	.card {
@@ -34,12 +34,13 @@
 	    border: 1px solid #ddd;
 	    border-radius: 8px;
 	    box-sizing: border-box; /* 패딩과 테두리가 높이에 포함되도록 고정 */
+	    min-height: 300px; height: auto;
 	}
 	
 	/* 두 카드가 우측 영역을 정확히 5:5 반씩 나눠 가지도록 설정 */
 	.right-section > .card {
 	    flex: 1; 
-	    height: 0; /* flex-fill 처럼 균등 분배를 위해 기본 높이 초기화 */
+	    min-height: 0; /* flex 자식 요소의 높이 계산을 위해 필수 */
 	}
 	
 	/* 카드 내부 제목의 기본 마진이 위쪽 공백을 만드므로 초기화 */
@@ -67,19 +68,19 @@
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
     	z-index: 10000;
     }
-.list-area{
-		height:190px;
+	.list-area{
+		height:300px;
 	    overflow-y:auto;
-}
+	}
 	
-.list-area thead th{
-   position: sticky;
-   top: 0;
-   background: white;
-   z-index: 10;
-}
+	.list-area thead th{
+	   position: sticky;
+	   top: 0;
+	   background: white;
+	   z-index: 10;
+	}
 
-/* 일요일 날짜 텍스트 색상 변경 */
+	/* 일요일 날짜 텍스트 색상 변경 */
     .fc .fc-day-sun a {
         color: #ff4d4d !important; /* 빨간색 계열 */
     }
@@ -672,14 +673,14 @@
 <!-- 	   		planWrite, planDetail들어가는 자리		 -->
 <div id="modal-body"></div>
 
-<!--  결재, 공지 보여주는 화면 -->
 <div class="dashboard-container">
        <div class="left-section">
-            <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
+            <div id='calendar' class="card p-20" style="min-height: 800px;"></div>
        </div>
 
+<!--  결재, 공지 보여주는 화면 -->
        <div class="right-section">
-            <div class="card p-20" style="height: 300px;">
+            <div class="card p-20">
             <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
             	<div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3>결재 대기 목록</h3>
@@ -789,7 +790,7 @@
                 </div>
             </c:if>
 			</div>
-	           	<div class="card p-20" style="height: 300px; overflow-y: auto;">
+	           	<div class="card p-20" style="overflow-y: auto;">
 		            <h3>공지사항</h3>
 		            <hr>
 		            <c:forEach var="notice" items="${noticeList}">
