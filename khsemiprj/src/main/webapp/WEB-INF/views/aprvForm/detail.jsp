@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <style>
+        /* 커스텀 카드 레이아웃만 남겨두고 나머지는 commons.css 활용 */
         .emp-info-card {
             background-color: #ffffff;
             border: 1px solid #e9ecef;
@@ -47,6 +48,7 @@
             font-weight: 600;
         }
 </style>
+
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
@@ -102,25 +104,37 @@
 		</div>
 	</form>
     
-    <div class="cell mb-10">
-        <span class="font-bold" style="color: #666;">양식 설명</span>
-    </div>
-    <div class="cell mb-40" style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; min-height: 100px; white-space: pre-wrap; line-height: 1.6;">${aprvFormSelectVO.formExplain}</div>
+<div class="cell mb-10">
+    <span class="gray" style="font-weight: bold;">양식 파일</span>
+</div>
+        
+<div class="cell mb-40">
+    <c:if test="${attachNo != null}">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 6px; background-color: #ffffff; width: 100%; box-sizing: border-box;">
+            <div style="display: flex; align-items: center;">
+                <i class="fa-solid fa-file-lines" style="color: #7c3aed; font-size: 16px; margin-right: 10px;"></i>
+                
+                <a href="/download/legacy?attachNo=${attachNo}" style="font-size: 14px; font-weight: 500; color: #1e293b; text-decoration: none;">
+                    ${attachDto.attachName}
+                </a>
+            </div>
+            
+            <div style="font-size: 12px; color: #64748b; background-color: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight: 500;">
+                <fmt:formatNumber value="${attachDto.attachSize / 1024}" pattern="#,##0.0"/> KB
+            </div>
+        </div>
+    </c:if>
 
-    <div class="cell mb-10">
-        <span class="font-bold" style="color: #666;">양식 파일</span>
-    </div>
-    <div class="cell mb-50">
-        <c:if test="${attachNo != null}">
-            <a href="/download/legacy?attachNo=${attachNo}" style="display: inline-block; border: 1px solid #333; background: white; color: black; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-size: 14px;">
-                첨부파일 다운로드
-            </a>
-        </c:if>
-        <c:if test="${attachNo == null}">
-            <span style="color: #999;">등록된 양식 파일이 없습니다.</span>
-        </c:if>
-    </div>
+    <c:if test="${attachNo == null}">
+        <div style="padding: 15px; background-color: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; color: #64748b; font-size: 14px;">
+            첨부된 파일이 없습니다.
+        </div>
+    </c:if>
+</div>
 
+
+<div class="cell file-info-area mb-50"></div>
+    
     <div class="cell right">
         <c:if test="${sessionScope.loginId != null}">
             <a href="./edit?formNo=${aprvFormSelectVO.formNo}" class="btn btn-positive">수정하기</a>

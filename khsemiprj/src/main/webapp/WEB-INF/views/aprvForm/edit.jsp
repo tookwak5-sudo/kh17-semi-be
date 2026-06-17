@@ -4,6 +4,79 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
+<script>
+$(function() {
+    $(".preview-input").on("change", function(){
+        $(".file-info-area").empty(); 
+
+        if(this.files.length > 0) {
+            var file = this.files[0];
+            var fileName = file.name;
+            var fileSize = (file.size / 1024).toFixed(1) + " KB"; 
+
+            var fileContainer = $("<div>")
+                .css({
+                    "padding": "15px",
+                    "background-color": "#f8f9fa",
+                    "border": "1px solid #e2e8f0",
+                    "border-radius": "6px",
+                    "display": "flex",
+                    "align-items": "center",
+                    "justify-content": "space-between"
+                });
+
+            var fileLeft = $("<div>").css("display", "flex").css("align-items", "center");
+            var fileIcon = $("<i>").addClass("fa-solid fa-file-lines purple me-10").css("font-size", "18px");
+            var fileNameText = $("<span>").addClass("black").css("font-weight", "bold").css("font-size", "14px").text(fileName);
+            
+            var deleteBtn = $("<i>")
+                .addClass("fa-solid fa-xmark gray ms-10")
+                .css({"cursor": "pointer", "font-size": "14px"})
+                .on("click", function(){
+                    $(".preview-input").val("").trigger("change"); 
+                });
+            
+            fileLeft.append(fileIcon).append(fileNameText).append(deleteBtn);
+
+            var fileRight = $("<span>")
+                .addClass("gray")
+                .css({
+                    "font-size": "12px",
+                    "background-color": "#edf2f7",
+                    "padding": "3px 8px",
+                    "border-radius": "4px",
+                    "font-weight": "500"
+                })
+                .text(fileSize);
+
+            fileContainer.append(fileLeft).append(fileRight);
+            $(".file-info-area").append(fileContainer);
+
+        } else {
+            var uploadPlaceholder = $("<div>")
+                .css({
+                    "padding": "30px",
+                    "background-color": "#ffffff",
+                    "border": "2px dashed #cbd5e0",
+                    "border-radius": "6px",
+                    "text-align": "center",
+                    "cursor": "pointer",
+                    "color": "#718096"
+                })
+                .html("<i class='fa-solid fa-cloud-arrow-up' style='font-size:24px; margin-bottom:8px; color:#a0aec0;'></i><br><span style='font-size:14px; font-weight:500;'>클릭하여 파일 첨부 (hwp, docx 등)</span>")
+                .on("click", function(){
+                    $(".preview-input").click(); 
+                });
+
+            $(".file-info-area").append(uploadPlaceholder);
+        }
+    });
+
+    
+    $(".preview-input").trigger("change");
+}); 
+</script>
+
 <div class="container w-800 mt-50 mb-50">
 
 	<div class="cell mb-40">
@@ -79,12 +152,15 @@
 			</c:if>
 		</div>
 		<div class="cell mb-40">
-			<c:if test="${attachNo != null}">
-				<input type="hidden" name="attachNo" value="${attachNo}">
-			</c:if>
-			<input type="file" name="attach" class="input w-100"
-				style="border: 1px solid #ccc; padding: 5px;">
+    		<c:if test="${attachNo != null}">
+       			 <input type="hidden" name="attachNo" value="${attachNo}">
+    		</c:if>
+    			<input type="file" name="attach" class="input w-100 preview-input"
+        			style="display: none;">
 		</div>
+		
+		<div class="cell file-info-area"></div>
+		
 
 		<div class="cell right">
 			<button type="submit" class="btn"

@@ -139,17 +139,37 @@
 
 	<div class="card-group">
 	    <div class="info-card" style="position: relative;">
-	        <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 8px;">
-	            <a href="/emp/checkPassword" class="btn btn-positive">내 정보 수정</a>
-	            <a href="/emp/changePassword" class="btn btn-neutral">비밀번호 수정</a>
-	        </div>
-	        
-	        <h3>기본 정보</h3>
-	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-user"></i> 아이디</div><div class="info-value">${findEmpDto.empId}</div></div>
-	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-envelope"></i> 이메일</div><div class="info-value">${findEmpDto.empEmail}</div></div>
-	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-phone"></i> 연락처</div><div class="info-value">${findEmpDto.empContact}</div></div>
-	    </div>
-	
+    <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 8px;">
+        <a href="/emp/checkPassword" class="btn btn-positive">내 정보 수정</a>
+        <a href="/emp/changePassword" class="btn btn-neutral">비밀번호 수정</a>
+    </div>
+    
+    <h3>기본 정보</h3>
+    
+    <div style="display: flex; gap: 30px; margin-top: 20px;">
+        
+        <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 3px solid #e2e8f0; background-color: #f8fafc; display: flex; justify-content: center; align-items: center;">
+                
+                <c:if test="${profileAttachNo != null}">
+    				<img src="/download/legacy?attachNo=${profileAttachNo}" alt="" style="width: 100%; height: 100%; object-fit: cover; font-size: 0; color: transparent;">
+				</c:if>
+
+                <c:if test="${profileAttachNo == null}">
+                    <i class="fa-solid fa-user" style="font-size: 50px; color: #cbd5e1;"></i>
+                </c:if>
+
+            </div>
+        </div>
+
+        <div style="flex-grow: 1;">
+            <div class="info-row"><div class="info-label"><i class="fa-solid fa-user"></i> 아이디</div><div class="info-value">${findEmpDto.empId}</div></div>
+            <div class="info-row"><div class="info-label"><i class="fa-solid fa-envelope"></i> 이메일</div><div class="info-value">${findEmpDto.empEmail}</div></div>
+            <div class="info-row"><div class="info-label"><i class="fa-solid fa-phone"></i> 연락처</div><div class="info-value">${findEmpDto.empContact}</div></div>
+        </div>
+        
+    </div>
+</div>
 	    <div class="info-card">
 	        <h3>상세 정보</h3>
 	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-location-dot"></i>주소</div><div class="info-value">${findEmpDto.empAddress1}</div></div>
