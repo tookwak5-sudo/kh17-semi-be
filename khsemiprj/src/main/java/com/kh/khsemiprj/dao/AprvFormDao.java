@@ -1,11 +1,14 @@
 package com.kh.khsemiprj.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.AprvFormDto;
@@ -308,6 +311,39 @@ public class AprvFormDao {
 			e.getMessage();
 			return null;
 		}
+	}
+	
+	//목록에서 구분으로 검색을 위한 메소드
+	public List<AprvFormVO> selectHeadList(PageVO pageVO) {
+	    
+		 String sql = "select distinct af.form_head_no, ah.head_name "
+	               + "from aprv_form af "
+	               + "left join aprv_head ah on af.form_head_no = ah.head_no "
+	               + "where af.form_head_no is not null ";
+	               
+		
+		if(pageVO.getColumn()!=null && pageVO.getKeyword() != null && !pageVO.getKeyword().isEmpty()) {
+	    	if(pageVO.getColumn().equals("form_head_no")) {
+	    		sql += " AND af.form_head_no = " + pageVO.getKeyword();
+	    	}
+	    
+	    	else {
+	    		sql += " AND INSTR(af.form_name, '" + pageVO.getKeyword() + "') > 0 ";
+	    	}
+		} 
+      sql+= "order by af.form_head_no asc";
+	    return jdbcTemplate.query(sql, new RowMapper<AprvFormVO>() {
+	        @Override
+	        public AprvFormVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+	            AprvFormVO aprvFormVO = new AprvFormVO();
+	            
+	            // 쿼리 결과 컬럼명과 정확히 매칭시켜서 set
+	            aprvFormVO.setFormHeadNo(rs.getInt("form_head_no")); 
+	            aprvFormVO.setHeadName(rs.getString("head_name"));
+	            
+	            return aprvFormVO;
+	        }
+	    });
 	}
 
 	// 승인 대기 결재 문서 조회

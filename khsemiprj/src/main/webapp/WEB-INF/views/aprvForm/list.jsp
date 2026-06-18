@@ -7,7 +7,7 @@
 
 <div class="container w-80 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-	    <div class="w-15 flex-area" style="justify-content: left">
+	    <div class="w-20 flex-area" style="justify-content: left">
 				<div>
 			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 			            결재양식 관리
@@ -18,7 +18,7 @@
 
 		<div class="w-70 flex-area flex-center">
 	    	<form action="./list" method="get">
-	        	<select name="column" class="field">
+	        	<select name="column" class="field field-sm">
 	            <option value="form_name" ${param.column == 'form_name' ? 'selected' : ''}>양식명</option>
 	            <option value="form_head_no" ${param.column == 'form_head_no' ? 'selected' : ''}>구분(업무/비용 등)</option>
 	         	</select>
@@ -100,3 +100,4 @@
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
+
