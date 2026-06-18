@@ -12,6 +12,12 @@
 
     <!-- 아이콘 -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+	
+	<!-- fullcalendar cdn -->
+	<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
+	<!-- 음력 cdn	 -->
+	<script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.min.js"></script>
+	<!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 
     <!-- 디자인을 작성하기 위한 영역 -->
     <link rel="stylesheet" type="text/css" href="/css/commons.css">
@@ -57,14 +63,14 @@
 		/* 2. 종 아이콘 스타일 */
 		.bell-icon {
 		    font-size: 20px;       /* 아이콘 크기 (상단바에 맞게 조절 가능) */
-		 	color: #739BED;
+		 	color: white;
 		}
 		
 		/* 3. 🔥 핵심: 빨간색 알림 뱃지 */
 		.badge {
 		    position: absolute;    /* 💡 중요: 부모 상자를 기준으로 자유롭게 배치 */
-		    top: 10px;             /* 위에서부터의 위치 */
-		    right: 30px;           /* 우측에서부터의 위치 */
+		    top: 3px;             /* 위에서부터의 위치 */
+		    right: 75px;           /* 우측에서부터의 위치 */
 		    
 		    background-color: #ff4d4d; /* 선명하고 트렌디한 빨간색 */
 		    color: #ffffff;        /* 숫자 색상은 흰색 */
@@ -88,7 +94,8 @@
 		.sticky-header {
 		    position: sticky;
 		    top: 0; 
-		    z-index: 9999; 
+		    /* z-index: 9999; */ 
+		    z-index: 999;
 		    background-color: #ffffff; 
 		}
 		body {
@@ -97,14 +104,77 @@
 		    font-family: 'Pretendard', sans-serif;
 		}
 		.flex-center h1 {
-    font-size: 26px;
-    font-weight: 800;
-    /* 그라데이션 텍스트 처리 */
-    background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -1px;
-}
+		    font-size: 26px;
+		    font-weight: 800;
+		    /* 그라데이션 텍스트 처리 */
+		    background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+		    -webkit-background-clip: text;
+		    -webkit-text-fill-color: transparent;
+		    letter-spacing: -1px;
+		}
+		
+		/* 사이드바 프로필 카드 스타일 */
+		
+		/* 프로필 정보 텍스트 */
+		.profile-info {
+		    font-size: 0.95em;
+		    color: #475569;
+		    margin-top: 15px;
+		    line-height: 1.6;
+		}
+		
+		/* 출퇴근 버튼 전용 클래스 (기존 btn 스타일 계승) */
+		.btn-work {
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    gap: 8px;
+		    width: 100%;
+		    margin-top: 15px;
+		    font-weight: 600;
+		}
+	
+		.profile-card, .profile-card2 {
+		    background: #FFFFFF;
+		    border: 1px solid #E2E8F0;
+		    border-radius: 12px;
+		    padding: 20px;
+		    margin-top: 20px;
+		    margin-right:10px;
+		    text-align: center;
+		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+		    height:fit-content;
+		}
+		
+		.profile-card2 ul {
+		    list-style: none;
+		    padding: 0;
+		    margin-top: 20px;
+		    border-top: 1px solid #eee; /* 구분선 */
+		    padding-top: 15px;
+		}
+		.profile-card2 li a {
+		    display: flex;
+		    align-items: center;
+		    padding: 10px 15px;
+		    color: #495057;
+		    text-decoration: none;
+		    border-radius: 8px;
+		    transition: 0.2s;
+		    font-size: 0.95rem;
+		}
+		.profile-card2 li a i {
+		    margin-right: 12px;
+		    width: 20px; /* 아이콘 정렬 맞추기 */
+		    text-align: center;
+		    color: #6c757d;
+		}
+		
+		.profile-card2 li a:hover {
+		    background-color: #f1f3f5;
+		    color: #007bff;
+		    font-weight: 600;
+		}
     </style>
     
     <!-- jQuery CDN -->
@@ -127,58 +197,176 @@
 <%-- 세션ID : ${pageContext.session.id} --%>
 <%-- loginId : ${sessionScope.loginId} --%>
 <%-- empGrade : ${sessionScope.empGrade} --%>
+<%-- 부서 정보 : ${sessionScope.empDept} --%>
+<%-- 직책 정보 : ${sessionScope.empPosition} --%>
+
+	<script>
+// 		var workInState = {
+// 			workInValid: false,
+// 			ok: function(){
+// 				return Object.values(this)
+// 				.filter(v => typeof v==="boolean")
+// 				.every(v => v === true);
+// 			}
+// 		};
+		
+		var workOutState = {
+			workOutValid: false,
+			ok: function(){
+				return Object.values(this)
+				.filter(v => typeof v==="boolean")
+				.every(v => v === true);
+			}
+		};
+		
+		$(function () {
+// 			$("#workInForm").on("submit", function(e){
+				
+// 				if(!workInState.workInValid) {
+// 	            	openConfirm('출근하시겠습니까?', 'workInState.workInValid = true; $("#btnWorkIn").click();');
+// 				}
+				
+// 				return workInState.ok();
+// 			});
+			
+			$("#workOutForm").on("submit", function(e){
+				
+				if(!workOutState.workOutValid) {
+	            	openConfirm('퇴근하시겠습니까?로그아웃이 진행됩니다.', 'workOutState.workOutValid = true; $("#btnWorkOut").click();');
+				}
+				
+				return workOutState.ok();
+			});
+		});
+	</script>
 
     <!-- 메인 컨테이너1 + 내부영역4 -->
-    <div class="container w-1400">
+    <div class="container w-clamp">
         <div class="flex-area flex-vertical">
-        	<div class="sticky-header">
-            	<!-- 헤더 영역 -->
-	            <div class="flex-area">
-	                <div class="w-25 flex-area flex-center">
-	                    <img src="/images/kh정보교육원 로고.png" alt="로고" style="height: 42px; width: auto; object-fit: contain;">
-	                </div>
-	                <div class="w-50 flex-area flex-center">
-	                    <h1>　                        </h1>
-	                </div>
-	                <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-		                <div class="w-25 flex-area" style="justify-content: right; align-items: center;">
-		                    <div style="padding-top: 15px;padding-right: 20px;width: 100px;height: 42px; text-align: center;" class="notification-box"> 
-		                    	<a href="/memo/list" 
-						           style="font-size:20px; text-decoration: none;" 
-						           onclick="
-						               var w = 650; 
-						               var h = 650; 
-						               var left = (screen.width/2) - (w/2); 
-						               var top = (screen.height/2) - (h/2); 
-						               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
-						               return false;
-						        		 ">
-						            <i class="fa-solid fa-bell bell-icon">
-						            	<c:if test="${not empty countMemo && countMemo != 0}">
-							            	<span class="badge">${countMemo}</span>					            	
-						            	</c:if>
-						            </i>
-						        </a>
-		                    </div>
-		                </div>
-	                </c:if>
-	            </div>
-	
-	            <!-- 메뉴 -->
-	           <div> 
-           		<c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
-	            	<c:if test="${sessionScope.empGrade == '2'}">
-	            	<jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
-					</c:if>
-					<c:if test="${sessionScope.empGrade == '1'}">
-						<jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
-					</c:if>
-					<c:if test="${sessionScope.empGrade == '0'}">           	
-					<jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
-					</c:if>
-				</c:if>
-            </div>
-         </div>
+        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center; height: 49px">
+                
+                <a href="/" style="display: flex; align-items: center; padding: 0 10px; flex-shrink: 0; position: relative; z-index: 9999; margin-right: 100px;">
+                    <img src="/images/kh정보교육원 로고.png" alt="홈" style="height: 35px; width: auto; transform: scale(2.8); transform-origin: left center; position: relative; top: 5px;">
+                </a>
+
+                <div style="flex-grow: 1;">
+                    <style>
+                        .sticky-header .bell-icon {
+                            color: #ffffff !important;
+                        }
+                        .sticky-header .notification-box {
+                            background: transparent !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                            padding: 0 !important;
+                            margin: 0 15px !important;
+                        }
+                    </style>
+
+                    <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+                        <c:if test="${sessionScope.empGrade == '2'}">
+                            <jsp:include page="/WEB-INF/views/template/menu-admin.jsp"></jsp:include>
+                        </c:if>
+                        <c:if test="${sessionScope.empGrade == '1'}">
+                            <jsp:include page="/WEB-INF/views/template/menu-deptEmp.jsp"></jsp:include>
+                        </c:if>
+                        <c:if test="${sessionScope.empGrade == '0'}">           	
+                            <jsp:include page="/WEB-INF/views/template/menu-emp.jsp"></jsp:include>
+                        </c:if>
+                    </c:if>
+                </div>
+	         </div>
 	            <!-- 사이드바 및 컨텐츠 -->
 	            <div style="min-height: 450px;" class="flex-area">
+	        		 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+	        		 <div>
+					    <div class="profile-card">
+					        <div class="image-hover image-circle image-shadow" style="width: 120px; margin: 0 auto;">
+					            <img src="./profile?empId=${sessionScope.loginId}">
+					            <div class="content">
+					                <a href="/emp/mypage" class="white">
+					                    <i class="fa-solid fa-user"></i> 내정보
+					                </a>
+					            </div>
+					        </div>
+					
+					        <div class="profile-info">
+					            <div style="font-weight: bold; color: #1E293B;">${sessionScope.loginId}</div>
+					            <div>${sessionScope.empDept}</div>
+					            <div>${sessionScope.empPosition}</div>
+					        </div>
+					
+<%-- 					        <c:choose> --%>
+<%-- 					            <c:when test="${logInoutType.trim() eq '퇴근'}"> --%>
+<!-- 					                <form id="workInForm" action="/emp/work-in" method="post"> -->
+<!-- 					                <button id="btnWorkIn" class="btn btn-positive btn-work"> -->
+<!-- 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 출근 -->
+<!-- 					                </button> -->
+<!-- 					                </form> -->
+<%-- 					            </c:when> --%>
+<%-- 					            <c:otherwise> --%>
+<!-- 					                <form id="workOutForm" action="/emp/logoutOut" method="post"> -->
+<!-- 					                <button id="btnWorkOut" class="btn btn-negative btn-work"> -->
+<!-- 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근 및 로그아웃 -->
+<!-- 					                </button> -->
+<!-- 					                </form> -->
+<%-- 					            </c:otherwise> --%>
+<%-- 					        </c:choose> --%>
+					        <c:if test="${logInoutType.trim() eq '출근'}">
+					        	<form id="workOutForm" action="/emp/logoutOut" method="post">
+				                <button id="btnWorkOut" class="btn btn-negative btn-work">
+				                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근 및 로그아웃
+				                </button>
+				                </form>
+					        </c:if>
+					    </div>
+					    <div class="profile-card2">
+					        <ul>
+					        	<li class="mb-0">
+						    		<a href="/admin/manage">
+								        <i class="fa-solid fa-user-gear"></i>
+								        <span>시스템 설정</span>
+								    </a>
+					    		</li>
+					        	<li>
+								    <a href="/admin/emp/list">
+								        <i class="fa-solid fa-people-group"></i>
+								        <span>사원관리</span>
+								    </a>
+								</li>
+								<li>
+								    <a href="/dept/list">
+								        <i class="fa-solid fa-building"></i>
+								        <span>부서관리</span>
+									</a>
+								</li>
+								<li>
+					                <a href="/aprvForm/list">
+					                    <i class="fa-solid fa-box"></i>
+					                    <span>결재 양식</span>
+					                </a>
+					            </li>
+					            <li>
+					                <a href="/admin/logAccess/list">
+					                    <i class="fa-solid fa-server"></i>
+					                    <span>접속로그</span>
+					                </a>
+					            </li>
+					            <li>
+					                <a href="/admin/log-inout/list">
+					                    <i class="fa-solid fa-clock-rotate-left"></i>
+					                    <span>근태로그</span>
+					                </a>
+					            </li>
+					            <li>
+								    <a href="/admin/emp/exitList">
+								        <i class="fa-solid fa-people-group"></i>
+								        <span>퇴사자목록</span>
+								    </a>
+								</li>
+					        </ul>
+					    </div>
+					 </div>
+	        		 </c:if>   	
+	            	<!-- 컨텐츠 -->
 	                <div class="w-200 flex-fill">

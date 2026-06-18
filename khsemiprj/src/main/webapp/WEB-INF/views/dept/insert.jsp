@@ -55,7 +55,7 @@ input[type="checkbox"]:checked + label::after {
 
 <form action="./insert" autocomplete="off" method="post" class="form-check">
 
-	<div class="container w-400 mt-50">
+	<div class="container w-400 mt-20 mb-50 background-card">
 		
     	<div class="cell center">
             <h1>부서 등록</h1>

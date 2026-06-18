@@ -163,22 +163,28 @@ $(function() {
     });
 
     $("form").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+    	
         var canSubmit = false;
 
         if(state.formNameValid == false) {
-            window.alert("양식명을 입력하세요.");
+            //window.alert("양식명을 입력하세요.");
+            showAjaxAlarm('양식명을 입력하세요', 'btn-negative', '[name=formName]', 'left');
             $("[name=formName]").focus();
             return canSubmit; 
         }
 
         if(state.headNameValid == false) {
-            window.alert("구분을 선택하세요.");
+            //window.alert("구분을 선택하세요.");
+            showAjaxAlarm('구분을 선택하세요', 'btn-negative', '[name=headName]', 'left');
             $("[name=headName]").focus();
             return canSubmit; 
         }
 
         if(state.formExplainValid == false) {
-            window.alert("양식 내용을 입력하세요.");
+            //window.alert("양식 내용을 입력하세요.");
+            showAjaxAlarm('양식 내용을 입력하세요', 'btn-negative', '[name=formExplain]', 'left');
             $("[name=formExplain]").focus();
             return canSubmit; 
         }
@@ -190,11 +196,16 @@ $(function() {
 </script>
 <form action="./insert" method="post" enctype="multipart/form-data">
 
-	<div class="container w-950 mt-50 mb-50">
-		<div class="cell">
-			<h1 class="mt-0 mb-0">결재 양식 신규 등록</h1>
-		</div>
-		<div class="cell">전자결재 기안 시 직원들이 사용할 새로운 양식을 등록합니다.</div>
+	<div class="container w-950 mt-20 mb-50 background-card">
+		<div class="w-30 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            결재 양식 등록
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+        </div>
+<!-- 		<div class="cell">전자결재 기안 시 직원들이 사용할 새로운 양식을 등록합니다.</div> -->
 
 		<div class="cell mt-40">
 			<label>양식명 <i class="fa-solid fa-asterisk red"></i></label> 

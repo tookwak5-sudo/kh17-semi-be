@@ -6,6 +6,18 @@
 
 <script>
 $(function() {
+	var state = {
+        formNameValid: false,
+        headNameValid: true,
+        formExplainValid: false, 
+        
+        ok: function(){
+            return Object.values(this)
+            .filter(v => typeof v==="boolean")
+            .every(v => v === true);
+        }
+    };
+	
     $(".preview-input").on("change", function(){
         $(".file-info-area").empty(); 
 
@@ -72,17 +84,62 @@ $(function() {
         }
     });
 
+    $("[name=formName]").on("blur", function(){
+        var value = $(this).val().trim(); 
+        if(value.length == 0){ 
+            state.formNameValid = false; 
+        } else {
+            state.formNameValid = true;
+        }
+    });
+
+    $("[name=formExplain]").on("blur", function(){
+        var value = $(this).val().trim();
+        if(value.length == 0) {
+            state.formExplainValid = false;
+        } else {
+            state.formExplainValid = true;
+        }
+    });
+
+    $("form").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+    	
+        var canSubmit = false;
+
+        if(state.formNameValid == false) {
+            //window.alert("양식명을 입력하세요.");
+            showAjaxAlarm('양식명을 입력하세요', 'btn-negative', '[name=formName]', 'left');
+            $("[name=formName]").focus();
+            return canSubmit; 
+        }
+
+        if(state.formExplainValid == false) {
+            //window.alert("양식 내용을 입력하세요.");
+            showAjaxAlarm('양식 내용을 입력하세요', 'btn-negative', '[name=formExplain]', 'left');
+            $("[name=formExplain]").focus();
+            return canSubmit; 
+        }
+
+        canSubmit = true;
+        return canSubmit;
+    });
     
     $(".preview-input").trigger("change");
 }); 
 </script>
 
-<div class="container w-800 mt-50 mb-50">
+<div class="container w-800 mt-20 mb-50 background-card">
 
-	<div class="cell mb-40">
-		<h1 style="font-size: 36px; font-weight: bold; color: #333;">결재양식
-			수정</h1>
-	</div>
+	<div class="w-100 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            결재양식 수정
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+    </div>
 
 	<form action="./edit" method="post" enctype="multipart/form-data">
 
@@ -126,7 +183,7 @@ $(function() {
 		</div>
 		<div class="cell mb-20">
 			<input type="text" name="formName" value="${aprvFormDto.formName}"
-				class="input w-100" required
+				class="input w-100"
 				style="border: 1px solid #ccc; padding: 10px;">
 		</div>
 
@@ -134,7 +191,7 @@ $(function() {
 			<label class="font-bold" style="color: #666;">양식 설명</label>
 		</div>
 		<div class="cell mb-20">
-			<textarea name="formExplain" class="input w-100" required
+			<textarea name="formExplain" class="input w-100"
 				style="min-height: 150px; resize: vertical; border: 1px solid #ccc; padding: 10px;">${aprvFormDto.formExplain}</textarea>
 		</div>
 

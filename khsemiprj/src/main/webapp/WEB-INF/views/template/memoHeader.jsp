@@ -8,7 +8,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>그룹웨어</title>
-
+	<link rel="icon" href="/images/kh.ico" type="image/x-icon">
+	
     <!-- 아이콘 -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 
@@ -18,12 +19,19 @@
     <!-- jQuery CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
-    <style>
- 	.memo-card { */
- 	    background-color: #E2E8F0; 
- 	    border: 2px solid #e1e4e6; 
- 	    border-radius: 6px;
- 	    padding: 30px; 
- 	} 
+<style>
+    /* 페이지 전체의 배경색 (마이페이지와 동일하게 설정) */
+    body {
+        background-color: #F8F9FA; /* 마이페이지 배경색 확인 후 수정 */
+    }
+
+   /* 카드 스타일 */
+.memo-card {
+    background-color: #ffffff;
+    border: 1px solid #e1e4e6;
+    border-radius: 6px;
+    padding: 30px;
+    margin: 20px auto;
+}
 </style>
 </head>

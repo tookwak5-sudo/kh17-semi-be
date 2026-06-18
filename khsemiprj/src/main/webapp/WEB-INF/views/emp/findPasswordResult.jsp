@@ -53,7 +53,7 @@
         margin: 0;
     }
 </style>
-<div class="container w-400 mt-50 mb-50">
+<div class="container w-400 mt-20 mb-50 background-card">
     <div class="result-card">
         
         <div class="result-icon">
