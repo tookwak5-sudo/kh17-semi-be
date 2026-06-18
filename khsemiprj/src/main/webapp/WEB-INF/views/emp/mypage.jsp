@@ -133,7 +133,7 @@
 	</div>
 	
 	<div class="section-header">
-	    <h1 class="section-title">${findEmpDto.empName}님의 프로필 정보</h1>
+	    <h1 class="section-title">${findEmpDto.empName}님의 정보</h1>
 	    <span class="section-subtitle">기본 및 상세 설정 관리</span>
 	</div>
 
@@ -147,35 +147,27 @@
     <h3>기본 정보</h3>
     
     <div style="display: flex; gap: 30px; margin-top: 20px;">
-        
-        <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center;">
-            <div style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 3px solid #e2e8f0; background-color: #f8fafc; display: flex; justify-content: center; align-items: center;">
-                
-                <c:if test="${profileAttachNo != null}">
-    				<img src="/download/legacy?attachNo=${profileAttachNo}" alt="" style="width: 100%; height: 100%; object-fit: cover; font-size: 0; color: transparent;">
-				</c:if>
-
-                <c:if test="${profileAttachNo == null}">
-                    <i class="fa-solid fa-user" style="font-size: 50px; color: #cbd5e1;"></i>
-                </c:if>
-
-            </div>
-        </div>
-
         <div style="flex-grow: 1;">
             <div class="info-row"><div class="info-label"><i class="fa-solid fa-user"></i> 아이디</div><div class="info-value">${findEmpDto.empId}</div></div>
             <div class="info-row"><div class="info-label"><i class="fa-solid fa-envelope"></i> 이메일</div><div class="info-value">${findEmpDto.empEmail}</div></div>
             <div class="info-row"><div class="info-label"><i class="fa-solid fa-phone"></i> 연락처</div><div class="info-value">${findEmpDto.empContact}</div></div>
         </div>
-        
     </div>
 </div>
 	    <div class="info-card">
 	        <h3>상세 정보</h3>
 	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-location-dot"></i>주소</div><div class="info-value">${findEmpDto.empAddress1}</div></div>
 	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-cake-candles"></i>생년월일</div><div class="info-value">${findEmpDto.empBirth}</div></div>
-	        <div class="info-row"><div class="info-label"><i class="fa-solid fa-clock-rotate-left"></i>마지막 로그인</div><div class="info-value">2026.06.01</div></div>
-	    </div>
+	        <div class="info-row">
+	        	<div class="info-label">
+	        		<i class="fa-solid fa-clock-rotate-left"></i>
+	        		최종 로그인
+	        	</div>
+	        	<div class="info-value">
+	        		<fmt:formatDate value="${findEmpDto.empLogin}" pattern="yyyy-MM-dd" />
+	        	</div>
+	        </div>
+	   </div>
 	</div>
 
 	<div class="section-header mt-50">

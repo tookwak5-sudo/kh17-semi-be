@@ -140,7 +140,7 @@
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
-	        	<label>일정명</label>
+	        	<label>일정명<i class="fa-solid fa-asterisk red"></i></label>
 	        	<input type="text" name="planName" class="field w-100">
 				<div class="fail-feedback w-100">
                    <div>필수 입력 창 입니다</div>
@@ -148,7 +148,7 @@
 	        </div>
 			<input type="hidden" name="planDeptNo" value="${deptNo}" class="field w-100">
 	        <div class="cell">
-	        	<label>유형</label>
+	        	<label>유형<i class="fa-solid fa-asterisk red"></i></label>
 	        	<select class="field w-100" name="planType">
 	                <option value="">선택하세요</option>
 	                <option value="개인">개인</option>
@@ -174,9 +174,12 @@
 	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
 	        </div>
 	       	
-	         <div class="cell">
-	            <label>내용</label>
+	        <div class="cell">
+	            <label>내용<i class="fa-solid fa-asterisk red"></i></label>
 	            <textarea name="planExplain" class="field w-100"></textarea>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        <div class="cell mt-40 right">
 	            <button type="submit" class="btn btn-positive btn-plan">
@@ -230,20 +233,23 @@
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
-	        	<label>일정명</label>
+	        	<label>일정명<i class="fa-solid fa-asterisk red"></i></label>
 	        	<input type="text" name="planName" class="field w-100">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
-	        <div class="cell">
-	        	<label>유형</label>
-	        	<div class="cell">
-	        	<label>유형</label>
+			<div class="cell">
+	        	<label>유형<i class="fa-solid fa-asterisk red"></i></label>
 	        	<select class="field w-100" name="planType">
 	                <option value="">선택하세요</option>
 	                <option value="개인">개인</option>
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
-	        </div>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
@@ -258,6 +264,9 @@
 	            <input type="text" name="planSdate" class="field w-100 picker-8-1">
 	                <i class="fa-solid fa-minus ms-10 me-10"></i>
 	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        
 	         <div class="cell">
@@ -294,9 +303,9 @@
             planNameValid : false,
             planTypeValid : false,
             planHeadNoValid : true,
-            planSdateValid : true,
-            planEdateValid : true,
-            planExplainValid : true, // 선택항목
+            planSdateValid : false,
+            planEdateValid : false,
+            planExplainValid : false, 
             ok : function() {
                 return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
                 .filter(v => typeof v == "boolean") // boolean값만 추출해서
@@ -339,6 +348,60 @@
                 $input.removeClass("fail").removeAttr("data-error");
             }
         });
+        
+        $(document).on("blur input", "[name=planSdate]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planSdate") state.planSdateValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+        
+        $(document).on("blur input", "[name=planEdate]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planEdate") state.planEdateValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+        
+        $(document).on("blur input", "[name=planExplain]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planExplain") state.planExplainValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
 		 
 		//등록 버튼을 누르면 발생하는 등록 작업
 		$(document).on("click",".btn-plan", function(){
@@ -347,7 +410,6 @@
 		    $(".field").trigger("blur").trigger("input");
 		    
 		    if(!state.ok()) {
-		        alert("입력 오류를 확인하세요.");
 		        return;
 		    }
 			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';

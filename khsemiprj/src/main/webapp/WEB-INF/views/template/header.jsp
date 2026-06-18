@@ -303,7 +303,7 @@
 	        		 <div>
 					    <div class="profile-card">
 					        <div class="image-hover image-circle image-shadow" style="width: 120px; margin: 0 auto;">
-					            <img src="./profile?empId=${sessionScope.loginId}">
+					            <img src="/emp/profile?empId=${sessionScope.loginId}">
 					            <div class="content">
 					                <a href="/emp/mypage" class="white">
 					                    <i class="fa-solid fa-user"></i> 내정보

@@ -92,17 +92,17 @@ public class EmpController {
 			return "redirect:./login?error";
 		}
 
-		// 이 회원의 승인 상태가 상태가 N이라면
+		// [3] 로그인 아이디의 승인 상태가 상태가 N이라면
 		if (findEmpDto.getEmpValid().equals("N")) {
 			return "redirect:./login?valid";
 		}
 
-		// 퇴사 회원이라면
+		// [4] 퇴사 회원이라면
 		EmpExitDto empExitDto = empExitDao.selectOne(empDto.getEmpId());
 		if (empExitDto != null && empExitDto.isExit()) {
 			return "redirect:./login?exit";
 		}
-
+		
 		// - 현재시간을 생성(완벽하게 동일한 시간으로 설정해야 할 경우 자바에서 시간을 생성해서 양측에 추가)
 		// Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 		// - 로그인시간을 갱신
@@ -113,20 +113,25 @@ public class EmpController {
 //		empHistoryDto.setMemberHistoryAddress(request.getRemoteAddr());//IP
 //		empHistoryDto.setMemberHistoryAgent(request.getHeader("User-Agent"));//Agent
 //		empHistoryDao.insert(empHistoryDto);
-
-		// - 세션(HttpSession)에 로그인 되었음을 표시
+		
+		// [5] 세션 등록
+		// [5-1] 세션 : 아이디- 세션(HttpSession)에 로그인 되었음을 표시
 		session.setAttribute("loginId", findEmpDto.getEmpId());
 
-		// loginLevel
+		// [5-2] 세션 : 등급 loginLevel
 		// - 1. 관리자 테이블 조회 후 존재 시 → loginLevel = 2로 설정
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
 		
-		// 직책 
+		// [5-3] 세션 : 직책
 		EmpPositionDeptVO empPositionDeptVO = empPositionDemptDao.selectDeptPositionbyId(empDto.getEmpId());
 		session.setAttribute("empPosition", empPositionDeptVO.getEmpPositionName());
 		session.setAttribute("empDept", empPositionDeptVO.getDeptName());
+		
+		// [6] 로그인 시 회원의 로그인 시간 등록
+		// 조회된 아이디에 로그인 시간을 현재시간으로 update
+		empDao.updateLoginTime(findEmpDto.getEmpId());
 		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
@@ -364,7 +369,6 @@ public class EmpController {
 			model.addAttribute("profileAttachNo", profileAttachNo);
 		} catch (Exception e) {
 			// 프로필 사진이 없으면 번호를 안 넘김
-			return "redirect:/images/no_image.png";
 		}
 
 		// 근태 로그 및 로그인 로그 필요.
@@ -382,17 +386,6 @@ public class EmpController {
 		return "emp/mypage";
 	}
 	
-	//header프로필 호출
-	@RequestMapping("/headerProfile")
-	public String headerProfile(@RequestParam String loginId) {
-		try {
-			int profileAttachNo = empDao.searchProfile(loginId);
-			return "redirect:/download/modern?attachNo="+profileAttachNo;
-		} catch (Exception e) {
-			return "redirect:/images/no_image.png";
-		}
-	}
-
 	@GetMapping("/checkPassword")
 	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto) {
 		String loginId = (String) session.getAttribute("loginId");
@@ -607,5 +600,17 @@ public class EmpController {
 
 		return "redirect:./mypage";
 	}
+	
+//	//header프로필 호출
+//	@RequestMapping("/headerProfile")
+//	public String headerProfile(@RequestParam String empId) {
+//		try {
+//			int attachNo = empDao.searchProfile(empId);
+//			return "redirect:/download/modern?attachNo=" + attachNo;
+//		} catch (Exception e) {
+//			//return "redirect:/images/no_image.png";
+//			return "redirect:/images/no_image.png";
+//		}
+//	}
 
 }
