@@ -460,8 +460,7 @@
 </script>
 
 <script type="text/javascript">
-	    document.addEventListener('DOMContentLoaded', function() {
-	    	  var currentPlanType = "회사"
+	    document.addEventListener('DOMContentLoaded', function() {    	  
 	    	  
 		      var calendarEl = document.getElementById('calendar');
 		   	  
@@ -639,6 +638,7 @@
         });
       		//날짜 클릭시 클릭한 날짜와 함께 
 	        calendar.render();
+	        filterCalendarEvents("회사");
 			
 	        document.addEventListener('click', function(e) {
             // 클릭된 요소가 '+더보기' 링크인지 확인
