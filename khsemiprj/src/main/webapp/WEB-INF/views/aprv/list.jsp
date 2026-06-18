@@ -76,12 +76,12 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th width="6%">번호</th>
-					<th width="5%">분류</th>
-					<th width="36%">제목</th>
-					<th width="5%">상태</th>
+					<th width="75px">번호</th>
+					<th width="75px">분류</th>
+					<th>제목</th>
+					<th width="90px">상태</th>
 					<th width="27%">기안자</th>
-					<th width="12%">기안일자</th>
+					<th width="200px">기안일자</th>
 				</tr>
 			</thead>
 				<tbody>
