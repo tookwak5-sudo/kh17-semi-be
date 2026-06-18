@@ -27,6 +27,15 @@
 		        }
 		        
 		        #send-ajax-alarm {
+		        	background-color: #ffffff;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-positive:hover {
+		        	background-color: #5A86E3;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-negative:hover {
+		        	background-color: #E86A7A;
 		        	transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
 		
@@ -115,13 +124,29 @@
 				                top: $(target).offset().top + "px",
 				                left: ($(target).offset().left - alarmWidth - 10) + "px" // 10은 타겟과의 간격
 				            });
-				        } else {
+				        } else if(position == 'right') {
 				            // 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
 				            $(divAlarm).css('transform-origin', 'left center');
 				            
 				            $(divAlarm).css({
 				                top: $(target).offset().top + "px",
 				                left: ($(target).offset().left + $(target).outerWidth() + 10) + "px"
+				            });
+				        } else if(position == 'bottom') {
+				        	// 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
+				            $(divAlarm).css('transform-origin', 'left center');
+				            
+				            $(divAlarm).css({
+				                top: $(target).offset().top + $(target).outerHeight() + 10 + "px",
+				                left: $(target).offset().left + "px"
+				            });
+				        } else {
+				        	// 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
+				            $(divAlarm).css('transform-origin', 'left center');
+				            
+				            $(divAlarm).css({
+				                top: $(target).offset().top - 50 + "px",
+				                left: $(target).offset().left + "px"
 				            });
 				        }
 				    }
@@ -245,8 +270,8 @@
 				</c:when>
 	    	</c:choose>
 	    	<!-- 비동기용 알림 -->
-			<div id="div-alarm" style="position: absolute;top: 590px;right: 20px;opacity: 0;visibility: hidden;width: fit-content;">
-		        <a id="send-ajax-alarm" class="btn btn-positive btn-slide-hidden" onclick="hideAjaxAlarm(this)" >알림</a>
+			<div id="div-alarm" style="position: absolute;opacity: 0;visibility: hidden;width: fit-content;">
+		        <a id="send-ajax-alarm" class="btn btn-positive btn-slide-hidden" onclick="hideAjaxAlarm(this)">알림</a>
 		    </div>
 		    
 		    <!-- 커스텀 얼럿 -->

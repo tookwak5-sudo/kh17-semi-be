@@ -83,6 +83,20 @@ $(function () {
 		}
 	});
 	
+	$(document).on("click", "[name=aprvCostType]", function () {
+		if($("[name=aprvCostType]:checked").val() == "개인") {
+			$('#divAprvCostTypePersonal').show();
+			state.aprvCostReceiverValid = false;
+        	state.aprvCostReceiveAccountValid = false;
+		} else {
+			$('#divAprvCostTypePersonal').hide();
+			$('#aprvCostReceiver').val('');
+			$('#aprvCostReceiveAccount').val('');
+			state.aprvCostReceiverValid = true;
+			state.aprvCostReceiveAccountValid = true;
+		}
+	});
+	
 	$(document).on("click", "#deptList1 input[type=checkbox][name=dept]", function () {
     	if($(this).prop("checked")) {
     		$("#deptList1 input[type=checkbox][name=dept]").prop("checked", false);
@@ -145,6 +159,100 @@ $(function () {
 	$(document).on("click", ".line-delete", function () {
 		$(this).closest("tr").remove();
 	});
+ 
+  	//금액 입력창 처리
+    $("[name=aprvCost]").on("input", function(){
+    	var $this = $(this);
+        var originValue = $this.val();
+        
+        // 1. 현재 커서의 위치를 저장
+        var selectionStart = this.selectionStart;
+        
+        // 2. 커서 앞쪽에 있던 콤마(,)의 개수를 세어둡니다. (커서 위치 계산용)
+        var commaCountBefore = (originValue.substring(0, selectionStart).match(/,/g) || []).length;
+        
+        // 3. 숫자 외의 문자 제거 및 포맷팅
+        var replaceValue = originValue.replace(/[^0-9]/g, "");
+        var formattedValue = replaceValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        
+        // 4. 값을 인풋에 반영
+        $this.val(formattedValue);
+        
+        // 5. 값이 바뀐 후, 커서 앞쪽에 새로 생긴 콤마(,)의 개수를 쎕니다.
+        var commaCountAfter = (formattedValue.substring(0, selectionStart).match(/,/g) || []).length;
+        
+        // 6. 늘어나거나 줄어든 콤마 개수만큼 커서 위치를 보정합니다.
+        var newCursorPosition = selectionStart + (commaCountAfter - commaCountBefore);
+        
+        // 7. 커서 위치를 강제로 세팅합니다.
+        this.setSelectionRange(newCursorPosition, newCursorPosition);
+        
+     	// --- [추가된 로직] 실시간 한글 변환 결과 보여주기 ---
+        var koreanText = numberToKorean(replaceValue);
+        
+        // 예: input 바로 다음(next)에 있는 .korean-view 클래스에 글자를 넣어줌
+        $(this).next(".korean-view").text(koreanText);
+    });
+  	
+ 	// 1. 숫자를 한글로 변환하는 함수
+    function numberToKorean(number) {
+    	if (!number || isNaN(number)) return "";
+        
+        var inputNumber = number.replace(/,/g, ""); // 콤마 제거
+        if (parseInt(inputNumber) === 0) return "영원";
+        
+        var numUnit = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+        var danUnit = ["", "십", "백", "천"];
+        var manUnit = ["", "만 ", "억 ", "조 ", "경 "]; // 뒤에 공백을 살짝 주면 보기 좋습니다
+        
+        var koreanResult = "";
+        var len = inputNumber.length;
+        var currentBlockHasValue = false; // 현재 4자리 블록에 숫자가 존재하는지 체크
+        
+        for (var i = 0; i < len; i++) {
+            var num = inputNumber.charAt(i);
+            var unitIdx = len - 1 - i; // 역순 인덱스
+            
+            // 해당 자리에 숫자가 있으면 (0이 아니면)
+            if (num !== "0") {
+                currentBlockHasValue = true; // 이 블록은 숫자가 존재함!
+                
+                var numStr = numUnit[num];
+                // '일십' 대신 '십'으로 표현 (단, 만/억/조 등의 자리가 아닌 경우에만)
+                if (numStr === "일" && (unitIdx % 4) !== 0) {
+                    numStr = ""; 
+                }
+                koreanResult += numStr + danUnit[unitIdx % 4];
+            }
+            
+            // 4자리마다 (만, 억, 조, 경) 단위를 붙이는 시점
+            if (unitIdx % 4 === 0) {
+                // 현재 4자리 블록에 숫자가 하나라도 입력되었거나, 
+                // 혹은 최초 '억', '조' 단위 위쪽에서 내려온 숫자가 있다면 단위를 붙여줍니다.
+                if (currentBlockHasValue) {
+                    koreanResult += manUnit[Math.floor(unitIdx / 4)];
+                }
+                // 다음 4자리 블록을 위해 체크 변수 초기화
+                currentBlockHasValue = false; 
+            }
+        }
+        
+        // 마지막에 '원'을 붙여주고, 공백 정리
+        return koreanResult.trim() + "원";
+    }
+ 	
+ 	//계좌번호 입력처리
+    $("[name=aprvCostReceiveAccount]").on("input", function(e){
+    	let value = e.target.value;
+
+	    // 1. 숫자와 하이픈이 아닌 문자(한글 자음 포함) 제거
+	    value = value.replace(/[^0-9-]/g, '');
+
+	    // 2. 하이픈 연속 입력 방지
+	    value = value.replace(/-{2,}/g, '-');
+
+	    e.target.value = value;
+    });
 });
 
 // 팝업 열기
@@ -374,4 +482,19 @@ function removeFile(button) {
 			$('input[name=deleteFileNo').val($(button).attr("data-no"));
         }
     }
+}
+
+// 평일(주말 제외) 일수 계산 함수 (호이스팅을 위해 상단 정의 또는 바깥 배치)
+function getWeekdaysCount(startDate, endDate) {
+	let count = 0;
+	let current = startDate.clone(); 
+	
+	while (current.isSameOrBefore(endDate, 'day')) {
+		let dayOfWeek = current.day(); 
+		if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+			count++;
+		}
+		current.add(1, 'day');
+	}
+	return count;
 }
