@@ -461,9 +461,10 @@
 
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
-			
+	    	  var currentPlanType = "회사"
+	    	  
 		      var calendarEl = document.getElementById('calendar');
-		      
+		   	  
 		      var calendar = new FullCalendar.Calendar(calendarEl, {
 	        	slotMinTime: '09:00',
 	        	slotMaxTime: '19:00',
