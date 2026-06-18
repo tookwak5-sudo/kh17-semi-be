@@ -187,7 +187,7 @@
 		
 		<c:if test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
 			<a class="btn btn-negative" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
-			<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+			<a class="btn btn-negative" onclick="deleteCheck();">삭제</a>
 		</c:if>
 		
 		<c:if test="${param.column == null && param.boardHead == null}">
@@ -219,6 +219,22 @@
 
 
 <script type="text/javascript">
+
+	function deleteCheck() {
+		openConfirm('게시글을 삭제하시겠습니까?', 'location.href="./delete?boardNo='+${boardDto.boardNo}+'";');
+	}
+	
+	function deleteReply(replyNo) {
+		$.ajax({
+			url: "/rest/reply/delete",
+			method: "post",
+			data: { replyNo : replyNo },
+			success: function(response){
+				loadList();
+			}
+		});
+	}
+
 	$(function(){
     	$(document).on("click", ".writer-name", function(e) {
 	        e.stopPropagation(); 
@@ -339,11 +355,9 @@
 
 
 <script type="text/javascript">
-	$(function(){
-		var params = new URLSearchParams(window.location.search);
-		var boardNo = params.get("boardNo");
+	var params = new URLSearchParams(window.location.search);
+	var boardNo = params.get("boardNo");
 		
-		loadList();
 		
 		//목록 불러오기 로직
 		function loadList() {
@@ -470,7 +484,7 @@
 						if (response[i].replyParent) { 
 						    $(html).find(".btn-nested-reply").remove(); 
 						    $(html).css({
-						        "padding-left": "60px",
+						        /* "padding-left": "60px", */
 						        "position": "relative"
 						    }); 
 						    var arrowHtml = `
@@ -495,6 +509,8 @@
 				}
 			});
 		}
+	$(function(){
+		loadList();
 		
 		//이벤트: 인벤 스타일 아코디언 그룹 토글
 		$(".reply-area").on("click", ".reply-chunk-header", function() {
@@ -669,19 +685,16 @@
 		});
 		
 		//이벤트: 댓글 삭제, 수정
-		$(".reply-area").on("click", ".btn-reply-delete", function(){
-			var choice = window.confirm("정말 삭제하시겠습니까?");
-			if(choice == false) return;
+ 		$(".reply-area").on("click", ".btn-reply-delete", function(){
 			var replyNo = $(this).closest(".reply-viewer").data("key");
-			$.ajax({
-				url: "/rest/reply/delete",
-				method: "post",
-				data: { replyNo : replyNo },
-				success: function(response){
-					loadList();
-				}
-			});
+			openConfirm("정말 삭제하시겠습니까?", 'deleteReply('+replyNo+');');
 		});
+		
+
+		
+		
+			
+			
 		
 		$(".reply-area").on("click", ".btn-reply-edit", function(){
 			$(".reply-editor").prev(".reply-viewer").show();
