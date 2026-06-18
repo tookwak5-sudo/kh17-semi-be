@@ -5,24 +5,39 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
-<div class="container w-1200 mt-50 mb-50">
+<div class="container w-80 mt-20 mb-50 background-card">
+	<div class="cell center flex-area">
+	    <div class="w-15 flex-area" style="justify-content: left">
+				<div>
+			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+			            결재양식 관리
+			            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+			        </h1>
+				</div>
+	    </div>
 
-    <div class="cell center mb-0">
-        <h1 class="mb-0">결재 양식 관리</h1>
-    </div>
-
-    <div class="cell center">
-        사원들이 결재 기안 시 사용할 서식 양식을 등록하고 관리하는 페이지입니다.
-    </div>
-
-    <div class="cell right">
-        <c:if test="${sessionScope.loginId != null}">
-            <a href="./insert" class="btn btn-neutral">
-                <i class="fa-solid fa-plus"></i> 신규 양식 등록하기
-            </a>
-        </c:if>
-    </div>
-
+		<div class="w-70 flex-area flex-center">
+	    	<form action="./list" method="get">
+	        	<select name="column" class="field">
+	            <option value="form_name" ${param.column == 'form_name' ? 'selected' : ''}>양식명</option>
+	            <option value="form_head_no" ${param.column == 'form_head_no' ? 'selected' : ''}>구분(업무/비용 등)</option>
+	         	</select>
+	            <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
+	            <button type="submit" class="btn btn-positive">
+	                <i class="fa-solid fa-magnifying-glass"></i>
+	                <span>검색</span>
+	            </button>
+	        </form>
+	    </div>
+	    <div class="w-15 flex-area flex-center" style="justify-content: right; align-items: center;">
+	        <c:if test="${sessionScope.loginId != null}">
+	            <a href="./insert" class="btn btn-neutral">
+	                <i class="fa-solid fa-plus"></i> 양식 등록
+	            </a>
+	        </c:if>
+	    </div>
+	</div>
+	
     <div class="cell right">
        ${pageVO.getBeginRownum()}-${pageVO.getEndRownum()} / 총 ${pageVO.count}개의 양식
     </div>
@@ -69,7 +84,7 @@
         <jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
     </div>
         
-   <div class="cell center">
+   <%-- <div class="cell center">
     	<form action="./list" method="get">
         	<select name="column" class="field">
             <option value="form_name" ${param.column == 'form_name' ? 'selected' : ''}>양식명</option>
@@ -81,7 +96,7 @@
                 <span>검색</span>
             </button>
         </form>
-    </div>
+    </div> --%>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

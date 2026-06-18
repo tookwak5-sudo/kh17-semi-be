@@ -6,6 +6,10 @@
     font-family: sans-serif;
 }
 
+body {
+	margin-top:0px;
+}
+
 /* 
     컨테이너 디자인 
     - 기본적으로 가운데 배치되도록 구현
@@ -72,10 +76,20 @@
 .w-1400 { width:1400px !important; }
 .w-1500 { width:1500px !important; }
 .w-1600 { width:1600px !important; }
+.w-clamp { 
+	width: clamp(1000px, 95%, 1920px);
+    /* 화면 중앙 배치 */
+    margin: 0 auto;
+    /* 필요시 배경색이나 여백 설정 */
+    /* padding: 0 20px; */
+}
 /* 폭 비율 설정 */
 .w-100 { width:100% !important; }
+.w-90 { width:90% !important; }
+.w-85 { width:85% !important; }
 .w-80 { width:80% !important; }
 .w-75 { width:75% !important; }
+.w-70 { width:70% !important; }
 .w-66 { width:66.6666% !important; }
 .w-60 { width:60% !important; }
 .w-50 { width:50% !important; }
@@ -83,6 +97,8 @@
 .w-33 { width:33.3333% !important; }
 .w-25 { width:25% !important; }
 .w-20 { width:20% !important; }
+.w-15 { width:15% !important; }
+.w-10 { width:10% !important; }
 
 /*
     여백(margin) 유틸리티 클래스
@@ -310,17 +326,13 @@ a.btn {
     자식(하위) 선택자
     - .table > thead > tr > th 과 같이 부등호 표시로 연결
 */
+
 .table {
-/*     width: 100%; */
-/*     border: 1px solid #2d3436; */
-/*     border: none; */
-/*     border-bottom: 1px solid #ebebeb; */
-/*     border-collapse: collapse; */
-    
-    width: 100%;
-    border-collapse: separate; /* border-radius를 위해 separate 사용 */
-    border-spacing: 0;
+  	width: 100%;
+    border-collapse: collapse; /* 하나만 남깁니다 */
+    border: none;
     margin-top: 10px;
+    table-layout: fixed; /* 중요: 셀 너비를 고정하여 레이아웃 붕괴 방지 */
 }
 
 .table > thead > tr > th, 
@@ -331,6 +343,9 @@ a.btn {
     border-bottom: 1px solid #ebebeb;
     padding: 0.2em;
     height: 37px;
+    
+    /* 추가: 세로 중앙 정렬 핵심 */
+    vertical-align: middle;
 }
 
 .table > tbody > tr:hover
@@ -372,6 +387,10 @@ a.btn {
 .table.table-stripe > tbody > tr:nth-child(2n) 
 {
     background-color: #dfe6e9;
+}
+
+.table input[type="checkbox"] {
+    display: none !important;
 }
 
 /* 
@@ -620,6 +639,7 @@ a.btn {
 .image-hover > img {
     width: 100%;
     height: 100%;
+    display: block; /* 이미지 하단 공백 제거 */
 }
 .image-hover > .content {
     position: absolute;
@@ -627,22 +647,33 @@ a.btn {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     
     display: flex;
+    flex-direction: column;    /* 가로에서 세로 정렬로 변경 */
     justify-content: center;
     align-items: center;
+    gap: 5px;                 /* 메뉴 사이 간격 */
 
     /* display: none; */
     opacity: 0;
-
-    transition: opacity 0.1s ease-out;
+    transition: opacity 0.3s ease-out;
 }
 .image-hover:hover > .content {
     /* display: flex; */
     opacity: 1;
 }
 
+/* 메뉴 링크 스타일 */
+.content a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+}
 
 /* 
     피드백 디자인 
@@ -709,7 +740,7 @@ textarea.field {
 }
 /* 검색창 전용 클래스 (Compact) */
 .field-sm {
-    width: 400px;
+    width: 200px;
     height: 40px; /* 높이 고정 */
     padding: 0px 12px; /* 패딩을 줄여서 높이를 낮춤 */
     line-height: 40px;        /* 높이와 동일하게 설정하여 텍스트 중앙 정렬 */
@@ -787,4 +818,13 @@ select.field {
     border-color: #4f46e5;
     background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
     background-size: 100% 100%;
+}
+
+.background-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 20px;
+    padding-top:0px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }

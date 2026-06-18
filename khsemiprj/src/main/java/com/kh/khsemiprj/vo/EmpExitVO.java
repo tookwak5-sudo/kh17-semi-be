@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class EmpExitVO {
 	 private String empId;
-	 private Timestamp empExitTime;
+	 private Timestamp empExitTime;//사직 신청 시각
 	 private String empName;
+	 private Timestamp aprvEtime;//사직 처리 시각
 }

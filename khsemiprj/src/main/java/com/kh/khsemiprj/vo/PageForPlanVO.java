@@ -2,19 +2,17 @@ package com.kh.khsemiprj.vo;
 
 import lombok.Data;
 
-//VO(Value Object) :
-//- 테이블과 무관하게 필요에 의해서 데이터를 묶어두기 위한 클래스
-//- 자바에서 배웠던 클래스와 가장 유사한 형태
 @Data
-public class PageForAprvVO {
-	private String aprvHead = "";
-	private String aprvStatus = "";
+public class PageForPlanVO {
+	private String planSdate;
+	private String planEdate;
 	private String column;//파라미터에 있는 검색항목
 	private String keyword;//파라미터에 있는 검색키워드
 	private Integer page = 1;//파라미터에 있는 페이지번호 (없으면 1페이지)
 	private Integer size = 10;//파라미터에 있는 페이지규격 (없으면 5개)
 	private int count; //총 데이터 개수 (DB에서 조회해서 채워줘야함)
 	
+
 	//목록인지 검색인지 판정하는 메소드
 	//- 목록 : 컬럼과 키워드 중 하나라도 없는 경우
 	//- 검색 : 컬럼과 키워드 모두 있는 경우
@@ -38,9 +36,9 @@ public class PageForAprvVO {
 	//목록 및 검색 유지용 파라미터 생성
 	public String getSearchParams() {
 		if(isList())
-			return "size="+size+"&aprvHead="+aprvHead+"&aprvStatus="+aprvStatus;
+			return "size="+size+"&planSdate="+planSdate+"&planEdate="+planEdate;
 		else
-			return "size="+size+"&aprvHead="+aprvHead+"&aprvStatus="+aprvStatus+"&column="+column+"&keyword="+keyword;
+			return "size="+size+"&planSdate="+planSdate+"&planEdate="+planEdate+"&column="+column+"&keyword="+keyword;
 	}
 	//현재 페이지에 맞는 첫 블록 번호를 반환하는 메소드
 	public int getBeginBlock() {

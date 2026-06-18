@@ -1,6 +1,7 @@
 package com.kh.khsemiprj.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,9 +10,14 @@ import org.springframework.stereotype.Repository;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.mapper.HeadMapper;
+import com.kh.khsemiprj.mapper.PlanEmpDeptMapper;
 import com.kh.khsemiprj.mapper.PlanHeadMapper;
 import com.kh.khsemiprj.mapper.PlanMapper;
+import com.kh.khsemiprj.vo.PageForPlanVO;
+import com.kh.khsemiprj.vo.PageVO;
+import com.kh.khsemiprj.vo.PlanEmpDeptVO;
 import com.kh.khsemiprj.vo.PlanHeadVO;
+
 
 @Repository
 public class PlanDao {
@@ -23,6 +29,8 @@ public class PlanDao {
 	private HeadMapper headMapper;
 	@Autowired
 	private PlanHeadMapper planHeadMapper;
+	@Autowired
+	private PlanEmpDeptMapper planEmpDeptMapper;
 	
 	public int sequence() {
 	    String sql = "select plan_seq.nextval from dual";
@@ -121,5 +129,107 @@ public class PlanDao {
 		Object[] params = { planType };
 		List<PlanDto> list = jdbcTemplate.query(sql, planMapper, params);
 		return list.isEmpty() ? null : list.get(0);
+    }
+     
+ // 1. 일정 리스트 조회 
+    public List<PlanEmpDeptVO> selectList(String empId, String planSdate, String planEdate, int beginRownum, int endRownum){
+    	String sql = "select * from ("
+    	        + "select rownum rn, TMP.* from ("
+    	        + "  select p.*, e.emp_name, d.dept_name "
+    	        + "  from plan p "
+    	        + "  left outer join emp e on p.plan_emp_id = e.emp_id "
+    	        + "  left outer join dept d on p.plan_dept_no = d.dept_no "
+    	        + "  where ((p.plan_type = '개인' and p.plan_emp_id = ?) or p.plan_type IN ('회사','부서')) "
+    	        + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
+                + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END "
+    	        + "  order by p.plan_sdate desc"
+    	        + ") TMP"
+    	    + ") where rn between ? and ?";
+        Object[] params = { empId, planEdate, planEdate, planSdate, planSdate, beginRownum, endRownum };
+        return jdbcTemplate.query(sql, planEmpDeptMapper, params);
+    }
+    
+    // 2. 검색목록조회 메소드 (검색 시에도 개인 일정 차단 및 SQL 에러 방지)
+    public List<PlanEmpDeptVO> selectList(PageForPlanVO pageForPlanVO, String empId){
+        if(pageForPlanVO.isList())
+            return selectList(empId, pageForPlanVO.getPlanSdate(), pageForPlanVO.getPlanEdate(), pageForPlanVO.getBeginRownum(), pageForPlanVO.getEndRownum());
+        
+        Set<String> allowList = Set.of("emp_name", "dept_name" , "plan_name", "plan_type");
+        if(allowList.contains(pageForPlanVO.getColumn()) == false)
+            return List.of();
+            
+        // 오라클에서 emp_name, dept_name 검색 시 어떤 테이블 컬럼인지 명시하지 않으면 에러(Ambiguous)가 납니다.
+        String col = pageForPlanVO.getColumn();
+        if("emp_name".equals(col)) col = "e.emp_name";
+        else if("dept_name".equals(col)) col = "d.dept_name";
+        else col = "p." + col;
+            
+        String sql = "select * from ("
+                + "select rownum rn, TMP.* from ("
+                + "  select p.*, e.emp_name, d.dept_name "
+                + "  from plan p " 
+                + "  left outer join emp e on p.plan_emp_id = e.emp_id "
+                + "  left outer join dept d on p.plan_dept_no = d.dept_no " // 👈 [핵심수정] 여기도 똑같이 직조인!
+                + "  where"
+                + "  instr (" + col + ", ?) > 0 " 
+                + "  and ((p.plan_type = '개인' and p.plan_emp_id = ?) or p.plan_type IN ('회사','부서'))"
+                + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
+                + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END "
+                + "  order by p.plan_sdate desc" 
+                + ") TMP"
+            + ") where rn between ? and ?";
+            
+        Object [] params = {
+        		pageForPlanVO.getKeyword(),
+                empId,
+                pageForPlanVO.getPlanEdate(),
+                pageForPlanVO.getPlanEdate(),
+                pageForPlanVO.getPlanSdate(),
+                pageForPlanVO.getPlanSdate(),
+                pageForPlanVO.getBeginRownum(),
+                pageForPlanVO.getEndRownum()
+                };
+                
+        return jdbcTemplate.query(sql, planEmpDeptMapper, params);
+    }
+
+    public int count(String empId, String planSdate, String planEdate) {
+        String sql = "select count(*) from plan p "
+                   + "where ((p.plan_type = '개인' and p.plan_emp_id = ?) "
+                   + "   or p.plan_type in ('회사', '부서')) "
+                   + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
+                   + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END ";
+        Object[] params = { empId, planEdate, planEdate, planSdate, planSdate };
+        return jdbcTemplate.queryForObject(sql, int.class, params);
+    }
+
+    // 검색 상황별 카운트
+    public int count(PageForPlanVO pageForPlanVO, String empId) {
+        if(pageForPlanVO.isList()) return count(empId, pageForPlanVO.getPlanSdate(), pageForPlanVO.getPlanEdate());
+        
+        String col = pageForPlanVO.getColumn();
+        if("emp_name".equals(col)) col = "e.emp_name";
+        else if("dept_name".equals(col)) col = "d.dept_name";
+        else col = "p." + col;
+        
+        String sql = "select count(*) "
+                + "from plan p "
+                + "left outer join emp e on p.plan_emp_id = e.emp_id "
+                + "left outer join emp_dept_relation r on e.emp_id = r.emp_id "
+                + "left outer join dept d on r.dept_no = d.dept_no "
+                + "where " 
+                + "instr(" + col + ", ?) > 0 "
+                + "  and ((p.plan_type = '개인' and p.plan_emp_id = ?) or p.plan_type IN ('회사','부서')) "
+                + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
+                + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END ";
+                
+        Object[] params = { pageForPlanVO.getKeyword(),
+        					empId,
+        					pageForPlanVO.getPlanEdate(),
+        					pageForPlanVO.getPlanEdate(),
+        					pageForPlanVO.getPlanSdate(),
+        					pageForPlanVO.getPlanSdate()
+        					};
+        return jdbcTemplate.queryForObject(sql, int.class, params);    
     }
 }

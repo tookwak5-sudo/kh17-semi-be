@@ -10,8 +10,9 @@
 .dashboard-container {
 	display: flex;
 	gap: 20px; /* 좌우 간격 */
-	width: 1400px;
+	width: 100%;
 	margin: 50px auto;
+	margin-top: 20px !important;
 }
 
 /* 좌측 달력 영역 (비율 7) */
@@ -26,7 +27,7 @@
 	    display: flex;
 	    flex-direction: column;
 	    gap: 20px; /* 두 카드 사이의 정밀한 간격 */
-	    height: 662px; /* 💡 핵심: 좌측 달력 카드(620px + 패딩40px + 테두리2px)와 전체 높이를 완벽히 일치시킴 */
+	    height: auto; /* 고정 높이 삭제 */
 	}
 	
 	.card {
@@ -34,12 +35,13 @@
 	    border: 1px solid #ddd;
 	    border-radius: 8px;
 	    box-sizing: border-box; /* 패딩과 테두리가 높이에 포함되도록 고정 */
+	    min-height: 300px; height: auto;
 	}
 	
 	/* 두 카드가 우측 영역을 정확히 5:5 반씩 나눠 가지도록 설정 */
 	.right-section > .card {
 	    flex: 1; 
-	    height: 0; /* flex-fill 처럼 균등 분배를 위해 기본 높이 초기화 */
+	    min-height: 0; /* flex 자식 요소의 높이 계산을 위해 필수 */
 	}
 	
 	/* 카드 내부 제목의 기본 마진이 위쪽 공백을 만드므로 초기화 */
@@ -67,19 +69,19 @@
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
     	z-index: 10000;
     }
-.list-area{
-		height:190px;
+	.list-area{
+		height:0px;
 	    overflow-y:auto;
-}
+	}
 	
-.list-area thead th{
-   position: sticky;
-   top: 0;
-   background: white;
-   z-index: 10;
-}
+	.list-area thead th{
+	   position: sticky;
+	   top: 0;
+	   background: white;
+	   z-index: 10;
+	}
 
-/* 일요일 날짜 텍스트 색상 변경 */
+	/* 일요일 날짜 텍스트 색상 변경 */
     .fc .fc-day-sun a {
         color: #ff4d4d !important; /* 빨간색 계열 */
     }
@@ -128,10 +130,6 @@
 	}
 </style>
 
-<!-- fullcalendar cdn -->
-<script
-	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
-<!-- <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script> -->
 <script type="text/template" id="write-template">
 <div class="calendarModal">
 	<div class="flex-area flex-center mb-10 w-100">
@@ -234,9 +232,6 @@
 			<div class="cell">
 	        	<label>일정명</label>
 	        	<input type="text" name="planName" class="field w-100">
-				<div class="fail-feedback w-100">
-                   <div>필수 입력 창 입니다</div>
-            	</div>
 	        </div>
 	        <div class="cell">
 	        	<label>유형</label>
@@ -248,9 +243,6 @@
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
-				<div class="fail-feedback w-100">
-                   <div>필수 입력 창 입니다</div>
-            	</div>
 	        </div>
 	        </div>
 			<div class="cell">
@@ -279,12 +271,6 @@
 	       </div>
     	</div>
 </div>
-</script>
-
-<script type="text/javascript">
-	$(function(){
-	
-	});
 </script>
 
 <script type="text/javascript">
@@ -350,6 +336,7 @@
 		        alert("입력 오류를 확인하세요.");
 		        return;
 		    }
+			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
 			var planDeptNo = $("[name=planDeptNo]").val();
 			
 			var data = {// 입력된 값들의 name값을 가져와서 data에 입력 
@@ -407,35 +394,31 @@
 		    var planSdate = $(this).data("plan-sdate");
 		    var planEdate = $(this).data("plan-edate");
 		    var planExplain = $(this).data("plan-explain");
-		    var planHeadNo = $(this).data("planHead-no");
+		    var planHeadNo = $(this).data("plan-head_no");
+			
 // 			현재 수정하려는 수정 화면에 대한 처리		
-			//템플릿 생성
+
+			// 수정 화면 가져오기
 			var template = $("#edit-template").text();
             $("#modal-body").html(template);
-			
-            //헤더 목록 생성
-		    var headList = JSON.parse('${planHeadJson}');
-            var options = "<option value=''>선택하세요</option>";
-            for(var i = 0; i < headList.length; i++) {
-            	if(headList[i].headType === '일반') {
-                    options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
-                }
-            }
-            //가져온 option을 헤더 select 아래에 append 
-            $("select[name='planHeadNo']").html(options);
-		    
-        	// 값 세팅
-			
 			$("#modal-body").find("[name=planName]").val(planTitle);
 			$("#modal-body").find("[name=planType]").val(planType);
-			$("#modal-body").find("[name=planHeadNo]").val(planHeadNo);
+			$("#modal-body").find("[name=planHead_no]").val(planHeadNo);
 		    $("#modal-body").find("[name=planSdate]").val(planSdate);
 		    $("#modal-body").find("[name=planEdate]").val(planEdate);
 		    $("#modal-body").find("[name=planExplain]").val(planExplain);
 			
 		    //수정 눌렀을때 고유키 심어주기
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
-            
+			
+		    var headList = JSON.parse('${planHeadJson}');
+            var options = "";
+            for(var i = 0; i < headList.length; i++) {
+        		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+            }
+            //가져온 option을 헤더 select 아래에 append 
+            $("select[name='planHeadNo']").empty().append(options);
+		    
 		    $(".calendarModal").show();
 		});
 		
@@ -473,10 +456,9 @@
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
 			
-	    	//var currentPlanType = "회사"
-	    	
-	        var calendarEl = document.getElementById('calendar');
-	        var calendar = new FullCalendar.Calendar(calendarEl, {
+		      var calendarEl = document.getElementById('calendar');
+		      
+		      var calendar = new FullCalendar.Calendar(calendarEl, {
 	        	slotMinTime: '09:00',
 	        	slotMaxTime: '19:00',
 	        	slotDuration: '02:00:00',
@@ -486,26 +468,21 @@
 	        	    center: 'title', 
 	        	    right: 'btnAll,btnDept,btnPersonal' 
 	        	},
-	        	
-	        	// 일정이 1개만 보이도록 그 외에는 more(더보기) 표시
 	            dayMaxEvents: 1, 
-
 	            selectable: true,
+	            
+	            
 	       		select: function(info) { // select : 날짜 시간을 선택할 때 사용
-	       			
+							       		
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
 	            
-	            // controller에서 저장한 plan정보 가져오기
-	            
-	            // 부서 번호 가져오기
+	            // 부서 번호 넣기
 	            var headList = JSON.parse('${planHeadJson}');
 	            var options = "<option value=''>선택하세요</option>";
 	            for(var i = 0; i < headList.length; i++) {
-	            	if(headList[i].headType === '일반') {
-	                    options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
-	                }
+            		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
 	            }
 	            //가져온 option을 헤더 select 아래에 append 
 	            $("select[name='headNo']").empty().append(options);
@@ -546,6 +523,7 @@
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
                 var planHeadNo = info.event.extendedProps.planHeadNo;
+                
                 var sdateObj = new Date(planSdate);
                 var edateObj = new Date(planEdate);
                 
@@ -568,7 +546,7 @@
                 var eResult = eYear + '-' + eMonth + '-' + eDay;
                 
                 
-            	// 1. 상세조회 템플릿을 불러와 #modal-body에 주입
+            	// 1. 상세조회 템플릿을 불러와 #modal-boday에 주입
             	var detailTemplate = $("#detail-template").html();
             	$("#modal-body").html(detailTemplate);
             	 // 2. 로그인 아이디
@@ -595,7 +573,8 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
-                $("#modalEditBtn").data("planHead-no", planHeadNo);
+                $("#modalEditBtn").data("plan-head-no", planHeadNo);
+            	
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
                 
@@ -632,27 +611,38 @@
  			    }
  			},
  			
- 			events: ${eventList},
+ 			dayCellContent: function(arg) {
+ 	            // lunar-javascript 사용법
+ 	            const d = Lunar.fromDate(arg.date);
+ 	            return {
+ 	                html: `<div class="date-cell">
+ 	                         <span class="solar">` + arg.dayNumberText + `</span>
+ 	                         <span class="lunar" style="display:block; font-size:0.7em; color:#888;">
+ 	                           ` + d.getMonth() + `.` + d.getDay() + `
+ 	                         </span>
+ 	                       </div>`
+ 	            };
+ 	        },
+ 			
+ 			events: JSON.parse('${eventList}'),
         	initialView: 'dayGridMonth', 
             height: '100%', // 부모 div 높이에 맞춤
             displayEventTime: false, 
             locale: 'ko'
         });
-        //날짜 클릭시 클릭한 날짜와 함께 
-        calendar.render();
-        //처음 로드 될때 회사 디폴트
-        filterCalendarEvents("${param.planType == null ? '회사' : param.planType}");
-		
-        document.addEventListener('click', function(e) {
+      		//날짜 클릭시 클릭한 날짜와 함께 
+	        calendar.render();
+			
+	        document.addEventListener('click', function(e) {
             // 클릭된 요소가 '+더보기' 링크인지 확인
             if (e.target.matches('.fc-daygrid-more-link')) {
                 e.preventDefault(); // 기본 줌인 동작 방지
                 
-                // 클릭한 날짜 정보 가져오기 (가까운 날짜 셀에서 data-date 속성 추출)
-                var dateStr = e.target.closest('.fc-daygrid-day').getAttribute('data-date');
-                // 여기에 모달을 띄우는 로직(예: openCalendarModal) 호출
-                // 또는 상세 조회 화면을 모달로 보여주는 로직 실행
-            }
+            // 클릭한 날짜 정보 가져오기 (가까운 날짜 셀에서 data-date 속성 추출)
+            var dateStr = e.target.closest('.fc-daygrid-day').getAttribute('data-date');
+            // 여기에 모달을 띄우는 로직(예: openCalendarModal) 호출
+            // 또는 상세 조회 화면을 모달로 보여주는 로직 실행
+           	}
         });
         
         //함수 정의
@@ -673,7 +663,6 @@
             });
         }
         
-        
     });
     
     function closeCalendarModal() {
@@ -685,14 +674,14 @@
 <!-- 	   		planWrite, planDetail들어가는 자리		 -->
 <div id="modal-body"></div>
 
-<!--  결재, 공지 보여주는 화면 -->
 <div class="dashboard-container">
        <div class="left-section">
-            <div id='calendar' class="card p-20" style="min-height: 620px;"></div>
+            <div id='calendar' class="card p-20" style="min-height: 800px;"></div>
        </div>
 
+<!--  결재, 공지 보여주는 화면 -->
        <div class="right-section">
-            <div class="card p-20" style="height: 300px;">
+            <div class="card p-20">
             <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
             	<div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3>결재 대기 목록</h3>
@@ -802,13 +791,9 @@
                 </div>
             </c:if>
 			</div>
-	           	<div class="card p-20" style="height: 300px; overflow-y: auto;">
-		            <div style="display: flex; justify-content: space-between; align-items: center;">
+	           	<div class="card p-20" style="overflow-y: auto;">
 		            <h3>공지사항</h3>
-		            <a href="/board/list">
-                    	<span><i class="fa-solid fa-list black"></i></span>
-                    </a> 
-                    </div>  
+		            <hr>
 		            <c:forEach var="notice" items="${noticeList}">
 		                <div
 		                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">

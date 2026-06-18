@@ -19,17 +19,21 @@ import com.kh.khsemiprj.dao.CertDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpExitDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
+import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dao.LogAccessDao;
 import com.kh.khsemiprj.dao.LogInoutDao;
+import com.kh.khsemiprj.dao.MemoDao;
 import com.kh.khsemiprj.dto.CertDto;
 import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpExitDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.dto.LogAccessDto;
 import com.kh.khsemiprj.dto.LogInoutDto;
+import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
+import com.kh.khsemiprj.vo.EmpPositionDeptVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -43,7 +47,7 @@ public class EmpController {
 
 	@Autowired
 	private EmpExitDao empExitDao;
-	
+
 	@Autowired
 	private CertDao certDao;
 
@@ -58,7 +62,12 @@ public class EmpController {
 
 	@Autowired
 	private LogAccessDao logAccessDao;
+	@Autowired
+	private EmpPositionDeptDao empPositionDemptDao;
 
+	@Autowired
+	private MemoDao memoDao;
+	
 	@GetMapping("/login")
 	public String login() {
 		return "emp/login";
@@ -90,7 +99,7 @@ public class EmpController {
 
 		// 퇴사 회원이라면
 		EmpExitDto empExitDto = empExitDao.selectOne(empDto.getEmpId());
-		if(empExitDto != null && empExitDto.isExit()) {
+		if (empExitDto != null && empExitDto.isExit()) {
 			return "redirect:./login?exit";
 		}
 
@@ -114,6 +123,11 @@ public class EmpController {
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
 		
+		// 직책 
+		EmpPositionDeptVO empPositionDeptVO = empPositionDemptDao.selectDeptPositionbyId(empDto.getEmpId());
+		session.setAttribute("empPosition", empPositionDeptVO.getEmpPositionName());
+		session.setAttribute("empDept", empPositionDeptVO.getDeptName());
+		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
 //		if(last == null) {
@@ -126,7 +140,7 @@ public class EmpController {
 //			return "redirect:./notice";
 //		}
 
-		//목표: 로그인과 동시에 직원 출근처리 
+		// 목표: 로그인과 동시에 직원 출근처리
 		LogInoutDto logInoutDto = new LogInoutDto();
 		logInoutDto.setLogInoutEmpId(empDto.getEmpId());
 		logInoutDto.setLogInoutType("출근");
@@ -139,6 +153,8 @@ public class EmpController {
 	public String logout(HttpSession session) {
 		session.removeAttribute("loginId");
 		session.removeAttribute("empGrade");
+		session.removeAttribute("empDept");
+		session.removeAttribute("empPosition");
 
 		return "redirect:/emp/login";
 	}
@@ -150,69 +166,68 @@ public class EmpController {
 
 		// 아이디를 조회해서 출퇴근 여부 확인
 		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-		
+
 		// 출근 상태라면 상태변화x
 		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
 			return "redirect:/?workIn";
 		}
-		
+
 		LogInoutDto newDto = new LogInoutDto();
 		newDto.setLogInoutEmpId(loginId);
 		newDto.setLogInoutType("출근");
 		logInoutDao.insert(newDto);
-		
-		// [추가] 세션에 상태 저장
-	    session.setAttribute("logInoutType", "퇴근");
-		
-		return "redirect:/";
+
+		return "redirect:/?alarm=workIn";
 	}
 
 	// 목표 퇴근 버튼을 누르면 퇴근 처리
-	@PostMapping("/work-out")
-	public String workOut(HttpSession session) {
-		String loginId = (String) session.getAttribute("loginId");
-
-		// 아이디를 조회해서 출퇴근 여부 확인
-		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-		// 퇴근 상태라면 상태변화x
-		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
-			return "redirect:/?workOut";
-		}
-		// 출근 상태라면
-		LogInoutDto newDto = new LogInoutDto();
-		newDto.setLogInoutEmpId(loginId);
-		newDto.setLogInoutType("퇴근");
-		logInoutDao.insert(newDto);
-		
-		// [추가] 세션에 상태 저장
-	    session.setAttribute("logInoutType", "출근");
-		
-		return "redirect:/";
-	}
+//	@PostMapping("/work-out")
+//	public String workOut(HttpSession session) {
+//		String loginId = (String) session.getAttribute("loginId");
+//
+//		// 아이디를 조회해서 출퇴근 여부 확인
+//		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+//		// 퇴근 상태라면 상태변화x
+//		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+//			return "redirect:/?workOut";
+//		}
+//		// 출근 상태라면
+//		LogInoutDto newDto = new LogInoutDto();
+//		newDto.setLogInoutEmpId(loginId);
+//		newDto.setLogInoutType("퇴근");
+//		logInoutDao.insert(newDto);
+//
+//		return "redirect:/?alarm=workOut";
+//	}
 
 	// 로그아웃 및 퇴근
 	@RequestMapping("/logoutOut")
 	public String logoutOut(HttpSession session) {
 		// [1] 세션을 지우기 전에 현재 로그인 ID를 먼저 확보해야 합니다
-	    String loginId = (String) session.getAttribute("loginId");
-	    
-	    if (loginId != null) {
-	        // [2] 마지막 상태 확인
-	        LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-	        
-	        // 출근 상태인 경우에만 퇴근 처리
-	        if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
-	            LogInoutDto newDto = new LogInoutDto();
-	            newDto.setLogInoutEmpId(loginId);
-	            newDto.setLogInoutType("퇴근");
-	            logInoutDao.insert(newDto);
-	        }
-	    }
-	    
-	    //[3] 세션제거
-		session.removeAttribute("loginId");
-		session.removeAttribute("empGrade");
+		String loginId = (String) session.getAttribute("loginId");
+		
+		LogInoutDto newDto = new LogInoutDto();
+		
+		if (loginId != null) {
+			// [2] 마지막 상태 확인
+			LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
 
+			// 출근 상태인 경우에만 퇴근 처리
+			if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
+				newDto.setLogInoutEmpId(loginId);
+				newDto.setLogInoutType("퇴근");
+				logInoutDao.insert(newDto);
+			}
+		}
+		
+		if(newDto.getLogInoutType() == "퇴근") {
+			// [3] 세션제거
+			session.removeAttribute("loginId");
+			session.removeAttribute("empGrade");
+			session.removeAttribute("empDept");
+			session.removeAttribute("empPosition");
+
+		}
 		return "redirect:/emp/login";
 	}
 
@@ -230,12 +245,26 @@ public class EmpController {
 		// 회원가입 정보 등록
 		empDao.join(empDto);
 
-
 		// 프로필이 있으면 추가 등록 및 연결
 		if (!attach.isEmpty()) {
 			int attachNo = attachService.save(attach);
 			empDao.connect(empDto.getEmpId(), attachNo);
 		}
+		
+		List<EmpDto> adminList = empDao.selectAdminList();
+		for(int i = 0; i < adminList.size(); i++) {			
+			MemoDto memoDto = MemoDto.builder()
+					.memoNo(memoDao.sequence())
+					.memoReceiverId(adminList.get(i).getEmpId())
+					.memoSenderId("system")
+					.memoTitle("신규 사원 등록 알림")
+					.memoContent("<a href='/admin/emp/list' class='btn btn-positive' target='_blank'>사원 관리 확인</a>")
+					.memoReadStatus("N")
+					.memoType("일반")
+					.build();
+			memoDao.insert(memoDto);
+		}
+		
 		return "redirect:/emp/login?alarm=join";
 	}
 
@@ -326,6 +355,14 @@ public class EmpController {
 			return "redirect:./login";
 		model.addAttribute("findEmpDto", findEmpDto);
 
+		try {
+			int profileAttachNo = empDao.searchProfile(loginId);
+			model.addAttribute("profileAttachNo", profileAttachNo);
+		} catch (Exception e) {
+			// 프로필 사진이 없으면 번호를 안 넘김
+			return "redirect:/images/no_image.png";
+		}
+
 		// 근태 로그 및 로그인 로그 필요.
 
 		List<EmpLeaveDto> empLeaveList = empLeaveDao.selectList(loginId);
@@ -339,6 +376,17 @@ public class EmpController {
 		model.addAttribute("lastLogIn", lastLogIn);
 
 		return "emp/mypage";
+	}
+	
+	//header프로필 호출
+	@RequestMapping("/headerProfile")
+	public String headerProfile(@RequestParam String loginId) {
+		try {
+			int profileAttachNo = empDao.searchProfile(loginId);
+			return "redirect:/download/modern?attachNo="+profileAttachNo;
+		} catch (Exception e) {
+			return "redirect:/images/no_image.png";
+		}
 	}
 
 	@GetMapping("/checkPassword")
@@ -433,6 +481,13 @@ public class EmpController {
 			return "redirect:./login";
 		}
 		model.addAttribute("empDto", empDto);
+		
+		try {
+	        int profileAttachNo = empDao.searchProfile(loginId);
+	        model.addAttribute("profileAttachNo", profileAttachNo);
+	    } catch (Exception e) {
+	        
+	    }
 		return "emp/edit";
 	}
 
@@ -440,7 +495,8 @@ public class EmpController {
 
 	@PostMapping("/edit")
 	public String edit(HttpSession session, @ModelAttribute EmpDto empDto,
-			@RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
+			@RequestParam(required = false) MultipartFile attach, 
+			@RequestParam(defaultValue = "N") String deleteProfileFlag) throws IllegalStateException, IOException {
 		String loginId = (String) session.getAttribute("loginId");
 		if (loginId == null) {
 			return "redirect:./login";
@@ -486,20 +542,31 @@ public class EmpController {
 		empDto.setEmpId(loginId);
 		empDao.update(empDto);
 
-		// 프로필 교체 작업
-		if (attach != null && !attach.isEmpty()) {
-			// 삭제
+		// 프로필 교체 작업 (중복 제거 및 로직 통합)
+	    if (attach != null && !attach.isEmpty()) {
+	        // 1. 기존 프사 지우기
+	        try {
+	            int oldAttachNo = empDao.searchProfile(loginId);
+	            empDao.deleteProfile(loginId); // DB에서 프로필 연결 끊기
+	            attachService.delete(oldAttachNo); // 물리적 파일 및 첨부파일 테이블 기록 삭제
+	        } catch (Exception e) {
+	            // 기존 프사 없으면 예외 발생하니까 무시하고 진행
+	        }
+
+	        // 2. 새 프사 등록 및 연결
+	        int newAttachNo = attachService.save(attach);
+	        empDao.connect(loginId, newAttachNo);
+	    }
+	    
+	    else if ("Y".equals(deleteProfileFlag)) {
 			try {
-				int attachNo = empDao.searchProfile(empDto.getEmpId());
-				attachService.delete(attachNo);
+				int oldAttachNo = empDao.searchProfile(loginId);
+				empDao.deleteProfile(loginId); // DB 관계 끊기
+				attachService.delete(oldAttachNo); // 물리 파일 + attach 테이블 레코드 완전 삭제
 			} catch (Exception e) {
+				// 기존 프사가 원래 없었으면 패스
 			}
-
-			// 등록
-			int attachNo = attachService.save(attach);
-			empDao.connect(empDto.getEmpId(), attachNo);
 		}
-
 		return "redirect:./mypage";
 	}
 
@@ -513,7 +580,28 @@ public class EmpController {
 			return "redirect:/images/no_image.png";
 		}
 	}
-	
-	
+
+	@RequestMapping("/removeProfile")
+	public String removeProfile(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		if (loginId == null) {
+			return "redirect:/login";
+		}
+
+		try {
+
+			int attachNo = empDao.searchProfile(loginId);
+
+			empDao.deleteProfile(loginId);
+
+			attachService.delete(attachNo);
+
+		} catch (Exception e) {
+			// 프사가 애초에 없었거나 에러 터져도 티 안 내고 스무스하게 넘어감
+		}
+
+		return "redirect:./mypage";
+	}
 
 }

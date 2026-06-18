@@ -3,12 +3,17 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
-<form id="boardWriteForm" action="./write" method="post" novalidate autocomplete="off">
+<form id="boardWriteForm" action="./write" method="post" class="form-check" novalidate autocomplete="off">
 
-<div class="container w-950 mt-50 mb-50">
-	<div class="cell">
-		<h1 class="mt-0 mb-0">신규 글 작성</h1>
-	</div>
+<div class="container w-950 mt-20 mb-50 background-card">
+	<div class="w-100 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            신규 글 작성
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+        </div>
 	<div class="cell">
 		타인에 대한 무분별한 비방글은 경고 없이 삭제될 수 있습니다
 	</div>
@@ -17,7 +22,6 @@
 		<label>제목 <i class="fa-solid fa-asterisk red"></i></label>
 		<input type="text" name="boardTitle" class="field w-100 input-title" placeholder="제목을 입력하세요">
 	</div>
-	
 	<div class="cell mb-0">
 		<label>구분 <i class="fa-solid fa-asterisk red"></i></label>
 	</div>
@@ -121,6 +125,15 @@ $(document).ready(function() {
     });
     $('#summernote').summernote('code', '');
     
+    $("[name=boardTitle]").on("blur", function(){
+        state.boardTitleValid = $(this).val().trim().length > 0;
+    });
+    $("[name=boardHead]").on("blur", function(){
+        state.boardHeadValid = $(this).val().trim().length > 0;
+    });
+    $("[name=boardContent]").on("blur", function(){
+        state.boardContentValid = $(this).val().trim().length > 0;
+    });
     
     // ★ 4. 폼 전송(submit) 시 최종 유효성 검사
     $("#boardWriteForm").on("submit", function(e) {
@@ -135,19 +148,22 @@ $(document).ready(function() {
     	
         // 순차적으로 검사 후 경고창 띄우고 전송 중단(return false)
         if (!state.boardTitleValid) {
-            alert("게시글 제목을 입력해주세요.");
+            //alert("게시글 제목을 입력해주세요.");
+            showAjaxAlarm('게시글 제목을 입력해주세요', 'btn-negative', '.input-title', 'left');
             $(".input-title").focus();
             return false;
         }
         
         if (!state.boardHeadValid) {
-            alert("게시글의 말머리(구분)를 선택해주세요.");
+            //alert("게시글의 말머리(구분)를 선택해주세요.");
+            showAjaxAlarm('게시글의 말머리(구분)를 선택해주세요', 'btn-negative', '.select-head', 'left');
             $(".select-head").focus();
             return false;
         }
         
         if (!state.boardContentValid) {
-            alert("게시글 내용을 입력해주세요.");
+            //alert("게시글 내용을 입력해주세요.");
+            showAjaxAlarm('게시글 내용을 입력해주세요', 'btn-negative', '.note-editable', 'left');
             $('#summernote').summernote('focus');
             return false;
         }

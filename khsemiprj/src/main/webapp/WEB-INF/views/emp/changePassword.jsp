@@ -3,21 +3,34 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp" />
 
 <style>
-
-/* togglebox 디자인 */
-.togglebox {
+/* [해결 완료] 1. togglebox와 togglebox2의 체크박스를 동시에 완벽 숨김 처리 */
+.togglebox, .togglebox2 {
 	cursor: pointer;
+	user-select: none;
+	display: inline-block;
+	margin-left: 5px;
 }
 
-.togglebox>[type=checkbox], /*체크박스*/ .togglebox>[type=checkbox] ~.fa-eye,
-	/*평상시 체크박스 뒤 눈표시*/ .togglebox>[type=checkbox]:checked ~.fa-eye-slash
-	/*체크되었을 때 눈가림 표시*/ {
+/* 두 클래스 하위의 체크박스는 무조건 화면에서 증발시킴 */
+.togglebox > [type=checkbox], 
+.togglebox2 > [type=checkbox] {
+	display: none !important;
+}
+
+/* 2. 평상시(체크 안 됨) -> 눈 뜬 아이콘(.fa-eye)을 숨김 (즉, 눈 감은 아이콘만 노출) */
+.togglebox > [type=checkbox] ~ .fa-eye,
+.togglebox2 > [type=checkbox] ~ .fa-eye {
 	display: none;
 }
 
-.togglebox>[type=checkbox]:checked ~.fa-eye, /*체크되었을 때 눈 표시*/ .togglebox>[type=checkbox]
-	 ~.fa-eye-slash /*평상시 체크박스 뒤 눈가림 표시*/ {
-	display: inline;
+/* 3. 눈 클릭 시(체크박스 체크 됨) -> 감은 눈(.fa-eye-slash)을 숨기고 뜬 눈(.fa-eye)을 보여줌 */
+.togglebox > [type=checkbox]:checked ~ .fa-eye-slash,
+.togglebox2 > [type=checkbox]:checked ~ .fa-eye-slash {
+	display: none;
+}
+.togglebox > [type=checkbox]:checked ~ .fa-eye,
+.togglebox2 > [type=checkbox]:checked ~ .fa-eye {
+	display: inline-block;
 }
 
 .password-change-form input.field.success,
@@ -128,13 +141,23 @@ $(function() {
 		
 	// 3. 비밀번호 보이기/숨기기 토글
 	$(".togglebox").find("[type=checkbox]").on("input", function () {
-		var check = $(this).prop("checked");
-		// 모든 토글박스 상태 동기화
-		$(".togglebox").find("[type=checkbox]").prop("checked", check);
+        var check = $(this).prop("checked");
+        // 모든 새 비밀번호 토글박스 아이콘 상태 동기화
+        $(".togglebox").find("[type=checkbox]").prop("checked", check);
 
-		$("[name=empPassword], [name=newPassword], [name=newPasswordCheck]")
-			.attr("type", check ? "text" : "password");
-	});
+        $("[name=newPassword], [name=newPasswordCheck]")
+            .attr("type", check ? "text" : "password");
+    });
+	
+	// 윗칸(원 비밀번호)과 토글박스 분리
+	$(".togglebox2").find("[type=checkbox]").on("input", function () {
+        var check = $(this).prop("checked");
+        // 현재 비밀번호용 토글박스 상태 동기화
+        $(".togglebox2").find("[type=checkbox]").prop("checked", check);
+
+        $("[name=empPassword]")
+            .attr("type", check ? "text" : "password");
+    });
 
 	// 4. Form 전송 차단 로직
 	$(".password-change-form").on("submit", function() {
@@ -156,7 +179,7 @@ $(function() {
 			
 		<div class="cell">
 			<label>현재 비밀번호 입력 <i class="fa-solid fa-asterisk red"></i></label> 
-			<label class="togglebox"> 
+			<label class="togglebox2"> 
 				<input type="checkbox"> 
 				<i class="fa-solid fa-eye-slash red"></i> 
 				<i class="fa-solid fa-eye blue"></i>
