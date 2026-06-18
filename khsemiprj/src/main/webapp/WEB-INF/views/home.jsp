@@ -67,7 +67,7 @@
     	padding: 20px;
     	border: 1px solid #ccc; 
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
-    	z-index: 10000;
+    	z-index: 999;
     }
 	.list-area{
 		height:0px;
@@ -274,6 +274,20 @@
 </script>
 
 <script type="text/javascript">
+    // 1. [확인]을 눌렀을 때 실제로 실행될 AJAX 삭제 함수를 전역(바깥)에 따로 만듭니다.
+    function proceedDelete(planNo, planType) {
+        $.ajax({
+            url: "/rest/plan/delete",
+            method: "post",
+            data: { planNo : planNo },
+            success: function(response){
+                closeCalendarModal();
+                //홈 화면 새로고침
+                location.href = "/?alarm=calendarDelete&planType=" + planType;
+            }
+        });
+    }
+
 	$(function(){
 		//상태객체
         var state = {
@@ -363,26 +377,18 @@
 		});
 	
 	
-		//삭제 버튼 클릭시
-	    $(document).on("click", "#modalDeleteBtn", function(){
-	        var choice = window.confirm("정말 삭제하시겠습니까?");
-	        if(choice == false) return;
-	
-	        //댓글 영역 최상단에 data-key라는 이름으로 작성된 번호를 가져온다
+		// 삭제 버튼 클릭시 (오류 수정 완료)
+	    $(document).on("click", "#modalDeleteBtn", function(e) {
+	        e.preventDefault(); // 기본 이벤트 방지
+
 	        var planNo = $(this).data("key");
-	
-	        $.ajax({
-	            url: "/rest/plan/delete",
-	            method: "post",
-	            data: { planNo : planNo },
-	            success: function(response){
-	                alert("삭제되었습니다.");
-	                var planType = $("[name=planType]").val();
-	                closeCalendarModal();
-	                //홈 화면 새로고침
-	                location.href = "/?alarm=calendarDelete&planType=" + planType;
-	            }
-	        });
+	        var planType = $("[name=planType]").val();
+
+	        // openConfirm에 바깥에 정의한 proceedDelete 함수 호출 문자열을 조립해 넘깁니다.
+	        openConfirm(
+	            '정말 삭제하시겠습니까?', 
+	            "proceedDelete(" + planNo + ", '" + planType + "');"
+	        );
 	    });
 		
 	  //목표 : 수정버튼을 누르면 수정화면을 보여주도록 처리

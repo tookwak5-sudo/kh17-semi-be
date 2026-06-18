@@ -4,6 +4,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
+<style>
+.break-url {
+    word-break: break-all;     /* 글자 단위로 쪼개서 줄바꿈 */
+    white-space: normal;       /* 기본 줄바꿈 허용 */
+}
+</style>
 	
 <div class="container w-1200 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">		
@@ -40,11 +46,11 @@
 	   		<table class="table">
 	   			<thead>
 	               <tr>
-	                   <th>no.</th>
-	                   <th class="w-40">접근자</th>
+	                   <th width="80px">no.</th>
+	                   <th>접근자</th>
 	                   <th>경로(URL)</th>
-	                   <th>접근IP</th>
-	                   <th>접근시각</th>
+	                   <th width="130px">접근IP</th>
+	                   <th width="130px">접근시각</th>
 	               </tr>
 	  			</thead>
 	  			<tbody>
@@ -52,7 +58,7 @@
 	  				<tr>
 	  					<td>${logAccessDto.accessNo}</td>
 	  					<td>${logAccessDto.accessEmpId} ([${logAccessDto.deptName}] ${logAccessDto.empName})</td>
-	  					<td>${logAccessDto.accessUrl}</td>
+	  					<td  class="break-url">${logAccessDto.accessUrl}</td>
 	  					<td>${logAccessDto.accessIp}</td>
 	  					<td>${logAccessDto.accessDate}</td>
 	  				</tr>
