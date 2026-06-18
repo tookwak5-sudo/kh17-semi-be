@@ -153,6 +153,8 @@ public class EmpController {
 	public String logout(HttpSession session) {
 		session.removeAttribute("loginId");
 		session.removeAttribute("empGrade");
+		session.removeAttribute("empDept");
+		session.removeAttribute("empPosition");
 
 		return "redirect:/emp/login";
 	}
@@ -175,58 +177,57 @@ public class EmpController {
 		newDto.setLogInoutType("출근");
 		logInoutDao.insert(newDto);
 
-		// [추가] 세션에 상태 저장
-		session.setAttribute("logInoutType", "퇴근");
-
 		return "redirect:/?alarm=workIn";
 	}
 
 	// 목표 퇴근 버튼을 누르면 퇴근 처리
-	@PostMapping("/work-out")
-	public String workOut(HttpSession session) {
-		String loginId = (String) session.getAttribute("loginId");
-
-		// 아이디를 조회해서 출퇴근 여부 확인
-		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-		// 퇴근 상태라면 상태변화x
-		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
-			return "redirect:/?workOut";
-		}
-		// 출근 상태라면
-		LogInoutDto newDto = new LogInoutDto();
-		newDto.setLogInoutEmpId(loginId);
-		newDto.setLogInoutType("퇴근");
-		logInoutDao.insert(newDto);
-
-		// [추가] 세션에 상태 저장
-		session.setAttribute("logInoutType", "출근");
-
-		return "redirect:/?alarm=workOut";
-	}
+//	@PostMapping("/work-out")
+//	public String workOut(HttpSession session) {
+//		String loginId = (String) session.getAttribute("loginId");
+//
+//		// 아이디를 조회해서 출퇴근 여부 확인
+//		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+//		// 퇴근 상태라면 상태변화x
+//		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+//			return "redirect:/?workOut";
+//		}
+//		// 출근 상태라면
+//		LogInoutDto newDto = new LogInoutDto();
+//		newDto.setLogInoutEmpId(loginId);
+//		newDto.setLogInoutType("퇴근");
+//		logInoutDao.insert(newDto);
+//
+//		return "redirect:/?alarm=workOut";
+//	}
 
 	// 로그아웃 및 퇴근
 	@RequestMapping("/logoutOut")
 	public String logoutOut(HttpSession session) {
 		// [1] 세션을 지우기 전에 현재 로그인 ID를 먼저 확보해야 합니다
 		String loginId = (String) session.getAttribute("loginId");
-
+		
+		LogInoutDto newDto = new LogInoutDto();
+		
 		if (loginId != null) {
 			// [2] 마지막 상태 확인
 			LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
 
 			// 출근 상태인 경우에만 퇴근 처리
 			if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
-				LogInoutDto newDto = new LogInoutDto();
 				newDto.setLogInoutEmpId(loginId);
 				newDto.setLogInoutType("퇴근");
 				logInoutDao.insert(newDto);
 			}
 		}
+		
+		if(newDto.getLogInoutType() == "퇴근") {
+			// [3] 세션제거
+			session.removeAttribute("loginId");
+			session.removeAttribute("empGrade");
+			session.removeAttribute("empDept");
+			session.removeAttribute("empPosition");
 
-		// [3] 세션제거
-		session.removeAttribute("loginId");
-		session.removeAttribute("empGrade");
-
+		}
 		return "redirect:/emp/login";
 	}
 
@@ -359,6 +360,7 @@ public class EmpController {
 			model.addAttribute("profileAttachNo", profileAttachNo);
 		} catch (Exception e) {
 			// 프로필 사진이 없으면 번호를 안 넘김
+			return "redirect:/images/no_image.png";
 		}
 
 		// 근태 로그 및 로그인 로그 필요.
@@ -374,6 +376,17 @@ public class EmpController {
 		model.addAttribute("lastLogIn", lastLogIn);
 
 		return "emp/mypage";
+	}
+	
+	//header프로필 호출
+	@RequestMapping("/headerProfile")
+	public String headerProfile(@RequestParam String loginId) {
+		try {
+			int profileAttachNo = empDao.searchProfile(loginId);
+			return "redirect:/download/modern?attachNo="+profileAttachNo;
+		} catch (Exception e) {
+			return "redirect:/images/no_image.png";
+		}
 	}
 
 	@GetMapping("/checkPassword")

@@ -165,7 +165,7 @@
 				
 				// 컨펌 열기
 				function openConfirm(message, clickScript) {
-					$('#confirmMessage').text(message);
+					$('#confirmMessage').html(message);
 					$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
 					var confirm = document.getElementById('modalConfirm');
 					confirm.classList.add('active');
