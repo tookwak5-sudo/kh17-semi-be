@@ -76,8 +76,8 @@ $(function() {
 
     var state = {
         empNameValid: false,
-        empEmailValid: false,
-        empEmailCertValid: false, 
+        empEmailValid: true,
+        empEmailCertValid: true, 
         empBirthValid: false,
         empContactValid: false,
         empAddressValid: false,
@@ -193,14 +193,24 @@ $(function() {
 
     // 이메일 형식 및 중복 검사 
     $("[name=empEmail]").on("blur", function(){
+        var empEmail = $("[name=empEmail]").val().trim(); // 입력값 가져오기
+        
+     	// 1. 비어있는 경우: 통과 처리 (null 허용)
+        if(empEmail.length === 0) {
+            $(this).removeClass("success fail");
+            state.empEmailValid = true; // 비어있으므로 유효함으로 간주
+            return;
+        }
+        
+        // 2. 입력된 경우 정규식 검사
         var regex = /^([a-z][a-z0-9]{4,19})@([A-Za-z0-9\-\.]{1,})(\.[a-z]{2,3})$/;
-        var empEmail = $("[name=empEmail]").val(); 
         var valid = regex.test(empEmail); 
         
         if(valid == false){
             $("[name=empEmail]").removeClass("success fail")
                                .addClass("fail").attr("data-error","1");
             state.empEmailValid = false; 
+            state.empEmailCertValid = false;
             return;
         } 
         
@@ -210,7 +220,7 @@ $(function() {
             method: "post",
             data: { empEmail : empEmail }, 
             success: function (response){
-            	if(response == true || response === "true"){ 
+            	if(response == true){ 
                     $("[name=empEmail]").removeClass("success fail")
                                        .addClass("fail").attr("data-error","2");
                     state.empEmailValid = false; 
@@ -220,7 +230,7 @@ $(function() {
                     $("[name=empEmail]").removeClass("success fail")
                                        .addClass("success");
                     state.empEmailValid = true; 
-                   
+                    state.empEmailCertValid = false;
                 }
             }
         });
@@ -229,7 +239,19 @@ $(function() {
     $(".btn-cert-send").on("click", function(){
         var empEmail = $("[name=empEmail]").val();
         if(state.empEmailValid == false) return;
-
+		
+     	// 비어있으면 막기
+        if(empEmail.length === 0) {
+            alert("이메일을 입력해주세요.");
+            return;
+        }
+        
+        // 이미 유효성 검사에서 실패했으면 막기
+        if(state.empEmailValid == false) {
+            alert("이메일 형식을 확인하거나 중복 검사를 통과해야 합니다.");
+            return;
+        }
+        
         $.ajax({
             url:"/rest/cert/send",
             method:"post",
@@ -307,8 +329,8 @@ $(function() {
         $(".btn-cert-send").show();
         $("[name=empEmail]").removeClass("success fail").prop("readonly", false).val("");
         
-        state.empEmailValid = false;
-        state.empEmailCertValid = false;
+        state.empEmailValid = true;
+        state.empEmailCertValid = true;
         
         certFailCount = 0;
         $(".cert-message").text("");

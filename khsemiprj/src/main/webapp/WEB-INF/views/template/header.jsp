@@ -341,6 +341,8 @@
 				                </form>
 					        </c:if>
 					    </div>
+					    
+					    <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
 					    <div class="profile-card2">
 			    			
 						    <div class="menu-title"><i class="fa-solid fa-user-gear"></i> <span>관리메뉴</span></div>
@@ -389,6 +391,7 @@
 								</li>
 					        </ul>
 					    </div>
+					    </c:if>
 					 </div>
 	        		 </c:if>   	
 	            	<!-- 컨텐츠 -->
