@@ -31,7 +31,7 @@ public class EmpPositionDeptDao {
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
 				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
-				+ "where d.dept_no = ? "
+				+ "where d.dept_no = ? and e.emp_valid = 'Y' "
 				+ "order by e.emp_grade desc, p.emp_position_no asc, e.emp_name asc";
 		Object[] params = {deptNo};
 		return jdbcTemplate.query(sql, empPositionDeptVOMapper, params);
@@ -49,13 +49,27 @@ public class EmpPositionDeptDao {
 		return jdbcTemplate.queryForObject(sql, Long.class, empId);
 	}
 	
+	// 아이디를 통해 사원의 직책, 부서 조회
+	public EmpPositionDeptVO selectDeptPositionbyId(String empId) {
+		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, e.emp_email, e.emp_contact, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id "
+				+ "FROM emp e "
+				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
+				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no "
+				+ "where e.emp_id = ? ";
+		Object[] params = {empId};
+		List<EmpPositionDeptVO> list = jdbcTemplate.query(sql, empPositionDeptVOMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	
 	//부서 없는 사원 목록 조회
 	public List<EmpPositionDeptVO> selectDepthEmpByNull() {
 		String sql = "SELECT e.emp_id, e.emp_name, p.emp_position_name, p.emp_position_level, p.emp_position_no, d.dept_no, d.dept_name, d.dept_emp_id, e.emp_email, e.emp_contact "
 				+ "FROM emp e "
 				+ "LEFT JOIN emp_position p ON e.emp_position_no = p.emp_position_no "
 				+ "LEFT JOIN emp_dept_relation edr ON e.emp_id = edr.emp_id "
-				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no is null";
+				+ "LEFT JOIN dept d ON edr.dept_no = d.dept_no where d.dept_no is null and e.emp_valid = 'Y'";
 		Object[] params = {};
 		return jdbcTemplate.query(sql, empPositionDeptVOMapper, params);
 	}

@@ -10,36 +10,40 @@
 
 <script>
 
+	var state = {
+		aprvValid: false,
+		ok: function(){
+			return Object.values(this)
+			.filter(v => typeof v==="boolean")
+			.every(v => v === true);
+		}
+	};
+
 	$(function () {
-		var state = {
-				aprvValid: false,
-				ok: function(){
-					return Object.values(this)
-					.filter(v => typeof v==="boolean")
-					.every(v => v === true);
-				}
-		};
-		
 		$(".form-check").on("submit", function(e){
 			
 			// submit을 유발한 버튼 객체 가져오기
             var clickedButton = e.originalEvent.submitter; 
-
-            // 특정 버튼일 때만 다르게 처리하고 싶다면?
-            if ($(clickedButton).hasClass("aprv-save")) {
-            	$(".form-check").attr("action", "./save");
-            	if(confirm("문서를 기안하시겠습니까?")) {
-    				state.aprvValid = true;
-    			}
-            } else if($(clickedButton).hasClass("aprv-delete")) {
-            	$(".form-check").attr("action", "./delete");
-            	if(confirm("문서를 삭제하시겠습니까?")) {
-    				state.aprvValid = true;
-    			}
-            } else {
-            	alert("잘못된 접근입니다. 페이지를 새로고침합니다.");
-            	location.reload();
-            }
+	
+			if(!state.aprvValid) {
+	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
+	            if ($(clickedButton).hasClass("aprv-save")) {
+	            	$(".form-check").attr("action", "./save");
+	            	/* if(confirm("문서를 기안하시겠습니까?")) {
+	    				state.aprvValid = true;
+	    			} */
+	    			openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-save").click();');
+	            } else if($(clickedButton).hasClass("aprv-delete")) {
+	            	$(".form-check").attr("action", "./delete");
+	            	/* if(confirm("문서를 삭제하시겠습니까?")) {
+	    				state.aprvValid = true;
+	    			} */
+	            	openConfirm('문서를 삭제하시겠습니까?', 'state.aprvValid = true; $(".aprv-delete").click();');
+	            } else {
+	            	alert("잘못된 접근입니다. 페이지를 새로고침합니다.");
+	            	location.reload();
+	            }
+			}
 			
 			return state.ok();
 		});
@@ -47,7 +51,7 @@
 
 </script>
 
-<div class="container w-1200 mt-50 mb-50">
+<div class="container w-80 mt-20 mb-50 background-card">
 	<div class="cell">
 		<div class="flex-area" style="align-items:end">
 			<div>
@@ -116,8 +120,8 @@
 	        			<tr>
 		        			<th width="25%">부서</th>
 		        			<th width="25%">결재자</th>
-		        			<th width="25%">직책</th>
-		        			<th width="25%">상태</th>
+		        			<th width="20%">직책</th>
+		        			<th width="30%">상태</th>
 	        			</tr>
 	        		</thead>
 	        		<tbody id="line1List" class="lineList">
@@ -157,8 +161,8 @@
 	        			<tr>
 		        			<th width="25%">부서</th>
 		        			<th width="25%">결재자</th>
-		        			<th width="25%">직책</th>
-		        			<th width="25%">상태</th>
+		        			<th width="20%">직책</th>
+		        			<th width="30%">상태</th>
 	        			</tr>
 	        		</thead>
 	        		<tbody id="line2List" class="lineList">
@@ -200,13 +204,13 @@
 	</div>
 	<div class="cell right">
 		<form method="post" class="form-check">
+		<a class="btn btn-neutral" href="./list">목록으로</a>
 		<input type="hidden" name="aprvNo" value="${param.aprvNo}" />
 		<c:if test="${aprvDetailVO.aprvStatus == '임시저장' && aprvDetailVO.aprvWriter == sessionScope.loginId}">
+		<a class="btn btn-save" href="./edit?aprvNo=${aprvDetailVO.aprvNo}">수정</a>
 		<button class="btn btn-positive aprv-save">기안하기</button>
-		<a class="btn btn-negative" href="./edit?aprvNo=${aprvDetailVO.aprvNo}">수정</a>
 		<button class="btn btn-negative aprv-delete">삭제</button>
 		</c:if>
-		<a class="btn btn-neutral" href="./list">목록으로</a>
 		</form>
 	</div>
 </div>

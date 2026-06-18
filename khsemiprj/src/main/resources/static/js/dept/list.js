@@ -153,6 +153,8 @@ $(function(){
 	                	var template = $("#emp-template").text();
 	                	const tr = $.parseHTML(template)[1];
 	                	$(tr).find(".emp-checkbox").attr("value", empId);
+						$(tr).find(".emp-checkbox").attr("id", "emp_" + empId);
+						$(tr).find("label").attr("for", "emp_" + empId);
 	                	$(tr).find("td:eq(1)").text(deptName);
 	                	$(tr).find("td:eq(2)").text(empId);
 	                	if(empId == deptEmpId) {
@@ -258,4 +260,34 @@ $(function(){
             });
     	}
 	});
+});
+
+// 부서 체크박스 클릭 이벤트 발생 시 호출될 함수 (예시)
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('dept-checkbox') && e.target.closest('#deptList')) {
+        
+        // 1. 왼쪽에서 체크된 부서들의 ID를 모두 가져옴
+        const checkedDepts = Array.from(document.querySelectorAll('#deptList .dept-checkbox:checked'))
+                                  .map(cb => cb.id); // 혹은 value 값 등 부서 식별자
+
+        // 2. 오른쪽 목록(#deptList2)의 모든 체크박스를 초기화 (다시 선명하게)
+        document.querySelectorAll('#deptList2 .dept-checkbox').forEach(cb => {
+            cb.disabled = false;
+            cb.parentElement.style.opacity = "1";
+            cb.parentElement.style.cursor = "pointer";
+        });
+
+        // 3. 왼쪽에서 체크된 부서와 동일한 ID를 가진 오른쪽 체크박스를 찾아 흐릿하게 처리
+        checkedDepts.forEach(id => {
+            // id가 dept1_123 이라면 dept2_123 처럼 매칭되는 규칙이 필요함
+            const targetId = id.replace('dept1_', 'dept2_'); 
+            const targetCb = document.getElementById(targetId);
+            
+            if (targetCb) {
+                targetCb.disabled = true; // 클릭 불가
+                targetCb.parentElement.style.opacity = "0.3"; // 흐릿하게
+                targetCb.parentElement.style.cursor = "not-allowed";
+            }
+        });
+    }
 });

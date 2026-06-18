@@ -24,49 +24,69 @@
 /* 	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2); */
 /* 	} */
 	
-	input[type="date"].field.fail,
-	input[type="date"].field.success {
-	    background-image: none !important; 
-	    padding-right: 10px !important; 
+	.select2-results__options {
+        max-height: 150px !important;
+        overflow-y: auto !important;
+    }
+    
+	.select2-container .select2-selection--single {
+	    height: 38px !important; /* 기존 field와 비슷한 높이로 설정 */
+	    border: 1px solid #ced4da !important; 
+	    border-radius: 6px !important;
+	    display: flex;
+	    align-items: center;
+	}
+	
+	/* 텍스트가 위아래 정중앙에 오도록 설정 */
+	.select2-container--default .select2-selection--single .select2-selection__rendered {
+	    line-height: 38px !important;
+	    padding-left: 10px !important;
+	}
+	
+	.select2-container--default .select2-selection--single .select2-selection__arrow {
+	    height: 36px !important;
 	}
 </style>
 
-<div class="container w-950 mt-50 mb-50">
-	<div class="cell">
-			<h1 class="mt-0 mb-0">회원 관리</h1>
+<div class="container w-950 mt-20 mb-50 background-card">
+	<div class="cell center flex-area">
+		<div class="w-15 flex-area" style="justify-content: left">
+			<div>
+		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+		            회원 관리
+		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+		        </h1>
+			</div>
+        </div>
 	</div>
-	
 			
-				<c:if test="${sessionScope.empGrade == 2 && wList.size() > 0}">
-				<div class="cell">
-						<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3>
-						
-						<div style="border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">
-							<table class="table" style="background-color: white; margin-bottom: 0;">
-								<thead>
-									<tr style="border-bottom: 2px solid #e9ecef;">
-										<th style="padding: 10px;">아이디</th>
-										<th style="padding: 10px;">이름</th>
-										<th style="padding: 10px;">관리</th>
-									</tr>
-								</thead>
-								<tbody align="center">
-									<c:forEach var="waitEmp" items="${wList}">
-									<tr>
-										<td style="padding: 12px 0;">${waitEmp.empId}</td>
-										<td style="padding: 12px 0;">${waitEmp.empName}</td>
-										<td>
-											<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
-											<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="padding: 6px 12px; font-size: 18px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
-										</td>
-									</tr>
-									</c:forEach>
-								</tbody>
-							</table>
-						</div>
+		<c:if test="${sessionScope.empGrade == 2 && wList.size() > 0}">
+		<div class="cell">
+				<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3>
+					<table class="table" style="background-color: white; margin-bottom: 0;">
+						<thead>
+							<tr style="border-bottom: 2px solid #e9ecef;">
+								<th style="padding: 10px;">아이디</th>
+								<th style="padding: 10px;">이름</th>
+								<th style="padding: 10px;">관리</th>
+							</tr>
+						</thead>
+						<tbody align="center">
+							<c:forEach var="waitEmp" items="${wList}">
+							<tr>
+								<td style="padding: 12px 0;">${waitEmp.empId}</td>
+								<td style="padding: 12px 0;">${waitEmp.empName}</td>
+								<td>
+									<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
+									<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="text-decoration: none; padding: 6px 12px; font-size: 18px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
+								</td>
+							</tr>
+							</c:forEach>
+						</tbody>
+					</table>
 				</div>
-				<hr class="mt-30 mb-30">
-				</c:if>
+		<hr class="mt-30 mb-30">
+		</c:if>
 				
 				
 		<div class="cell" style="display: flex; justify-content: flex-end;">
@@ -95,7 +115,6 @@
 	
 	<c:if test="${list.size() > 0}">
 	<div class="cell">
-		<div style="border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">
 			<table class="table table-hover">
 				<thead>
 					<tr>
@@ -118,7 +137,6 @@
 					</c:forEach>
 				</tbody>
 			</table>
-		</div>
 	</div>
 	</c:if>
 </div>
@@ -137,9 +155,7 @@
             
             <div>
                 <label>입사일 지정</label>
-                <input type="date" name="empHireDate" class="field w-100">
-                <div class="success-feedback"></div>
-                <div class="fail-feedback">필수 입력 항목입니다</div>
+                <input type="text" name="empHireDate" id="hireDatePicker" class="field w-100" placeholder="YYYY-MM-DD" autocomplete="off">
             </div>
             
             <div>
@@ -150,8 +166,6 @@
                     <option value="${dept.deptNo}">${dept.deptName}</option>
                     </c:forEach>
                 </select>
-                <div class="success-feedback"></div>
-                <div class="fail-feedback">필수 입력 항목입니다</div>
             </div>
             
              <div>
@@ -162,8 +176,6 @@
 		            	<option value="${position.empPositionNo}">${position.empPositionName}</option>
                 	</c:forEach>
 	            </select>
-	            <div class="success-feedback"></div>
-	            <div class="fail-feedback">필수 입력 항목입니다</div>
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -182,6 +194,9 @@
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
     // 팝업 함수
     function openPopUp(empId) {
@@ -192,12 +207,10 @@
 
     function closePopUp() {
         document.getElementById('popUp').style.display = 'none';
+        document.getElementById('hireDatePicker').value = '';
         
-        var fields = document.querySelectorAll('#popUp .field:not([type="hidden"])');
-        fields.forEach(function(el) {
-            el.value = ''; 
-            el.classList.remove('fail', 'success');
-        });
+        $('select[name="deptNo"]').val('').trigger('change');
+        $('select[name="empPositionNo"]').val('').trigger('change');
     }
     
     function confirmReject(empId) {
@@ -205,18 +218,18 @@
     }
     
     document.addEventListener("DOMContentLoaded", function() {
-        var fields = document.querySelectorAll('#popUp select.field, #popUp input[type="date"].field');
-        
-        fields.forEach(function(el) {
-            el.addEventListener('change', function() {
-                if (!this.value) {
-                    this.classList.remove('success');
-                    this.classList.add('fail');
-                } else {
-                    this.classList.remove('fail');
-                    this.classList.add('success');
-                }
-            });
+    	var hireDatePicker = new Lightpick({
+    		field: document.getElementById('hireDatePicker'),
+    		format: 'YYYY-MM-DD',
+    		firstDay: 7
+    	});
+    });
+    
+    $(document).ready(function() {
+        $('select[name="deptNo"], select[name="empPositionNo"]').select2({
+            dropdownParent: $('#popUp'),
+            width: '100%',
+            minimumResultsForSearch: Infinity
         });
     });
     
@@ -225,20 +238,26 @@
         var deptNo = document.querySelector('[name="deptNo"]');
         var positionNo = document.querySelector('[name="empPositionNo"]');
         
-        var isValid = true; 
+        if (!hireDate.value.trim()) {
+            window.alert("입사일을 지정해 주세요.");
+            hireDate.focus();
+            return false; // 전송 중단
+        }
+        
+        if (!deptNo.value) {
+            window.alert("부서를 배치해 주세요.");
+            $(deptNo).select2('open'); // Select2 창 열기
+            return false;
+        }
+        
+        if (!positionNo.value) {
+            window.alert("직급을 지정해 주세요.");
+            $(positionNo).select2('open'); // Select2 창 열기
+            return false;
+        }
 
-        [hireDate, deptNo, positionNo].forEach(function(el) {
-            if (!el.value) {
-                el.classList.remove('success');
-                el.classList.add('fail');
-                isValid = false;
-            } else {
-                el.classList.remove('fail');
-                el.classList.add('success');
-            }
-        });
-
-        return isValid;
+        // 3개 모두 입력되었다면 마지막으로 확인받고 전송
+        return confirm("해당 사원의 가입을 승인하시겠습니까?");
     }
 </script>
 

@@ -73,8 +73,8 @@
         	var searchUrl = "/board/list?column=board_writer&keyword=" + memberId;
         	$("#link-view-posts").attr("href", searchUrl);
         	
-        	var memoUrl = "/board/list?column=board_writer&keyword=" + memberId;
-        	$("#link-view-posts").attr("href", searchUrl);
+        	var memoUrl = "/memo/write?memoSenderId=" + memberId;
+        	$("#link-send-memo").attr("href", memoUrl);
 
         // 3) 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
         	$("#user-context-menu").css({
@@ -91,37 +91,39 @@
 </script>
 
 
-<div class="container w-1200 mt-50 mb-50">
-
-	<div class="cell center mb-0">
-		<h1 class="mb-0">${param.boardHead} 게시판</h1>
-	</div>
-
-	<!-- <div class="cell center">타인에 대한 무분별한 비방글은 예고 없이 삭제될 수 있습니다.</div> -->
-		<div class="cell center">
-	    <form action="./list" method="get">
-	        
-	        <c:if test="${param.boardHead != null}">
-	            <input type="hidden" name="boardHead" value="${param.boardHead}">
-	        </c:if>
-	        <select name="column" class="field">
-	            <option value="board_title" ${param.column == 'board_title' ? "selected" : ""}>제목</option>
-	            <option value="board_writer" ${param.column == 'board_writer' ? "selected" : ""}>작성자</option>
-	        </select> 
-	        <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
-	        
-	        <button type="submit" class="btn btn-positive">
-	            <i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
-	        </button>
-	    </form>
-	</div>
-
-	<div class="cell right">
-		<c:if test="${sessionScope.loginId != null}">
-			<a href="write" class="btn btn-neutral">신규 글 등록하기</a>
-		</c:if>
-	</div>
+<div class="container w-90 mt-20 mb-50 background-card">
+	<div class="cell center flex-area">
+		<div class="w-15 flex-area" style="justify-content: left">
+				<div>
+			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+					${param.boardHead} 게시판
+			 		<span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+			        </h1>
+				</div>
+		</div>
+		<div class="w-70 flex-area flex-center">
+		    <form action="./list" method="get">
+		        <c:if test="${param.boardHead != null}">
+		            <input type="hidden" name="boardHead" value="${param.boardHead}">
+		        </c:if>
+		        <select name="column" class="field">
+		            <option value="board_title" ${param.column == 'board_title' ? "selected" : ""}>제목</option>
+		            <option value="board_writer" ${param.column == 'board_writer' ? "selected" : ""}>작성자</option>
+		        </select> 
+		        <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
+		        
+		        <button type="submit" class="btn btn-positive">
+		            <i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+		        </button>
+		    </form>
+		</div>
 	
+		<div class="w-15 flex-area flex-center" style="justify-content: right;">
+			<c:if test="${sessionScope.loginId != null}">
+				<a href="write" class="btn btn-neutral">글쓰기</a>
+			</c:if>
+		</div>
+	</div>
 	<div class="flex-area ms-20" style="justify-content: space-between; align-items: center;">
 		<div class="left category-menu">
 	        <a href="./list" class="ms-20 ${empty pageVO.boardHead ? 'active' : ''}">전체</a>
@@ -132,8 +134,8 @@
 	        <a href="./list?boardHead=질문&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '질문' ? 'active' : ''}">질문</a>
 	        <a href="./list?boardHead=나눔&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '나눔' ? 'active' : ''}">나눔</a>
 	    </div>
-		<div class="right">
-			${pageVO.getBeginRownum()}-${pageVO.endRownum} / 총 ${pageVO.count}개의 글
+		<div class="right" style="font-size: 14px; color: #666;">
+		    <strong style="color: #007bff;">${pageVO.count}</strong>개의 글
 		</div>
 	</div>
 
@@ -159,7 +161,9 @@
 	                    (${boardDto.boardHead})
 	                </c:if> <a href="./detail?boardNo=${boardDto.boardNo}">${boardDto.boardTitle}
 	                <c:if test="${boardDto.boardReplycount > 0}">
-	                    [${boardDto.boardReplycount}]
+						<span style="color: #f94b4b">
+							[${boardDto.boardReplycount}]
+						</span>
 	                </c:if> 
 	                </a>
 	
@@ -188,13 +192,17 @@
                 <c:if test="${param.column!=null || param.boardHead!=null}">
                 <a href="./detail?boardNo=${boardDto.boardNo}&boardHead=${param.boardHead}&column=${param.column}&keyword=${param.keyword}">${boardDto.boardTitle}
                 <c:if test="${boardDto.boardReplycount > 0}">
-                    [${boardDto.boardReplycount}]
+                	<span style="color: #f94b4b">
+                    	[${boardDto.boardReplycount}]
+                    </span>
                 </c:if></a>
 				</c:if>
 				 <c:if test="${param.column==null && param.boardHead==null}">
                 <a href="./detail?boardNo=${boardDto.boardNo}">${boardDto.boardTitle}
                 <c:if test="${boardDto.boardReplycount > 0}">
-                    [${boardDto.boardReplycount}]
+                    <span style="color: #f94b4b">
+                    	[${boardDto.boardReplycount}]
+                    </span>
                 </c:if></a>
 				</c:if>
 							</td>
@@ -243,8 +251,15 @@
     <a href="#" id="link-view-posts">
         <i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
     </a>
-    <a href="#" id="link-memo-write">
-        <i class="fa-solid fa-memo"></i> 쪽지 보내기
+    <a href="#"  id="link-send-memo"
+			onclick="
+				var w = 650; 
+				var h = 650; 
+				var left = (screen.width/2) - (w/2); 
+				var top = (screen.height/2) - (h/2); 
+				window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
+				return false;">
+        <i class="fa-solid fa-message"></i> 쪽지 보내기
     </a>
 </div>
 

@@ -17,6 +17,7 @@ public class EmpExitVOMapper implements RowMapper<EmpExitVO>{
 				.empId(rs.getString("emp_id"))
 				.empExitTime(rs.getTimestamp("emp_exit_time"))
 				.empName(rs.getString("emp_name"))
+				.aprvEtime(rs.getTimestamp("aprv_etime"))
 				.build();
 	}
 

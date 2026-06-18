@@ -5,7 +5,7 @@
 
 <jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include>
 
-<div class="container w-600 mt-0 mb-0 memo-card">
+<div class="container w-600 mt-20 mb-0 memo-card background-card">
 <!-- 	제목, 타입, 작성자 -->
 	<div class="cell">
 		<div class="flex-area" style="align-items:end">
@@ -29,14 +29,18 @@
 	</div>	
 	<hr style="color:#e1e4e6">		
 <!-- 	쪽지 내용 -->
-	<div class="cell" style="min-height:300px">
+	<div class="cell" style="min-height:350px">
 		<pre style="font-size:16px;">${memoDto.memoContent}</pre>
 	</div>
 	<hr style="color:#e1e4e6">
-	<div class="cell mt-40 right">
+	<div class="cell mt-50 right">
 		<a href="/memo/write?memoSenderId=${memoDto.memoSenderId}" class="btn btn-positive">
-	    	<span>답변하기</span>
+			<i class="fa-solid fa-reply"></i>
+	    	<span>답변</span>
 		</a>
-		<a class="btn btn-neutral" href="./list">목록으로</a>	
+		<a class="btn btn-neutral" href="./list">
+			<i class="fa-solid fa-list"></i>
+			<span>목록</span>
+		</a>	
 	</div>
 </div>      

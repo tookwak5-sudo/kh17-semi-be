@@ -13,7 +13,11 @@
 	<!-- 조직도 동작 스크립트 -->
 	<script src="/js/dept/chart.js"></script>
 	
-	<h1>조직도</h1>
+<div class="container w-80 mt-50 mb-50">
+
+	<div class="cell center">
+		<h1 class="mb-0">조직도</h1>
+	</div>
 	
 	<div class="dept-chart-wrapper">
 		<div class="zoom-controls">
@@ -38,5 +42,6 @@
 			</div>
 	    </div>
     </div>
+</div>
 	
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

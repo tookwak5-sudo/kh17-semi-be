@@ -11,8 +11,9 @@
 /* 은은한 그림자가 들어간 부드러운 상자 스타일 */
 .custom-card {
     background: #ffffff;
+    border: 1px solid #E2E8F0; /* 아주 연한 회색 테두리 */
     border-radius: 12px; /* 모서리를 부드럽게 라운딩 */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 은은하고 부드러운 그림자 효과 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* 아주 연한 그림자 */
     padding: 24px; /* 상자 내부 여백 */
     box-sizing: border-box;
     transition: all 0.3s ease; /* 마우스 올렸을 때 자연스러운 효과용 (선택) */
@@ -23,6 +24,18 @@
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
 }
 
+.table tbody tr td.empty-msg {
+    display: table-cell !important;      /* 셀 속성 강제 */
+    text-align: center !important;       /* 가로 중앙 */
+    vertical-align: middle !important;   /* 세로 중앙 */
+    width: 100% !important;              /* 표 전체 너비 활용 */
+    padding: 50px 0 !important;          /* 높이 확보 */
+    border-bottom: none !important;      /* 줄 제거 */
+}
+
+/* 템플릿의 tr 자체가 정렬을 방해하지 않도록 처리 */
+.table tbody tr.empty-row {
+    display: table-row !important;
 /* [수정] 헤더 영역 내부 요소를 세로축 기준 완벽한 중앙(Center) 정렬 */
 .card-header {
     margin-top: 0 !important;
@@ -51,6 +64,7 @@
 /* 버튼 자체의 여백 리셋 */
 .card-header .btn {
     margin: 0 !important;
+>>>>>>> refs/remotes/origin/hero_20260611-1
 }
 </style>
 
@@ -73,24 +87,32 @@
 </script>
 <script type="text/template" id="emp-template">
 <tr>
-	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp_DYNAMIC_ID">
-	<label for="emp_DYNAMIC_ID"></label>
-	</td>
-	<td></td>
-	<td></td>
-	<td></td>
-	<td></td>
+    <td>
+        <input type="checkbox" name="emp" class="emp-checkbox" id="">
+        <label for="" class="emp-label"></label>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
 </tr>
 </script>
 <script type="text/template" id="emp-empty-template">
-<tr>
-	<td colspan="5">검색된 사원이 없습니다</td>
+<tr class="empty-row">
+    <td colspan="5" class="empty-msg">
+        검색된 사원이 없습니다
+    </td>
 </tr>
 </script>
-
-	<div class="cell flex-area">
-		<h1>부서관리</h1>
-	</div>
+<div class="container w-100 mt-20 mb-50 background-card">
+	<div class="w-15 flex-area" style="justify-content: left">
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            부서관리
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+		</div>
+    </div>
 	<div class="cell flex-area">
 		<div class="cell w-25 custom-card">
 			<div class="cell card-header">
@@ -124,7 +146,7 @@
 				<table class="table" style="margin-top: 20px;">
 					<thead>
 						<tr>
-							<th><input type="checkbox" name="emp" class="emp-checkbox check-emp-all"></th>
+							<th><input type="checkbox" id="emp_all" name="emp" class="emp-checkbox check-emp-all"><label for="emp_all"></label></th>
 							<th>부서</th>
 							<th>사원아이디</th>
 							<th>이름</th>
@@ -144,18 +166,18 @@
 					<a class="btn btn-positive dept-change">변경</a>
 				</div>
 			</div>
-			<div id="deptList2" class="dept-tree" style="margin-top: 20px;">
-				<ul>
-					<li class="dept-item">
-						<div class="dept-row">
-							<span class="toggle-btn" style="visibility:hidden;">▼</span>
-							<input type="checkbox" name="dept" class="dept-checkbox" id="dept2_" value="">
-							<label for="dept2_" class="dept-name">부서없음</label>
-						</div>
-					</li>
-				</ul>
-			</div>
+			<div id="deptList2" class="dept-tree">
+		    <ul>
+		        <li class="dept-item no-children">
+		            <div class="dept-row">
+		                <span class="toggle-btn" style="visibility:hidden;">▶</span>
+		                <input type="checkbox" name="dept" class="dept-checkbox" id="dept2_none" value="">
+		                <label for="dept2_none" class="dept-name">부서없음</label>
+		            </div>
+		        </li>
+		        </ul>
+		</div>
 		</div>
 	</div>
-	
+</div>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
