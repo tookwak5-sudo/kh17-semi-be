@@ -27,7 +27,7 @@
 				<div class="w-200">
 					<h3 class="mt-0 mb-0">
 						<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
-						<span class="board-writer red">(작성자)</span>
+						<span class="board-writer" style="color: #f94b4b">(작성자)</span>
 					</h3>
 					<div class="w-50">
 						<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
