@@ -152,7 +152,7 @@
 				
 				// 얼럿 열기
 				function openAlert(message) {
-					$('#alertMessage').text(message);
+					$('#alertMessage').html(message);
 					var alert = document.getElementById('modalAlert');
 					alert.classList.add('active');
 				}
@@ -165,7 +165,7 @@
 				
 				// 컨펌 열기
 				function openConfirm(message, clickScript) {
-					$('#confirmMessage').text(message);
+					$('#confirmMessage').html(message);
 					$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
 					var confirm = document.getElementById('modalConfirm');
 					confirm.classList.add('active');
@@ -251,7 +251,7 @@
 		    
 		    <!-- 커스텀 얼럿 -->
 		    <div class="modal-overlay" id="modalAlert">
-			    <div class="modal-box">
+			    <div class="modal-box" style="width:400px;">
 			        <!-- <div class="modal-header center"></div> -->
 			        <div class="modal-body">
 			            <form id="popupFormAlert" class="flex-area">
@@ -268,7 +268,7 @@
 			
 		    <!-- 커스텀 컨펌 -->
 		    <div class="modal-overlay" id="modalConfirm">
-			    <div class="modal-box">
+			    <div class="modal-box" style="width:400px;">
 			        <!-- <div class="modal-header center"></div> -->
 			        <div class="modal-body">
 			            <form id="popupFormConfirm" class="flex-area">

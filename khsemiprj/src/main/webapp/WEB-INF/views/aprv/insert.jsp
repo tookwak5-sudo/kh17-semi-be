@@ -19,6 +19,7 @@ var state = {
 	aprvEdateValid: false,
 	aprvLineNo1Valid: false,
 	aprvLineNo2Valid: true,
+	aprvValid: false,
 	ok: function(){
 		return Object.values(this)
 		.filter(v => typeof v==="boolean")
@@ -47,6 +48,8 @@ $(function () {
 	var formName = $(".aprv-form-list option:selected").attr("data-name");
 	var formHead = $(".aprv-form-list option:selected").attr("data-head");
 	
+	let activeInput = null;
+	
 	switch(formHead) {
 		case "연차":
 		case "병가":
@@ -57,13 +60,17 @@ $(function () {
 			$(".timeTilde").show();
 			$(".picker-edate").show();
 			var picker1 = new Lightpick({ 
-			    field : $(".picker-sdate")[0],
-				secondField : $(".picker-edate")[0],
+			    field : document.querySelector('.picker-sdate'),
+				secondField : document.querySelector('.picker-edate'),
 				singleDate : true,
 			    format : "YYYY-MM-DD",
 				firstDay : 7,
 				disableWeekends: true,
 			    onOpen: function() {
+			    	$(".picker-sdate").val('');
+		    		$(".picker-edate").val('');
+		    		picker1.setDateRange(null, null);
+			    	
 			        const calendarEl = document.querySelector('.lightpick__months');
 			        if(!calendarEl) return;
 			        
@@ -103,12 +110,8 @@ $(function () {
 						} else {
 							$(".vacationType").hide().empty();
 						}
-					} else {
-						$(".vacationType").hide().empty();
-					}
-					
-					if(currentFormHead == "연차" && sDate && eDate) {
-						var count = getWeekdaysCount(moment(sDate), moment(eDate));
+				        
+				        var count = getWeekdaysCount(moment(sDate), moment(eDate));
 						if(count > ${leaveRemain}) {
 							//alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
 							showAjaxAlarm("휴가 잔여일 : ${leaveRemain}일 / 휴가 선택일 : " + count + "일 / 휴가 잔여일보다 휴가 선택일이 많습니다. 다시 선택하세요.", 'btn-negative', '[name=aprvEdate]', 'right');
@@ -119,6 +122,8 @@ $(function () {
 						} else {
 							$('input[name=aprvLeave]').val(count);
 						}
+					} else {
+						$(".vacationType").hide().empty();
 					}
 					
                     if($(".picker-sdate").val().trim().length > 0) $(".picker-sdate").removeClass("fail");
@@ -137,7 +142,7 @@ $(function () {
 			$(".timeTilde").hide();
 			$(".picker-edate").hide();
 			var picker1 = new Lightpick({ 
-			    field : $(".picker-sdate")[0],
+			    field : document.querySelector('.picker-sdate'),
 			    format : "YYYY-MM-DD",
 				firstDay : 7,
 				disableWeekends: true,
@@ -155,7 +160,7 @@ $(function () {
 			$(".timeTilde").hide();
 			$(".picker-edate").hide();
 			var picker1 = new Lightpick({ 
-			    field : $(".picker-sdate")[0],
+			    field : document.querySelector('.picker-sdate'),
 			    format : "YYYY-MM-DD",
 				firstDay : 7,
 				disableWeekends: true,
@@ -235,19 +240,18 @@ $(function () {
             //$(".aprv-line-1").click();
             return false; // 무조건 전송 차단
         }
-        /* if(!state.aprvLineNo2Valid) {
-            window.alert("두 번째 결재자를 입력하세요.");
-            $(".aprv-line-2").focus(); 
-            return false; // 무조건 전송 차단
-        } */
         
-        // [4] 기안 / 임시저장 상태 값 세팅
-        var clickedButton = e.originalEvent.submitter; 
-        if ($(clickedButton).hasClass("aprv-insert")) {
-        	$(".aprv-status").val("대기");
-        	return confirm("문서를 기안하시겠습니까?");
-        } else {
-        	$(".aprv-status").val("임시저장");
+        if(!state.aprvValid) {
+	        // [4] 기안 / 임시저장 상태 값 세팅
+	        var clickedButton = e.originalEvent.submitter; 
+	        if ($(clickedButton).hasClass("aprv-insert")) {
+	        	$(".aprv-status").val("대기");
+	        	//return confirm("문서를 기안하시겠습니까?");
+	        	openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-insert").click();');
+	        } else {
+	        	$(".aprv-status").val("임시저장");
+	        	state.aprvValid = true;
+	        }
         }
 
         return state.ok();
@@ -310,10 +314,10 @@ $(function () {
 		<label>휴가 분류</label>
 	</div>
 	<div class="cell">
-		<input type="radio" name="vacationType" value="연차" id="vacationType1">
-		<label for="vacationType1">연차</label>
+		<input type="radio" name="vacationType" value="연차" id="vacationType1" checked>
+		<label for="vacationType1">연차 ( 1일 )</label>
 		<input type="radio" name="vacationType" value="반차" id="vacationType2">
-		<label for="vacationType2">반차</label>
+		<label for="vacationType2">반차 ( 0.5일 )</label>
 	</div>
 </div>
 </script>
@@ -369,9 +373,9 @@ $(function () {
 		        </div>
 		        <div class="cell mt-0">
 		        	<input type="hidden" name="aprvLeave" value="" />
-		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일" readonly>
+		        	<input type="text" id="aprvSdate" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일" readonly>
 		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" readonly>
+		        	<input type="text" id="aprvEdate" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" readonly>
 		        </div>
 	        </div>
 	        <div class="w-66 vacationType">

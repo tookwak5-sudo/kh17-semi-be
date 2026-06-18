@@ -19,6 +19,8 @@
 		var formName = $(".aprv-form-list option:selected").attr("data-name");
 		var formHead = $(".aprv-form-list option:selected").attr("data-head");
 		
+		let activeInput = null;
+		
 		switch(formHead) {
 			case "연차":
 			case "병가":
@@ -39,6 +41,10 @@
 					disableWeekends: true,
 					// 1. 달력이 화면에 열렸을 때 마우스 움직임 감지 셋팅
 				    onOpen: function() {
+				    	$(".picker-sdate").val('');
+			    		$(".picker-edate").val('');
+			    		picker1.setDateRange(null, null);
+				    	
 				        // Lightpick 달력의 날짜 칸(td)들에 마우스가 올라갈 때 이벤트 리스너 추가
 				        const calendarEl = document.querySelector('.lightpick__months');
 				        
@@ -76,7 +82,7 @@
 				    },
 					onSelect: function(start, end){
 				        // 날짜 선택 시 실행될 코드
-						var formHead = $(".aprv-form-list:selected").attr("data-head");
+						var formHead = $(".aprv-form-list option:selected").attr("data-head");
 						var sDate = $(".picker-sdate").val();
 						var eDate = $(".picker-edate").val();
 						if(formHead == "연차" && sDate != "" && eDate != "") {
@@ -84,21 +90,16 @@
 								$(".vacationType").show();
 								var template = $("#vacation-type-template").text();
 								const div = $.parseHTML(template)[1];
-								$(".vacationType").append(div);
+								$(".vacationType").html(div); // 중복 append 방지를 위해 html() 사용 권장
 							} else {
 								$(".vacationType").hide();
 								$(".vacationType").empty();
 							}
-						} else {
-							$(".vacationType").hide();
-							$(".vacationType").empty();
-						}
-						
-						var formHead = $(".aprv-form-list option:selected").attr("data-head");
-						if(formHead == "연차") {
-							var count = getWeekdaysCount(moment(sDate), moment(eDate));
+					        
+					        var count = getWeekdaysCount(moment(sDate), moment(eDate));
 							if(count > ${leaveRemain}) {
-								alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+								//alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+								showAjaxAlarm("휴가 잔여일 : ${leaveRemain}일 / 휴가 선택일 : " + count + "일 / 휴가 잔여일보다 휴가 선택일이 많습니다. 다시 선택하세요.", 'btn-negative', '[name=aprvEdate]', 'right');
 								picker1.setDateRange(null, null);
 								$(".picker-sdate").val("");
 								$(".picker-edate").val("");
@@ -106,7 +107,17 @@
 							} else {
 								$('input[name=aprvLeave]').val(count);
 							}
+						} else {
+							$(".vacationType").hide();
+							$(".vacationType").empty();
 						}
+						
+						if($(".picker-sdate").val().trim().length > 0) $(".picker-sdate").removeClass("fail");
+	                    if($(".picker-edate").val().trim().length > 0) $(".picker-edate").removeClass("fail");
+	                    
+	                    // 날짜 변경 시 실시간 상태 동기화
+	                    state.aprvSdateValid = $(".picker-sdate").val().trim().length > 0;
+	                    state.aprvEdateValid = $(".picker-edate").val().trim().length > 0;
 				    }
 				});
 			
@@ -138,6 +149,7 @@
 			aprvEdateValid: false,
 			aprvLineNo1Valid: false,
 			aprvLineNo2Valid: true,
+			aprvValid: false,
 			ok: function(){
 				return Object.values(this)
 				.filter(v => typeof v==="boolean")
@@ -221,12 +233,16 @@
          	// submit을 유발한 버튼 객체 가져오기
             var clickedButton = e.originalEvent.submitter; 
 
-            // 특정 버튼일 때만 다르게 처리하고 싶다면?
-            if ($(clickedButton).hasClass("aprv-update")) {
-            	$(".aprv-status").val("대기");
-            	return confirm("문서를 기안하시겠습니까?");
-            } else {
-            	$(".aprv-status").val("임시저장");
+            if(!state.aprvValid) {
+	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
+	            if ($(clickedButton).hasClass("aprv-update")) {
+	            	$(".aprv-status").val("대기");
+	            	//return confirm("문서를 기안하시겠습니까?");
+	            	openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-update").click();');
+	            } else {
+	            	$(".aprv-status").val("임시저장");
+	            	state.aprvValid = true;
+	            }
             }
            	return state.ok();
         });
@@ -304,10 +320,10 @@
 		<label>휴가 분류</label>
 	</div>
 	<div class="cell">
-		<input type="radio" name="vacationType" value="연차" id="vacationType1">
-		<label for="vacationType1">연차</label>
+		<input type="radio" name="vacationType" value="연차" id="vacationType1" checked>
+		<label for="vacationType1">연차 ( 1일 )</label>
 		<input type="radio" name="vacationType" value="반차" id="vacationType2">
-		<label for="vacationType2">반차</label>
+		<label for="vacationType2">반차 ( 0.5일 )</label>
 	</div>
 </div>
 </script>
@@ -360,7 +376,19 @@
 		        </div>
 	        </div>
 	        <div class="w-66 vacationType">
-	        	
+	        	<c:if test="${not empty aprvDto.aprvLeave && aprvDto.aprvLeave <= 1}">
+	        	<div>
+					<div class="cell">
+						<label>휴가 분류</label>
+					</div>
+					<div class="cell">
+						<input type="radio" name="vacationType" value="연차" id="vacationType1" <c:if test="${aprvDto.aprvLeave == 1}">checked</c:if>>
+						<label for="vacationType1">연차 ( 1일 )</label>
+						<input type="radio" name="vacationType" value="반차" id="vacationType2" <c:if test="${aprvDto.aprvLeave == 0.5}">checked</c:if>>
+						<label for="vacationType2">반차 ( 0.5일 )</label>
+					</div>
+				</div>
+	        	</c:if>
 	        </div>
         </div>
         <div class="cell">

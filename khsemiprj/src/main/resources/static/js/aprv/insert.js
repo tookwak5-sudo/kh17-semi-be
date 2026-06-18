@@ -75,6 +75,14 @@ $(function () {
         });
     });
 	
+	$(document).on("click", "[name=vacationType]", function () {
+		if($("[name=vacationType]:checked").val() == "반차") {
+			$("[name=aprvLeave]").val(0.5);
+		} else {
+			$("[name=aprvLeave]").val(1);
+		}
+	});
+	
 	$(document).on("click", "#deptList1 input[type=checkbox][name=dept]", function () {
     	if($(this).prop("checked")) {
     		$("#deptList1 input[type=checkbox][name=dept]").prop("checked", false);
