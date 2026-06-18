@@ -4,6 +4,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include>
+<style>
+.memo-content-area { word-break: break-all; overflow-wrap: break-word; }
+</style>
 
 <div class="container w-600 mt-20 mb-0 memo-card background-card">
 <!-- 	제목, 타입, 작성자 -->
@@ -30,7 +33,7 @@
 	<hr style="color:#e1e4e6">		
 <!-- 	쪽지 내용 -->
 	<div class="cell" style="min-height:350px">
-		<pre style="font-size:16px;">${memoDto.memoContent}</pre>
+		<div class="memo-content-area">${memoDto.memoContent}</div>
 	</div>
 	<hr style="color:#e1e4e6">
 	<div class="cell mt-50 right">
@@ -43,4 +46,4 @@
 			<span>목록</span>
 		</a>	
 	</div>
-</div>      
+</div>    

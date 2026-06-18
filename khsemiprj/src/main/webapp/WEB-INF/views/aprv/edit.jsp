@@ -39,6 +39,10 @@
 					disableWeekends: true,
 					// 1. 달력이 화면에 열렸을 때 마우스 움직임 감지 셋팅
 				    onOpen: function() {
+				    	$(".picker-sdate").val('');
+			    		$(".picker-edate").val('');
+			    		picker1.setDateRange(null, null);
+				    	
 				        // Lightpick 달력의 날짜 칸(td)들에 마우스가 올라갈 때 이벤트 리스너 추가
 				        const calendarEl = document.querySelector('.lightpick__months');
 				        
@@ -76,7 +80,7 @@
 				    },
 					onSelect: function(start, end){
 				        // 날짜 선택 시 실행될 코드
-						var formHead = $(".aprv-form-list:selected").attr("data-head");
+						var formHead = $(".aprv-form-list option:selected").attr("data-head");
 						var sDate = $(".picker-sdate").val();
 						var eDate = $(".picker-edate").val();
 						if(formHead == "연차" && sDate != "" && eDate != "") {
@@ -84,21 +88,16 @@
 								$(".vacationType").show();
 								var template = $("#vacation-type-template").text();
 								const div = $.parseHTML(template)[1];
-								$(".vacationType").append(div);
+								$(".vacationType").html(div); // 중복 append 방지를 위해 html() 사용 권장
 							} else {
 								$(".vacationType").hide();
 								$(".vacationType").empty();
 							}
-						} else {
-							$(".vacationType").hide();
-							$(".vacationType").empty();
-						}
-						
-						var formHead = $(".aprv-form-list option:selected").attr("data-head");
-						if(formHead == "연차") {
-							var count = getWeekdaysCount(moment(sDate), moment(eDate));
+					        
+					        var count = getWeekdaysCount(moment(sDate), moment(eDate));
 							if(count > ${leaveRemain}) {
-								alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+								//alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
+								showAjaxAlarm("휴가 잔여일 : ${leaveRemain}일 / 휴가 선택일 : " + count + "일 / 휴가 잔여일보다 휴가 선택일이 많습니다. 다시 선택하세요.", 'btn-negative', '[name=aprvEdate]', 'right');
 								picker1.setDateRange(null, null);
 								$(".picker-sdate").val("");
 								$(".picker-edate").val("");
@@ -106,7 +105,17 @@
 							} else {
 								$('input[name=aprvLeave]').val(count);
 							}
+						} else {
+							$(".vacationType").hide();
+							$(".vacationType").empty();
 						}
+						
+						if($(".picker-sdate").val().trim().length > 0) $(".picker-sdate").removeClass("fail");
+	                    if($(".picker-edate").val().trim().length > 0) $(".picker-edate").removeClass("fail");
+	                    
+	                    // 날짜 변경 시 실시간 상태 동기화
+	                    state.aprvSdateValid = $(".picker-sdate").val().trim().length > 0;
+	                    state.aprvEdateValid = $(".picker-edate").val().trim().length > 0;
 				    }
 				});
 			
@@ -127,36 +136,60 @@
 				        $(".picker-edate").val($(".picker-sdate").val());//시작일만 선택 가능하므로 종료일도 동일하게 설정
 				    }
 				});
+				
+				$(".divAprvCost").show();
 				break;
 		}
 		
-		// 유효성 검사 상태 객체
+		//유효성 검사 상태 객체
 		var state = {
 			aprvTitleValid: false,
 			aprvContentValid: false,
 			aprvSdateValid: false,
 			aprvEdateValid: false,
+			aprvCostValid: false,
+			aprvCostTypeValid: true,
+			aprvCostReceiverValid: true,
+			aprvCostReceiveAccountValid: true,
 			aprvLineNo1Valid: false,
 			aprvLineNo2Valid: true,
+			aprvValid: false,
 			ok: function(){
 				return Object.values(this)
 				.filter(v => typeof v==="boolean")
 				.every(v => v === true);
 			}
 		};
-		
+
 		// 블러/체인지 이벤트 핸들러들
 	    $("[name=aprvTitle]").on("blur", function(){
 	        state.aprvTitleValid = $(this).val().trim().length > 0;
 	    });
-	    $("[name=aprvContent]").on("change keyup", function(){ // keyup 추가로 실시간 검사 보완
+	    $("[name=aprvContent]").on("blur", function(){
 	        state.aprvContentValid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=aprvSdate]").on("blur", function(){
+	        state.aprvSdateValid = $(this).val().trim().length > 0;
 	    });
 	    $("[name=aprvEdate]").on("blur", function(){
 	        state.aprvEdateValid = $(this).val().trim().length > 0;
 	    });
-	    $("[name=aprvSdate]").on("blur", function(){
-	        state.aprvSdateValid = $(this).val().trim().length > 0;
+	    $("[name=aprvCost]").on("blur", function(){
+	        state.aprvCostValid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=aprvCostReceiver]").on("blur", function(){
+	    	if($("[name=aprvCostType]:checked").val() == "개인") {
+	        	state.aprvCostReceiverValid = $(this).val().trim().length > 0;
+	    	} else {
+	    		state.aprvCostReceiverValid = true;
+	    	}
+	    });
+	    $("[name=aprvCostReceiveAccount]").on("blur", function(){
+	    	if($("[name=aprvCostType]:checked").val() == "개인") {
+	        	state.aprvCostReceiveAccountValid = $(this).val().trim().length > 0;
+	    	} else {
+	    		state.aprvCostReceiveAccountValid = true;
+	    	}
 	    });
 	    $("[name=aprvLineNo1]").on("blur", function(){
 	        state.aprvLineNo1Valid = $(this).val().trim().length > 0;
@@ -179,54 +212,92 @@
             // [2] 결재 라인 테이블(tbody)에 추가된 행(tr) 개수로 결재자 등록 여부 체크
             state.aprvLineNo1Valid = ($("#line1List tr").length > 0);
 
-            // [3] 순차적 유효성 검사 및 경고창 출력
+         	// [3] 순차적 유효성 검사 및 경고창 출력
             if(!state.aprvTitleValid) {
                 //window.alert("제목을 입력하세요.");
-                showAjaxAlarm('필수', 'btn-negative', '[name=aprvTitle]', 'left');
+                showAjaxAlarm('제목을 입력하세요', 'btn-negative', '[name=aprvTitle]', 'left');
                 $("[name=aprvTitle]").focus();
                 return false; 
             }
             
+            var formHead = $(".aprv-form-list option:selected").attr("data-head");
+            
             if(!state.aprvSdateValid) {
                 //window.alert("결재 시작일을 입력하세요.");
-                showAjaxAlarm('필수', 'btn-negative', '[name=aprvSdate]', 'left');
+                var message = "";
+                switch(formHead) {
+                	case "비용":
+                		message = "지출일자를 입력하세요";
+                		break;
+                	case "사직":
+                		message = "퇴사일자를 입력하세요";
+                		break;
+                	default:
+                		message = "시작일을 입력하세요";
+                		break;
+                }
+                showAjaxAlarm(message, 'btn-negative', '[name=aprvSdate]', 'left');
                 $("[name=aprvSdate]").focus();
                 return false; 
             }
             if(!state.aprvEdateValid) {
                 //window.alert("결재 종료일을 입력하세요.");
-                showAjaxAlarm('필수', 'btn-negative', '[name=aprvEdate]', 'right');
+                showAjaxAlarm('종료일을 입력하세요', 'btn-negative', '[name=aprvEdate]', 'right');
                 $("[name=aprvEdate]").focus();
                 return false; 
             }
+            
+            if(formHead == "비용") {
+            	if(!state.aprvCostValid) {
+            		showAjaxAlarm('지출금액을 입력하세요', 'btn-negative', '[name=aprvCost]', 'left');
+                    $("[name=aprvCost]").focus();
+                    return false; 
+            	}
+            	if(!state.aprvCostReceiverValid) {
+            		showAjaxAlarm('계좌주를 입력하세요', 'btn-negative', '[name=aprvCostReceiver]', 'bottom');
+                    $("[name=aprvCostReceiver]").focus();
+                    return false; 
+            	}
+            	
+            	if(!state.aprvCostReceiveAccountValid) {
+            		showAjaxAlarm('계좌번호를 입력하세요', 'btn-negative', '[name=aprvCostReceiveAccount]', 'bottom');
+                    $("[name=aprvCostReceiveAccount]").focus();
+                    return false; 
+            	}
+            } else {
+            	state.aprvCostValid = true;
+            	state.aprvCostTypeValid = true;
+            	state.aprvCostReceiverValid = true;
+            	state.aprvCostReceiveAccountValid = true;
+            }
+            
             if(!state.aprvContentValid) {
                 //window.alert("내용을 입력하세요.");
-                showAjaxAlarm('필수', 'btn-negative', '[name=aprvContent]', 'left');
+                showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=aprvContent]', 'left');
                 $("[name=aprvContent]").focus();
                 return false;
             }
             // 🚨 결재자 미선택 시 명확하게 경고창을 띄우고 전송 중단
             if(!state.aprvLineNo1Valid) {
                 //window.alert("1차 결재 라인 결재자를 추가하세요.");
-                showAjaxAlarm('필수', 'btn-negative', '.aprv-line-1', 'left');
+                showAjaxAlarm('1차 결재 라인 결재자를 추가하세요', 'btn-negative', '.aprv-line-1', 'left');
                 //$(".aprv-line-1").click();
                 return false; // 무조건 전송 차단
             }
-            /* if(!state.aprvLineNo2Valid) {
-                window.alert("두 번째 결재자를 입력하세요.");
-                $(".aprv-line-2").focus(); 
-                return false; // 무조건 전송 차단
-            } */
             
          	// submit을 유발한 버튼 객체 가져오기
             var clickedButton = e.originalEvent.submitter; 
 
-            // 특정 버튼일 때만 다르게 처리하고 싶다면?
-            if ($(clickedButton).hasClass("aprv-update")) {
-            	$(".aprv-status").val("대기");
-            	return confirm("문서를 기안하시겠습니까?");
-            } else {
-            	$(".aprv-status").val("임시저장");
+            if(!state.aprvValid) {
+	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
+	            if ($(clickedButton).hasClass("aprv-update")) {
+	            	$(".aprv-status").val("대기");
+	            	//return confirm("문서를 기안하시겠습니까?");
+	            	openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-update").click();');
+	            } else {
+	            	$(".aprv-status").val("임시저장");
+	            	state.aprvValid = true;
+	            }
             }
            	return state.ok();
         });
@@ -303,11 +374,11 @@
 	<div class="cell">
 		<label>휴가 분류</label>
 	</div>
-	<div class="cell">
-		<input type="radio" name="vacationType" value="연차" id="vacationType1">
-		<label for="vacationType1">연차</label>
+	<div class="cell mb-0">
+		<input type="radio" name="vacationType" value="연차" id="vacationType1" checked>
+		<label for="vacationType1">연차 ( 1일 )</label>
 		<input type="radio" name="vacationType" value="반차" id="vacationType2">
-		<label for="vacationType2">반차</label>
+		<label for="vacationType2">반차 ( 0.5일 )</label>
 	</div>
 </div>
 </script>
@@ -348,21 +419,73 @@
         	
         </div>
         <div class="flex-area">
-	        <div class="w-33">
+	        <div>
 		        <div class="cell mb-0">
 		            <label><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i></label>
 		        </div>
-		        <div class="cell mt-0">
+		        <div class="cell mt-0 mb-0">
 					<input type="hidden" name="aprvLeave" value="${aprvDto.aprvLeave}" />
 		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일">
 		        	<span class="timeTilde">~</span>
 		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvEdate}">
 		        </div>
 	        </div>
-	        <div class="w-66 vacationType">
-	        	
+	        <div class="vacationType ms-50">
+	        	<c:if test="${not empty aprvDto.aprvLeave && aprvDto.aprvLeave <= 1}">
+	        	<div>
+					<div class="cell">
+						<label>휴가 분류</label>
+					</div>
+					<div class="cell mb-0">
+						<input type="radio" name="vacationType" value="연차" id="vacationType1" <c:if test="${aprvDto.aprvLeave == 1}">checked</c:if>>
+						<label for="vacationType1">연차 ( 1일 )</label>
+						<input type="radio" name="vacationType" value="반차" id="vacationType2" <c:if test="${aprvDto.aprvLeave == 0.5}">checked</c:if>>
+						<label for="vacationType2">반차 ( 0.5일 )</label>
+					</div>
+				</div>
+	        	</c:if>
 	        </div>
         </div>
+        <div class="divAprvCost" style="display:none;">
+	        <div class="cell mb-0">
+	            <label>지출금액 <i class="fa-solid fa-asterisk red"></i></label>
+	        </div>
+	        <div class="cell mt-0 flex-area">
+	        	<input type="text" name="aprvCost" inputmode="numeric" class="field w-10" value="${aprvDto.aprvCost}">
+	        	<div class="korean-view ms-10" style="color: #666; font-size: 0.9rem; margin-top: 8px; min-height: 20px;"></div>
+	        </div>
+	        <div class="flex-area">
+		        <div>
+		        	<div class="cell mb-0">
+			            <label>지출 수단 <i class="fa-solid fa-asterisk red"></i></label>
+			        </div>
+			        <div class="cell mt-0 flex-area">
+			        	<input type="radio" name="aprvCostType" id="aprvCostType1" value="법인" <c:if test="${aprvDto.aprvCostType == '법인'}">checked</c:if>>
+						<label for="aprvCostType1" style="margin-top:4px;">법인카드</label>
+						<input type="radio" name="aprvCostType" id="aprvCostType2" value="개인" <c:if test="${aprvDto.aprvCostType == '개인'}">checked</c:if>>
+						<label for="aprvCostType2" style="margin-top:4px;">개인지출</label>
+			        </div>
+		        </div>
+		        <div id="divAprvCostTypePersonal" class="flex-area" <c:if test="${aprvDto.aprvCostType == '법인'}">style="display: none;"</c:if>>
+			        <div class="ms-20">
+			        	<div class="cell mb-0">
+				            <label>계좌주 <i class="fa-solid fa-asterisk red"></i></label>
+				        </div>
+				        <div class="cell mt-0 mb-0">
+				        	<input type="text" name="aprvCostReceiver" class="field" placeholder="계좌주" style="width:110px;" value="${aprvDto.aprvCostReceiver}" />
+			        	</div>
+			        </div>
+			        <div class="ms-20">
+			        	<div class="cell mb-0">
+				            <label>계좌번호 <i class="fa-solid fa-asterisk red"></i></label>
+				        </div>
+				        <div class="cell mt-0 mb-0">
+				        	<input type="text" name="aprvCostReceiveAccount" class="field" placeholder="계좌번호" style="width:240px;" value="${aprvDto.aprvCostReceiveAccount}" />
+			        	</div>
+			        </div>
+		        </div>
+	        </div>
+	    </div>
         <div class="cell">
         	<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
         	<input type="text" name="aprvContent" class="field w-100" value="${aprvDto.aprvContent}">

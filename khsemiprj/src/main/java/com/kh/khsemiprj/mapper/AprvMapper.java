@@ -27,6 +27,10 @@ public class AprvMapper implements RowMapper<AprvDto> {
 				.aprvWtime(rs.getTimestamp("aprv_wtime"))
 				.aprvEtime(rs.getTimestamp("aprv_etime"))
 				.aprvLeave(rs.getObject("aprv_leave", Double.class))
+				.aprvCost(rs.getObject("aprv_cost", Long.class))
+				.aprvCostType(rs.getString("aprv_cost_type"))
+				.aprvCostReceiver(rs.getString("aprv_cost_receiver"))
+				.aprvCostReceiveAccount(rs.getString("aprv_cost_receive_account"))
 				.build();
 	}
 }

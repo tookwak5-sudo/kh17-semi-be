@@ -24,7 +24,6 @@
 			
 			// submit을 유발한 버튼 객체 가져오기
             var clickedButton = e.originalEvent.submitter; 
-	
 			if(!state.aprvValid) {
 	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
 	            if ($(clickedButton).hasClass("aprv-save")) {
@@ -84,7 +83,7 @@
 	퇴사일자 : ${aprvDetailVO.aprvSdate}
 	</c:when>
 	<c:otherwise>
-	기한 : ${aprvDetailVO.aprvSdate} ~ ${aprvDetailVO.aprvEdate}
+	기한 : ${aprvDetailVO.aprvSdate} ~ ${aprvDetailVO.aprvEdate} <c:if test="${not empty aprvDetailVO.aprvLeave}">[ 연차사용 ${aprvDetailVO.aprvLeave}일 ]</c:if>
 	</c:otherwise>
 	</c:choose>
 	</div>

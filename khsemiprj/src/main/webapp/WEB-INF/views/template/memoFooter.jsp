@@ -21,6 +21,15 @@
 		        }
 		        
 		        #send-ajax-alarm {
+		        	background-color:#ffffff;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-positive:hover {
+		        	background-color:#5A86E3;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-negative:hover {
+		        	background-color:#E86A7A;
 		        	transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
 		
@@ -38,10 +47,25 @@
 		            opacity: 1;
 		        }
 		        
+		        /* 비동기 알림창의 부모 dynamic 위치 제어 */
+				#div-alarm {
+				    /* absolute 대신 fixed를 사용하면 문서 레이아웃 흐름에서 완전히 제외되어 여백을 만들지 않습니다 */
+				    position: absolute; 
+				    opacity: 0;
+				    visibility: hidden;
+				    width: fit-content;
+				    z-index: 1000;
+				    
+				    /* [추가] 처음부터 공간을 아예 차지하지 않도록 설정 */
+				    display: none; 
+				}
+		        
 		        /* 보여지는 상태 */
 				#div-alarm.is-visible {
 				    opacity: 1 !important;
 				    visibility: visible !important;
+				    /* [추가] 보일 때만 block 형태로 배치 */
+    				display: block !important;
 				}
 		    </style>
 			
@@ -109,13 +133,29 @@
 				                top: $(target).offset().top + "px",
 				                left: ($(target).offset().left - alarmWidth - 10) + "px" // 10은 타겟과의 간격
 				            });
-				        } else {
+				        } else if(position == 'right') {
 				            // 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
 				            $(divAlarm).css('transform-origin', 'left center');
 				            
 				            $(divAlarm).css({
 				                top: $(target).offset().top + "px",
 				                left: ($(target).offset().left + $(target).outerWidth() + 10) + "px"
+				            });
+				        } else if(position == 'bottom') {
+				        	// 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
+				            $(divAlarm).css('transform-origin', 'left center');
+				            
+				            $(divAlarm).css({
+				                top: $(target).offset().top + $(target).outerHeight() + 10 + "px",
+				                left: $(target).offset().left + "px"
+				            });
+				        } else {
+				        	// 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
+				            $(divAlarm).css('transform-origin', 'left center');
+				            
+				            $(divAlarm).css({
+				                top: $(target).offset().top - 50 + "px",
+				                left: $(target).offset().left + "px"
 				            });
 				        }
 				    }
@@ -143,32 +183,9 @@
 	                	$('#div-alarm').removeClass("is-visible");
 	                }, 500); // CSS 애니메이션 시간과 맞춤
 				}
-				
-				// 얼럿 열기
-				function openAlert(message) {
-					$('#alertMessage').text(message);
-					var alert = document.getElementById('modalAlert');
-					alert.classList.add('active');
-				}
-
-				// 얼럿 닫기
-				function closeAlert() {
-					var alert = document.getElementById('modalAlert');
-					alert.classList.remove('active');
-				}
-				
-				// 컨펌 열기
-				function openConfirm(message, clickScript) {
-					$('#confirmMessage').text(message);
-					$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
-					var confirm = document.getElementById('modalConfirm');
-					confirm.classList.add('active');
-				}
-
-				// 컨펌 닫기
-				function closeConfirm() {
-					var confirm = document.getElementById('modalConfirm');
-					confirm.classList.remove('active');
-					$('#btnConfirmAction').attr("onclick", '');
-				}
 			</script>
+			
+			<!-- 비동기용 알림 -->
+			<div id="div-alarm" style="position: absolute;opacity: 0;visibility: hidden;width: fit-content;">
+		        <a id="send-ajax-alarm" class="btn btn-positive btn-slide-hidden" onclick="hideAjaxAlarm(this)">알림</a>
+		    </div>
