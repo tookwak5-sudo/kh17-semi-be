@@ -24,7 +24,7 @@
 			<div class="flex-area">
 				<div class="image-circle image-profile" style="width: 34px; height: 34px; flex-shrink: 0; margin-right: 10px;">
 				</div>
-				<div class="w-20">
+				<div class="w-200">
 					<h3 class="mt-0 mb-0">
 						<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
 						<span class="board-writer red">(작성자)</span>
