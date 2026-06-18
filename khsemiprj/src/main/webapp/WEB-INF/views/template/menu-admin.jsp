@@ -6,7 +6,6 @@
 
 <!-- 관리자일 때 보여줄 메뉴 -->
 <ul class="menu">
-	
 	<li>
 	    <a href="/aprv/list">
 	    	<i class="fa-solid fa-file-signature"></i>
