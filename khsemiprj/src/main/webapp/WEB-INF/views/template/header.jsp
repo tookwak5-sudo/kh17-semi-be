@@ -147,7 +147,7 @@
 						           style="font-size:20px; text-decoration: none;" 
 						           onclick="
 						               var w = 650; 
-						               var h = 650; 
+						               var h = 720; 
 						               var left = (screen.width/2) - (w/2); 
 						               var top = (screen.height/2) - (h/2); 
 						               window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 

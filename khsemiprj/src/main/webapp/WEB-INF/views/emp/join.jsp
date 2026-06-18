@@ -564,6 +564,9 @@ $(function() {
 			<button type="submit" class="btn btn-positive w-100">
 				<i class="fa-solid fa-user-plus"></i> <span>회원 가입하기</span>
 			</button>
+			<a href="/emp/login" class="btn btn-negative w-100 mt-10">
+				<span>취소하기</span>			
+			</a>
 		</div>
 	</div>
 </form>

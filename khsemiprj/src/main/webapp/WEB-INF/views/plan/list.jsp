@@ -27,24 +27,22 @@
 </style>
 <script>
 	$(function () {
-		var picker1 = new Lightpick({ 
-		    field : $(".picker-sdate")[0],
-		    format : "YYYY-MM-DD",
-			firstDay : 7,
-			onSelect: function(start, end){
-		    }
-		});
-		var picker2 = new Lightpick({ 
-		    field : $(".picker-edate")[0],
-		    format : "YYYY-MM-DD",
-			firstDay : 7,
-			onSelect: function(start, end){
-		    }
-		});
+		 var picker8 = new Lightpick({
+             field : $(".picker-sdate")[0] ,
+             secondField : $(".picker-edate")[0],
+             singleDate : false,//범위선택으로 변경
+             format : "YYYY-MM-DD", 
+             firstDay : 7 ,
+             numberOfMonths : 2,//2달 표시
+             numberOfColumns : 2,//한 줄에 2칸 표시
+             selectForward : false,//최초 선택날짜 이후로만 선택가능
+         });
 		
 		$(document).on("click", "#dateReset", function() {
 			$(".picker-sdate").val("");
 			$(".picker-edate").val("");
+			$(".field-sm").val("");
+			
 		});
 	})
 </script>
@@ -55,9 +53,6 @@
 
 	<div class="cell center">
 		<form autocomplete="off">
-			<button type="button" class="btn btn-negative" id="dateReset">
-				<i class="fa-solid fa-xmark red"></i> <span>날짜 초기화</span>
-			</button>
         	<input type="text" name="planSdate" class="field picker-sdate" size="4" placeholder="시작일" value="${param.planSdate}"}>
         	<span class="timeTilde">~</span>
         	<input type="text" name="planEdate" class="field picker-edate" size="4" placeholder="종료일" value="${param.planEdate}">
@@ -68,8 +63,11 @@
 				<option value="plan_type" ${param.column == 'plan_type' ? 'selected' : ''}>일정타입</option>
 			</select> <input type="text" name="keyword" class="field-sm"
 				placeholder="검색어 입력" value="${param.keyword}">
-			<button type="submit" class="btn btn-positive">
-				<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+			<button type="submit" class="btn btn-positive" style="width:102px">
+				<i class="fa-solid fa-magnifying-glass"></i><span>검색</span>
+			</button>
+			<button type="button" class="btn btn-neutral" style="width:102px" id="dateReset">
+				<i class="fa-solid fa-xmark"></i> <span>초기화</span>
 			</button>
 		</form>
 	</div>

@@ -33,8 +33,10 @@
 		<pre style="font-size:16px;">${memoDto.memoContent}</pre>
 	</div>
 	<hr style="color:#e1e4e6">
-	<a href="/memo/write?memoSenderId=${memoDto.memoSenderId}" class="btn btn-positive">
-    	<span>답변하기</span>
-	</a>
-	<a class="btn btn-neutral" href="./list">목록으로</a>
+	<div class="cell mt-40 right">
+		<a href="/memo/write?memoSenderId=${memoDto.memoSenderId}" class="btn btn-positive">
+	    	<span>답변하기</span>
+		</a>
+		<a class="btn btn-neutral" href="./list">목록으로</a>	
+	</div>
 </div>      
