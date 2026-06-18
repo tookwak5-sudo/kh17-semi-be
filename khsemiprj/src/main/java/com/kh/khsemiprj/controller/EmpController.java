@@ -139,12 +139,16 @@ public class EmpController {
 //		if(duration.toDays() >= 30) {
 //			return "redirect:./notice";
 //		}
-
-		// 목표: 로그인과 동시에 직원 출근처리
-		LogInoutDto logInoutDto = new LogInoutDto();
-		logInoutDto.setLogInoutEmpId(empDto.getEmpId());
-		logInoutDto.setLogInoutType("출근");
-		logInoutDao.insert(logInoutDto);
+		// 목표: 최초 로그인 시에만 로그인과 출근 동시에 처리
+		// 오늘의 기록의 마지막 상태를 조회
+		LogInoutDto lastRecord = logInoutDao.getLastType(empDto.getEmpId());
+		// 2. 기록이 없는 경우에만 출근 처리(null체크)
+		if (lastRecord == null) {
+			LogInoutDto newLog = new LogInoutDto();
+			newLog.setLogInoutEmpId(empDto.getEmpId());
+			newLog.setLogInoutType("출근");
+			logInoutDao.insert(newLog);
+		}
 		return "redirect:/";
 	}
 
@@ -159,46 +163,46 @@ public class EmpController {
 		return "redirect:/emp/login";
 	}
 
-	// 목표 출근버튼을 누르면 출근 처리
-	@PostMapping("/work-in")
-	public String workIn(HttpSession session, Model model) {
-		String loginId = (String) session.getAttribute("loginId");
-
-		// 아이디를 조회해서 출퇴근 여부 확인
-		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-
-		// 출근 상태라면 상태변화x
-		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
-			return "redirect:/?workIn";
-		}
-
-		LogInoutDto newDto = new LogInoutDto();
-		newDto.setLogInoutEmpId(loginId);
-		newDto.setLogInoutType("출근");
-		logInoutDao.insert(newDto);
-
-		return "redirect:/?alarm=workIn";
-	}
-
-	// 목표 퇴근 버튼을 누르면 퇴근 처리
-//	@PostMapping("/work-out")
-//	public String workOut(HttpSession session) {
+	// 목표:  출근버튼을 누르면 출근 처리
+//	@PostMapping("/work-in")
+//	public String workIn(HttpSession session, Model model) {
 //		String loginId = (String) session.getAttribute("loginId");
 //
 //		// 아이디를 조회해서 출퇴근 여부 확인
 //		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-//		// 퇴근 상태라면 상태변화x
-//		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
-//			return "redirect:/?workOut";
+//
+//		// 출근 상태라면 상태변화x
+//		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
+//			return "redirect:/?workIn";
 //		}
-//		// 출근 상태라면
+//
 //		LogInoutDto newDto = new LogInoutDto();
 //		newDto.setLogInoutEmpId(loginId);
-//		newDto.setLogInoutType("퇴근");
+//		newDto.setLogInoutType("출근");
 //		logInoutDao.insert(newDto);
 //
-//		return "redirect:/?alarm=workOut";
+//		return "redirect:/?alarm=workIn";
 //	}
+
+	// 목표 퇴근 버튼을 누르면 퇴근 처리
+	@PostMapping("/work-out")
+	public String workOut(HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+
+		// 아이디를 조회해서 출퇴근 여부 확인
+		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+		// 퇴근 상태라면 상태변화x
+		if (logInoutDto != null && "퇴근".equals(logInoutDto.getLogInoutType().trim())) {
+			return "redirect:/?workOut";
+		}
+		// 출근 상태라면
+		LogInoutDto newDto = new LogInoutDto();
+		newDto.setLogInoutEmpId(loginId);
+		newDto.setLogInoutType("퇴근");
+		logInoutDao.insert(newDto);
+
+		return "redirect:/?alarm=workOut";
+	}
 
 	// 로그아웃 및 퇴근
 	@RequestMapping("/logoutOut")

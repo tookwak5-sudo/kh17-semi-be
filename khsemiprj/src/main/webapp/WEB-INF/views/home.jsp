@@ -67,10 +67,10 @@
     	padding: 20px;
     	border: 1px solid #ccc; 
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
-    	z-index: 10000;
+    	z-index: 999;
     }
 	.list-area{
-		height:0px;
+		height: 250px;
 	    overflow-y:auto;
 	}
 	
@@ -349,6 +349,15 @@
 				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
 			
+			//console.log(data);
+			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
+// 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
+// 			if(check) return;
+			
+			//[1]결재문서
+			//planType(개인, 부서, 회사)이 부서이고, planAprvNo가 null이 아닌 경우
+			
+			//[2]결재문서가 아닌 경우 planAprvNo가 null인 경우
 			$.ajax({
 				url: "/rest/plan/write",
 				method: "post",
@@ -455,10 +464,10 @@
 
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
-			
-		      var calendarEl = document.getElementById('calendar');
+	    	 var currentPlanType = "회사"; // 기본값 설정	
+		     var calendarEl = document.getElementById('calendar');
 		      
-		      var calendar = new FullCalendar.Calendar(calendarEl, {
+		     var calendar = new FullCalendar.Calendar(calendarEl, {
 	        	slotMinTime: '09:00',
 	        	slotMaxTime: '19:00',
 	        	slotDuration: '02:00:00',
@@ -482,7 +491,9 @@
 	            var headList = JSON.parse('${planHeadJson}');
 	            var options = "<option value=''>선택하세요</option>";
 	            for(var i = 0; i < headList.length; i++) {
-            		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	            	if(headList[i].headType === '일반') {
+            			options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	            	}
 	            }
 	            //가져온 option을 헤더 select 아래에 append 
 	            $("select[name='headNo']").empty().append(options);
@@ -573,7 +584,7 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
-                $("#modalEditBtn").data("plan-head-no", planHeadNo);
+                $("#modalEditBtn").data("plan-headNo", planHeadNo);
             	
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
@@ -632,7 +643,8 @@
         });
       		//날짜 클릭시 클릭한 날짜와 함께 
 	        calendar.render();
-			
+	        filterCalendarEvents("회사");
+	        
 	        document.addEventListener('click', function(e) {
             // 클릭된 요소가 '+더보기' 링크인지 확인
             if (e.target.matches('.fc-daygrid-more-link')) {
