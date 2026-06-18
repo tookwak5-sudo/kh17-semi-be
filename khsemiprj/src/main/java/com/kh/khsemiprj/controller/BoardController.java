@@ -109,9 +109,13 @@ public class BoardController {
 	
 	//수정 매핑
 	@GetMapping("/edit")
-	public String edit(@RequestParam long boardNo, Model model) {
+	public String edit(@RequestParam long boardNo, Model model, HttpSession session) {
 		BoardDto boardDto = boardDao.selectOne(boardNo);
 		if(boardDto == null) throw new TargetNotfoundException("존재하지 않는 게시글");
+		String loginId = (String)session.getAttribute("loginId");
+		if(!boardDto.getBoardWriter().equals(loginId)) {
+			throw new GetOutException("작성자만 수정할 수 있습니다");
+		}
 		
 		model.addAttribute("boardDto", boardDto);
 		return "board/edit";
@@ -120,11 +124,13 @@ public class BoardController {
 	public String edit(@ModelAttribute BoardDto boardDto, HttpSession session) {
 		//작성한 글이 "공지"라면 관리자인지를 반드시 확인
 		if(boardDto.getBoardHead() != null && boardDto.getBoardHead().equals("공지")) {
-			String loginLevel = (String)session.getAttribute("loginLevel");
+//			String loginLevel = (String)session.getAttribute("loginLevel");
 			//로그인 할 때 직급은 positionLevel로 session에 저장, 관리자 단계는 loginLevel로 session에 저장
-			if(loginLevel.equals("0")) {//loginLevel이 0이라면 (관리자가 아니라면)
-				throw new GetOutException();
-			}
+			/*
+			 * if(loginLevel.equals("0")) {//loginLevel이 0이라면 (관리자가 아니라면)
+			 * throw new GetOutException();
+			 * }
+			 */
 		}
 		
 		BoardDto findBoardDto = boardDao.selectOne(boardDto.getBoardNo());

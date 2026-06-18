@@ -105,7 +105,8 @@ public class ReplyRestController {
 		String loginId = (String) session.getAttribute("loginId");
         replyDto.setReplyWriter(loginId);
 		
-        replyService.registerFormFile(replyDto, replyImage); 
+        replyService.writeReply(replyDto, replyImage);
+		/* boardDao.updateBoardReplycount(replyDto.getReplyOrigin()); */
     }
 	
 	@PostMapping("/list")

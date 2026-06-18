@@ -27,7 +27,7 @@ import com.kh.khsemiprj.exception.TargetNotfoundException;
 		@Autowired
 		private BoardDao boardDao;
 	
-		public void registerFormFile(ReplyDto replyDto, MultipartFile attach)
+		public void writeReply(ReplyDto replyDto, MultipartFile attach)
 				throws IllegalStateException, IOException {
 			
 			// 1. 게시글 번호 생성 및 게시글 DB 등록
@@ -40,6 +40,8 @@ import com.kh.khsemiprj.exception.TargetNotfoundException;
 		        int attachNo = attachService.save(attach);
 		        replyDao.connect(replyNo, attachNo);
 		    }
+		    // 3. 댓글 갯수 업데이트
+		    boardDao.updateBoardReplycount(replyDto.getReplyOrigin());
 		}
 		public void modifyFile(ReplyDto replyDto, AttachDto attachDto, MultipartFile attach)
 				throws IllegalStateException, IOException {

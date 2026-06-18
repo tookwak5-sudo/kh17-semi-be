@@ -6,7 +6,7 @@
 
 <style>
 	.reply-viewer, .reply-editor { display:flex; padding:15px; box-shadow: 0 0 0 1px lightgray; }
-	.reply-viewer > .profile-wrapper, .reply-editor > .profile-wrapper { width:100px; flex-shrink: 0; }
+	.reply-viewer > .profile-wrapper, .reply-editor > .profile-wrapper { width:34px; flex-shrink: 0; }
 	.reply-viewer > .profile-wrapper > img, .reply-editor > .profile-wrapper > img { width:100%; aspect-ratio:1/1; }
 	.reply-viewer > .content-wrapper, .reply-editor > .content-wrapper { flex-grow: 1; }
 	
@@ -20,15 +20,19 @@
 
 <script type="text/template" id="reply-viewer-template">
 	<div class="reply-viewer">
-		<div class="profile-wrapper">
-			<img src="https://picsum.photos/500" class="image-circle image-profile">
-		</div>
 		<div class="content-wrapper ms-20">
 			<div class="flex-area">
-				<h3 class="mt-0 mb-0">
-					<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
-					<span class="board-writer red">(작성자)</span>
-				</h3>
+				<div class="image-circle image-profile" style="width: 34px; height: 34px; flex-shrink: 0; margin-right: 10px;">
+				</div>
+				<div class="w-20">
+					<h3 class="mt-0 mb-0">
+						<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
+						<span class="board-writer red">(작성자)</span>
+					</h3>
+					<div class="w-50">
+						<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
+					</div>
+				</div>
 				<div style="margin-left : auto">
 					<i class="fa-regular fa-thumbs-up red reply-btn-like"></i>
 					<span class="reply-thumbs-up-count">0</span>
@@ -43,11 +47,8 @@
 			
 			<pre class="mt-10 mb-0 reply-content">내용 샘플</pre>
 			
-			<div class="mt-20 flex-area"> 
-				<div class="w-50">
-					<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
-				</div>
-				<div class="button-wrapper right w-50">
+			<div class="flex-area"> 
+				<div class="button-wrapper" style="margin-left: auto">
 					<i class="fa-solid fa-comment-dots blue btn-nested-reply"></i>
 					<i class="fa-solid fa-edit orange btn-reply-edit"></i>
 					<i class="fa-solid fa-trash red btn-reply-delete"></i>
@@ -360,7 +361,8 @@
 				    var currentChunkContainer = null; 
 				    var chunkIndex = 0;         
 				    var validCounter = 0;       
-				    var globalValidCounter = 0; 
+				    var globalValidCounter = 0;
+				    var maxChunkIndex = Math.max(0, Math.ceil(totalValidCount / displayLimit) - 1);
 					
 					for(var i=0; i < response.length; i++) {
 					    if (currentChunkContainer === null || (validCounter === displayLimit && globalValidCounter < totalValidCount)) {
@@ -370,17 +372,27 @@
 					        }
 					        var startNum = chunkIndex * displayLimit + 1;
 					        var endNum = Math.min((chunkIndex + 1) * displayLimit, totalValidCount);
-					        var isOpen = (chunkIndex === 0);
+					        var isOpen = (chunkIndex === maxChunkIndex);
 					        var iconClass = isOpen ? "fa-minus" : "fa-plus";
 					        var displayStyle = isOpen ? "block" : "none";
 					        
 					        if (totalValidCount > displayLimit) {
-					            var chunkHeader = `
-					                <div class="reply-chunk-header" data-target="chunk-` + chunkIndex + `" style="border: 1px solid #ddd; padding: 12px 15px; margin-bottom: -1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #fbfbfb; border-radius: 3px;">
-					                    <span style="font-weight: bold; font-size: 14px; color: #333;">` + startNum + ` ~ ` + endNum + ` 번째 댓글</span>
-					                    <i class="fa-solid ` + iconClass + `" style="color: #666;"></i>
-					                </div>
-					            `;
+								if(chunkIndex!=maxChunkIndex){
+						       		var chunkHeader = `
+										<div class="reply-chunk-header" data-target="chunk-` + chunkIndex + `" style="border: 1px solid #ddd; padding: 12px 15px; margin-bottom: -1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #fbfbfb; border-radius: 3px;">
+											<span style="font-weight: bold; font-size: 14px; color: #333;">` + startNum + ` ~ ` + endNum + ` 번째 댓글</span>
+											<i class="fa-solid ` + iconClass + `" style="color: #666;"></i>
+										</div>
+									`;
+								} else{
+									var chunkHeader = `
+						                <div class="reply-chunk-header" data-target="chunk-` + chunkIndex + `" style="border: 1px solid #ddd; padding: 12px 15px; margin-bottom: -1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #fbfbfb; border-radius: 3px;">
+						                    <span style="font-weight: bold; font-size: 14px; color: #333;">` + startNum + ` ~  번째 댓글</span>
+						                    <i class="fa-solid ` + iconClass + `" style="color: #666;"></i>
+						                </div>
+						            `;
+								}
+								
 					            $(".reply-area").append(chunkHeader);
 					        }
 					        currentChunkContainer = $(`<div id="chunk-` + chunkIndex + `" class="reply-chunk-container" style="display: ` + (totalValidCount > displayLimit ? displayStyle : 'block') + `; margin-bottom: 20px;"></div>`);
