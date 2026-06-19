@@ -39,21 +39,6 @@
 		    padding: 2px 6px;
 		    border-radius: 4px;
 		}
-</style>
-
-<div class="container w-950 mt-20 mb-50 background-card">
-
-	<div class="profile-info">
-		<div class="profile-name">${empDto.empName}</div>
-		<h1>${empPositionDeptDto.empPositionName} / ${empPositionDeptDto.deptName}</h1>
-	</div>
-	
-	<div class="cell">
-		<img src="./profile?empId=${empDto.empId}" width="100" height="100"
-			style="border-radius:50%; box-shadow:0 0 1px 0 black">
-	</div>
-	
-	<style>
 		.emp-info-card {
 			background-color: #ffffff;
 			border: 1px solid #e9ecef;
@@ -98,6 +83,15 @@
 			font-weight: 600;
 		}
 	</style>
+<div class="container w-100 mt-20 mb-50 background-card">
+	<div class="profile-info">
+		<div class="profile-name">${empDto.empName} ${empPositionDeptDto.empPositionName}</div>
+		<div class="profile-dept-pos">${empPositionDeptDto.deptName}</div>
+	</div>
+	<div class="cell">
+		<img src="/emp/profile?empId=${empDto.empId}" width="100" height="100"
+			style="border-radius:50%; box-shadow:0 0 1px 0 black">
+	</div>
 	
 	<form action="edit" method="post" id="editForm">
 		<input type="hidden" name="empId" value="${empDto.empId}">
@@ -190,7 +184,6 @@
 		</div>
 	</form>
 </div>
-
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
 <script>

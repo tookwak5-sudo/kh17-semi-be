@@ -251,6 +251,11 @@
 						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" style="top:400px;">퇴근처리 되었습니다.</a>
 						    </div>
 						</c:when>
+						<c:when test="${param.alarm == 'editLeave'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();">휴가수정이 완료되었습니다.</a>
+						    </div>
+						</c:when>
 					</c:choose>
 				</c:when>
 	    	</c:choose>

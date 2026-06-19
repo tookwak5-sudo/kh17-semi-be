@@ -266,14 +266,6 @@
 		};
 		
 		$(function () {
-// 			$("#workInForm").on("submit", function(e){
-				
-// 				if(!workInState.workInValid) {
-// 	            	openConfirm('출근하시겠습니까?', 'workInState.workInValid = true; $("#btnWorkIn").click();');
-// 				}
-				
-// 				return workInState.ok();
-// 			});
 			
 			
 			$("#workOutForm").on("submit", function(e){
@@ -338,9 +330,9 @@
 					        </div>
 					
 					        <div class="profile-info">
-					            <div class="profile-name">${sessionScope.loginId} ${sessionScope.empPosition}</div>
+					            <div class="profile-name">${sessionScope.empName} ${sessionScope.empPosition}</div>
 					            <div class="profile-dept-pos">${sessionScope.empDept}</div>
-					            <div class="profile-id">ID: ${sessionScope.empName}</div>
+					            <div class="profile-id">ID: ${sessionScope.loginId}</div>
 					        </div>
 					
 <%-- 					        <c:choose> --%>

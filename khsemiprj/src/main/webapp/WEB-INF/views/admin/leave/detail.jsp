@@ -65,16 +65,13 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
 <div class="container w-90 mt-20 mb-50 background-card">
-
-<div class="container w-100 mt-50 mb-50">
-
-	<div class="cell">
-		<h1>${empDto.empName}</h1>
-		<h1>${empPositionDeptDto.empPositionName} / ${empPositionDeptDto.deptName}</h1>
+	<div class="profile-info">
+		<div class="profile-name">${empDto.empName} ${empPositionDeptDto.empPositionName} </div>
+		<div class="profile-dept-pos">${empPositionDeptDto.deptName}</div>
 	</div>
 	
 	<div class="cell">
-		<img src="./profile?empId=${empDto.empId}" width="100" height="100"
+		<img src="/emp/profile?empId=${empDto.empId}" width="100" height="100"
 			style="border-radius:50%; box-shadow:0 0 1px 0 black">
 	</div>
 	
@@ -139,7 +136,6 @@
 		</div>
 	</div>
 	
-</div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

@@ -12,23 +12,41 @@
 			background-color : #f8f9fa;
 			transition: background-color 0.2s ease;
 	}
-	
-/* 	.field { */
-/* 	    border: 1px solid #ced4da;  */
-/* 	    border-radius: 6px;  */
-/* 	    padding: 5px 10px;  */
-/* 	    outline: none; */
-/* 	    transition: border-color 0.2s ease, box-shadow 0.2s ease; */
-/* 	} */
-	
-/* 	.field:focus { */
-/* 	    border-color: #739BED; */
-/* 	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2); */
-/* 	} */
-	
+	.profile-info {
+		    font-size: 0.95em;
+		    color: #475569;
+		    margin-top: 15px;
+		    line-height: 1.4;
+		    padding: 10px 0;
+		}
+		
+		/* 이름 강조 */
+		.profile-name {
+		    font-size: 1.2em;
+		    font-weight: 700;
+		    color: #1E293B;
+		    margin-bottom: 2px;
+		}
+		
+		/* 부서 및 직책 라인 */
+		.profile-dept-pos {
+		    font-size: 0.9em;
+		    color: #64748b;
+		    margin-bottom: 8px;
+		}
+		
+		/* 아이디(작은 텍스트) */
+		.profile-id {
+		    font-size: 0.8em;
+		    color: #94a3b8;
+		    background: #f8fafc;
+		    display: inline-block;
+		    padding: 2px 6px;
+		    border-radius: 4px;
+		}
 </style>
 
-<div class="container w-90 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
 		<div class="w-20 flex-area" style="justify-content: left">
 			<div>
@@ -39,7 +57,7 @@
 			</div>
         </div>
         
-        <div class="w-60 flex-area flex-center">
+        <div class="w-70 flex-area flex-center">
 			<form action="./list" method="get" style="display: flex; align-items: center; gap: 8px;">
 				<select name="column" class="field select">
 					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>

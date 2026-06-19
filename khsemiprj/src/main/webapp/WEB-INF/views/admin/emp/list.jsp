@@ -11,19 +11,6 @@
 			transition: background-color 0.2s ease;
 	}
 	
-/* 	.field { */
-/* 	    border: 1px solid #ced4da;  */
-/* 	    border-radius: 6px;  */
-/* 	    padding: 5px 10px;  */
-/* 	    outline: none; */
-/* 	    transition: border-color 0.2s ease, box-shadow 0.2s ease; */
-/* 	} */
-	
-/* 	.field:focus { */
-/* 	    border-color: #739BED; */
-/* 	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2); */
-/* 	} */
-	
 	.select2-results__options {
         max-height: 150px !important;
         overflow-y: auto !important;
@@ -53,7 +40,7 @@
 		<div class="w-20 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
-		            회원 관리
+		            사원 관리
 		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
 		        </h1>
 			</div>
