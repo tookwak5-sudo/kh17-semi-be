@@ -91,9 +91,9 @@
 </script>
 
 
-<div class="container w-90 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-		<div class="w-15 flex-area" style="justify-content: left">
+		<div class="flex-area" style="margin-right: auto">
 				<div>
 			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 					${param.boardHead} 게시판
@@ -101,7 +101,7 @@
 			        </h1>
 				</div>
 		</div>
-		<div class="w-70 flex-area flex-center">
+		<div class="w-60 flex-area flex-center">
 		    <form action="./list" method="get">
 		        <c:if test="${param.boardHead != null}">
 		            <input type="hidden" name="boardHead" value="${param.boardHead}">
@@ -118,13 +118,13 @@
 		    </form>
 		</div>
 	
-		<div class="w-15 flex-area flex-center" style="justify-content: right;">
+		<div class="flex-area flex-center" style="margin-left: auto;">
 			<c:if test="${sessionScope.loginId != null}">
 				<a href="write" class="btn btn-neutral">글쓰기</a>
 			</c:if>
 		</div>
 	</div>
-	<div class="flex-area ms-20" style="justify-content: space-between; align-items: center;">
+	<div class="flex-area" style="justify-content: space-between; align-items: center;">
 		<div class="left category-menu">
 	        <a href="./list" class="ms-20 ${empty pageVO.boardHead ? 'active' : ''}">전체</a>
 	        <a href="./list?boardHead=공지&column=${param.column}&keyword=${param.keyword}" class="ms-20 ${pageVO.boardHead == '공지' ? 'active' : ''}">공지</a>
