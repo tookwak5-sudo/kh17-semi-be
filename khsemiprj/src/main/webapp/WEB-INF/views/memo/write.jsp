@@ -42,11 +42,62 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+//유효성 검사 상태 객체
+var state = {
+	memoTitleValid: false,
+	memoReceiverIdValid: false,	
+	memoContentValid: false,
+	ok: function(){
+		return Object.values(this)
+		.filter(v => typeof v==="boolean")
+		.every(v => v === true);
+	}
+};
+$(function () {
+	// 블러/체인지 이벤트 핸들러들
+    $("[name=memoTitle]").on("blur", function(){
+        state.memoTitleValid = $(this).val().trim().length > 0;
+    });
+ 	
+    $("[name=memoReceiverId]").on("blur", function(){
+        state.memoReceiverIdValid = $(this).val().trim().length > 0;
+    });
+	
+    $("[name=memoContent]").on("blur", function(){
+        state.memoContentValid = $(this).val().trim().length > 0;
+    });
+    
+    $(".form-check").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+    	
+    	if(!state.memoTitleValid) {
+    		showAjaxAlarm('제목을 입력하세요', 'btn-negative', '[name=memoTitle]', 'bottom');
+            $("[name=memoTitle]").focus();
+            return false;
+    	}
+    	
+    	if(!state.memoReceiverIdValid) {    		
+    		showAjaxAlarm('받을사람 아이디를 입력하세요', 'btn-negative', '[name=memoReceiverId]', 'bottom');
+            $("[name=memoReceiverId]").focus();
+            return false;
+    	}
+    	
+    	if(!state.memoContentValid) {
+    		showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=memoContent]', 'bottom');
+            $("[name=memoContent]").focus();
+            return false;
+    	}
+    	
+    	return state.ok();
+    });
+});
 </script>
 
    
 
-<form action="./write" method="post">
+<form action="./write" method="post" class="form-check">
 	<div class="container memo-card w-600 mt-20 mb-50 background-card">
 		<div class="w-40 flex-area" style="justify-content: left">
 			<div>
@@ -68,8 +119,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		
 			<div class="cell mt-0">
 				<select id="memoTypeSelect" name="memoType" class="field">
-					<option value="">선택 안함</option>
-					<!-- 공지는 관리자에게만 보이도록 해야함 -->
 					<option>일반</option>
 					<option>공지</option>		
 				</select>
@@ -81,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		</div>
 		<div class="cell">
 			<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-			<textarea name="memoContent" rows="8" required rows="8" class="field w-100" style="height:170px"></textarea>
+			<textarea name="memoContent" rows="8" rows="8" class="field w-100" style="height:170px"></textarea>
 		</div>
 		
 		<div class="cell mt-40 right">
@@ -95,4 +144,5 @@ document.addEventListener("DOMContentLoaded", function() {
 			</button>
 		</div>
 	</div>
+	<jsp:include page="/WEB-INF/views/template/memoFooter.jsp"></jsp:include>
 </form>

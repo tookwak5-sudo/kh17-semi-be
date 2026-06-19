@@ -4,6 +4,30 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include>
+<link rel="stylesheet" type="text/css" href="/css/modal.css">
+<style>
+.memo-content-area { word-break: break-all; overflow-wrap: break-word; }
+</style>
+<script>
+//컨펌 열기
+function openConfirm(message, clickScript) {
+	$('#confirmMessage').html(message);
+	$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
+	var confirm = document.getElementById('modalConfirm');
+	confirm.classList.add('active');
+}
+
+// 컨펌 닫기
+function closeConfirm() {
+	var confirm = document.getElementById('modalConfirm');
+	confirm.classList.remove('active');
+	$('#btnConfirmAction').attr("onclick", '');
+}
+
+function deleteMemo(no) {
+	location.href= "./delete?memoNo=" + no;
+}
+</script>
 
 <div class="container w-600 mt-20 mb-0 memo-card background-card">
 <!-- 	제목, 타입, 작성자 -->
@@ -30,7 +54,7 @@
 	<hr style="color:#e1e4e6">		
 <!-- 	쪽지 내용 -->
 	<div class="cell" style="min-height:350px">
-		<pre style="font-size:16px;">${memoDto.memoContent}</pre>
+		<div class="memo-content-area">${memoDto.memoContent}</div>
 	</div>
 	<hr style="color:#e1e4e6">
 	<div class="cell mt-50 right">
@@ -41,6 +65,31 @@
 		<a class="btn btn-neutral" href="./list">
 			<i class="fa-solid fa-list"></i>
 			<span>목록</span>
-		</a>	
+		</a>
+		<%-- <a class="btn btn-negative" href="./delete?memoNo=${memoDto.memoNo}">
+			<i class="fa-solid fa-list"></i>
+			<span>삭제</span>
+		</a> --%>
+		<a class="btn btn-negative" onclick="openConfirm('정말 삭제하시겠습니까?', 'deleteMemo(${memoDto.memoNo});')">
+			<i class="fa-solid fa-list"></i>
+			<span>삭제</span>
+		</a>
 	</div>
-</div>      
+	<!-- 커스텀 컨펌 -->
+    <div class="modal-overlay" id="modalConfirm">
+	    <div class="modal-box" style="width:400px;">
+	        <!-- <div class="modal-header center"></div> -->
+	        <div class="modal-body">
+	            <form id="popupFormConfirm" class="flex-area">
+	            	<div class="cell w-100">
+	            		<span id="confirmMessage"></span>
+					</div>
+	            </form>
+	        </div>
+	        <div class="modal-footer" style="txt-align:center;">
+	        	<button id="btnConfirmAction" type="button" class="btn btn-positive" onclick="">확인</button>
+	        	<button type="button" class="btn btn-neutral" onclick="closeConfirm()">취소</button>
+	        </div>
+	    </div>
+	</div>
+</div>    

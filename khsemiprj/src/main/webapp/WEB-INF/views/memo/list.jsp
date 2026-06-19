@@ -122,6 +122,7 @@
 				</a>
 		</div>
 	</div>
+	<!--     보냈을때 -->
 	<c:if test="${param.send != null}">
 	
 	<style>
@@ -191,6 +192,79 @@
 	
 	<div style="position: absolute;top: 590px;right: 20px;">
         <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >쪽지가 전송되었습니다.</a>
+    </div>
+    </c:if>
+    
+<!--     삭제되었을때 -->
+    <c:if test="${param.delete != null}">
+	
+	<style>
+        /* [1] 버튼 기본 스타일 */
+        #send-alarm {
+            position: fixed; /* 화면 하단에 고정 */
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: transparent;
+            color: #E86A7A;
+            border: 2px solid #E86A7A;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000; /* 최상단 위치 */
+            
+            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        /* [2] 처음 숨겨진 상태 (기본) */
+        #send-alarm.btn-slide-hidden {
+            /* 아래로 100px 내려가 있고 투명함 */
+            transform: translateY(100px); 
+            opacity: 0;
+        }
+
+        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
+        #send-alarm.btn-slide-show {
+            /* 제자리로 돌아오고 불투명함 */
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+	
+	<script>
+		// 페이지가 완전히 로드되면 실행
+	    document.addEventListener("DOMContentLoaded", function() {
+	    	const btn = document.getElementById("send-alarm");
+
+            // --- [단계 1] 자연스럽게 등장 (아래 -> 위) ---
+            // 페이지 로드 즉시 등장 애니메이션 클래스 추가
+            // (브라우저 렌더링 타이밍을 맞추기 위해 setTimeout을 사용)
+            setTimeout(() => {
+                btn.classList.add("btn-slide-show");
+            }, 10); // 아주 미세한 지연 후 실행
+
+            // --- [단계 2] 3초 대기 ---
+            
+            // --- [단계 3] 자연스럽게 사라짐 (위 -> 아래) ---
+            setTimeout(() => {
+                // 등장 클래스를 제거 -> CSS transition에 의해 아래로 내려감
+                btn.classList.remove("btn-slide-show");
+                
+                // 💡 핵심: 애니메이션 시간(0.5초)이 끝난 후 요소 삭제
+                // transition 시간인 0.5초(500ms) 뒤에 remove 실행
+                setTimeout(() => {
+                    btn.remove(); // HTML에서 완전히 삭제
+                    console.log("버튼이 완전히 삭제되었습니다.");
+                }, 500); // CSS 애니메이션 시간과 맞춤
+
+            }, 3000); // 3초 대기 시간
+	    });
+	</script>
+	
+	<div style="position: absolute;top: 590px;right: 20px;">
+        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >쪽지가 삭제되었습니다.</a>
     </div>
     </c:if>
 

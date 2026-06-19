@@ -727,9 +727,7 @@
         //함수 정의
         function filterCalendarEvents(type) {
             var allEvents = calendar.getEvents(); // 달력의 모든 일정 가져오기
-            console.log("▶ [내가 클릭한 버튼 타입]:", type);
-            // 2. 전체 가져온 일정 개수가 몇 개인지 확인
-            console.log("▶ [달력이 불러온 총 일정 개수]:", allEvents.length, "개");
+            
             allEvents.forEach(function(event) {
                 // DB의 plan_type 컬럼값 (extendedProps에서 꺼내옴)
                 var eventType = event.extendedProps.planType; 
@@ -843,6 +841,11 @@
 			                            </td>
 					  					<td>${myList.empName}</td>
 					  					<td>
+					  						<c:if test="${myList.aprvStatus == '임시저장'}">
+										        <div class="cell" style="color: #F4C47A; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
 										    <c:if test="${myList.aprvStatus == '승인'}">
 										        <div class="cell" style="color: #5A86E3; font-weight:bold; text-align: center;">
 										            ${myList.aprvStatus} 

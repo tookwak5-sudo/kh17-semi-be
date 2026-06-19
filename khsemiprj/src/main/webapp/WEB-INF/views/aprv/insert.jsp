@@ -11,35 +11,25 @@
 <script>
 const deptList = JSON.parse('${deptListJson}');
 
-// 유효성 검사 상태 객체
+//유효성 검사 상태 객체
 var state = {
 	aprvTitleValid: false,
 	aprvContentValid: false,
 	aprvSdateValid: false,
 	aprvEdateValid: false,
+	aprvCostValid: false,
+	aprvCostTypeValid: true,
+	aprvCostReceiverValid: true,
+	aprvCostReceiveAccountValid: true,
 	aprvLineNo1Valid: false,
 	aprvLineNo2Valid: true,
+	aprvValid: false,
 	ok: function(){
 		return Object.values(this)
 		.filter(v => typeof v==="boolean")
 		.every(v => v === true);
 	}
 };
-
-// 평일(주말 제외) 일수 계산 함수 (호이스팅을 위해 상단 정의 또는 바깥 배치)
-function getWeekdaysCount(startDate, endDate) {
-	let count = 0;
-	let current = startDate.clone(); 
-	
-	while (current.isSameOrBefore(endDate, 'day')) {
-		let dayOfWeek = current.day(); 
-		if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-			count++;
-		}
-		current.add(1, 'day');
-	}
-	return count;
-}
 
 $(function () {
 	var formNo = '${param.formNo}';
@@ -57,13 +47,17 @@ $(function () {
 			$(".timeTilde").show();
 			$(".picker-edate").show();
 			var picker1 = new Lightpick({ 
-			    field : $(".picker-sdate")[0],
-				secondField : $(".picker-edate")[0],
+			    field : document.querySelector('.picker-sdate'),
+				secondField : document.querySelector('.picker-edate'),
 				singleDate : true,
 			    format : "YYYY-MM-DD",
 				firstDay : 7,
 				disableWeekends: true,
 			    onOpen: function() {
+			    	$(".picker-sdate").val('');
+		    		$(".picker-edate").val('');
+		    		picker1.setDateRange(null, null);
+			    	
 			        const calendarEl = document.querySelector('.lightpick__months');
 			        if(!calendarEl) return;
 			        
@@ -103,12 +97,8 @@ $(function () {
 						} else {
 							$(".vacationType").hide().empty();
 						}
-					} else {
-						$(".vacationType").hide().empty();
-					}
-					
-					if(currentFormHead == "연차" && sDate && eDate) {
-						var count = getWeekdaysCount(moment(sDate), moment(eDate));
+				        
+				        var count = getWeekdaysCount(moment(sDate), moment(eDate));
 						if(count > ${leaveRemain}) {
 							//alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
 							showAjaxAlarm("휴가 잔여일 : ${leaveRemain}일 / 휴가 선택일 : " + count + "일 / 휴가 잔여일보다 휴가 선택일이 많습니다. 다시 선택하세요.", 'btn-negative', '[name=aprvEdate]', 'right');
@@ -119,6 +109,8 @@ $(function () {
 						} else {
 							$('input[name=aprvLeave]').val(count);
 						}
+					} else {
+						$(".vacationType").hide().empty();
 					}
 					
                     if($(".picker-sdate").val().trim().length > 0) $(".picker-sdate").removeClass("fail");
@@ -137,7 +129,7 @@ $(function () {
 			$(".timeTilde").hide();
 			$(".picker-edate").hide();
 			var picker1 = new Lightpick({ 
-			    field : $(".picker-sdate")[0],
+			    field : document.querySelector('.picker-sdate'),
 			    format : "YYYY-MM-DD",
 				firstDay : 7,
 				disableWeekends: true,
@@ -155,7 +147,7 @@ $(function () {
 			$(".timeTilde").hide();
 			$(".picker-edate").hide();
 			var picker1 = new Lightpick({ 
-			    field : $(".picker-sdate")[0],
+			    field : document.querySelector('.picker-sdate'),
 			    format : "YYYY-MM-DD",
 				firstDay : 7,
 				disableWeekends: true,
@@ -165,6 +157,8 @@ $(function () {
                     state.aprvEdateValid = true;
 			    }
 			});
+			
+			$(".divAprvCost").show();
 			break;
 	}
 	
@@ -175,11 +169,28 @@ $(function () {
     $("[name=aprvContent]").on("blur", function(){
         state.aprvContentValid = $(this).val().trim().length > 0;
     });
+    $("[name=aprvSdate]").on("blur", function(){
+        state.aprvSdateValid = $(this).val().trim().length > 0;
+    });
     $("[name=aprvEdate]").on("blur", function(){
         state.aprvEdateValid = $(this).val().trim().length > 0;
     });
-    $("[name=aprvSdate]").on("blur", function(){
-        state.aprvSdateValid = $(this).val().trim().length > 0;
+    $("[name=aprvCost]").on("blur", function(){
+        state.aprvCostValid = $(this).val().trim().length > 0;
+    });
+    $("[name=aprvCostReceiver]").on("blur", function(){
+    	if($("[name=aprvCostType]:checked").val() == "개인") {
+        	state.aprvCostReceiverValid = $(this).val().trim().length > 0;
+    	} else {
+    		state.aprvCostReceiverValid = true;
+    	}
+    });
+    $("[name=aprvCostReceiveAccount]").on("blur", function(){
+    	if($("[name=aprvCostType]:checked").val() == "개인") {
+        	state.aprvCostReceiveAccountValid = $(this).val().trim().length > 0;
+    	} else {
+    		state.aprvCostReceiveAccountValid = true;
+    	}
     });
     $("[name=aprvLineNo1]").on("blur", function(){
         state.aprvLineNo1Valid = $(this).val().trim().length > 0;
@@ -187,7 +198,7 @@ $(function () {
     $("[name=aprvLineNo2]").on("blur", function(){
         state.aprvLineNo2Valid = $(this).val().trim().length > 0;
     });
- 
+	
 	// 9. 최종 전송(submit) 시 검사
     $(".form-check").on("submit", function(e){
     	$(this).find("select[name]").trigger("input");
@@ -210,18 +221,57 @@ $(function () {
             return false; 
         }
         
+        var formHead = $(".aprv-form-list option:selected").attr("data-head");
+        
         if(!state.aprvSdateValid) {
             //window.alert("결재 시작일을 입력하세요.");
-            showAjaxAlarm('결재 시작일을 입력하세요', 'btn-negative', '[name=aprvSdate]', 'left');
+            var message = "";
+            switch(formHead) {
+            	case "비용":
+            		message = "지출일자를 입력하세요";
+            		break;
+            	case "사직":
+            		message = "퇴사일자를 입력하세요";
+            		break;
+            	default:
+            		message = "시작일을 입력하세요";
+            		break;
+            }
+            showAjaxAlarm(message, 'btn-negative', '[name=aprvSdate]', 'left');
             $("[name=aprvSdate]").focus();
             return false; 
         }
         if(!state.aprvEdateValid) {
             //window.alert("결재 종료일을 입력하세요.");
-            showAjaxAlarm('결재 종료일을 입력하세요', 'btn-negative', '[name=aprvEdate]', 'right');
+            showAjaxAlarm('종료일을 입력하세요', 'btn-negative', '[name=aprvEdate]', 'right');
             $("[name=aprvEdate]").focus();
             return false; 
         }
+        
+        if(formHead == "비용") {
+        	if(!state.aprvCostValid) {
+        		showAjaxAlarm('지출금액을 입력하세요', 'btn-negative', '[name=aprvCost]', 'left');
+                $("[name=aprvCost]").focus();
+                return false; 
+        	}
+        	if(!state.aprvCostReceiverValid) {
+        		showAjaxAlarm('계좌주를 입력하세요', 'btn-negative', '[name=aprvCostReceiver]', 'bottom');
+                $("[name=aprvCostReceiver]").focus();
+                return false; 
+        	}
+        	
+        	if(!state.aprvCostReceiveAccountValid) {
+        		showAjaxAlarm('계좌번호를 입력하세요', 'btn-negative', '[name=aprvCostReceiveAccount]', 'bottom');
+                $("[name=aprvCostReceiveAccount]").focus();
+                return false; 
+        	}
+        } else {
+        	state.aprvCostValid = true;
+        	state.aprvCostTypeValid = true;
+        	state.aprvCostReceiverValid = true;
+        	state.aprvCostReceiveAccountValid = true;
+        }
+        
         if(!state.aprvContentValid) {
             //window.alert("내용을 입력하세요.");
             showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=aprvContent]', 'left');
@@ -235,21 +285,24 @@ $(function () {
             //$(".aprv-line-1").click();
             return false; // 무조건 전송 차단
         }
-        /* if(!state.aprvLineNo2Valid) {
-            window.alert("두 번째 결재자를 입력하세요.");
-            $(".aprv-line-2").focus(); 
-            return false; // 무조건 전송 차단
-        } */
         
-        // [4] 기안 / 임시저장 상태 값 세팅
-        var clickedButton = e.originalEvent.submitter; 
-        if ($(clickedButton).hasClass("aprv-insert")) {
-        	$(".aprv-status").val("대기");
-        	return confirm("문서를 기안하시겠습니까?");
-        } else {
-        	$(".aprv-status").val("임시저장");
+        if(!state.aprvValid) {
+	        // [4] 기안 / 임시저장 상태 값 세팅
+	        var clickedButton = e.originalEvent.submitter; 
+	        if ($(clickedButton).hasClass("aprv-insert")) {
+	        	$(".aprv-status").val("대기");
+	        	//return confirm("문서를 기안하시겠습니까?");
+	        	openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-insert").click();');
+	        } else {
+	        	$(".aprv-status").val("임시저장");
+	        	state.aprvValid = true;
+	        }
         }
 
+        if(state.ok()) {
+        	//금액 저장 시 콤마 제거용
+        	$("[name=aprvCost]").val($("[name=aprvCost]").val().replaceAll(",", ""));
+        }
         return state.ok();
     });
 });
@@ -309,11 +362,11 @@ $(function () {
 	<div class="cell">
 		<label>휴가 분류</label>
 	</div>
-	<div class="cell">
-		<input type="radio" name="vacationType" value="연차" id="vacationType1">
-		<label for="vacationType1">연차</label>
+	<div class="cell mb-0">
+		<input type="radio" name="vacationType" value="연차" id="vacationType1" checked>
+		<label for="vacationType1">연차 ( 1일 )</label>
 		<input type="radio" name="vacationType" value="반차" id="vacationType2">
-		<label for="vacationType2">반차</label>
+		<label for="vacationType2">반차 ( 0.5일 )</label>
 	</div>
 </div>
 </script>
@@ -363,21 +416,61 @@ $(function () {
         	
         </div>
         <div class="flex-area">
-	        <div class="w-33">
+	        <div>
 		        <div class="cell mb-0">
 		            <label><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i></label>
 		        </div>
-		        <div class="cell mt-0">
+		        <div class="cell mt-0 mb-0">
 		        	<input type="hidden" name="aprvLeave" value="" />
-		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일" readonly>
+		        	<input type="text" id="aprvSdate" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일" readonly>
 		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" readonly>
+		        	<input type="text" id="aprvEdate" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" readonly>
 		        </div>
 	        </div>
-	        <div class="w-66 vacationType">
+	        <div class="vacationType ms-50">
 	        	
 	        </div>
         </div>
+        <div class="divAprvCost" style="display:none;">
+	        <div class="cell mb-0">
+	            <label>지출금액 <i class="fa-solid fa-asterisk red"></i></label>
+	        </div>
+	        <div class="cell mt-0 flex-area">
+	        	<input type="text" name="aprvCost" inputmode="numeric" class="field w-10">
+	        	<div class="korean-view ms-10" style="color: #666; font-size: 0.9rem; margin-top: 8px; min-height: 20px;"></div>
+	        </div>
+	        <div class="flex-area">
+		        <div>
+		        	<div class="cell mb-0">
+			            <label>지출 수단 <i class="fa-solid fa-asterisk red"></i></label>
+			        </div>
+			        <div class="cell mt-0 flex-area">
+			        	<input type="radio" name="aprvCostType" id="aprvCostType1" value="법인" checked>
+						<label for="aprvCostType1" style="margin-top:4px;">법인카드</label>
+						<input type="radio" name="aprvCostType" id="aprvCostType2" value="개인">
+						<label for="aprvCostType2" style="margin-top:4px;">개인지출</label>
+			        </div>
+		        </div>
+		        <div id="divAprvCostTypePersonal" class="flex-area" style="display:none;">
+			        <div class="ms-20">
+			        	<div class="cell mb-0">
+				            <label>계좌주 <i class="fa-solid fa-asterisk red"></i></label>
+				        </div>
+				        <div class="cell mt-0 mb-0">
+				        	<input type="text" name="aprvCostReceiver" class="field" placeholder="계좌주" style="width:110px;" />
+			        	</div>
+			        </div>
+			        <div class="ms-20">
+			        	<div class="cell mb-0">
+				            <label>계좌번호 <i class="fa-solid fa-asterisk red"></i></label>
+				        </div>
+				        <div class="cell mt-0 mb-0">
+				        	<input type="text" name="aprvCostReceiveAccount" class="field" placeholder="계좌번호" style="width:240px;" />
+			        	</div>
+			        </div>
+		        </div>
+	        </div>
+	    </div>
         <div class="cell">
         	<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
         	<input type="text" name="aprvContent" class="field w-100">

@@ -13,20 +13,23 @@
 	<!-- 조직도 동작 스크립트 -->
 	<script src="/js/dept/chart.js"></script>
 	
-<div class="container w-80 mt-50 mb-50">
+<div class="container w-100 mt-20 mb-50 background-card" style="padding:0px;">
 
-	<div class="cell center">
-		<h1 class="mb-0">조직도</h1>
-	</div>
-	
-	<div class="dept-chart-wrapper">
-		<div class="zoom-controls">
+	<div class="cell">
+		<h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block; padding-left:20px;">
+            조직도
+            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+        </h1>
+        <div class="zoom-controls">
             <button class="zoom-btn" onclick="zoomOut()">-</button>
             <div class="zoom-text" id="zoomLevel">100%</div>
             <button class="zoom-btn" onclick="zoomIn()">+</button>
             <button class="zoom-btn" onclick="zoomReset()" style="font-size: 11px;"><i class="fa-solid fa-arrow-rotate-left"></i></button>
         </div>
-	    <div class="dept-chart-container" style="justify-content: flex-start;">
+	</div>
+	
+	<div class="dept-chart-wrapper">
+	    <div class="dept-chart-container" style="justify-content: flex-start; margin-bottom:0px;padding-top:0px;">
 	        <div class="tree" id="deptChart">
 	            <!-- JavaScript로 트리 구조가 생성됩니다. -->
 	        </div>
