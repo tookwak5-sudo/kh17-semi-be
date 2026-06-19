@@ -26,6 +26,13 @@ public class PlanController {
 	public String list(HttpSession session,Model model, @ModelAttribute PageForPlanVO pageVO) {
 		String loginId = (String)session.getAttribute("loginId");
 		
+		if ("null".equals(pageVO.getPlanSdate())) {
+			pageVO.setPlanSdate(""); 
+		}
+		if ("null".equals(pageVO.getPlanEdate())) {
+			pageVO.setPlanEdate(""); 
+		}
+		
 	    int count = planDao.count(pageVO, loginId);
 	    pageVO.setCount(count);
 	    model.addAttribute("pageVO", pageVO);
