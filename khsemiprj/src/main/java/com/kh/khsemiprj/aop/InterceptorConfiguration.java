@@ -75,15 +75,15 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 //								,"/dept/list"
 //						);
 //				
-//				//관리자만 접근 가능
-//				registry.addInterceptor(masterOnlyInterceptor)
-//						.addPathPatterns(
-//							"/admin/log-inout/**"
-//							,"/admin/logAccess/**"
-//							,"/dept/insert"
-//							,"/dept/insertComplete"
-//							,"/dept/edit"
-//							,"/dept/delete"
-//						);
+				//관리자만 접근 가능
+				registry.addInterceptor(masterOnlyInterceptor)
+						.addPathPatterns(
+							"/admin/log-inout/**"
+							,"/admin/logAccess/**"
+							,"/dept/insert"
+							,"/dept/insertComplete"
+							,"/dept/edit"
+							,"/dept/delete"	
+						);
 	}
 }
