@@ -71,7 +71,6 @@
 			
 			// submit을 유발한 버튼 객체 가져오기
             var clickedButton = e.originalEvent.submitter; 
-
 			if(!state.aprvValid) {
 	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
 	            if ($(clickedButton).hasClass("aprv-save")) {

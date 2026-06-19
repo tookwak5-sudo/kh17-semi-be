@@ -266,6 +266,16 @@
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >결재가 삭제되었습니다.</a>
 						    </div>
 						</c:when>
+						<c:when test="${param.alarm == 'workIn'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" style="top:400px;">출근처리 되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'workOut'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" style="top:400px;">퇴근처리 되었습니다.</a>
+						    </div>
+						</c:when>
 					</c:choose>
 				</c:when>
 	    	</c:choose>

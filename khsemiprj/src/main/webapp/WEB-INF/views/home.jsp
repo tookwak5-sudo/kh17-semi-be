@@ -10,7 +10,7 @@
 .dashboard-container {
 	display: flex;
 	gap: 20px; /* 좌우 간격 */
-	width: 1400px;
+	width: 100%;
 	margin: 50px auto;
 	margin-top: 20px !important;
 }
@@ -67,10 +67,10 @@
     	padding: 20px;
     	border: 1px solid #ccc; 
     	box-shadow: 0px 4px 10px rgba(0,0,0,0.2); 
-    	z-index: 10000;
+    	z-index: 999;
     }
 	.list-area{
-		height:0px;
+		height: 250px;
 	    overflow-y:auto;
 	}
 	
@@ -140,7 +140,7 @@
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
-	        	<label>일정명</label>
+	        	<label>일정명<i class="fa-solid fa-asterisk red"></i></label>
 	        	<input type="text" name="planName" class="field w-100">
 				<div class="fail-feedback w-100">
                    <div>필수 입력 창 입니다</div>
@@ -148,7 +148,7 @@
 	        </div>
 			<input type="hidden" name="planDeptNo" value="${deptNo}" class="field w-100">
 	        <div class="cell">
-	        	<label>유형</label>
+	        	<label>유형<i class="fa-solid fa-asterisk red"></i></label>
 	        	<select class="field w-100" name="planType">
 	                <option value="">선택하세요</option>
 	                <option value="개인">개인</option>
@@ -174,9 +174,12 @@
 	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
 	        </div>
 	       	
-	         <div class="cell">
-	            <label>내용</label>
+	        <div class="cell">
+	            <label>내용<i class="fa-solid fa-asterisk red"></i></label>
 	            <textarea name="planExplain" class="field w-100"></textarea>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        <div class="cell mt-40 right">
 	            <button type="submit" class="btn btn-positive btn-plan">
@@ -230,20 +233,23 @@
 	</div>
 		<div class="container w-500 mt-50">
 			<div class="cell">
-	        	<label>일정명</label>
+	        	<label>일정명<i class="fa-solid fa-asterisk red"></i></label>
 	        	<input type="text" name="planName" class="field w-100">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
-	        <div class="cell">
-	        	<label>유형</label>
-	        	<div class="cell">
-	        	<label>유형</label>
+			<div class="cell">
+	        	<label>유형<i class="fa-solid fa-asterisk red"></i></label>
 	        	<select class="field w-100" name="planType">
 	                <option value="">선택하세요</option>
 	                <option value="개인">개인</option>
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
 	            </select>
-	        </div>
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
@@ -258,6 +264,9 @@
 	            <input type="text" name="planSdate" class="field w-100 picker-8-1">
 	                <i class="fa-solid fa-minus ms-10 me-10"></i>
 	            <input type="text" name="planEdate" class="field w-100 picker-8-2">
+				<div class="fail-feedback w-100">
+                   <div>필수 입력 창 입니다</div>
+            	</div>
 	        </div>
 	        
 	         <div class="cell">
@@ -274,15 +283,29 @@
 </script>
 
 <script type="text/javascript">
+    // 1. [확인]을 눌렀을 때 실제로 실행될 AJAX 삭제 함수를 전역(바깥)에 따로 만듭니다.
+    function proceedDelete(planNo, planType) {
+        $.ajax({
+            url: "/rest/plan/delete",
+            method: "post",
+            data: { planNo : planNo },
+            success: function(response){
+                closeCalendarModal();
+                //홈 화면 새로고침
+                location.href = "/?alarm=calendarDelete&planType=" + planType;
+            }
+        });
+    }
+
 	$(function(){
 		//상태객체
         var state = {
             planNameValid : false,
             planTypeValid : false,
             planHeadNoValid : true,
-            planSdateValid : true,
-            planEdateValid : true,
-            planExplainValid : true, // 선택항목
+            planSdateValid : false,
+            planEdateValid : false,
+            planExplainValid : false, 
             ok : function() {
                 return Object.values(this)//이 객체의 모든 이름에 대한 값을 반환해라
                 .filter(v => typeof v == "boolean") // boolean값만 추출해서
@@ -325,6 +348,60 @@
                 $input.removeClass("fail").removeAttr("data-error");
             }
         });
+        
+        $(document).on("blur input", "[name=planSdate]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planSdate") state.planSdateValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+        
+        $(document).on("blur input", "[name=planEdate]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planEdate") state.planEdateValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
+        
+        $(document).on("blur input", "[name=planExplain]", function () {
+            var $input = $(this);
+            var val = $input.val();
+            
+            // 값이 비어있는지 확인 (select의 경우 value가 ""이면 비어있는 것)
+            var valid = val !== null && val.trim().length > 0;
+            
+            // 상태 객체 업데이트
+            if($input.attr("name") === "planExplain") state.planExplainValid = valid;
+            
+            // 클래스 및 데이터 속성 처리
+            if(!valid) {
+                $input.addClass("fail").attr("data-error", "1");
+            } else {
+                $input.removeClass("fail").removeAttr("data-error");
+            }
+        });
 		 
 		//등록 버튼을 누르면 발생하는 등록 작업
 		$(document).on("click",".btn-plan", function(){
@@ -333,7 +410,6 @@
 		    $(".field").trigger("blur").trigger("input");
 		    
 		    if(!state.ok()) {
-		        alert("입력 오류를 확인하세요.");
 		        return;
 		    }
 			//var planDeptNo = $("[name=planType]").val() == '부서' ? $("[name=planDeptNo]").val() : '';
@@ -349,6 +425,15 @@
 				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
 			
+			//console.log(data);
+			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
+// 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
+// 			if(check) return;
+			
+			//[1]결재문서
+			//planType(개인, 부서, 회사)이 부서이고, planAprvNo가 null이 아닌 경우
+			
+			//[2]결재문서가 아닌 경우 planAprvNo가 null인 경우
 			$.ajax({
 				url: "/rest/plan/write",
 				method: "post",
@@ -363,26 +448,18 @@
 		});
 	
 	
-		//삭제 버튼 클릭시
-	    $(document).on("click", "#modalDeleteBtn", function(){
-	        var choice = window.confirm("정말 삭제하시겠습니까?");
-	        if(choice == false) return;
-	
-	        //댓글 영역 최상단에 data-key라는 이름으로 작성된 번호를 가져온다
+		// 삭제 버튼 클릭시 (오류 수정 완료)
+	    $(document).on("click", "#modalDeleteBtn", function(e) {
+	        e.preventDefault(); // 기본 이벤트 방지
+
 	        var planNo = $(this).data("key");
-	
-	        $.ajax({
-	            url: "/rest/plan/delete",
-	            method: "post",
-	            data: { planNo : planNo },
-	            success: function(response){
-	                alert("삭제되었습니다.");
-	                var planType = $("[name=planType]").val();
-	                closeCalendarModal();
-	                //홈 화면 새로고침
-	                location.href = "/?alarm=calendarDelete&planType=" + planType;
-	            }
-	        });
+	        var planType = $("[name=planType]").val();
+
+	        // openConfirm에 바깥에 정의한 proceedDelete 함수 호출 문자열을 조립해 넘깁니다.
+	        openConfirm(
+	            '정말 삭제하시겠습니까?', 
+	            "proceedDelete(" + planNo + ", '" + planType + "');"
+	        );
 	    });
 		
 	  //목표 : 수정버튼을 누르면 수정화면을 보여주도록 처리
@@ -455,10 +532,9 @@
 
 <script type="text/javascript">
 	    document.addEventListener('DOMContentLoaded', function() {
-			
-		      var calendarEl = document.getElementById('calendar');
+		     var calendarEl = document.getElementById('calendar');
 		      
-		      var calendar = new FullCalendar.Calendar(calendarEl, {
+		     var calendar = new FullCalendar.Calendar(calendarEl, {
 	        	slotMinTime: '09:00',
 	        	slotMaxTime: '19:00',
 	        	slotDuration: '02:00:00',
@@ -482,7 +558,9 @@
 	            var headList = JSON.parse('${planHeadJson}');
 	            var options = "<option value=''>선택하세요</option>";
 	            for(var i = 0; i < headList.length; i++) {
-            		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	            	if(headList[i].headType === '일반') {
+            			options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	            	}
 	            }
 	            //가져온 option을 헤더 select 아래에 append 
 	            $("select[name='headNo']").empty().append(options);
@@ -573,7 +651,7 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
-                $("#modalEditBtn").data("plan-head-no", planHeadNo);
+                $("#modalEditBtn").data("plan-headNo", planHeadNo);
             	
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;
@@ -632,6 +710,7 @@
         });
       		//날짜 클릭시 클릭한 날짜와 함께 
 	        calendar.render();
+	        filterCalendarEvents("${param.planType == null ? '회사' : param.planType}");
 			
 	        document.addEventListener('click', function(e) {
             // 클릭된 요소가 '+더보기' 링크인지 확인

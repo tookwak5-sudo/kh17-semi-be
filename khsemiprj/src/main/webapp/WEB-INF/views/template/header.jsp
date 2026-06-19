@@ -114,24 +114,39 @@
 		}
 		
 		/* 사이드바 프로필 카드 스타일 */
-		.profile-card {
-		    background: #FFFFFF;
-		    border: 1px solid #E2E8F0;
-		    border-radius: 12px;
-		    padding: 20px;
-		    margin-top: 20px;
-		    margin-right:10px;
-		    text-align: center;
-		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-		    height:fit-content;
-		}
 		
-		/* 프로필 정보 텍스트 */
+		/* 기존 스타일 수정 및 추가 */
 		.profile-info {
 		    font-size: 0.95em;
 		    color: #475569;
 		    margin-top: 15px;
-		    line-height: 1.6;
+		    line-height: 1.4;
+		    padding: 10px 0;
+		}
+		
+		/* 이름 강조 */
+		.profile-name {
+		    font-size: 1.2em;
+		    font-weight: 700;
+		    color: #1E293B;
+		    margin-bottom: 2px;
+		}
+		
+		/* 부서 및 직책 라인 */
+		.profile-dept-pos {
+		    font-size: 0.9em;
+		    color: #64748b;
+		    margin-bottom: 8px;
+		}
+		
+		/* 아이디(작은 텍스트) */
+		.profile-id {
+		    font-size: 0.8em;
+		    color: #94a3b8;
+		    background: #f8fafc;
+		    display: inline-block;
+		    padding: 2px 6px;
+		    border-radius: 4px;
 		}
 		
 		/* 출퇴근 버튼 전용 클래스 (기존 btn 스타일 계승) */
@@ -143,6 +158,67 @@
 		    width: 100%;
 		    margin-top: 15px;
 		    font-weight: 600;
+		}
+	
+		.profile-card, .profile-card2 {
+		    background: #FFFFFF;
+		    border: 1px solid #E2E8F0;
+		    border-radius: 12px;
+		    padding: 20px;
+		    margin-top: 20px;
+		    margin-right:10px;
+		    text-align: center;
+		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+		    height:fit-content;
+		}
+		.profile-card2 {
+		    background: #FFFFFF;
+		    border: 1px solid #E2E8F0;
+		    border-radius: 12px;
+		    padding: 20px;
+		    margin-top: 20px;
+		    margin-right:10px;
+		    text-align: center;
+		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+		    height:fit-content;
+		}
+		
+		.profile-card2 ul {
+		    list-style: none;
+		    padding: 0;
+		    margin-top: 20px;
+		    border-top: 1px solid #eee; /* 구분선 */
+		    padding-top: 15px;
+		}
+		.profile-card2 li a {
+		    display: flex;
+		    align-items: center;
+		    padding: 10px 15px;
+		    color: #495057;
+		    text-decoration: none;
+		    border-radius: 8px;
+		    transition: 0.2s;
+		    font-size: 0.95rem;
+		}
+		.profile-card2 li a i {
+		    margin-right: 12px;
+		    width: 20px; /* 아이콘 정렬 맞추기 */
+		    text-align: center;
+		    color: #6c757d;
+		}
+		
+		.profile-card2 li a:hover {
+		    background-color: #f1f3f5;
+		    color: #007bff;
+		    font-weight: 600;
+		}
+		
+		/* 관리메뉴 타이틀 부분 */
+		.menu-title {
+		    padding: 10px 20px 5px 20px; /* 위/옆/아래/옆 */
+		    font-size: 0.95rem;
+		    font-weight: bold;
+		    color: #888;
 		}
     </style>
     
@@ -168,10 +244,53 @@
 <%-- empGrade : ${sessionScope.empGrade} --%>
 <%-- 부서 정보 : ${sessionScope.empDept} --%>
 <%-- 직책 정보 : ${sessionScope.empPosition} --%>
+
+	<script>
+// 		var workInState = {
+// 			workInValid: false,
+// 			ok: function(){
+// 				return Object.values(this)
+// 				.filter(v => typeof v==="boolean")
+// 				.every(v => v === true);
+// 			}
+// 		};
+		
+		// 퇴근
+		var workOutState = {
+			workOutValid: false,
+			ok: function(){
+				return Object.values(this)
+				.filter(v => typeof v==="boolean")
+				.every(v => v === true);
+			}
+		};
+		
+		$(function () {
+// 			$("#workInForm").on("submit", function(e){
+				
+// 				if(!workInState.workInValid) {
+// 	            	openConfirm('출근하시겠습니까?', 'workInState.workInValid = true; $("#btnWorkIn").click();');
+// 				}
+				
+// 				return workInState.ok();
+// 			});
+			
+			
+			$("#workOutForm").on("submit", function(e){
+				
+				if(!workOutState.workOutValid) {
+	            	openConfirm('퇴근하시겠습니까?로그아웃이 진행됩니다.', 'workOutState.workOutValid = true; $("#btnWorkOut").click();');
+				}
+				
+				return workOutState.ok();
+			});
+		});
+	</script>
+
     <!-- 메인 컨테이너1 + 내부영역4 -->
     <div class="container w-clamp">
         <div class="flex-area flex-vertical">
-        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center;">
+        	<div class="sticky-header flex-area" style="background-color: #739BED; align-items: center; height: 49px">
                 
                 <a href="/" style="display: flex; align-items: center; padding: 0 10px; flex-shrink: 0; position: relative; z-index: 9999; margin-right: 100px;">
                     <img src="/images/kh정보교육원 로고.png" alt="홈" style="height: 35px; width: auto; transform: scale(2.8); transform-origin: left center; position: relative; top: 5px;">
@@ -206,9 +325,11 @@
 	         </div>
 	            <!-- 사이드바 및 컨텐츠 -->
 	            <div style="min-height: 450px;" class="flex-area">
+	        		 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade != null}">
+	        		 <div>
 					    <div class="profile-card">
 					        <div class="image-hover image-circle image-shadow" style="width: 120px; margin: 0 auto;">
-					            <img src="https://picsum.photos/200">
+					            <img src="/emp/profile?empId=${sessionScope.loginId}">
 					            <div class="content">
 					                <a href="/emp/mypage" class="white">
 					                    <i class="fa-solid fa-user"></i> 내정보
@@ -217,25 +338,87 @@
 					        </div>
 					
 					        <div class="profile-info">
-					            <div style="font-weight: bold; color: #1E293B;">${sessionScope.loginId}</div>
-					            <div>${sessionScope.empDept}</div>
-					            <div>${sessionScope.empPosition}</div>
+					            <div class="profile-name">${sessionScope.loginId} ${sessionScope.empPosition}</div>
+					            <div class="profile-dept-pos">${sessionScope.empDept}</div>
+					            <div class="profile-id">ID: ${sessionScope.empName}</div>
 					        </div>
 					
-					        <c:choose>
-					            <c:when test="${logInoutType.trim() eq '퇴근'}">
-					                <form id="workInForm" action="/emp/work-in" method="post"></form>
-					                <a href="#" class="btn btn-positive btn-work" onclick="document.getElementById('workInForm').submit(); return false;">
-					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 출근
-					                </a>
-					            </c:when>
-					            <c:otherwise>
-					                <form id="workOutForm" action="/emp/work-out" method="post"></form>
-					                <a href="#" class="btn btn-negative btn-work" onclick="document.getElementById('workOutForm').submit(); return false;">
-					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근
-					                </a>
-					            </c:otherwise>
-					        </c:choose>
+<%-- 					        <c:choose> --%>
+<%-- 					            <c:when test="${logInoutType.trim() eq '퇴근'}"> --%>
+<!-- 					                <form id="workInForm" action="/emp/work-in" method="post"> -->
+<!-- 					                <button id="btnWorkIn" class="btn btn-positive btn-work"> -->
+<!-- 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 출근 -->
+<!-- 					                </button> -->
+<!-- 					                </form> -->
+<%-- 					            </c:when> --%>
+<%-- 					            <c:otherwise> --%>
+<!-- 					                <form id="workOutForm" action="/emp/work-out" method="post"> -->
+<!-- 					                <button id="btnWorkOut" class="btn btn-negative btn-work"> -->
+<!-- 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근 -->
+<!-- 					                </button> -->
+<!-- 					                </form> -->
+<%-- 					            </c:otherwise> --%>
+<%-- 					        </c:choose> --%>
+					        <c:if test="${logInoutType.trim() eq '출근'}">
+					        	<form id="workOutForm" action="/emp/logoutOut" method="post">
+				                <button id="btnWorkOut" class="btn btn-negative btn-work">
+				                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근 및 로그아웃
+				                </button>
+				                </form>
+					        </c:if>
 					    </div>
+					    
+					    <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
+					    <div class="profile-card2">
+			    			
+						    <div class="menu-title"><i class="fa-solid fa-user-gear"></i> <span>관리메뉴</span></div>
+					        <ul>
+					        	<li class="mb-0">
+						    		<a href="/admin/manage">
+								        <i class="fa-solid fa-user-gear"></i>
+								        <span>시스템 설정</span>
+								    </a>
+					    		</li>
+					        	<li>
+								    <a href="/admin/emp/list">
+								        <i class="fa-solid fa-people-group"></i>
+								        <span>사원관리</span>
+								    </a>
+								</li>
+								<li>
+								    <a href="/dept/list">
+								        <i class="fa-solid fa-building"></i>
+								        <span>부서관리</span>
+									</a>
+								</li>
+								<li>
+					                <a href="/aprvForm/list">
+					                    <i class="fa-solid fa-box"></i>
+					                    <span>결재 양식</span>
+					                </a>
+					            </li>
+					            <li>
+					                <a href="/admin/logAccess/list">
+					                    <i class="fa-solid fa-server"></i>
+					                    <span>접속로그</span>
+					                </a>
+					            </li>
+					            <li>
+					                <a href="/admin/log-inout/list">
+					                    <i class="fa-solid fa-clock-rotate-left"></i>
+					                    <span>근태로그</span>
+					                </a>
+					            </li>
+					            <li>
+								    <a href="/admin/emp/exitList">
+								        <i class="fa-solid fa-people-group"></i>
+								        <span>퇴사자목록</span>
+								    </a>
+								</li>
+					        </ul>
+					    </div>
+					    </c:if>
+					 </div>
+	        		 </c:if>   	
 	            	<!-- 컨텐츠 -->
 	                <div class="w-200 flex-fill">

@@ -37,6 +37,18 @@ public class MemoDao {
 		jdbcTemplate.update(sql, params);
 	}
 	
+	//전사원 쪽지 전송
+	public void insertAll(MemoDto memoDto) {
+		String sql = "INSERT INTO memo (memo_no, memo_receiver_id, memo_sender_id, memo_title, memo_content, memo_type) "
+				+ "SELECT memo_seq.nextval, e.EMP_ID, ?, ?, ?, ? FROM emp e "
+				+ "WHERE e.EMP_VALID = 'Y'";
+		Object[] params = {
+				memoDto.getMemoSenderId(), memoDto.getMemoTitle()
+				, memoDto.getMemoContent(), memoDto.getMemoType()
+		};
+		jdbcTemplate.update(sql, params);
+	}
+	
 	//쪽지 상세 메소드
 	public MemoDto selectOne(int memoNo) {
 	    // 💡 memo 테이블(M)과 emp 테이블(E)을 조인하여 emp_name까지 함께 조회합니다.

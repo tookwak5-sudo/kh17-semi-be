@@ -26,6 +26,27 @@
 }
 </style>
 
+<script>
+	$(function () {
+		 var picker8 = new Lightpick({
+             field : $(".picker-sdate")[0] ,
+             secondField : $(".picker-edate")[0],
+             singleDate : false,//범위선택으로 변경
+             format : "YYYY-MM-DD", 
+             firstDay : 7 ,
+             numberOfMonths : 2,//2달 표시
+             numberOfColumns : 2,//한 줄에 2칸 표시
+             selectForward : false,//최초 선택날짜 이후로만 선택가능
+         });
+		
+		$(document).on("click", "#dateReset", function() {
+			$(".picker-sdate").val("");
+			$(".picker-edate").val("");
+			$(".field-sm").val("");
+			
+		});
+	})
+</script>
 <div class="container w-1200 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
 		<div>
@@ -36,20 +57,26 @@
 		</div>
 		<div class="w-70 flex-area flex-center">
 			<form autocomplete="off">
+	        	<input type="text" name="planSdate" class="field picker-sdate" size="4" placeholder="시작일" value="${param.planSdate}"}>
+	        	<span class="timeTilde">~</span>
+	        	<input type="text" name="planEdate" class="field picker-edate" size="4" placeholder="종료일" value="${param.planEdate}">
 				<select name="column" class="field-ph">
-					<option value="emp_name">작성자</option>
-					<option value="dept_name">부서명</option>
-					<option value="plan_name">일정명</option>
-					<option value="plan_type">일정타입</option>
+					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>작성자</option>
+					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
+					<option value="plan_name" ${param.column == 'plan_name' ? 'selected' : ''}>일정명</option>
+					<option value="plan_type" ${param.column == 'plan_type' ? 'selected' : ''}>일정타입</option>
 				</select> <input type="text" name="keyword" class="field-sm"
-					placeholder="검색어 입력">
-				<button type="submit" class="btn btn-positive">
-					<i class="fa-solid fa-magnifying-glass"></i> <span>검색</span>
+					placeholder="검색어 입력" value="${param.keyword}">
+				<button type="submit" class="btn btn-positive" style="width:102px">
+					<i class="fa-solid fa-magnifying-glass"></i><span>검색</span>
+				</button>
+				<button type="button" class="btn btn-neutral" style="width:102px" id="dateReset">
+					<i class="fa-solid fa-xmark"></i> <span>초기화</span>
 				</button>
 			</form>
 		</div>
 	</div>
-	
+
 	<div class="cell right mt-0">
 		<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총
 			${pageVO.count}개 로그</span>
@@ -84,7 +111,7 @@
 						<td class="left"
 							style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
 							${planDto.planName}</td>
-						<td class="center">${planDto.planSdate}~ ${planDto.planEdate}</td>
+						<td class="center">${planDto.planSdate} ~ ${planDto.planEdate}</td>
 						<td class="center"><c:choose>
 								<c:when
 									test="${empty planDto.deptName && (empty planDto.planDeptNo || planDto.planDeptNo == 0)}">

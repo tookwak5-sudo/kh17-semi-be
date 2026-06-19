@@ -48,7 +48,42 @@
             font-weight: 600;
         }
 </style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<script>
+var deleteConfirmState = {
+	    deleteConfirmValid: false,
+	    ok: function(){
+	        return Object.values(this)
+	        // 오타 수정 (typeof =>===  ->  typeof v === "boolean")
+	        .filter(v => typeof v === "boolean")
+	        .every(v => v === true);
+	    }
+	};
+
+	$(function(){
+	    // submit 대신 a 태그의 click 이벤트로 변경
+	    $("#btnDeleteConfirm").on("click", function(e){
+	        
+	        // 검증이 안 끝났으면 일단 a 태그의 기본 이동(href)을 막음
+	        if(!deleteConfirmState.deleteConfirmValid){
+	            e.preventDefault();
+	            var deleteUrl = $(this).attr("href"); // 이동할 주소 따두기
+	            
+	            // 팝업 확인 누르면 Valid를 true로 바꾸고, 저장해둔 URL로 강제 주소 이동
+	            openConfirm(
+	                '정말 삭제 하시겠습니까?', 
+	                'deleteConfirmState.deleteConfirmValid = true; location.href="' + deleteUrl + '";'
+	            );
+	        }
+	        
+	        // workOutState -> deleteConfirmState로 이름 수정
+	        return deleteConfirmState.ok();
+	    });
+	});
+
+
+</script>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
@@ -133,11 +168,11 @@
 
 <div class="cell file-info-area mb-50"></div>
     
-    <div class="cell right">
+    <div class="cell right" id="deleteConfirmForm">
         <c:if test="${sessionScope.loginId != null}">
             <a href="./edit?formNo=${aprvFormSelectVO.formNo}" class="btn btn-positive">수정하기</a>
             
-            <a href="./delete?formNo=${aprvFormSelectVO.formNo}" class="btn btn-negative" onclick="return confirm('정말 이 결재 양식을 삭제하시겠습니까?');">삭제하기</a>
+            <a href="./delete?formNo=${aprvFormSelectVO.formNo}" class="btn btn-negative" id="btnDeleteConfirm">삭제하기</a>
         </c:if>
 
         <a href="./list" class="btn btn-neutral">목록</a>

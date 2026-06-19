@@ -68,22 +68,23 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 			        ,"/images/**"
 			    );	
 				
-//				//부서장 이상만 갈 수 있는 페이지 설정
-//				registry.addInterceptor(adminOnlyInterceptor)
-//						.addPathPatterns(
-//								"/admin/**"
-//								,"/dept/list"
-//						);
-//				
-//				//관리자만 접근 가능
-//				registry.addInterceptor(masterOnlyInterceptor)
-//						.addPathPatterns(
-//							"/admin/log-inout/**"
-//							,"/admin/logAccess/**"
-//							,"/dept/insert"
-//							,"/dept/insertComplete"
-//							,"/dept/edit"
-//							,"/dept/delete"
-//						);
+				//부서장 이상만 갈 수 있는 페이지 설정
+				registry.addInterceptor(adminOnlyInterceptor)
+						.addPathPatterns(
+								"/admin/**"
+								,"/dept/list"
+						);
+						
+				//관리자만 접근 가능
+				registry.addInterceptor(masterOnlyInterceptor)
+						.addPathPatterns(
+							"/admin/manage/**"
+							,"/admin/log-inout/**"
+							,"/admin/logAccess/**"
+							,"/dept/insert"
+							,"/dept/insertComplete"
+							,"/dept/edit"
+							,"/dept/delete"
+						);
 	}
 }

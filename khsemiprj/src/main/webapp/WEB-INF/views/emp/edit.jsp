@@ -76,8 +76,8 @@ $(function() {
 
     var state = {
         empNameValid: false,
-        empEmailValid: false,
-        empEmailCertValid: false, 
+        empEmailValid: true,
+        empEmailCertValid: true, 
         empBirthValid: false,
         empContactValid: false,
         empAddressValid: false,
@@ -193,15 +193,24 @@ $(function() {
 
     // 이메일 형식 및 중복 검사 
     $("[name=empEmail]").on("blur", function(){
+        var empEmail = $("[name=empEmail]").val().trim(); // 입력값 가져오기
+        
+     	// 1. 비어있는 경우: 통과 처리 (null 허용)
+        if(empEmail.length === 0) {
+            $(this).removeClass("success fail");
+            state.empEmailValid = true; // 비어있으므로 유효함으로 간주
+            return;
+        }
+        
+        // 2. 입력된 경우 정규식 검사
         var regex = /^([a-z][a-z0-9]{4,19})@([A-Za-z0-9\-\.]{1,})(\.[a-z]{2,3})$/;
-        var empEmail = $(this).val(); 
         var valid = regex.test(empEmail); 
-        var $wrapper = $(this).closest(".flex-area");
         
         if(valid == false){
-            $(this).removeClass("success fail").addClass("fail");
-            $wrapper.find(".fail-feedback").text("형식과 맞지 않습니다.");
+            $("[name=empEmail]").removeClass("success fail")
+                               .addClass("fail").attr("data-error","1");
             state.empEmailValid = false; 
+            state.empEmailCertValid = false;
             return;
         } 
         
@@ -211,16 +220,17 @@ $(function() {
             method: "post",
             data: { empEmail : empEmail }, 
             success: function (response){
-                if(response === true){ 
+            	if(response == true){ 
                     $("[name=empEmail]").removeClass("success fail")
                                        .addClass("fail").attr("data-error","2");
                     state.empEmailValid = false; 
+                   
                 }
                 else { 
                     $("[name=empEmail]").removeClass("success fail")
                                        .addClass("success");
                     state.empEmailValid = true; 
-                   
+                    state.empEmailCertValid = false;
                 }
             }
         });
@@ -229,7 +239,19 @@ $(function() {
     $(".btn-cert-send").on("click", function(){
         var empEmail = $("[name=empEmail]").val();
         if(state.empEmailValid == false) return;
-
+		
+     	// 비어있으면 막기
+        if(empEmail.length === 0) {
+            alert("이메일을 입력해주세요.");
+            return;
+        }
+        
+        // 이미 유효성 검사에서 실패했으면 막기
+        if(state.empEmailValid == false) {
+            alert("이메일 형식을 확인하거나 중복 검사를 통과해야 합니다.");
+            return;
+        }
+        
         $.ajax({
             url:"/rest/cert/send",
             method:"post",
@@ -244,21 +266,23 @@ $(function() {
             error:function(){
                 window.alert("이메일 발송에 실패했습니다.\n잠시 후 다시 시도해보세요");
             },
-            beforeSend:function(){
-                var $btn = $(".btn-cert-send");
-                $btn.find("span").text("인증메일 발송중");
-                $btn.find("i").removeClass("fa-envelope").addClass("fa-spinner fa-spin");
-                $btn.prop("disabled", true);
+            beforeSend:function(){//요청 시작 직전에 실행되는 함수 (디자인 변화를 부여)
+                $(".btn-cert-send").find("span").text("인증메일 발송중");
+                $(".btn-cert-send").find("i").removeClass("fa-envelope")
+                                .addClass("fa-spinner fa-spin");
+                $(".btn-cert-send").prop("disabled", true);
+
+                //입력창을 더이상 고치지 못하도록 잠금처리
                 $("[name=empEmail]").prop("readonly", true);
             },
-            complete:function(){
-                var $btn = $(".btn-cert-send");
-                $btn.find("span").text("인증메일 보내기");
-                $btn.find("i").removeClass("fa-spinner fa-spin").addClass("fa-envelope");
-                $btn.prop("disabled", false);
+            complete:function(){//성공/실패 관계없이 끝나면 실행되는 함수 (디자인 변화를 제거)
+                $(".btn-cert-send").find("span").text("인증메일 보내기");
+                $(".btn-cert-send").find("i").removeClass("fa-spinner fa-spin")
+                                .addClass("fa-envelope");
+                $(".btn-cert-send").prop("disabled", false);
             },
         });
-    });
+	});
 		
     // 인증번호 검사 버튼
     $(".cert-area").on("click", ".btn-cert-check", function(){
@@ -274,7 +298,7 @@ $(function() {
             method:"post",
             data: { certEmail : certEmail , certNumber : certNumber },
             success: function(response) {
-                if(response === true) {
+            	if(response == true || response === "true") {
                     state.empEmailCertValid = true;
                     $("[name=empEmail]").removeClass("success fail").addClass("success");
                     $(".success-feedback.w-100").text("이메일 인증이 완료되었습니다.");
@@ -305,8 +329,8 @@ $(function() {
         $(".btn-cert-send").show();
         $("[name=empEmail]").removeClass("success fail").prop("readonly", false).val("");
         
-        state.empEmailValid = false;
-        state.empEmailCertValid = false;
+        state.empEmailValid = true;
+        state.empEmailCertValid = true;
         
         certFailCount = 0;
         $(".cert-message").text("");
@@ -316,21 +340,18 @@ $(function() {
     });
 
     // 폼 검사
-    $(".form-check").on("submit", function(e){
+    $(".form-check").on("submit", function(){
+        $(this).find("select[name]").trigger("input");
         $(this).find("input[name], textarea[name]").trigger("blur");
-        
-        if (!state.ok()) {
-            e.preventDefault();
-            window.alert("입력하신 정보를 다시 확인해주세요.");
-        }
-    });
+        return state.ok();
+   	 });
 });
 </script>
 
 <script type="text/template" id="cert-template">
     <div class="cert-wrapper flex-area" style="flex-wrap: wrap;">
-        <input type="text" inputmode="numeric" class="field field-cert" 
-                placeholder="인증번호 입력" size="6" maxlength="6">
+       <input type="text" inputmode="numeric" class="field field-cert" 
+       placeholder="인증번호 입력" maxlength="6" style="width: 140px;">
         <button type="button" class="btn btn-positive btn-cert-check ms-10">
             <i class="fa-solid fa-lock"></i>
             <span>인증번호 확인</span>
@@ -353,26 +374,42 @@ $(function() {
 	    </div>
 
 		<div class="cell">
-			<label>이메일<i class="fa-solid fa-asterisk red"></i></label>
-		</div>
-		<div class="cell mt-0 flex-area" style="flex-wrap: wrap;">
-			<input type="text" name="empEmail" class="field field-sm" inputmode="email">
+    <label>기존 이메일</label>
+</div>
 
-			<button type="button" class="btn btn-neutral btn-cert-send ms-10">
-				<i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
-			</button>
-			<button type="button" class="btn btn-negative btn-cert-retry ms-10"
-				style="display: none;">
-				<i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
-			</button>
-
-			<div class="success-feedback w-100 mt-5">사용 가능한 이메일입니다.</div>
-			<div class="fail-feedback w-100 mt-5">
-				<div>이메일이 형식에 맞지 않습니다.</div>
-				<div>중복된 이메일입니다.</div>
-			</div>
-		</div>
-	
+<div class="cell mt-0">
+    
+    <div class="w-100">
+        <input type="text" class="field field-sm w-100" inputmode="email" placeholder="기존 이메일" value="${empDto.empEmail}" readonly>
+    </div>
+    
+    <div class="gray mt-10">
+        <b>이메일 변경</b>
+    </div>
+    
+    <div class="flex-area mt-10" style="align-items: flex-start; gap: 10px;">
+        
+        <div style="flex-grow: 1;">
+            <input type="text" name="empEmail" class="field field-sm w-100" inputmode="email" placeholder="새 이메일 입력" autocomplete="off">
+            
+            <div class="success-feedback w-100 mt-5">사용 가능한 이메일입니다.</div>
+            <div class="fail-feedback w-100 mt-5">
+                <div>이메일이 형식에 맞지 않습니다.</div>
+                <div>중복된 이메일입니다.</div>
+            </div>
+        </div>
+        
+        <div>
+            <button type="button" class="btn btn-neutral btn-cert-send">
+                <i class="fa-solid fa-envelope"></i> <span>인증메일 보내기</span>
+            </button>
+            <button type="button" class="btn btn-negative btn-cert-retry" style="display: none;">
+                <i class="fa-solid fa-rotate-right"></i> <span>다시 인증하기</span>
+            </button>
+        </div>
+        
+    </div>
+</div>
 		<div class="cell cert-area"></div>
 	
 	    <div class="cell">

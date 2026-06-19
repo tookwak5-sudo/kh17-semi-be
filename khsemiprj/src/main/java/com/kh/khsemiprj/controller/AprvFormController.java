@@ -22,6 +22,7 @@ import com.kh.khsemiprj.service.AprvFormService;
 import com.kh.khsemiprj.vo.AprvFormHeadNameVO;
 import com.kh.khsemiprj.vo.AprvFormHeadTypeVO;
 import com.kh.khsemiprj.vo.AprvFormSelectVO;
+import com.kh.khsemiprj.vo.AprvFormVO;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Controller
@@ -52,6 +53,7 @@ public class AprvFormController {
 	    
 	    return "aprvForm/list";
 	}
+
 
 	// 2. 결재 양식 상세 보기
 	@GetMapping("/detail")

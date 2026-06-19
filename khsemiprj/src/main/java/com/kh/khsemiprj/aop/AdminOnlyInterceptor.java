@@ -1,8 +1,10 @@
 package com.kh.khsemiprj.aop;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 

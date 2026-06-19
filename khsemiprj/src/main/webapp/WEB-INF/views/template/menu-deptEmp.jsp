@@ -6,12 +6,6 @@
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
-	    <a href="/">
-	        <i class="fa-solid fa-house"></i>
-	        <span>홈</span>
-	    </a>
-	</li>
-	<li>
 	    <a href="/aprv/list">
 	        <i class="fa-solid fa-file-signature"></i>
 	        <span>결재</span>
