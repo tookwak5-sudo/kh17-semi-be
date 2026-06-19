@@ -146,9 +146,9 @@ public class AprvFormDao {
 	    if (!allowColumns.contains(pageVO.getColumn())) return selectList(pageVO.getPage(), pageVO.getSize());
 
 	    // 1. head_type 누락 보완한 메인 베이스 쿼리
-	    String sql = "select * from (" 
+	    String sql = "select distinct * from (" 
 	               + "select rownum rn, TMP.* from ("
-	               + "select af.*, ah.head_name, ah.head_type " 
+	               + "select distinct af.*, ah.head_name, ah.head_type " 
 	               + "from aprv_form af "
 	               + "left join aprv_head ah on af.form_head_no = ah.head_no ";
 
@@ -160,7 +160,7 @@ public class AprvFormDao {
 	        paramList.add(pageVO.getKeyword());
 	    }
 	    else if (pageVO.getColumn().equals("form_head_no")) {
-	        sql += "where instr(ah.head_name, ?) > 0 "; // 👈 af.form_head_no 에서 ah.head_name 으로 변경
+	        sql += "where instr(ah.head_name, ?) > 0 "; 
 	        paramList.add(pageVO.getKeyword());
 	    } 
 	    else if (pageVO.getColumn().equals("head_type")) {

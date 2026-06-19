@@ -47,9 +47,11 @@ public class AprvFormController {
 	    
 	
 	    List<AprvFormSelectVO> list = aprvFormDao.selectList(pageVO);
+	    List<AprvFormHeadNameVO> filterHeadList = aprvFormDao.selectFilteredHeadList();
 	    
 	    model.addAttribute("list", list);
 	    model.addAttribute("pageVO", pageVO);
+	    model.addAttribute("filterHeadList", filterHeadList);
 	    
 	    return "aprvForm/list";
 	}
