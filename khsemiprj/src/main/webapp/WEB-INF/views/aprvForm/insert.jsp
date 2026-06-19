@@ -194,6 +194,7 @@ $(function() {
     });
 });
 </script>
+<c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
 <form action="./insert" method="post" enctype="multipart/form-data">
 
 	<div class="container w-950 mt-20 mb-50 background-card">
@@ -251,5 +252,5 @@ $(function() {
 		</div>
 	</div>
 </form>
-
+</c:if>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

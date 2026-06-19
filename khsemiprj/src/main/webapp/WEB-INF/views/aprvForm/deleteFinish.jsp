@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
-
+<c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
 <div class="container w-800 mt-100 mb-100 center">
 
     <div class="cell mb-40">
@@ -24,5 +24,5 @@
     </div>
 
 </div>
-
+</c:if>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

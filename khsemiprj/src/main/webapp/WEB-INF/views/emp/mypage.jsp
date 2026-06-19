@@ -245,6 +245,7 @@
 		</div>
 	</div>
 </div>
+
 <script>
 	let currentDate = new Date();
 	let currentYear = currentDate.getFullYear();
