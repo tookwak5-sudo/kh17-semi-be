@@ -114,10 +114,7 @@ public class HomeController {
 		    }
 			model.addAttribute("receivedAprvList", receivedAprvList);
 		}
-		
-		
-		
-		
+
 		return "home";
 	}
 }
