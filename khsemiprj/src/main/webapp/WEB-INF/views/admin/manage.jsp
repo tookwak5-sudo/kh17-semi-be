@@ -28,6 +28,18 @@
  		box-sizing: border-box;
  		height: 45px;
  	}
+ 	/* 비활성화된 체크박스(disabled)에 대한 스타일 */
+	.checkbox-custom:disabled + label::before {
+	    background-color: #f1f5f9; /* 배경을 회색조로 변경 */
+	    border-color: #e2e8f0;    /* 테두리 색을 흐리게 */
+	    cursor: not-allowed;      /* 마우스를 올리면 금지 표시 */
+	    opacity: 0.6;             /* 약간 투명하게 조절 */
+	}
+	
+	/* 비활성화된 체크박스 옆의 텍스트도 흐리게 하고 싶다면 (선택사항) */
+	.checkbox-custom:disabled ~ span {
+	    color: #94a3b8;
+	}
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function () {

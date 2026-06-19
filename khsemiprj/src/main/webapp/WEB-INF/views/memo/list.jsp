@@ -126,39 +126,58 @@
 	<c:if test="${param.send != null}">
 	
 	<style>
-        /* [1] 버튼 기본 스타일 */
-        #send-alarm {
-            position: fixed; /* 화면 하단에 고정 */
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            background-color: transparent;
-            color: #5A86E3;
-            border: 2px solid #5A86E3;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000; /* 최상단 위치 */
-            
-            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
-            transition: transform 0.5s ease, opacity 0.5s ease;
-        }
-
-        /* [2] 처음 숨겨진 상태 (기본) */
-        #send-alarm.btn-slide-hidden {
-            /* 아래로 100px 내려가 있고 투명함 */
-            transform: translateY(100px); 
-            opacity: 0;
-        }
-
-        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
-        #send-alarm.btn-slide-show {
-            /* 제자리로 돌아오고 불투명함 */
-            transform: translateY(0);
-            opacity: 1;
-        }
-    </style>
+		        /* [1] 버튼 기본 스타일 */
+		        #send-alarm {
+		            position: fixed; /* 화면 하단에 고정 */
+		            bottom: 40px;
+		            left: 20px;
+		            padding: 15px 25px;
+		            /* background-color: transparent; */
+		            /* color: #5A86E3; */
+		            /* border: 2px solid #5A86E3; */
+		            border-radius: 50px;
+		            font-size: 16px;
+		            cursor: pointer;
+		            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+		            z-index: 1000; /* 최상단 위치 */
+		            
+		            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
+		            transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        
+		        #send-ajax-alarm {
+		        	background-color: #ffffff;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-positive:hover {
+		        	background-color: #5A86E3;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-negative:hover {
+		        	background-color: #E86A7A;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		
+		        /* [2] 처음 숨겨진 상태 (기본) */
+		        #send-alarm.btn-slide-hidden, #send-ajax-alarm.btn-slide-hidden {
+		            /* 아래로 100px 내려가 있고 투명함 */
+		            transform: translateY(100px); 
+		            opacity: 0;
+		        }
+		
+		        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
+		        #send-alarm.btn-slide-show, #send-ajax-alarm.btn-slide-show  {
+		            /* 제자리로 돌아오고 불투명함 */
+		            transform: translateY(0);
+		            opacity: 1;
+		        }
+		        
+		        /* 보여지는 상태 */
+				#div-alarm.is-visible {
+				    opacity: 1 !important;
+				    visibility: visible !important;
+				}
+		    </style>
 	
 	<script>
 		// 페이지가 완전히 로드되면 실행
@@ -199,39 +218,58 @@
     <c:if test="${param.delete != null}">
 	
 	<style>
-        /* [1] 버튼 기본 스타일 */
-        #send-alarm {
-            position: fixed; /* 화면 하단에 고정 */
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            background-color: transparent;
-            color: #E86A7A;
-            border: 2px solid #E86A7A;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000; /* 최상단 위치 */
-            
-            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
-            transition: transform 0.5s ease, opacity 0.5s ease;
-        }
-
-        /* [2] 처음 숨겨진 상태 (기본) */
-        #send-alarm.btn-slide-hidden {
-            /* 아래로 100px 내려가 있고 투명함 */
-            transform: translateY(100px); 
-            opacity: 0;
-        }
-
-        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
-        #send-alarm.btn-slide-show {
-            /* 제자리로 돌아오고 불투명함 */
-            transform: translateY(0);
-            opacity: 1;
-        }
-    </style>
+		        /* [1] 버튼 기본 스타일 */
+		        #send-alarm {
+		            position: fixed; /* 화면 하단에 고정 */
+		            bottom: 40px;
+		            left: 20px;
+		            padding: 15px 25px;
+		            /* background-color: transparent; */
+		            /* color: #5A86E3; */
+		            /* border: 2px solid #5A86E3; */
+		            border-radius: 50px;
+		            font-size: 16px;
+		            cursor: pointer;
+		            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+		            z-index: 1000; /* 최상단 위치 */
+		            
+		            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
+		            transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        
+		        #send-ajax-alarm {
+		        	background-color: #ffffff;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-positive:hover {
+		        	background-color: #5A86E3;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-negative:hover {
+		        	background-color: #E86A7A;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		
+		        /* [2] 처음 숨겨진 상태 (기본) */
+		        #send-alarm.btn-slide-hidden, #send-ajax-alarm.btn-slide-hidden {
+		            /* 아래로 100px 내려가 있고 투명함 */
+		            transform: translateY(100px); 
+		            opacity: 0;
+		        }
+		
+		        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
+		        #send-alarm.btn-slide-show, #send-ajax-alarm.btn-slide-show  {
+		            /* 제자리로 돌아오고 불투명함 */
+		            transform: translateY(0);
+		            opacity: 1;
+		        }
+		        
+		        /* 보여지는 상태 */
+				#div-alarm.is-visible {
+				    opacity: 1 !important;
+				    visibility: visible !important;
+				}
+		    </style>
 	
 	<script>
 		// 페이지가 완전히 로드되면 실행

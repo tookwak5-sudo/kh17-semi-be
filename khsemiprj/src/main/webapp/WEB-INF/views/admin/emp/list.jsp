@@ -76,8 +76,8 @@
             	<span id="toggleIcon" style="color: #666;">▼</span>
             </button>
        	</div>
-       	<div id="waitListArea" style="display: none; margin-top: 15px;">
-				<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3>
+       	<div id="waitListArea" style="display: none; margin-top: 0px;">
+<!-- 				<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3> -->
 					<table class="table" style="background-color: white; margin-bottom: 0;">
 						<thead>
 							<tr style="border-bottom: 2px solid #e9ecef;">
@@ -101,7 +101,7 @@
 					</table>
 				</div>
 		
-		<hr class="mt-30 mb-30">
+		<hr class="mt-20 mb-30">
 		</c:if>
 				
 				
@@ -210,10 +210,10 @@
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
     // 팝업 함수
