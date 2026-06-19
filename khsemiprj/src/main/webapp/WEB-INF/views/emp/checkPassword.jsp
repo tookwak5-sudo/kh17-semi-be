@@ -33,10 +33,18 @@ $(function() {
     var state = {
         empPasswordValid: false
     };
-
-    $("[name=empPassword]").on("input", function(){
-        var empPassword = $(this).val();
-        var $failDiv = $(this).siblings(".fail-feedback");
+		
+    
+	var $failDiv = $("[name=empPassword]").siblings(".fail-feedback");
+    $("#confirm").on("click", function(){
+    	
+    	var empPassword = $("[name=empPassword]").val();
+    	if(empPassword.length==0){
+    		$("[name=empPassword]").removeClass("fail");
+    		$failDiv.text("비밀번호를 입력해주세요.");
+    		return;
+    	}
+       
 
         $.ajax({
             url: "/rest/cert/checkPassword",
@@ -44,13 +52,17 @@ $(function() {
             data: { empPassword: empPassword },
             success: function(response){
                 if(response === true) {
-                    $("[name=empPassword]").removeClass("success fail").addClass("success");
-                    state.empPasswordValid = true;
+                    $("[name=empPassword]").removeClass("fail").addClass("success");
+                    
                     $(".server-error").hide();
+                    $failDiv.text("");
+                    state.empPasswordValid = true;
+                    $(".check-form").trigger("submit");
+                   
                 } else {
-                    $("[name=empPassword]").removeClass("success fail").addClass("fail");
+                    $("[name=empPassword]").removeClass("success").addClass("fail");
                     $failDiv.text("비밀번호가 일치하지 않습니다.");
-                    state.empPasswordValid = false;
+                    return state.empPasswordValid = false;
                 }
             }
         });
@@ -94,13 +106,12 @@ $(function() {
 				<i class="fa-solid fa-eye-slash red"></i> 
 				<i class="fa-solid fa-eye blue"></i></label> 
 				<input type="password" name="empPassword" class="field w-100">
-				<div class="success-feedback">비밀번호가 확인되었습니다.</div>
 	            <div class="fail-feedback"></div>
 			</div>
 	
 	
 			<div class="mt-50">
-				<button type="submit" class="btn btn-positive w-100">
+				<button type="button" id="confirm" class="btn btn-positive w-100">
 					<i class="fa-solid fa-lock fa-fade"></i> <span>확인</span>
 				</button>
 			</div>

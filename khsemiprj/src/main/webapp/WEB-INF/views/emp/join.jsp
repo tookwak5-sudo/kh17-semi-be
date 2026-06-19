@@ -298,7 +298,6 @@ $(function() {
                 }
                 else { 
                     $("[name=empEmail]").removeClass("success fail")
-                                       .addClass("success");
                     state.empEmailValid = true; 
                    
                 }

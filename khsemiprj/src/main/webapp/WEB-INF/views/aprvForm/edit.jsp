@@ -129,7 +129,7 @@ $(function() {
     $(".preview-input").trigger("change");
 }); 
 </script>
-
+<c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
 <div class="container w-800 mt-20 mb-50 background-card">
 
 	<div class="w-100 flex-area" style="justify-content: left">
@@ -227,5 +227,5 @@ $(function() {
 
 
 </div>
-
+</c:if>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
