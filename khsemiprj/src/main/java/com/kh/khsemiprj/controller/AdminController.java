@@ -158,5 +158,4 @@ public class AdminController {
 		// 2. 수정이 끝난 후 원래 보던 사원의 상세 페이지로 리다이렉트
 		return "redirect:/admin/leave/detail?empId=" + empLeaveDto.getLeaveEmpId();
 	}
-	
 }
