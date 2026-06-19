@@ -66,9 +66,11 @@ $(function() {
 		        </h1>
 			</div>
         </div>
-
+		
+		
 
         <div class="cell flex-area flex-vertical" style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            
             <form action="exitList" method="get" class="w-100" autocomplete="off">
 
                 <input type="hidden" name="size" value="${pageVO.size}">
@@ -101,6 +103,9 @@ $(function() {
         </div>
 	</div>
         <div class="cell">
+        	<div class="right" style="font-size: 14px; color: #666;">
+		    	총 <strong style="color: #007bff;">${pageVO.count}</strong>명의 퇴사자 및 퇴사 예정자
+			</div>
             <table class="table table-hover">
                 <thead>
                     <tr>
