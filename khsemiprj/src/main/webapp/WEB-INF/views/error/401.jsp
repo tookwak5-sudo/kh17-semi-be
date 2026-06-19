@@ -3,8 +3,8 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
+<!--  <h1>일시적인 오류가 발생했습니다. -->
+<h1>${message == null ? "로그인 후 이용이 가능합니다" : message}</h1>
 
-<!-- <h1>일시적인 오류가 발생했습니다</h1> -->
-<h1>${message == null ? "일시적인 오류가 발생했습니다" : message}</h1>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

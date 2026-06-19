@@ -117,14 +117,16 @@ public class EmpController {
 		// [5] 세션 등록
 		// [5-1] 세션 : 아이디- 세션(HttpSession)에 로그인 되었음을 표시
 		session.setAttribute("loginId", findEmpDto.getEmpId());
-
-		// [5-2] 세션 : 등급 loginLevel
+		// [5-2] 세션 : 이름
+		session.setAttribute("empName", findEmpDto.getEmpName());
+		
+		// [5-3] 세션 : 등급 loginLevel
 		// - 1. 관리자 테이블 조회 후 존재 시 → loginLevel = 2로 설정
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
 		
-		// [5-3] 세션 : 직책
+		// [5-4] 세션 : 직책
 		EmpPositionDeptVO empPositionDeptVO = empPositionDemptDao.selectDeptPositionbyId(empDto.getEmpId());
 		session.setAttribute("empPosition", empPositionDeptVO.getEmpPositionName());
 		session.setAttribute("empDept", empPositionDeptVO.getDeptName());
@@ -600,17 +602,4 @@ public class EmpController {
 
 		return "redirect:./mypage";
 	}
-	
-//	//header프로필 호출
-//	@RequestMapping("/headerProfile")
-//	public String headerProfile(@RequestParam String empId) {
-//		try {
-//			int attachNo = empDao.searchProfile(empId);
-//			return "redirect:/download/modern?attachNo=" + attachNo;
-//		} catch (Exception e) {
-//			//return "redirect:/images/no_image.png";
-//			return "redirect:/images/no_image.png";
-//		}
-//	}
-
 }

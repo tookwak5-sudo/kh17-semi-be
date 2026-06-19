@@ -24,7 +24,7 @@ public class MasterOnlyInterceptor implements HandlerInterceptor{
 		if(empGrade == null) throw new WhoAreYouException();
 		
 		//관리자인지
-		if(empGrade == 2) throw new GetOutException();
+		if(empGrade != 2) throw new GetOutException();
 		
 		return true;
 	}

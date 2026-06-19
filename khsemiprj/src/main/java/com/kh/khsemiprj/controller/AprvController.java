@@ -92,7 +92,7 @@ public class AprvController {
 		int count = aprvDao.count(pageForAprvVO, loginId);
 		pageForAprvVO.setCount(count);//데이터 개수 설정
 		model.addAttribute("pageVO", pageForAprvVO);
-		System.out.println(pageForAprvVO);
+		//System.out.println(pageForAprvVO);
 		List<AprvDetailVO> aprvList = aprvDao.selectList(pageForAprvVO, loginId);
 		model.addAttribute("aprvList", aprvList);
 		return "aprv/list";

@@ -115,12 +115,38 @@
 		
 		/* 사이드바 프로필 카드 스타일 */
 		
-		/* 프로필 정보 텍스트 */
+		/* 기존 스타일 수정 및 추가 */
 		.profile-info {
 		    font-size: 0.95em;
 		    color: #475569;
 		    margin-top: 15px;
-		    line-height: 1.6;
+		    line-height: 1.4;
+		    padding: 10px 0;
+		}
+		
+		/* 이름 강조 */
+		.profile-name {
+		    font-size: 1.2em;
+		    font-weight: 700;
+		    color: #1E293B;
+		    margin-bottom: 2px;
+		}
+		
+		/* 부서 및 직책 라인 */
+		.profile-dept-pos {
+		    font-size: 0.9em;
+		    color: #64748b;
+		    margin-bottom: 8px;
+		}
+		
+		/* 아이디(작은 텍스트) */
+		.profile-id {
+		    font-size: 0.8em;
+		    color: #94a3b8;
+		    background: #f8fafc;
+		    display: inline-block;
+		    padding: 2px 6px;
+		    border-radius: 4px;
 		}
 		
 		/* 출퇴근 버튼 전용 클래스 (기존 btn 스타일 계승) */
@@ -312,9 +338,9 @@
 					        </div>
 					
 					        <div class="profile-info">
-					            <div style="font-weight: bold; color: #1E293B;">${sessionScope.loginId}</div>
-					            <div>${sessionScope.empDept}</div>
-					            <div>${sessionScope.empPosition}</div>
+					            <div class="profile-name">${sessionScope.loginId} ${sessionScope.empPosition}</div>
+					            <div class="profile-dept-pos">${sessionScope.empDept}</div>
+					            <div class="profile-id">ID: ${sessionScope.empName}</div>
 					        </div>
 					
 <%-- 					        <c:choose> --%>
