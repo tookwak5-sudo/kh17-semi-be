@@ -44,7 +44,7 @@
 
 			
 			if (findAprvFormDto == null) {
-				throw new TargetNotfoundException("해당 댓글이 존재하지 않습니다.");
+				throw new TargetNotfoundException("해당 양식이 존재하지 않습니다.");
 			}
 
 			//1. 새로운 파일이 진짜로 들어왔을 때만 아래 로직

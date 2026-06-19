@@ -55,7 +55,11 @@ public class MemoController {
 		memoDto.setMemoNo(memoNo);
 		memoDto.setMemoSenderId(loginId);
 		
-		memoDao.insert(memoDto);
+		if(memoDto.getMemoType().equals("공지")) {
+			memoDao.insertAll(memoDto);
+		} else {
+			memoDao.insert(memoDto);	
+		}
 		return "redirect:./list?send";
 	}
 	
@@ -110,6 +114,15 @@ public class MemoController {
 		model.addAttribute("countMemo", countMemo);
 		
 		return "template/header";
+	}
+	
+	@RequestMapping("/delete")
+	public String delete(@RequestParam int memoNo) {
+		MemoDto memoDto = memoDao.selectOne(memoNo);
+		if(memoDto == null) throw new TargetNotfoundException("존재하지 않는 메모");
+		
+		memoDao.delete(memoNo);
+		return "redirect:./list?delete";
 	}
 	
 }

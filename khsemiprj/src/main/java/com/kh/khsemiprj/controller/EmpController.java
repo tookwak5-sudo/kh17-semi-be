@@ -92,17 +92,17 @@ public class EmpController {
 			return "redirect:./login?error";
 		}
 
-		// 이 회원의 승인 상태가 상태가 N이라면
-		if (findEmpDto.getEmpValid().equals("N")) {
+		// [3] 로그인 아이디의 승인 상태가 상태가 Y가 아니라면
+		if (!findEmpDto.getEmpValid().equals("Y")) {
 			return "redirect:./login?valid";
 		}
 
-		// 퇴사 회원이라면
+		// [4] 퇴사 회원이라면
 		EmpExitDto empExitDto = empExitDao.selectOne(empDto.getEmpId());
 		if (empExitDto != null && empExitDto.isExit()) {
 			return "redirect:./login?exit";
 		}
-
+		
 		// - 현재시간을 생성(완벽하게 동일한 시간으로 설정해야 할 경우 자바에서 시간을 생성해서 양측에 추가)
 		// Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 		// - 로그인시간을 갱신
@@ -113,20 +113,27 @@ public class EmpController {
 //		empHistoryDto.setMemberHistoryAddress(request.getRemoteAddr());//IP
 //		empHistoryDto.setMemberHistoryAgent(request.getHeader("User-Agent"));//Agent
 //		empHistoryDao.insert(empHistoryDto);
-
-		// - 세션(HttpSession)에 로그인 되었음을 표시
+		
+		// [5] 세션 등록
+		// [5-1] 세션 : 아이디- 세션(HttpSession)에 로그인 되었음을 표시
 		session.setAttribute("loginId", findEmpDto.getEmpId());
-
-		// loginLevel
+		// [5-2] 세션 : 이름
+		session.setAttribute("empName", findEmpDto.getEmpName());
+		
+		// [5-3] 세션 : 등급 loginLevel
 		// - 1. 관리자 테이블 조회 후 존재 시 → loginLevel = 2로 설정
 		// - 2. 부서테이블의 부서장 조회 후 존재 시 → loginLevel = 1로 설정
 		// - 3. 1~2 단계 진행 후 조회 안될 시 → loginLevel = 0
 		session.setAttribute("empGrade", findEmpDto.getEmpGrade());
 		
-		// 직책 
+		// [5-4] 세션 : 직책
 		EmpPositionDeptVO empPositionDeptVO = empPositionDemptDao.selectDeptPositionbyId(empDto.getEmpId());
 		session.setAttribute("empPosition", empPositionDeptVO.getEmpPositionName());
 		session.setAttribute("empDept", empPositionDeptVO.getDeptName());
+		
+		// [6] 로그인 시 회원의 로그인 시간 등록
+		// 조회된 아이디에 로그인 시간을 현재시간으로 update
+		empDao.updateLoginTime(findEmpDto.getEmpId());
 		
 		// 비밀번호 변경한 시간을 비교해서 일정기간 이상이면 비밀번호 변경 안내 페이지로 리다이렉트
 //		Timestamp last = findEmpDto.getEmpChange();
@@ -139,12 +146,16 @@ public class EmpController {
 //		if(duration.toDays() >= 30) {
 //			return "redirect:./notice";
 //		}
-
-		// 목표: 로그인과 동시에 직원 출근처리
-		LogInoutDto logInoutDto = new LogInoutDto();
-		logInoutDto.setLogInoutEmpId(empDto.getEmpId());
-		logInoutDto.setLogInoutType("출근");
-		logInoutDao.insert(logInoutDto);
+		// 목표: 최초 로그인 시에만 로그인과 출근 동시에 처리
+		// 오늘의 기록의 마지막 상태를 조회
+		LogInoutDto lastRecord = logInoutDao.getLastType(empDto.getEmpId());
+		// 2. 기록이 없는 경우에만 출근 처리(null체크)
+		if (lastRecord == null) {
+			LogInoutDto newLog = new LogInoutDto();
+			newLog.setLogInoutEmpId(empDto.getEmpId());
+			newLog.setLogInoutType("출근");
+			logInoutDao.insert(newLog);
+		}
 		return "redirect:/";
 	}
 
@@ -153,33 +164,32 @@ public class EmpController {
 	public String logout(HttpSession session) {
 		session.removeAttribute("loginId");
 		session.removeAttribute("empGrade");
+		session.removeAttribute("empDept");
+		session.removeAttribute("empPosition");
 
 		return "redirect:/emp/login";
 	}
 
-	// 목표 출근버튼을 누르면 출근 처리
-	@PostMapping("/work-in")
-	public String workIn(HttpSession session, Model model) {
-		String loginId = (String) session.getAttribute("loginId");
-
-		// 아이디를 조회해서 출퇴근 여부 확인
-		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
-
-		// 출근 상태라면 상태변화x
-		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
-			return "redirect:/?workIn";
-		}
-
-		LogInoutDto newDto = new LogInoutDto();
-		newDto.setLogInoutEmpId(loginId);
-		newDto.setLogInoutType("출근");
-		logInoutDao.insert(newDto);
-
-		// [추가] 세션에 상태 저장
-		session.setAttribute("logInoutType", "퇴근");
-
-		return "redirect:/";
-	}
+	// 목표:  출근버튼을 누르면 출근 처리
+//	@PostMapping("/work-in")
+//	public String workIn(HttpSession session, Model model) {
+//		String loginId = (String) session.getAttribute("loginId");
+//
+//		// 아이디를 조회해서 출퇴근 여부 확인
+//		LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
+//
+//		// 출근 상태라면 상태변화x
+//		if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
+//			return "redirect:/?workIn";
+//		}
+//
+//		LogInoutDto newDto = new LogInoutDto();
+//		newDto.setLogInoutEmpId(loginId);
+//		newDto.setLogInoutType("출근");
+//		logInoutDao.insert(newDto);
+//
+//		return "redirect:/?alarm=workIn";
+//	}
 
 	// 목표 퇴근 버튼을 누르면 퇴근 처리
 	@PostMapping("/work-out")
@@ -198,10 +208,7 @@ public class EmpController {
 		newDto.setLogInoutType("퇴근");
 		logInoutDao.insert(newDto);
 
-		// [추가] 세션에 상태 저장
-		session.setAttribute("logInoutType", "출근");
-
-		return "redirect:/";
+		return "redirect:/?alarm=workOut";
 	}
 
 	// 로그아웃 및 퇴근
@@ -209,24 +216,29 @@ public class EmpController {
 	public String logoutOut(HttpSession session) {
 		// [1] 세션을 지우기 전에 현재 로그인 ID를 먼저 확보해야 합니다
 		String loginId = (String) session.getAttribute("loginId");
-
+		
+		LogInoutDto newDto = new LogInoutDto();
+		
 		if (loginId != null) {
 			// [2] 마지막 상태 확인
 			LogInoutDto logInoutDto = logInoutDao.getLastType(loginId);
 
 			// 출근 상태인 경우에만 퇴근 처리
 			if (logInoutDto != null && "출근".equals(logInoutDto.getLogInoutType().trim())) {
-				LogInoutDto newDto = new LogInoutDto();
 				newDto.setLogInoutEmpId(loginId);
 				newDto.setLogInoutType("퇴근");
 				logInoutDao.insert(newDto);
 			}
 		}
+		
+		if(newDto.getLogInoutType() == "퇴근") {
+			// [3] 세션제거
+			session.removeAttribute("loginId");
+			session.removeAttribute("empGrade");
+			session.removeAttribute("empDept");
+			session.removeAttribute("empPosition");
 
-		// [3] 세션제거
-		session.removeAttribute("loginId");
-		session.removeAttribute("empGrade");
-
+		}
 		return "redirect:/emp/login";
 	}
 
@@ -356,7 +368,6 @@ public class EmpController {
 
 		try {
 			int profileAttachNo = empDao.searchProfile(loginId);
-			System.out.println("가져온 프사번호: " + profileAttachNo);
 			model.addAttribute("profileAttachNo", profileAttachNo);
 		} catch (Exception e) {
 			// 프로필 사진이 없으면 번호를 안 넘김
@@ -376,7 +387,7 @@ public class EmpController {
 
 		return "emp/mypage";
 	}
-
+	
 	@GetMapping("/checkPassword")
 	public String checkPassword(HttpSession session, @ModelAttribute EmpDto empDto) {
 		String loginId = (String) session.getAttribute("loginId");
@@ -591,5 +602,4 @@ public class EmpController {
 
 		return "redirect:./mypage";
 	}
-
 }

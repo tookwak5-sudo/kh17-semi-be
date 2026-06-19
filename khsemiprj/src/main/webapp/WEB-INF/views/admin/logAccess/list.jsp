@@ -4,6 +4,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
+<style>
+.break-url {
+    word-break: break-all;     /* 글자 단위로 쪼개서 줄바꿈 */
+    white-space: normal;       /* 기본 줄바꿈 허용 */
+}
+</style>
 	
 <div class="container w-1200 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">		
@@ -19,11 +25,11 @@
 			<!-- 검색창 -->
 	            <form autocomplete="off">
 	                <select name="column" class="field-ph">
-	                    <option value="access_emp_id">접근자 아이디</option>
-	                    <option value="access_url">접속 URL</option>
+	                    <option value="access_emp_id" ${param.column == 'access_emp_id' ? 'selected' : ''}>접근자 아이디</option>
+	                    <option value="access_url" ${param.column == 'access_url' ? 'selected' : ''}>접속 URL</option>
 	                </select>
 	                <input type="text" name="keyword"
-	                    class="field-sm" placeholder="검색어 입력">
+	                    class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
 	                <button type="submit" class="btn btn-positive">
 	                    <i class="fa-solid fa-magnifying-glass"></i>
 	                    <span>검색</span>
@@ -40,11 +46,11 @@
 	   		<table class="table">
 	   			<thead>
 	               <tr>
-	                   <th>no.</th>
-	                   <th class="w-40">접근자</th>
+	                   <th width="80px">no.</th>
+	                   <th>접근자</th>
 	                   <th>경로(URL)</th>
-	                   <th>접근IP</th>
-	                   <th>접근시각</th>
+	                   <th width="130px">접근IP</th>
+	                   <th width="130px">접근시각</th>
 	               </tr>
 	  			</thead>
 	  			<tbody>
@@ -52,7 +58,7 @@
 	  				<tr>
 	  					<td>${logAccessDto.accessNo}</td>
 	  					<td>${logAccessDto.accessEmpId} ([${logAccessDto.deptName}] ${logAccessDto.empName})</td>
-	  					<td>${logAccessDto.accessUrl}</td>
+	  					<td  class="break-url">${logAccessDto.accessUrl}</td>
 	  					<td>${logAccessDto.accessIp}</td>
 	  					<td>${logAccessDto.accessDate}</td>
 	  				</tr>

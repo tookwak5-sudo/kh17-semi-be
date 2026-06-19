@@ -23,4 +23,9 @@ public class AprvDto {
 	private Timestamp aprvWtime;
 	private Timestamp aprvEtime;
 	private Double aprvLeave;
+	private Long aprvCost;
+	private String aprvCostType;
+	private String aprvCostReceiver;
+	private String aprvCostReceiveAccount;
+	private String aprvCostReceiveBank;
 }

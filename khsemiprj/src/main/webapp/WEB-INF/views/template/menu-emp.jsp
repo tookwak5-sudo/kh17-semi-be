@@ -7,12 +7,6 @@
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
-	    <a href="/">
-	        <i class="fa-solid fa-house"></i>
-	        <span>홈</span>
-	    </a>
-	</li>
-	<li>
 	    <a href="/aprv/list">
 	        <i class="fa-solid fa-database"></i>
 	        <span>결재</span>
@@ -39,7 +33,7 @@
 	<li>
 		<a href="/memo/list" style="font-size:20px; text-decoration: none;" onclick="
              var w = 650; 
-             var h = 650; 
+             var h = 750; 
              var left = (screen.width/2) - (w/2); 
              var top = (screen.height/2) - (h/2); 
              window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 

@@ -204,4 +204,11 @@ public class EmpDao {
 		Object[] params = {};
 		return jdbcTemplate.query(sql, empMapper, params);
 	}
+	
+	//로그인한 직원의 로그인 시각 업데이트
+	public boolean updateLoginTime(String empId) {
+		String sql = "update emp set emp_login = systimestamp where emp_id = ?";
+		Object[] params = {empId};
+		return jdbcTemplate.update(sql, params) > 0;
+	}
 }

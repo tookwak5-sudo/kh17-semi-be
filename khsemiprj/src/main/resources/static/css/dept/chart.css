@@ -140,19 +140,18 @@ position: relative; /* 📌 줌 컨트롤러의 절대 위치 기준점이 됨 *
 .dept-chart-container {
     display: flex;
     justify-content: flex-start; /* 스크롤 발생 시 왼쪽 정렬 유지로 깨짐 방지 */
-align-items: center;
-
-/* 🎨 디자인 포인트: 기존 디자인과 어우러지는 은은한 소프트 보더 */
-background-color: #ffffff;
-border: 1px solid #e2e8f0;       /* 부드러운 회색 테두리 */
-border-radius: 12px;            /* 모서리를 둥글게 */
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 
-            0 8px 10px -6px rgba(0, 0, 0, 0.05); /* 부드러운 대시보드 느낌의 그림자 */
-
-/* 📜 스크롤 바 스타일 */
-overflow-x: auto;
-overflow-y: hidden;
-padding: 40px;                  /* 내부 조직도와 테두리 사이의 여유 공간 */
+	align-items: center;
+	
+	/* 🎨 디자인 포인트: 기존 디자인과 어우러지는 은은한 소프트 보더 */
+	background-color: #ffffff;
+	/* border: 1px solid #e2e8f0;       부드러운 회색 테두리 */
+	border-radius: 12px;            /* 모서리를 둥글게 */
+	/* box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 
+	            0 8px 10px -6px rgba(0, 0, 0, 0.05); 부드러운 대시보드 느낌의 그림자 */
+	/* 📜 스크롤 바 스타일 */
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 40px;                  /* 내부 조직도와 테두리 사이의 여유 공간 */
     margin-bottom: 50px;
     box-sizing: border-box;
 }
@@ -175,13 +174,16 @@ border-radius: 0 0 12px 12px; /* 컨테이너 라운드에 맞춤 */
 
 
 /* 🔍 확대/축소 컨트롤 바 위치 설정 */
-.dept-chart-container {
-    position: relative; /* 버튼의 절대 위치 기준점이 됩니다 */
+/* .dept-chart-container {
+    position: relative; 버튼의 절대 위치 기준점이 됩니다
+} */
+.container {
+	position: relative;
 }
 
 .zoom-controls {
     position: absolute;
-    top: 10px;
+    top: 30px;
     right: 30px;
     display: flex;
     gap: 5px;

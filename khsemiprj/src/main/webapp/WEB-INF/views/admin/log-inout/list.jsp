@@ -20,11 +20,11 @@
 		        <div class="cell center">
 		            <form autocomplete="off">
 		                <select name="column" class="field">
-		                    <option value="log_inout_emp_id">사원아이디</option>
-		                    <option value="log_inout_type">분류</option>
+		                    <option value="log_inout_emp_id" ${param.column == 'log_inout_emp_id' ? 'selected' : ''}>사원아이디</option>
+		                    <option value="log_inout_type" ${param.column == 'log_inout_type' ? 'selected' : ''}>분류</option>
 		                </select>
 		                <input type="text" name="keyword"
-		                    class="field-sm" placeholder="검색어 입력">
+		                    class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
 		                <button type="submit" class="btn btn-positive">
 		                    <i class="fa-solid fa-magnifying-glass"></i>
 		                    <span>검색</span>

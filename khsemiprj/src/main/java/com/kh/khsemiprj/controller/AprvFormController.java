@@ -15,14 +15,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.AprvFormDao;
 import com.kh.khsemiprj.dao.AttachDao;
+import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AttachDto;
+import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.exception.TargetNotfoundException;
 import com.kh.khsemiprj.service.AprvFormService;
 import com.kh.khsemiprj.vo.AprvFormHeadNameVO;
 import com.kh.khsemiprj.vo.AprvFormHeadTypeVO;
 import com.kh.khsemiprj.vo.AprvFormSelectVO;
 import com.kh.khsemiprj.vo.PageVO;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/aprvForm")
@@ -36,26 +40,32 @@ public class AprvFormController {
 	
 	@Autowired
 	private AttachDao attachDao;
+	
+	@Autowired
+	private EmpDao empDao;
 
 	@GetMapping("/list")
 	public String list(@ModelAttribute PageVO pageVO, Model model) {
-	    
 	    
 	    int count = aprvFormDao.count(pageVO);
 	    pageVO.setCount(count);
 	    
 	
 	    List<AprvFormSelectVO> list = aprvFormDao.selectList(pageVO);
+	    List<AprvFormHeadNameVO> filterHeadList = aprvFormDao.selectFilteredHeadList();
 	    
 	    model.addAttribute("list", list);
 	    model.addAttribute("pageVO", pageVO);
+	    model.addAttribute("filterHeadList", filterHeadList);
 	    
 	    return "aprvForm/list";
 	}
 
+
 	// 2. 결재 양식 상세 보기
 	@GetMapping("/detail")
 	public String detail(@RequestParam int formNo, Model model) {
+		
 		AprvFormSelectVO aprvFormSelectVO = aprvFormDao.selectOneUsingHead(formNo);
 		Integer attachNo = aprvFormDao.findAttachNo(formNo);
 		model.addAttribute("attachNo", attachNo);
@@ -71,8 +81,17 @@ public class AprvFormController {
 
 	// 3. 결재 양식 신규 등록 페이지 열기
 	@GetMapping("/insert")
-	public String insert(Model model) {
-
+	public String insert(Model model, HttpSession session) {
+		
+		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpDto findEmpDto = new EmpDto();
+		findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
+			return "redirect:/error/500";
+		}
+		
+		
 		List<AprvFormHeadNameVO> filteredHeadList = aprvFormDao.selectFilteredHeadList();
 		List<AprvFormHeadTypeVO> filteredTypeList = aprvFormDao.selectFilteredTypeList();
 
@@ -89,9 +108,20 @@ public class AprvFormController {
 	        @RequestParam String formExplain,
 	        @RequestParam String headName,
 	        @RequestParam(required = false) String formUseYn,
-	        @RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
+	        @RequestParam(required = false) MultipartFile attach
+	        ,HttpSession session) throws IllegalStateException, IOException {
 
-	    // 1. DTO 객체 수동 생성 후 파라미터 매핑
+		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpDto findEmpDto = new EmpDto();
+		findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
+			return "redirect:/error/500";
+		}
+		
+		
+		
+		// 1. DTO 객체 수동 생성 후 파라미터 매핑
 	    AprvFormDto aprvFormDto = new AprvFormDto();
 	    aprvFormDto.setFormName(formName);
 	    aprvFormDto.setFormExplain(formExplain);
@@ -117,7 +147,17 @@ public class AprvFormController {
 
 	// 5. 결재 양식 수정 페이지 열기
 	@GetMapping("/edit")
-	public String edit(@RequestParam int formNo, Model model) {
+	public String edit(@RequestParam int formNo, Model model, HttpSession session) {
+		
+		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpDto findEmpDto = new EmpDto();
+		findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
+			return "redirect:/error/500";
+		}
+		
+		
 		try {
 
 			AprvFormDto aprvFormDto = aprvFormDao.selectOne(formNo);
@@ -151,8 +191,17 @@ public class AprvFormController {
 	@PostMapping("/edit")
 	public String edit(@ModelAttribute AprvFormDto aprvFormDto, @ModelAttribute AttachDto attachDto,
 			@RequestParam(value = "head_name") String headName, @RequestParam(value = "head_type") String headType,
-			@RequestParam(required = false) MultipartFile attach) throws IllegalStateException, IOException {
+			@RequestParam(required = false) MultipartFile attach, HttpSession session) throws IllegalStateException, IOException {
 
+		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpDto findEmpDto = new EmpDto();
+		findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
+			return "redirect:/error/500";
+		}
+		
+		
 		int headNo = aprvFormDao.findHeadNo(headName);
 
 		if (headNo == 0) {
@@ -178,7 +227,17 @@ public class AprvFormController {
 	}
 
 	@GetMapping("/delete")
-	public String delete(@RequestParam int formNo) throws IllegalStateException, IOException {
+	public String delete(@RequestParam int formNo,HttpSession session) throws IllegalStateException, IOException {
+		
+		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpDto findEmpDto = new EmpDto();
+		findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
+			return "redirect:/error/500";
+		}
+		
+		
 		try {
 			Integer attachNo = aprvFormDao.findAttachNo(formNo);
 			if (attachNo != null && attachNo > 0) {
@@ -203,8 +262,17 @@ public class AprvFormController {
 
 	// 8. 결재 양식 삭제 완료 페이지 열기
 	@GetMapping("/deleteFinish")
-	public String deleteFinish() {
+	public String deleteFinish(HttpSession session) {
 
+		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpDto findEmpDto = new EmpDto();
+		findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
+			return "redirect:/error/500";
+		}
+		
+		
 		return "aprvForm/deleteFinish";
 	}
 }

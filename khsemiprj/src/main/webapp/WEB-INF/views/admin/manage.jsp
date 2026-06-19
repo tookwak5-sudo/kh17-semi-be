@@ -28,6 +28,18 @@
  		box-sizing: border-box;
  		height: 45px;
  	}
+ 	/* 비활성화된 체크박스(disabled)에 대한 스타일 */
+	.checkbox-custom:disabled + label::before {
+	    background-color: #f1f5f9; /* 배경을 회색조로 변경 */
+	    border-color: #e2e8f0;    /* 테두리 색을 흐리게 */
+	    cursor: not-allowed;      /* 마우스를 올리면 금지 표시 */
+	    opacity: 0.6;             /* 약간 투명하게 조절 */
+	}
+	
+	/* 비활성화된 체크박스 옆의 텍스트도 흐리게 하고 싶다면 (선택사항) */
+	.checkbox-custom:disabled ~ span {
+	    color: #94a3b8;
+	}
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -132,131 +144,147 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
-
-<h1>관리</h1>
-
-<div class="container w-1200 mt-50 mb-50">
-	<div class="cell flex-area" style="align-items: flex-start;">
-		<div class="cell w-50 me-10 card p-20">
-			<div class="cell">
-				<h1>헤더 종류 목록</h1>
-			</div>
-			<form id="headDeleteForm" action="/admin/headDelete" method="POST">
-				<div class="cell list-area">
-					<table class="table">
-					    <thead>
-					        <tr>
-				        		<th>선택</th>
-					            <th>헤드 이름</th>
-					            <th>헤드 타입</th>
-					        </tr>
-					    </thead>
-					    <tbody>
-					        <c:forEach var="aprvHead" items="${aprvHeadList}">
-				           <tr>
-				               <td>
-					               <input type="checkbox" 
-			                              name="headNo" 
-			                              class="aprvHead-checkbox" 
-			                              value="${aprvHead.headNo}"
-			                              <c:if test="${aprvHead.headNo<=6}">disabled</c:if>
-			                              >
-				               </td>
-				               <td>${aprvHead.headName}<c:if test="${aprvHead.headNo <= 6}"><small>(삭제 불가)</small></c:if></td>
-				               <td>${aprvHead.headType}</td>
-				           </tr>
-				       </c:forEach>
-					    </tbody>
-					</table>
-				</div>
-				<div class="cell right">
-					<button type="submit" id="btnDeleteAprvHead" class="btn btn-negative">삭제</button>	
-				</div>
-			</form>
-			<div class="cell right">
-				<button type="button" id="btnToggleHeadWrite" class="btn btn-neutral">헤더 추가</button>
-			</div>
-			<hr>
-			<div id="headWriteArea" style="display: none;">
-				<div class="cell">
-					<form action="/admin/headWrite" method="post">
-				    	<div class="cell">
-							<label>헤더 이름</label> <input type="text" name="headName" class="w-100">
-						</div>
-						
-						<div class="cell">
-							<label>헤더 타입</label>
-							<select name="headType" class="field w-100">
-					        	<option value="">선택</option>
-					        	<option value="결재">결재</option>
-					        	<option value="일반">일반</option>
-					       	</select>
-						</div>
-						
-					   	<button type="submit" class="btn btn-positive">헤더생성</button>
-					</form>
-				</div>
-			</div>
+<div class="container w-100 mt-20 mb-50 background-card">
+	<div class="w-15 flex-area" style="justify-content: left">
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            관리
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
 		</div>
-		<div class="cell w-50 ms-10 card p-20">
-			<div class="cell">
+	</div>
+	
+	<div class="container w-1200 mt-20 mb-50">
+		<div class="cell flex-area" style="align-items: flex-start;">
+			<div class="cell w-50 me-10 card p-20">
 				<div class="cell">
-					<h1>직책 종류 목록</h1>
+					<h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+					헤더 종류 목록
+					<span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+					</h1>
 				</div>
-				
-				<form id="empPositionDeleteForm" action="/admin/empPositionDelete" method="POST">
+				<form id="headDeleteForm" action="/admin/headDelete" method="POST">
 					<div class="cell list-area">
 						<table class="table">
 						    <thead>
 						        <tr>
 					        		<th>선택</th>
-						            <th>직급명</th>
-						            <th>직급 단계</th>
+						            <th>헤드 이름</th>
+						            <th>헤드 타입</th>
 						        </tr>
 						    </thead>
 						    <tbody>
-						        <c:forEach var="empPosition" items="${empPositionList}">
+						        <c:forEach var="aprvHead" items="${aprvHeadList}">
 					           <tr>
 					               <td>
-						               <input type="checkbox" 
-				                              name="empPositionNo" 
-				                              class="empPosition-checkbox" 
-				                              value="${empPosition.empPositionNo}">
+						               <input type="checkbox"
+						               		  id="head_${aprvHead.headNo}" 
+				                              name="headNo" 
+				                              class="checkbox-custom aprvHead-checkbox" 
+				                              value="${aprvHead.headNo}"
+				                              <c:if test="${aprvHead.headNo<=6}">disabled</c:if>
+				                       >
+				                       <label for="head_${aprvHead.headNo}" style="cursor:pointer;"></label>
 					               </td>
-					               <td>${empPosition.empPositionName}</td>
-					               <td>${empPosition.empPositionLevel}</td>
+					               <td>${aprvHead.headName}<c:if test="${aprvHead.headNo <= 6}"><small>(삭제 불가)</small></c:if></td>
+					               <td>${aprvHead.headType}</td>
 					           </tr>
 					       </c:forEach>
 						    </tbody>
 						</table>
 					</div>
-					
 					<div class="cell right">
-						<button type="submit" id="btnDeleteEmpPosition" class="btn btn-negative">삭제</button>	
+						<button type="submit" id="btnDeleteAprvHead" class="btn btn-negative">삭제</button>	
 					</div>
 				</form>
 				<div class="cell right">
-					<button type="button" id="btnTogglePositionWrite" class="btn btn-neutral">직책 추가</button>
+					<button type="button" id="btnToggleHeadWrite" class="btn btn-neutral">헤더 추가</button>
 				</div>
 				<hr>
-				<div id="positionWriteArea" style="display: none;">
+				<div id="headWriteArea" style="display: none;">
 					<div class="cell">
-						<form action="/admin/empPositionWrite" method="post">
+						<form action="/admin/headWrite" method="post">
 					    	<div class="cell">
-								<label>직급명</label> <input type="text" name="empPositionName" class="w-100">
+								<label>헤더 이름</label> <input type="text" name="headName" class="w-100">
 							</div>
+							
 							<div class="cell">
-								<label>직급 단계</label> <input type="text" name="empPositionLevel" class="w-100">
+								<label>헤더 타입</label>
+								<select name="headType" class="field w-100">
+						        	<option value="">선택</option>
+						        	<option value="결재">결재</option>
+						        	<option value="일반">일반</option>
+						       	</select>
 							</div>
+							
 						   	<button type="submit" class="btn btn-positive">헤더생성</button>
 						</form>
+					</div>
+				</div>
+			</div>
+			<div class="cell w-50 ms-10 card p-20">
+				<div class="cell">
+					<h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+					직책 종류 목록
+					<span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+					</h1>
+					
+					<form id="empPositionDeleteForm" action="/admin/empPositionDelete" method="POST">
+						<div class="cell list-area">
+							<table class="table">
+							    <thead>
+							        <tr>
+						        		<th>선택</th>
+							            <th>직급명</th>
+							            <th>직급 단계</th>
+							        </tr>
+							    </thead>
+							    <tbody>
+							        <c:forEach var="empPosition" items="${empPositionList}">
+						           <tr>
+						               <td>
+							               <input type="checkbox" 
+							               		  id="pos_${empPosition.empPositionNo}"
+					                              name="empPositionNo" 
+					                              class="checkbox-custom empPosition-checkbox"
+					                              value="${empPosition.empPositionNo}"
+					                       >
+					                      <label for="pos_${empPosition.empPositionNo}" style="cursor:pointer;"></label>
+						               </td>
+						               <td>${empPosition.empPositionName}</td>
+						               <td>${empPosition.empPositionLevel}</td>
+						           </tr>
+						       </c:forEach>
+							    </tbody>
+							</table>
+						</div>
+						
+						<div class="cell right">
+							<button type="submit" id="btnDeleteEmpPosition" class="btn btn-negative">삭제</button>	
+						</div>
+					</form>
+					<div class="cell right">
+						<button type="button" id="btnTogglePositionWrite" class="btn btn-neutral">직책 추가</button>
+					</div>
+					<hr>
+					<div id="positionWriteArea" style="display: none;">
+						<div class="cell">
+							<form action="/admin/empPositionWrite" method="post">
+						    	<div class="cell">
+									<label>직급명</label> <input type="text" name="empPositionName" class="w-100">
+								</div>
+								<div class="cell">
+									<label>직급 단계</label> <input type="text" name="empPositionLevel" class="w-100">
+								</div>
+							   	<button type="submit" class="btn btn-positive">헤더생성</button>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
 
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

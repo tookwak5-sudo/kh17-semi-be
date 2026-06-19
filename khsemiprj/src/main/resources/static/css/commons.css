@@ -148,6 +148,7 @@ body {
 .silver { color: #BDC3C7 !important; }
 .gold { color: #D4AF37 !important; }
 
+.bold { font-weight: bold; }
 
 
 /* 컴포넌트(Component) 디자인 */
@@ -796,7 +797,7 @@ select.field {
 }
 
 /* 2. 체크박스 모양 (label::before를 생성하여 디자인) */
-/* 주의: 체크박스 바로 뒤에 오는 label 태그를 대상으로 합니다. */
+
 .checkbox-custom + label::before {
     content: "";
     display: inline-block;

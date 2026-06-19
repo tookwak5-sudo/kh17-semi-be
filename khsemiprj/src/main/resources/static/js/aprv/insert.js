@@ -75,6 +75,28 @@ $(function () {
         });
     });
 	
+	$(document).on("click", "[name=vacationType]", function () {
+		if($("[name=vacationType]:checked").val() == "반차") {
+			$("[name=aprvLeave]").val(0.5);
+		} else {
+			$("[name=aprvLeave]").val(1);
+		}
+	});
+	
+	$(document).on("click", "[name=aprvCostType]", function () {
+		if($("[name=aprvCostType]:checked").val() == "개인") {
+			$('#divAprvCostTypePersonal').show();
+			state.aprvCostReceiverValid = false;
+        	state.aprvCostReceiveAccountValid = false;
+		} else {
+			$('#divAprvCostTypePersonal').hide();
+			$('#aprvCostReceiver').val('');
+			$('#aprvCostReceiveAccount').val('');
+			state.aprvCostReceiverValid = true;
+			state.aprvCostReceiveAccountValid = true;
+		}
+	});
+	
 	$(document).on("click", "#deptList1 input[type=checkbox][name=dept]", function () {
     	if($(this).prop("checked")) {
     		$("#deptList1 input[type=checkbox][name=dept]").prop("checked", false);
@@ -112,7 +134,7 @@ $(function () {
 	});
 	
 	//첨부 파일 변경 시
-	$(document).on("change", ".attach-input", function (e) {
+	/*$(document).on("change", ".attach-input", function (e) {
 		$(".aprv-form-file-down").empty();
 		// 선택된 파일 정보 가져오기
 	    const file = e.target.files[0];
@@ -127,7 +149,7 @@ $(function () {
 		
 		$('.aprv-form-file-down').append(a);
 		$('.aprv-form-file-down').append(button);
-	});
+	});*/
 	
 	$(document).on("click", ".check-emp-all-2", function () {
     	var checked = $(this).prop("checked");
@@ -137,6 +159,102 @@ $(function () {
 	$(document).on("click", ".line-delete", function () {
 		$(this).closest("tr").remove();
 	});
+ 
+  	//금액 입력창 처리
+    $("[name=aprvCost]").on("input", function(){
+    	var $this = $(this);
+        var originValue = $this.val();
+        
+        // 1. 현재 커서의 위치를 저장
+        var selectionStart = this.selectionStart;
+        
+        // 2. 커서 앞쪽에 있던 콤마(,)의 개수를 세어둡니다. (커서 위치 계산용)
+        var commaCountBefore = (originValue.substring(0, selectionStart).match(/,/g) || []).length;
+        
+        // 3. 숫자 외의 문자 제거 및 포맷팅
+        var replaceValue = originValue.replace(/[^0-9]/g, "");
+        var formattedValue = replaceValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        
+        // 4. 값을 인풋에 반영
+        $this.val(formattedValue);
+        
+        // 5. 값이 바뀐 후, 커서 앞쪽에 새로 생긴 콤마(,)의 개수를 쎕니다.
+        var commaCountAfter = (formattedValue.substring(0, selectionStart).match(/,/g) || []).length;
+        
+        // 6. 늘어나거나 줄어든 콤마 개수만큼 커서 위치를 보정합니다.
+        var newCursorPosition = selectionStart + (commaCountAfter - commaCountBefore);
+        
+        // 7. 커서 위치를 강제로 세팅합니다.
+        this.setSelectionRange(newCursorPosition, newCursorPosition);
+        
+     	// --- [추가된 로직] 실시간 한글 변환 결과 보여주기 ---
+        var koreanText = numberToKorean(replaceValue);
+        
+        // 예: input 바로 다음(next)에 있는 .korean-view 클래스에 글자를 넣어줌
+        $(this).next(".korean-view").text(koreanText);
+    });
+  	
+ 	// 1. 숫자를 한글로 변환하는 함수
+    function numberToKorean(number) {
+    	if (!number || isNaN(number)) return "";
+        
+        var inputNumber = number.replace(/,/g, ""); // 콤마 제거
+        if (parseInt(inputNumber) === 0) return "영원";
+        
+        var numUnit = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+        var danUnit = ["", "십", "백", "천"];
+        var manUnit = ["", "만 ", "억 ", "조 ", "경 "]; // 뒤에 공백을 살짝 주면 보기 좋습니다
+        
+        var koreanResult = "";
+        var len = inputNumber.length;
+        var currentBlockHasValue = false; // 현재 4자리 블록에 숫자가 존재하는지 체크
+        
+        for (var i = 0; i < len; i++) {
+            var num = inputNumber.charAt(i);
+            var unitIdx = len - 1 - i; // 역순 인덱스
+            
+            // 해당 자리에 숫자가 있으면 (0이 아니면)
+            if (num !== "0") {
+                currentBlockHasValue = true; // 이 블록은 숫자가 존재함!
+                
+                var numStr = numUnit[num];
+                // '일십' 대신 '십'으로 표현 (단, 만/억/조 등의 자리가 아닌 경우에만)
+                if (numStr === "일" && (unitIdx % 4) !== 0) {
+                    numStr = ""; 
+                }
+                koreanResult += numStr + danUnit[unitIdx % 4];
+            }
+            
+            // 4자리마다 (만, 억, 조, 경) 단위를 붙이는 시점
+            if (unitIdx % 4 === 0) {
+                // 현재 4자리 블록에 숫자가 하나라도 입력되었거나, 
+                // 혹은 최초 '억', '조' 단위 위쪽에서 내려온 숫자가 있다면 단위를 붙여줍니다.
+                if (currentBlockHasValue) {
+                    koreanResult += manUnit[Math.floor(unitIdx / 4)];
+                }
+                // 다음 4자리 블록을 위해 체크 변수 초기화
+                currentBlockHasValue = false; 
+            }
+        }
+        
+        // 마지막에 '원'을 붙여주고, 공백 정리
+        return koreanResult.trim() + "원";
+    }
+ 	
+ 	//계좌번호 입력처리
+    $("[name=aprvCostReceiveAccount]").on("input", function(e){
+    	let value = e.target.value;
+
+	    // 1. 숫자와 하이픈이 아닌 문자(한글 자음 포함) 제거
+	    value = value.replace(/[^0-9-]/g, '');
+
+	    // 2. 하이픈 연속 입력 방지
+	    value = value.replace(/-{2,}/g, '-');
+
+	    e.target.value = value;
+    });
+	
+	$("[name=aprvCost]").trigger("input");
 });
 
 // 팝업 열기
@@ -244,9 +362,26 @@ function createTree(node, no) {
     return li;
 }
 
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024; // 1024 단위로 계산
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+  // 로그 함수를 사용하여 몇 번째 단위인지(i) 계산
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  // 변환 후 소수점 처리
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 function getAprmFormAttach(formNo) {
 	var title = $(".aprv-form-list option:selected").attr("data-name");
+	var name = $(".aprv-form-list option:selected").attr("data-head");
 	$(".h1-title").text(title);
+	$(".headName").text(name);
+	$(".formHead").text(title);
 	$.ajax({
 		url : "/rest/aprv/getAprvFormFile",
 		method: "post",
@@ -256,12 +391,14 @@ function getAprmFormAttach(formNo) {
 			
 			var attachNo = response.attachNo;
 			var attachName = response.attachName;
+			var attachSize = response.attachSize;
 			var result = response.result;
 			
 			if(result == "success") {
 				var template = $("#aprv-form-file-template").text();
 				const a = $.parseHTML(template)[1];
-				$(a).find("span").text(attachName);
+				$(a).find("span:eq(0)").text(attachName);
+				$(a).find("span:eq(1)").text(formatBytes(attachSize));
 				$(a).attr("href", "/download/legacy?attachNo=" + attachNo);
 				$(".aprv-form-file").append(a);
 			} else if(result == "empty") {
@@ -358,12 +495,24 @@ function getEmpPositionDeptList(deptNo, No) {
 }
 
 function removeFile(button) {
-    if (confirm("이 첨부파일을 삭제하시겠습니까?")) {
-        const fileDiv = button.closest('.aprv-form-file-down');
-        if (fileDiv) {
-            $(fileDiv).empty();
-			$('input[name=attach]').val('');
-			$('input[name=deleteFileNo').val($(button).attr("data-no"));
-        }
-    }
+	var no = $(button).data("no");
+	if($('input[name=deleteFileNo').val() == '' && no != undefined) {
+		$('input[name=deleteFileNo').val(no);
+	}
+	$(".preview-input").val("").trigger("change");
+}
+
+// 평일(주말 제외) 일수 계산 함수 (호이스팅을 위해 상단 정의 또는 바깥 배치)
+function getWeekdaysCount(startDate, endDate) {
+	let count = 0;
+	let current = startDate.clone(); 
+	
+	while (current.isSameOrBefore(endDate, 'day')) {
+		let dayOfWeek = current.day(); 
+		if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+			count++;
+		}
+		current.add(1, 'day');
+	}
+	return count;
 }

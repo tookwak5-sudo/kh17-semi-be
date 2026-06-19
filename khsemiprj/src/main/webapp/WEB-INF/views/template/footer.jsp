@@ -26,7 +26,16 @@
 		            transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
 		        
-		        #send-ajax-alarm {
+		        #send-alarm, #send-ajax-alarm {
+		        	background-color: #ffffff;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-alarm.btn-positive:hover, #send-ajax-alarm.btn-positive:hover {
+		        	background-color: #5A86E3;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-alarm.btn-negitave:hover, #send-ajax-alarm.btn-negative:hover {
+		        	background-color: #E86A7A;
 		        	transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
 		
@@ -115,13 +124,29 @@
 				                top: $(target).offset().top + "px",
 				                left: ($(target).offset().left - alarmWidth - 10) + "px" // 10은 타겟과의 간격
 				            });
-				        } else {
+				        } else if(position == 'right') {
 				            // 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
 				            $(divAlarm).css('transform-origin', 'left center');
 				            
 				            $(divAlarm).css({
 				                top: $(target).offset().top + "px",
 				                left: ($(target).offset().left + $(target).outerWidth() + 10) + "px"
+				            });
+				        } else if(position == 'bottom') {
+				        	// 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
+				            $(divAlarm).css('transform-origin', 'left center');
+				            
+				            $(divAlarm).css({
+				                top: $(target).offset().top + $(target).outerHeight() + 10 + "px",
+				                left: $(target).offset().left + "px"
+				            });
+				        } else {
+				        	// 왼쪽을 기준으로 오른쪽으로 확장 (기본값)
+				            $(divAlarm).css('transform-origin', 'left center');
+				            
+				            $(divAlarm).css({
+				                top: $(target).offset().top - 50 + "px",
+				                left: $(target).offset().left + "px"
 				            });
 				        }
 				    }
@@ -152,7 +177,7 @@
 				
 				// 얼럿 열기
 				function openAlert(message) {
-					$('#alertMessage').text(message);
+					$('#alertMessage').html(message);
 					var alert = document.getElementById('modalAlert');
 					alert.classList.add('active');
 				}
@@ -165,7 +190,7 @@
 				
 				// 컨펌 열기
 				function openConfirm(message, clickScript) {
-					$('#confirmMessage').text(message);
+					$('#confirmMessage').html(message);
 					$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
 					var confirm = document.getElementById('modalConfirm');
 					confirm.classList.add('active');
@@ -181,6 +206,11 @@
 			<c:choose>
 				<c:when test="${param.alarm != null}">
 					<c:choose>
+						<c:when test="${param.alarm == 'needLogin'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >로그인이 필요합니다.</a>
+						    </div>
+						</c:when>
 						<c:when test="${param.alarm == 'join'}">
 							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >회원가입이 완료되었습니다.</a>
@@ -241,17 +271,32 @@
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >결재가 삭제되었습니다.</a>
 						    </div>
 						</c:when>
+						<c:when test="${param.alarm == 'workIn'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" style="top:400px;">출근처리 되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'workOut'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" style="top:400px;">퇴근처리 되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'editLeave'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();">휴가수정이 완료되었습니다.</a>
+						    </div>
+						</c:when>
 					</c:choose>
 				</c:when>
 	    	</c:choose>
 	    	<!-- 비동기용 알림 -->
-			<div id="div-alarm" style="position: absolute;top: 590px;right: 20px;opacity: 0;visibility: hidden;width: fit-content;">
-		        <a id="send-ajax-alarm" class="btn btn-positive btn-slide-hidden" onclick="hideAjaxAlarm(this)" >알림</a>
+			<div id="div-alarm" style="position: absolute;opacity: 0;visibility: hidden;width: fit-content;">
+		        <a id="send-ajax-alarm" class="btn btn-positive btn-slide-hidden" onclick="hideAjaxAlarm(this)">알림</a>
 		    </div>
 		    
 		    <!-- 커스텀 얼럿 -->
 		    <div class="modal-overlay" id="modalAlert">
-			    <div class="modal-box">
+			    <div class="modal-box" style="width:400px;">
 			        <!-- <div class="modal-header center"></div> -->
 			        <div class="modal-body">
 			            <form id="popupFormAlert" class="flex-area">
@@ -268,7 +313,7 @@
 			
 		    <!-- 커스텀 컨펌 -->
 		    <div class="modal-overlay" id="modalConfirm">
-			    <div class="modal-box">
+			    <div class="modal-box" style="width:400px;">
 			        <!-- <div class="modal-header center"></div> -->
 			        <div class="modal-body">
 			            <form id="popupFormConfirm" class="flex-area">
