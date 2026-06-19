@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.khsemiprj.dao.BoardDao;
+import com.kh.khsemiprj.dao.MemoDao;
 import com.kh.khsemiprj.dao.ReplyDao;
 import com.kh.khsemiprj.dao.ReplyDislikeDao;
 import com.kh.khsemiprj.dao.ReplyLikeDao;
 import com.kh.khsemiprj.dto.BoardDto;
+import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.dto.ReplyDto;
 import com.kh.khsemiprj.service.ReplyService;
 import com.kh.khsemiprj.vo.DislikeVO;
@@ -36,6 +38,8 @@ public class ReplyRestController {
 	private ReplyDislikeDao replyDislikeDao;
 	@Autowired
     private ReplyService replyService;
+	@Autowired
+	private MemoDao memoDao;
 	
 	//좋아요 싫어요 토글 영역
 	@PostMapping("/like-check")
@@ -105,7 +109,45 @@ public class ReplyRestController {
 		String loginId = (String) session.getAttribute("loginId");
         replyDto.setReplyWriter(loginId);
 		
-        replyService.registerFormFile(replyDto, replyImage); 
+        replyService.writeReply(replyDto, replyImage);
+		boardDao.updateBoardReplycount(replyDto.getReplyOrigin());
+		
+		BoardDto targetBoard=boardDao.selectOne(replyDto.getReplyOrigin());
+		// 댓글이 달리면 게시글 작성자에게 쪽지 발송(내 게시글이면 제외)
+		if (targetBoard.getBoardWriter() != null 
+			&& replyDto.getReplyParent() == null 
+			&& !targetBoard.getBoardWriter().equals(loginId)) {
+			String safeTitle = replyService.truncate(targetBoard.getBoardTitle(), 15);
+			MemoDto memoDto = 
+				MemoDto.builder()
+					.memoNo(memoDao.sequence())
+					.memoReceiverId(targetBoard.getBoardWriter())
+					.memoSenderId("system")
+					.memoTitle("신규 댓글 알림 - [" + targetBoard.getBoardHead() + "] " + safeTitle)
+					.memoContent("<a href='/board/detail?boardNo=" + targetBoard.getBoardNo()+"' class='btn btn-positive' target='_blank'>댓글 확인</a>")
+					.memoReadStatus("N")
+					.memoType("일반")
+				.build();
+			memoDao.insert(memoDto);
+		}
+		// 대댓글이 달리면 댓글 작성자에게 쪽지 발송(내 댓글이면 제외)
+		if (replyDto.getReplyWriter() != null && replyDto.getReplyParent() != null 
+				&& !replyDao.selectOne(replyDto.getReplyParent()).getReplyWriter().equals(loginId)) {
+			ReplyDto parentReply = replyDao.selectOne(replyDto.getReplyParent());
+			String receiverId = parentReply.getReplyWriter();
+			String safeTitle = replyService.truncate(replyDto.getReplyContent(), 15);
+			MemoDto memoDto = 
+				MemoDto.builder()
+					.memoNo(memoDao.sequence())
+					.memoReceiverId(receiverId)
+					.memoSenderId("system")
+					.memoTitle("신규 대댓글 알림 - [" + safeTitle + "]")
+					.memoContent("<a href='/board/detail?boardNo=" + targetBoard.getBoardNo()+ "' class='btn btn-positive' target='_blank'>대댓글 확인</a>")
+					.memoReadStatus("N")
+					.memoType("일반")
+				.build();
+			memoDao.insert(memoDto);
+		}
     }
 	
 	@PostMapping("/list")

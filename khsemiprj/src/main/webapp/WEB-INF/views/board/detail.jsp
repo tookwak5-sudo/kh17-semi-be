@@ -6,7 +6,7 @@
 
 <style>
 	.reply-viewer, .reply-editor { display:flex; padding:15px; box-shadow: 0 0 0 1px lightgray; }
-	.reply-viewer > .profile-wrapper, .reply-editor > .profile-wrapper { width:100px; flex-shrink: 0; }
+	.reply-viewer > .profile-wrapper, .reply-editor > .profile-wrapper { width:34px; flex-shrink: 0; }
 	.reply-viewer > .profile-wrapper > img, .reply-editor > .profile-wrapper > img { width:100%; aspect-ratio:1/1; }
 	.reply-viewer > .content-wrapper, .reply-editor > .content-wrapper { flex-grow: 1; }
 	
@@ -20,15 +20,19 @@
 
 <script type="text/template" id="reply-viewer-template">
 	<div class="reply-viewer">
-		<div class="profile-wrapper">
-			<img src="https://picsum.photos/500" class="image-circle image-profile">
-		</div>
 		<div class="content-wrapper ms-20">
 			<div class="flex-area">
-				<h3 class="mt-0 mb-0">
-					<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
-					<span class="board-writer red">(작성자)</span>
-				</h3>
+				<div class="image-circle image-profile" style="width: 34px; height: 34px; flex-shrink: 0; margin-right: 10px;">
+				</div>
+				<div class="w-200">
+					<h3 class="mt-0 mb-0">
+						<span class="reply-writer writer-name" style="cursor: pointer;">아이디</span>
+						<span class="board-writer" style="color: #f94b4b">(작성자)</span>
+					</h3>
+					<div class="w-50">
+						<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
+					</div>
+				</div>
 				<div style="margin-left : auto">
 					<i class="fa-regular fa-thumbs-up red reply-btn-like"></i>
 					<span class="reply-thumbs-up-count">0</span>
@@ -43,11 +47,8 @@
 			
 			<pre class="mt-10 mb-0 reply-content">내용 샘플</pre>
 			
-			<div class="mt-20 flex-area"> 
-				<div class="w-50">
-					<span class="gray reply-wtime">yyyy-MM-dd HH:mm</span>
-				</div>
-				<div class="button-wrapper right w-50">
+			<div class="flex-area"> 
+				<div class="button-wrapper" style="margin-left: auto">
 					<i class="fa-solid fa-comment-dots blue btn-nested-reply"></i>
 					<i class="fa-solid fa-edit orange btn-reply-edit"></i>
 					<i class="fa-solid fa-trash red btn-reply-delete"></i>
@@ -78,7 +79,7 @@
 	</div>
 </script>
 
-<div class="container w-950 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell">
 		<div class="flex-area" style="align-items: end">
 			<div>
@@ -186,7 +187,7 @@
 		
 		<c:if test="${boardDto.boardWriter != null && boardDto.boardWriter == sessionScope.loginId}">
 			<a class="btn btn-negative" href="./edit?boardNo=${boardDto.boardNo}">수정</a>
-			<a class="btn btn-negative" href="./delete?boardNo=${boardDto.boardNo}" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+			<a class="btn btn-negative" onclick="deleteCheck();">삭제</a>
 		</c:if>
 		
 		<c:if test="${param.column == null && param.boardHead == null}">
@@ -212,12 +213,28 @@
 				var top = (screen.height/2) - (h/2); 
 				window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
 				return false;">
-        <i class="fa-solid fa-message"></i> 쪽지 보내기
+        <i class="fa-solid fa-paper-plane"></i> 쪽지 보내기
     </a>
 </div>
 
 
 <script type="text/javascript">
+
+	function deleteCheck() {
+		openConfirm('게시글을 삭제하시겠습니까?', 'location.href="./delete?boardNo='+${boardDto.boardNo}+'";');
+	}
+	
+	function deleteReply(replyNo) {
+		$.ajax({
+			url: "/rest/reply/delete",
+			method: "post",
+			data: { replyNo : replyNo },
+			success: function(response){
+				loadList();
+			}
+		});
+	}
+
 	$(function(){
     	$(document).on("click", ".writer-name", function(e) {
 	        e.stopPropagation(); 
@@ -338,11 +355,9 @@
 
 
 <script type="text/javascript">
-	$(function(){
-		var params = new URLSearchParams(window.location.search);
-		var boardNo = params.get("boardNo");
+	var params = new URLSearchParams(window.location.search);
+	var boardNo = params.get("boardNo");
 		
-		loadList();
 		
 		//목록 불러오기 로직
 		function loadList() {
@@ -360,7 +375,8 @@
 				    var currentChunkContainer = null; 
 				    var chunkIndex = 0;         
 				    var validCounter = 0;       
-				    var globalValidCounter = 0; 
+				    var globalValidCounter = 0;
+				    var maxChunkIndex = Math.max(0, Math.ceil(totalValidCount / displayLimit) - 1);
 					
 					for(var i=0; i < response.length; i++) {
 					    if (currentChunkContainer === null || (validCounter === displayLimit && globalValidCounter < totalValidCount)) {
@@ -370,17 +386,27 @@
 					        }
 					        var startNum = chunkIndex * displayLimit + 1;
 					        var endNum = Math.min((chunkIndex + 1) * displayLimit, totalValidCount);
-					        var isOpen = (chunkIndex === 0);
+					        var isOpen = (chunkIndex === maxChunkIndex);
 					        var iconClass = isOpen ? "fa-minus" : "fa-plus";
 					        var displayStyle = isOpen ? "block" : "none";
 					        
 					        if (totalValidCount > displayLimit) {
-					            var chunkHeader = `
-					                <div class="reply-chunk-header" data-target="chunk-` + chunkIndex + `" style="border: 1px solid #ddd; padding: 12px 15px; margin-bottom: -1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #fbfbfb; border-radius: 3px;">
-					                    <span style="font-weight: bold; font-size: 14px; color: #333;">` + startNum + ` ~ ` + endNum + ` 번째 댓글</span>
-					                    <i class="fa-solid ` + iconClass + `" style="color: #666;"></i>
-					                </div>
-					            `;
+								if(chunkIndex!=maxChunkIndex){
+						       		var chunkHeader = `
+										<div class="reply-chunk-header" data-target="chunk-` + chunkIndex + `" style="border: 1px solid #ddd; padding: 12px 15px; margin-bottom: -1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #fbfbfb; border-radius: 3px;">
+											<span style="font-weight: bold; font-size: 14px; color: #333;">` + startNum + ` ~ ` + endNum + ` 번째 댓글</span>
+											<i class="fa-solid ` + iconClass + `" style="color: #666;"></i>
+										</div>
+									`;
+								} else{
+									var chunkHeader = `
+						                <div class="reply-chunk-header" data-target="chunk-` + chunkIndex + `" style="border: 1px solid #ddd; padding: 12px 15px; margin-bottom: -1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: #fbfbfb; border-radius: 3px;">
+						                    <span style="font-weight: bold; font-size: 14px; color: #333;">` + startNum + ` ~  번째 댓글</span>
+						                    <i class="fa-solid ` + iconClass + `" style="color: #666;"></i>
+						                </div>
+						            `;
+								}
+								
 					            $(".reply-area").append(chunkHeader);
 					        }
 					        currentChunkContainer = $(`<div id="chunk-` + chunkIndex + `" class="reply-chunk-container" style="display: ` + (totalValidCount > displayLimit ? displayStyle : 'block') + `; margin-bottom: 20px;"></div>`);
@@ -458,7 +484,7 @@
 						if (response[i].replyParent) { 
 						    $(html).find(".btn-nested-reply").remove(); 
 						    $(html).css({
-						        "padding-left": "60px",
+						        /* "padding-left": "60px", */
 						        "position": "relative"
 						    }); 
 						    var arrowHtml = `
@@ -483,6 +509,8 @@
 				}
 			});
 		}
+	$(function(){
+		loadList();
 		
 		//이벤트: 인벤 스타일 아코디언 그룹 토글
 		$(".reply-area").on("click", ".reply-chunk-header", function() {
@@ -657,19 +685,16 @@
 		});
 		
 		//이벤트: 댓글 삭제, 수정
-		$(".reply-area").on("click", ".btn-reply-delete", function(){
-			var choice = window.confirm("정말 삭제하시겠습니까?");
-			if(choice == false) return;
+ 		$(".reply-area").on("click", ".btn-reply-delete", function(){
 			var replyNo = $(this).closest(".reply-viewer").data("key");
-			$.ajax({
-				url: "/rest/reply/delete",
-				method: "post",
-				data: { replyNo : replyNo },
-				success: function(response){
-					loadList();
-				}
-			});
+			openConfirm("정말 삭제하시겠습니까?", 'deleteReply('+replyNo+');');
 		});
+		
+
+		
+		
+			
+			
 		
 		$(".reply-area").on("click", ".btn-reply-edit", function(){
 			$(".reply-editor").prev(".reply-viewer").show();
