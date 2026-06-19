@@ -764,6 +764,11 @@
 			                            </td>
 					  					<td>${myList.empName}</td>
 					  					<td>
+					  						<c:if test="${myList.aprvStatus == '임시저장'}">
+										        <div class="cell" style="color: #F4C47A; font-weight:bold; text-align: center;">
+										            ${myList.aprvStatus} 
+										        </div>
+										    </c:if>
 										    <c:if test="${myList.aprvStatus == '승인'}">
 										        <div class="cell" style="color: #5A86E3; font-weight:bold; text-align: center;">
 										            ${myList.aprvStatus} 
