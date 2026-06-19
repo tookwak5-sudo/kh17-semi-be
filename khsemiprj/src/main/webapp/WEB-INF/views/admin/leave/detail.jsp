@@ -117,7 +117,9 @@
 								        <input type="number" name="leaveTotal" value="${leave.leaveTotal}" step="0.5" min="0"
 								               style="width: 60px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center;">일
 								        
-								        <button type="submit" style="padding: 4px 10px; background-color: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">수정</button>
+								        <button type="button" onclick="checkLeaveLimit(this)" style="padding: 4px 10px; background-color: #4f46e5; 
+								        	color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">수정
+								        </button>
 								    </form>
 								</td>
 								
@@ -144,4 +146,32 @@
 
 	
 <script>
+	function checkLeaveLimit(btn) {
+	    var form = btn.closest('form');
+	    var leaveTotalInput = form.querySelector('input[name="leaveTotal"]');
+	    var leaveTotal = parseFloat(leaveTotalInput.value);
+	
+	 	// 값이 없거나 0보다 작을 때
+	    if (isNaN(leaveTotal) || leaveTotal < 0) {
+	        
+	        if(typeof showAjaxAlarm === 'function') {
+	            showAjaxAlarm("0 이상이어야 합니다.", "btn-negative", leaveTotalInput);
+	            
+	            var $target = $(leaveTotalInput);
+	            $('#div-alarm').css({
+	                'top': ($target.offset().top + $target.outerHeight() + 8) + "px",
+	                'left': $target.offset().left + "px",                            
+	                'transform-origin': 'top center'                                 
+	            });
+	            
+	        } else {
+	            alert("0 이상이어야 합니다."); 
+	        }
+	        
+	        leaveTotalInput.focus();
+	        return; 
+	    }
+	
+	    form.submit();
+	}
 </script>
