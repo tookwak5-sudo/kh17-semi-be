@@ -73,10 +73,12 @@ public class AprvRestController {
 			if (findAprvFormDto == null || findAttachDto == null) {
 				fileMap.put("attachNo", "");
 				fileMap.put("attachName", "");
+				fileMap.put("attachSize", "");
 				fileMap.put("result", "empty");
 			} else {
 				fileMap.put("attachNo", findAttachDto.getAttachNo());
 				fileMap.put("attachName", findAttachDto.getAttachName());
+				fileMap.put("attachSize", findAttachDto.getAttachSize());
 				fileMap.put("result", "success");
 			}
 			return fileMap;
@@ -84,6 +86,7 @@ public class AprvRestController {
 			e.printStackTrace();
 			fileMap.put("attachNo", "");
 			fileMap.put("attachName", "");
+			fileMap.put("attachSize", "");
 			fileMap.put("result", "error");
 			
 			return fileMap;
@@ -156,6 +159,8 @@ public class AprvRestController {
 								} else {//일정 등록하지 않는 헤더라면
 									if(headName.equals("사직")) {
 										empDao.insertEmpExit(aprvDetailVO.getAprvWriter(), aprvDetailVO.getAprvSdate());
+									} else if(headName.equals("비용")) {
+										
 									}
 								}
 								

@@ -27,4 +27,5 @@ public class AprvDto {
 	private String aprvCostType;
 	private String aprvCostReceiver;
 	private String aprvCostReceiveAccount;
+	private String aprvCostReceiveBank;
 }

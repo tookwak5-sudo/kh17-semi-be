@@ -33,6 +33,7 @@ import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.exception.GetOutException;
+import com.kh.khsemiprj.exception.TargetNotfoundException;
 import com.kh.khsemiprj.service.AttachService;
 import com.kh.khsemiprj.vo.AprvDetailVO;
 import com.kh.khsemiprj.vo.AprvFormHeadNameVO;
@@ -235,10 +236,28 @@ public class AprvController {
 	}
 	
 	@RequestMapping("/detail")
-	public String detail(Model model
-						, @RequestParam int aprvNo) {
+	public String detail(HttpServletRequest request, Model model
+						, @RequestParam int aprvNo
+						, @RequestParam(required = false) String aprvHead
+						, @RequestParam(required = false) String aprvStatus
+						, @RequestParam(required = false) String column
+						, @RequestParam(required = false) String keyword
+						, @RequestParam(required = false) Integer page) {
+		HttpSession session = request.getSession();
+		String loginId = (String)session.getAttribute("loginId");
 		
 		AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvNo);
+		
+		//존재하지 않을 경우 예외처리
+		if(aprvDetailVO == null) {
+			throw new TargetNotfoundException("존재하지 않는 게시글입니다.");
+		}
+		
+		//상태값이 임시저장일 경우 본인이 아니면 예외처리
+		if(aprvDetailVO.getAprvStatus().equals("임시저장") && !aprvDetailVO.getAprvWriter().equals(loginId)) {
+			throw new GetOutException("작성자만 사용가능한 기능입니다.");
+		}
+		
 		model.addAttribute("aprvDetailVO", aprvDetailVO);
 		
 		Integer attachNo = aprvDao.searchAttach(aprvNo);
@@ -261,6 +280,17 @@ public class AprvController {
 		
 		//결재 정보
 		AprvDto aprvDto = aprvDao.selectOne(aprvNo);
+		
+		//존재하지 않을 경우 예외처리
+		if(aprvDto == null) {
+			throw new TargetNotfoundException("존재하지 않는 게시글입니다.");
+		}
+		
+		//작성자가 본인이 아니면 예외처리
+		if(!aprvDto.getAprvWriter().equals(loginId)) {
+			throw new GetOutException("작성자만 사용가능한 기능입니다.");
+		}
+		
 		model.addAttribute("aprvDto", aprvDto);
 		
 		//첨부파일
@@ -315,7 +345,10 @@ public class AprvController {
 		
  		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
- 		
+		
+		System.out.println(aprvDto);
+		System.out.println(formList);
+		
 		return "aprv/edit";
 	}
 	
@@ -328,6 +361,18 @@ public class AprvController {
 		
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
+		
+		//결재상태 확인
+		AprvDetailVO findAprvDetailVO = aprvDao.selectOneForAprv(aprvDto.getAprvNo());
+		
+		//작성자가 본인이 아니면 예외처리
+		if(!findAprvDetailVO.getAprvWriter().equals(loginId)) {
+			throw new GetOutException("작성자만 사용가능한 기능입니다.");
+		}
+		//수정하려는 글이 임시저장 상태가 아니라면 예외처리
+		if(!findAprvDetailVO.getAprvStatus().equals("임시저장")) {
+			throw new GetOutException("잘못된 접근입니다.");
+		}
 		
 		aprvDto.setAprvWriter(loginId);
 		if(aprvLine1IdList.size() > 0) {
@@ -355,7 +400,7 @@ public class AprvController {
 			//기존 결재라인 삭제
 			aprvLineDao.deleteAprvLine(aprvNo);
 			
-			//결재상태 확인
+			//결재상태 재확인
 			AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvNo);
 			
 			//결재라인1 등록
@@ -415,11 +460,23 @@ public class AprvController {
 	}
 	
 	@PostMapping("/save")
-	public String save(@RequestParam int aprvNo) {
+	public String save(@RequestParam int aprvNo, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		String loginId = (String)session.getAttribute("loginId");
+		//결재상태 확인
+		AprvDetailVO findAprvDetailVO = aprvDao.selectOneForAprv(aprvNo);
+		//작성자가 로그인 아이디와 다르다면 예외처리
+		if(!findAprvDetailVO.getAprvWriter().equals(loginId)) {
+			throw new GetOutException("작성자만 사용가능한 기능입니다.");
+		}
+		//기안하려는 글이 임시저장 상태가 아니라면 예외처리
+		if(!findAprvDetailVO.getAprvStatus().equals("임시저장")) {
+			throw new GetOutException("잘못된 접근입니다.");
+		}
 		
 		boolean result = aprvDao.save(aprvNo);
 		if(result) {
-			//결재상태 확인
+			//결재상태 재확인
 			AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvNo);
 			
 			List<AprvLineListVO> aprvLine1List = aprvLineDao.selectList1(aprvNo);
@@ -455,8 +512,15 @@ public class AprvController {
 	}
 	
 	@PostMapping("/delete")
-	public String delete(@RequestParam int aprvNo) throws Exception {
+	public String delete(@RequestParam int aprvNo, HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		String loginId = (String)session.getAttribute("loginId");
+		
 		AprvDto aprvDto = aprvDao.selectOne(aprvNo);
+		//작성자가 로그인 아이디와 다르다면 예외처리
+		if(!aprvDto.getAprvWriter().equals(loginId)) {
+			throw new GetOutException("작성자만 사용가능한 기능입니다.");
+		}
 		if(aprvDto.getAprvStatus().equals("임시저장")) {
 			boolean result = aprvDao.delete(aprvNo);
 			if(result) {

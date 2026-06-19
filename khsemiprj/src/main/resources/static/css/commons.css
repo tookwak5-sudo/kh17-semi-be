@@ -148,6 +148,7 @@ body {
 .silver { color: #BDC3C7 !important; }
 .gold { color: #D4AF37 !important; }
 
+.bold { font-weight: bold; }
 
 
 /* 컴포넌트(Component) 디자인 */

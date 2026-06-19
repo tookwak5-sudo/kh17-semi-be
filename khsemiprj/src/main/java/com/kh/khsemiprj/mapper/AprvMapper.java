@@ -31,6 +31,7 @@ public class AprvMapper implements RowMapper<AprvDto> {
 				.aprvCostType(rs.getString("aprv_cost_type"))
 				.aprvCostReceiver(rs.getString("aprv_cost_receiver"))
 				.aprvCostReceiveAccount(rs.getString("aprv_cost_receive_account"))
+				.aprvCostReceiveBank(rs.getString("aprv_cost_receive_bank"))
 				.build();
 	}
 }
