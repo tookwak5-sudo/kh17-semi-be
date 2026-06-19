@@ -46,4 +46,10 @@ public class AprvHeadDao {
 		return jdbcTemplate.query(sql, aprvHeadMapper);
 	}
 	
+	//일반 목록 조회
+	public List<AprvHeadDto> selectListNormal(){
+		String sql = "select * from aprv_head where head_type= '일반' order by head_no asc";
+		return jdbcTemplate.query(sql, aprvHeadMapper);
+	}
+	
 }

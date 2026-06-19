@@ -100,7 +100,7 @@ public class PlanDao {
 	
 	//plan head type ='일반'조인 조회
 	public List<PlanHeadVO> selectListPlanHeadType() {
-		String sql = "select * from head where head_type = '일반'";
+		String sql = "select * from aprv_head where head_type = '일반'";
 		return jdbcTemplate.query(sql, planHeadMapper);
 	}	
 	

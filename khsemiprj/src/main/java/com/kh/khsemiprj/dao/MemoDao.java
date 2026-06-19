@@ -37,6 +37,13 @@ public class MemoDao {
 		jdbcTemplate.update(sql, params);
 	}
 	
+	//쪽지 삭제
+	public boolean delete(int memoNo) {
+		String sql = "delete memo where memo_no = ?";
+		Object[] params = { memoNo };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
 	//전사원 쪽지 전송
 	public void insertAll(MemoDto memoDto) {
 		String sql = "INSERT INTO memo (memo_no, memo_receiver_id, memo_sender_id, memo_title, memo_content, memo_type) "

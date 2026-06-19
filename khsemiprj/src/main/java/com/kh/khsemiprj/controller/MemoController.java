@@ -116,4 +116,13 @@ public class MemoController {
 		return "template/header";
 	}
 	
+	@RequestMapping("/delete")
+	public String delete(@RequestParam int memoNo) {
+		MemoDto memoDto = memoDao.selectOne(memoNo);
+		if(memoDto == null) throw new TargetNotfoundException("존재하지 않는 메모");
+		
+		memoDao.delete(memoNo);
+		return "redirect:./list?delete";
+	}
+	
 }

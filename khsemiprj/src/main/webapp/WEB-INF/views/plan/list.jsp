@@ -49,33 +49,38 @@
 </script>
 <div class="container w-1200 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-		<div>
-	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
-	            일정
-	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
-	        </h1>
-		</div>
-		<div class="w-70 flex-area flex-center">
-			<form autocomplete="off">
-	        	<input type="text" name="planSdate" class="field picker-sdate" size="4" placeholder="시작일" value="${param.planSdate}"}>
-	        	<span class="timeTilde">~</span>
-	        	<input type="text" name="planEdate" class="field picker-edate" size="4" placeholder="종료일" value="${param.planEdate}">
-				<select name="column" class="field-ph">
-					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>작성자</option>
-					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
-					<option value="plan_name" ${param.column == 'plan_name' ? 'selected' : ''}>일정명</option>
-					<option value="plan_type" ${param.column == 'plan_type' ? 'selected' : ''}>일정타입</option>
-				</select> <input type="text" name="keyword" class="field-sm"
-					placeholder="검색어 입력" value="${param.keyword}">
-				<button type="submit" class="btn btn-positive" style="width:102px">
-					<i class="fa-solid fa-magnifying-glass"></i><span>검색</span>
-				</button>
-				<button type="button" class="btn btn-neutral" style="width:102px" id="dateReset">
-					<i class="fa-solid fa-xmark"></i> <span>초기화</span>
-				</button>
-			</form>
-		</div>
-	</div>
+    <div>
+        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+            일정
+            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+        </h1>
+    </div>
+    <div class="w-70 flex-area flex-center" style="flex: 1; justify-content: center;">
+        <form autocomplete="off">
+            <input type="text" name="planSdate" class="field picker-sdate" size="4" placeholder="시작일" value="${param.planSdate}">
+            	<span class="timeTilde">~</span>
+            <input type="text" name="planEdate" class="field picker-edate" size="4" placeholder="종료일" value="${param.planEdate}">
+            <select name="column" class="field-ph">
+                <option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>작성자</option>
+                <option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
+                <option value="plan_name" ${param.column == 'plan_name' ? 'selected' : ''}>일정명</option>
+                <option value="plan_type" ${param.column == 'plan_type' ? 'selected' : ''}>일정타입</option>
+            </select> 
+            <input type="text" name="keyword" class="field-sm" placeholder="검색어 입력" value="${param.keyword}">
+            <button type="submit" class="btn btn-positive" style="width:102px">
+                <i class="fa-solid fa-magnifying-glass"></i><span>검색</span>
+            </button>
+            <button type="button" class="btn btn-neutral" style="width:102px" id="dateReset">
+                <i class="fa-solid fa-xmark"></i> <span>초기화</span>
+            </button>
+        </form>
+    </div>
+    <div class="flex-area" style="justify-content: right; align-items: center; flex-shrink: 0;">
+        <c:if test="${sessionScope.loginId != null}">
+            <a href="/plan/write" class="btn btn-neutral">일정 등록하기</a>
+        </c:if>
+    </div>    
+</div>
 
 	<div class="cell right mt-0">
 		<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총
