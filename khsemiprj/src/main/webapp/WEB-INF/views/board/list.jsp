@@ -259,7 +259,7 @@
 				var top = (screen.height/2) - (h/2); 
 				window.open(this.href, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no'); 
 				return false;">
-        <i class="fa-solid fa-message"></i> 쪽지 보내기
+        <i class="fa-solid fa-paper-plane"></i> 쪽지 보내기
     </a>
 </div>
 
