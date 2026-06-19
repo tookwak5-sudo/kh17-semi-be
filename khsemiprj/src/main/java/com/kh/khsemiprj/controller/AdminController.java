@@ -152,7 +152,7 @@ public class AdminController {
 	
 	@PostMapping("/leave/edit")
 	public String edit(@ModelAttribute EmpLeaveDto empLeaveDto) {
-		// 1. DAO를 통해 휴가 데이터 업데이트 및 로그 기록
+		// 1. DAO를 통해 휴가 데이터 업데이트 및 로그 기록ㅇㅇ
 		empLeaveDao.updateLeaveTotal(empLeaveDto);
 		
 		// 2. 수정이 끝난 후 원래 보던 사원의 상세 페이지로 리다이렉트
