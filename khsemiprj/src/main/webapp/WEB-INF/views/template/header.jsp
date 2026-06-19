@@ -392,6 +392,12 @@
 									</a>
 								</li>
 								<li>
+								    <a href="/admin/leave/list">
+								        <i class="fa-solid fa-umbrella-beach"></i>
+								        <span>휴가관리</span>
+									</a>
+								</li>
+								<li>
 					                <a href="/aprvForm/list">
 					                    <i class="fa-solid fa-box"></i>
 					                    <span>결재 양식</span>

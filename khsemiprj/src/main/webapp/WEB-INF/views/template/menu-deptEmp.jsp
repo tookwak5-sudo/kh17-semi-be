@@ -49,33 +49,6 @@
 	
 	<li class="divider"></li>
 	
-	<li>
-	    <a href="/admin/manage">
-	        <i class="fa-solid fa-user"></i>
-	        <span>관리메뉴</span>
-	    </a>
-	     <!-- 하위메뉴 -->
-        <ul>
-        	<li>
-			    <a href="/admin/emp/list">
-			        <i class="fa-solid fa-people-group"></i>
-			        <span>사원관리</span>
-			    </a>
-			</li>
-			<li>
-			    <a href="/dept/list">
-			        <i class="fa-solid fa-building"></i>
-			        <span>부서관리</span>
-				</a>
-			</li>
-			<li>
-                <a href="/aprvForm/list">
-					<i class="fa-solid fa-box"></i>
-                    <span>결재 양식</span>
-                </a>
-            </li>
-        </ul>
-    </li>
     <li>
 	    <a href="/emp/mypage">
 	        <i class="fa-solid fa-user"></i>

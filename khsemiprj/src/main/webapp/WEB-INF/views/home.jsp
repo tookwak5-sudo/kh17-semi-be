@@ -763,10 +763,14 @@
             <div class="card p-20">
             <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
             	<div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>결재 대기 목록</h3>
+                    <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+                    결재 대기 목록
+                    <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+                    </h3>
                     <a href="/aprv/list">
                     	<span><i class="fa-solid fa-list black"></i></span>
-                    </a>     
+                    </a>  
+                       
                 </div>
                 <div class="cell list-area">
                  	<table class="table">
@@ -810,7 +814,10 @@
             </c:if>
             <c:if test="${sessionScope.empGrade == 0}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>내 결재목록</h3>
+                    <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+                    내 결재목록
+                    <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+                    </h3>
                     <a href="/aprv/list">
                     	<span><i class="fa-solid fa-list black"></i></span>
                     </a>   
@@ -871,8 +878,17 @@
             </c:if>
 			</div>
 	           	<div class="card p-20" style="overflow-y: auto;">
-		            <h3>공지사항</h3>
-		            <hr>
+		           		<div style="display: flex; justify-content: space-between; align-items: center;">
+				            <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+					            공지사항
+					            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+					        </h3>
+					        <div class="w-10 flex-area flex-center">
+					            <a href="/board/list">
+			                    	<span><i class="fa-solid fa-list black"></i></span>
+			                    </a> 
+				            </div>
+			            </div>
 		            <c:forEach var="notice" items="${noticeList}">
 		                <div
 		                    style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">

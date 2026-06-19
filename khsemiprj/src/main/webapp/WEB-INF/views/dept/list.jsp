@@ -64,7 +64,6 @@
 /* 버튼 자체의 여백 리셋 */
 .card-header .btn {
     margin: 0 !important;
->>>>>>> refs/remotes/origin/hero_20260611-1
 }
 </style>
 
