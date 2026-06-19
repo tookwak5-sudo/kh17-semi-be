@@ -145,6 +145,17 @@
 		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 		    height:fit-content;
 		}
+		.profile-card2 {
+		    background: #FFFFFF;
+		    border: 1px solid #E2E8F0;
+		    border-radius: 12px;
+		    padding: 20px;
+		    margin-top: 20px;
+		    margin-right:10px;
+		    text-align: center;
+		    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+		    height:fit-content;
+		}
 		
 		.profile-card2 ul {
 		    list-style: none;
@@ -174,6 +185,14 @@
 		    background-color: #f1f3f5;
 		    color: #007bff;
 		    font-weight: 600;
+		}
+		
+		/* 관리메뉴 타이틀 부분 */
+		.menu-title {
+		    padding: 10px 20px 5px 20px; /* 위/옆/아래/옆 */
+		    font-size: 0.95rem;
+		    font-weight: bold;
+		    color: #888;
 		}
     </style>
     
@@ -210,6 +229,7 @@
 // 			}
 // 		};
 		
+		// 퇴근
 		var workOutState = {
 			workOutValid: false,
 			ok: function(){
@@ -228,6 +248,7 @@
 				
 // 				return workInState.ok();
 // 			});
+			
 			
 			$("#workOutForm").on("submit", function(e){
 				
@@ -305,9 +326,9 @@
 <!-- 					                </form> -->
 <%-- 					            </c:when> --%>
 <%-- 					            <c:otherwise> --%>
-<!-- 					                <form id="workOutForm" action="/emp/logoutOut" method="post"> -->
+<!-- 					                <form id="workOutForm" action="/emp/work-out" method="post"> -->
 <!-- 					                <button id="btnWorkOut" class="btn btn-negative btn-work"> -->
-<!-- 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근 및 로그아웃 -->
+<!-- 					                    <i class="fa-solid fa-arrow-right-to-bracket"></i> 퇴근 -->
 <!-- 					                </button> -->
 <!-- 					                </form> -->
 <%-- 					            </c:otherwise> --%>
@@ -320,7 +341,11 @@
 				                </form>
 					        </c:if>
 					    </div>
+					    
+					    <c:if test="${sessionScope.empGrade == 1 || sessionScope.empGrade == 2}">
 					    <div class="profile-card2">
+			    			
+						    <div class="menu-title"><i class="fa-solid fa-user-gear"></i> <span>관리메뉴</span></div>
 					        <ul>
 					        	<li class="mb-0">
 						    		<a href="/admin/manage">
@@ -366,6 +391,7 @@
 								</li>
 					        </ul>
 					    </div>
+					    </c:if>
 					 </div>
 	        		 </c:if>   	
 	            	<!-- 컨텐츠 -->

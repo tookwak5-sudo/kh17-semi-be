@@ -47,6 +47,12 @@ $(function() {
         firstDay: 7,
         selectForward: true
     });
+    
+    $("#reset-btn").on("click", function() {
+       	$("#start").val("");
+       	$("#end").val("");
+       	$("#name").val("");
+    });
 });
 </script>
 
@@ -60,9 +66,11 @@ $(function() {
 		        </h1>
 			</div>
         </div>
-	 
-        <div class="w-80 flex-area flex-center">
-            <form action="exitList" method="get" class="w-100">
+
+
+        <div class="cell flex-area flex-vertical" style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <form action="exitList" method="get" class="w-100" autocomplete="off">
+
                 <input type="hidden" name="size" value="${pageVO.size}">
                 
                 <div class="flex-area" style="align-items: center; gap: 10px;">
@@ -74,19 +82,19 @@ $(function() {
                     
                     <div class="text-search-zone" style="display: inline-block;">
                         <input type="text" name="empName" class="field-sm" 
-                               placeholder="퇴사 사원명 입력" value="${param.empName}" style="width: 300px;">
+                               placeholder="퇴사 사원명 입력" value="${param.empName}" style="width: 300px;" id="name">
                     </div>
                     
                     <div class="date-search-zone flex-area" style="display: none; align-items: center; gap: 5px;">
-                        <input type="text" name="startDate" value="${pageVO.startDate}" class="field" style="width: 160px;">
+                        <input type="text" name="startDate" value="${pageVO.startDate}" class="field" style="width: 160px;" id="start">
                         <span style="color: #64748b;">~</span>
-                        <input type="text" name="endDate" value="${pageVO.endDate}" class="field" style="width: 160px;">
+                        <input type="text" name="endDate" value="${pageVO.endDate}" class="field" style="width: 160px;" id="end">
                     </div>
                     
-                    <button type="submit" class="btn btn-positive ms-10">검색</button>
+                    <button type="submit" class="btn btn-positive ms-10"><i class="fa-solid fa-magnifying-glass"></i>검색</button>
                     
                     <c:if test="${not empty param.empName or (not empty pageVO.startDate and not empty pageVO.endDate)}">
-                        <a href="exitList" class="btn btn-neutral">초기화</a>
+                        <button type="button" class="btn btn-neutral" id="reset-btn"><i class="fa-solid fa-xmark red" style="width:102px"></i>초기화</button>
                     </c:if>
                 </div>
             </form>
@@ -127,7 +135,7 @@ $(function() {
                                         <fmt:formatDate value="${exit.aprvEtime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     </c:if>
                                 </td>
-                            </tr>
+                          	  </tr>
                         </c:forEach>
                     </c:if>
                 </tbody>

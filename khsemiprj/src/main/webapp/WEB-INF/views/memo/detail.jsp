@@ -29,12 +29,18 @@
 	</div>	
 	<hr style="color:#e1e4e6">		
 <!-- 	쪽지 내용 -->
-	<div class="cell" style="min-height:300px">
+	<div class="cell" style="min-height:350px">
 		<pre style="font-size:16px;">${memoDto.memoContent}</pre>
 	</div>
 	<hr style="color:#e1e4e6">
-	<a href="/memo/write?memoSenderId=${memoDto.memoSenderId}" class="btn btn-positive">
-    	<span>답변하기</span>
-	</a>
-	<a class="btn btn-neutral" href="./list">목록으로</a>
+	<div class="cell mt-50 right">
+		<a href="/memo/write?memoSenderId=${memoDto.memoSenderId}" class="btn btn-positive">
+			<i class="fa-solid fa-reply"></i>
+	    	<span>답변</span>
+		</a>
+		<a class="btn btn-neutral" href="./list">
+			<i class="fa-solid fa-list"></i>
+			<span>목록</span>
+		</a>	
+	</div>
 </div>      

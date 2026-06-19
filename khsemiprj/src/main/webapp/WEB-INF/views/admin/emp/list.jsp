@@ -106,7 +106,7 @@
 								<td style="padding: 12px 0;">${waitEmp.empName}</td>
 								<td>
 									<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
-									<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative" style="text-decoration: none; padding: 6px 12px; font-size: 18px;" onclick="return confirmReject('${waitEmp.empId}')">거절</a>
+									<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative btn-reject-action" style="text-decoration: none; padding: 6px 12px; font-size: 18px;">거절</a>
 								</td>
 							</tr>
 							</c:forEach>
@@ -226,6 +226,7 @@
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
     // 팝업 함수
@@ -242,11 +243,7 @@
         $('select[name="deptNo"]').val('').trigger('change');
         $('select[name="empPositionNo"]').val('').trigger('change');
     }
-    
-    function confirmReject(empId) {
-        return confirm("정말 " + empId + "님의 승인 요청을 거절하시겠습니까?");
-    }
-    
+     
     document.addEventListener("DOMContentLoaded", function() {
     	var hireDatePicker = new Lightpick({
     		field: document.getElementById('hireDatePicker'),
@@ -314,6 +311,26 @@
         return confirm("해당 사원의 가입을 승인하시겠습니까?");
     }
     
-    
+    var rejectState = {
+    		rejectValid: false,
+			ok: function(){
+				return Object.values(this)
+				.filter(v => typeof v==="boolean")
+				.every(v => v === true);
+			}
+		};
+    $(function () {
+        // id(#)가 아닌 클래스(.) 기반으로 이벤트를 잡아야 모든 행에서 작동합니다.
+        $(document).on("click", ".btn-reject-action", function(e){
+            e.preventDefault(); // 링크 이동을 일단 막음
+            
+            var rejectUrl = $(this).attr("href"); // 클릭한 버튼의 거절 URL 수집
+            
+            openConfirm(
+                '승인 거절하시겠습니까?', 
+                "location.href = '" + rejectUrl + "';"
+            );
+        });	
+    });
 </script>
 

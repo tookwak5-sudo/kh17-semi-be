@@ -32,6 +32,8 @@
     border-radius: 6px;
     padding: 30px;
     margin: 20px auto;
+    height: 670px; 
+    overflow-y: auto; 
 }
 </style>
 </head>

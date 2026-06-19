@@ -81,17 +81,17 @@ document.addEventListener("DOMContentLoaded", function() {
 		</div>
 		<div class="cell">
 			<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-			<textarea name="memoContent" rows="5" required rows="5" class="field w-100"></textarea>
+			<textarea name="memoContent" rows="8" required rows="8" class="field w-100" style="height:170px"></textarea>
 		</div>
 		
-		<div class="cell mt-10 right">
+		<div class="cell mt-40 right">
 			<a href="/memo/list" class="btn btn-neutral">
 				<i class="fa-solid fa-list"></i>
-				<span>목록으로 이동</span>
+				<span>목록</span>
 			</a>
 			<button type="submit" class="btn btn-positive">
-				<i class="fa-solid fa-floppy-disk"></i>
-				<span>쪽지 보내기</span>
+				<i class="fa-solid fa-paper-plane"></i>
+				<span>발송</span>
 			</button>
 		</div>
 	</div>

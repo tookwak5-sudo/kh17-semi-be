@@ -5,16 +5,28 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.khsemiprj.dao.AprvHeadDao;
+import com.kh.khsemiprj.dao.DeptDao;
+import com.kh.khsemiprj.dao.EmpDao;
+import com.kh.khsemiprj.dao.EmpLeaveDao;
 import com.kh.khsemiprj.dao.EmpPositionDao;
+import com.kh.khsemiprj.dao.EmpPositionDeptDao;
+import com.kh.khsemiprj.dao.LogAccessDao;
+import com.kh.khsemiprj.dao.LogInoutDao;
 import com.kh.khsemiprj.dto.AprvHeadDto;
+import com.kh.khsemiprj.dto.DeptDto;
+import com.kh.khsemiprj.dto.EmpDto;
+import com.kh.khsemiprj.dto.EmpLeaveDto;
+import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.EmpPositionDto;
-
+import com.kh.khsemiprj.dto.LogAccessDto;
+import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.vo.PageVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -26,6 +38,18 @@ public class AdminController {
 	AprvHeadDao aprvHeadDao;
 	@Autowired
 	EmpPositionDao empPositionDao;
+	@Autowired
+	private EmpPositionDeptDao empPositionDeptDao;
+	@Autowired
+	private EmpDao empDao;
+	@Autowired
+	private DeptDao deptDao;
+	@Autowired
+	private EmpLeaveDao empLeaveDao;
+	@Autowired
+	private LogInoutDao logInoutDao;
+	@Autowired
+	private LogAccessDao logAccessDao;
 
 	
 	@RequestMapping("/manage")
@@ -78,6 +102,61 @@ public class AdminController {
 	}
 	
 	
+	@RequestMapping("/leave/list")
+	public String list(Model model, @ModelAttribute PageVO pageVO) {
 		
+		int count = empPositionDeptDao.count(pageVO);
+		pageVO.setCount(count);
+		model.addAttribute("pageVO", pageVO);
+		
+		List<EmpPositionDeptDto> list = empPositionDeptDao.selectList(pageVO);
+		model.addAttribute("list", list);
+		
+		List<EmpDto> wList = empDao.selectEmpByStatus(null);
+		model.addAttribute("wList", wList);
+		
+		
+		List<DeptDto> deptList = deptDao.deptList();
+		model.addAttribute("deptList", deptList);
+		
+		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
+		model.addAttribute("positionList", positionList);
+		
+		return "admin/leave/list"; 
+	}
+	
+	@GetMapping("/leave/detail")
+	public String detail(HttpSession session,
+						@RequestParam String empId, Model model) {
+		
+		EmpDto empDto = empDao.selectOne(empId);
+		EmpPositionDeptDto empPositionDeptDto = empPositionDeptDao.selectOne(empId);
+		model.addAttribute("empDto", empDto);
+		model.addAttribute("empPositionDeptDto", empPositionDeptDto);
+		
+		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
+		model.addAttribute("positionList", positionList);
+		
+		String loginId = (String) session.getAttribute("loginId");
+		if (loginId == null) {
+
+			return "redirect:/login";
+
+		}
+		
+		List<EmpLeaveDto> empLeaveList = empLeaveDao.selectList(empId);
+		model.addAttribute("empLeaveList", empLeaveList);
+
+		return "admin/leave/detail";
+	}
+	
+	@PostMapping("/leave/edit")
+	public String edit(@ModelAttribute EmpLeaveDto empLeaveDto) {
+		// 1. DAO를 통해 휴가 데이터 업데이트 및 로그 기록
+		empLeaveDao.updateLeaveTotal(empLeaveDto);
+		
+		// 2. 수정이 끝난 후 원래 보던 사원의 상세 페이지로 리다이렉트
+		return "redirect:/admin/leave/detail?empId=" + empLeaveDto.getLeaveEmpId();
+	}
 	
 }

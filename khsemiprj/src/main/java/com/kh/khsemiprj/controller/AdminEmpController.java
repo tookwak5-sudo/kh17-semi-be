@@ -56,7 +56,6 @@ public class AdminEmpController {
 		List<EmpDto> wList = empDao.selectEmpByStatus(null);
 		model.addAttribute("wList", wList);
 		
-		//
 		
 		List<DeptDto> deptList = deptDao.deptList();
 		model.addAttribute("deptList", deptList);

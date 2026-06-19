@@ -116,7 +116,10 @@
 			</table>
 		</div>
 		<div class="cell right">
-				<a class="btn btn-positive" href="./write">쪽지쓰기</a>
+				<a class="btn btn-positive" href="./write">
+					<i class="fa-regular fa-pen-to-square"></i>
+					<span>쪽지쓰기</span>
+				</a>
 		</div>
 	</div>
 	<c:if test="${param.send != null}">

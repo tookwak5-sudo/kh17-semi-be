@@ -162,7 +162,6 @@ $(function() {
 	// 4. Form 전송 차단 로직
 	$(".password-change-form").on("submit", function() {
 		if(!state.empPasswordValid || !state.newPasswordValid || !state.newPasswordCheckValid) {
-			alert("입력 항목을 다시 확인해주세요.");
 			return false;
 		}
 		return true;
