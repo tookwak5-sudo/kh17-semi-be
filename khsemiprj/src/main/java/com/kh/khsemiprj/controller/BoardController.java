@@ -99,10 +99,15 @@ public class BoardController {
 	
 	//삭제 매핑
 	@RequestMapping("/delete")
-	public String delete(@RequestParam long boardNo) {
+	public String delete(@RequestParam long boardNo, HttpSession session) {
 		BoardDto boardDto = boardDao.selectOne(boardNo);
 		if(boardDto == null) throw new TargetNotfoundException("존재하지 않는 게시글");
-		
+		String loginId = (String)session.getAttribute("loginId");
+		Integer empGrade = (Integer)session.getAttribute("empGrade");
+		if(!boardDto.getBoardWriter().equals(loginId) 
+			&& empGrade==0) {
+			throw new GetOutException("삭제 권한이 없습니다");
+		}
 		boardDao.delete(boardNo);
 		return "redirect:./list";
 	}
