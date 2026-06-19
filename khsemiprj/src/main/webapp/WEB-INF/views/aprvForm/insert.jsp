@@ -74,7 +74,27 @@ $(function() {
             var file = this.files[0];
             var fileName = file.name;
             var fileSize = (file.size / 1024).toFixed(1) + " KB"; 
+            if(file.size >= 1024*1024) {
+				openAlert('첨부파일은 1MB 까지만 첨부 가능합니다.');
+				$(".preview-input").val("");
+				var uploadPlaceholder = $("<div>")
+	                .css({
+	                    "padding": "30px",
+	                    "background-color": "#ffffff",
+	                    "border": "2px dashed #cbd5e0",
+	                    "border-radius": "6px",
+	                    "text-align": "center",
+	                    "cursor": "pointer",
+	                    "color": "#718096"
+	                })
+	                .html("<i class='fa-solid fa-cloud-arrow-up' style='font-size:24px; margin-bottom:8px; color:#a0aec0;'></i><br><span style='font-size:14px; font-weight:500;'>클릭하여 파일 첨부</span>")
+	                .on("click", function(){
+	                    $(".preview-input").click(); 
+	                });
 
+	            $(".file-info-area").append(uploadPlaceholder);
+				return false;
+			}
             var fileContainer = $("<div>")
                 .css({
                     "padding": "15px",
@@ -226,7 +246,7 @@ $(function() {
 
 		 <div class="cell mt-0">
             <input type="checkbox" id="formUseYn" name="formUseYn" value="Y">
-            <label for="formUseYn">부서 사용 여부</label>
+            <label for="formUseYn">양식 사용 여부</label>
         </div>
 		
 		<div class="cell mt-20">

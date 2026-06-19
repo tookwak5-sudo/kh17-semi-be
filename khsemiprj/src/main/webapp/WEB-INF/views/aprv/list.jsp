@@ -91,7 +91,7 @@
 					<tr>
 						<td>${aprvDetailVO.aprvNo}</td>
 						<td>${aprvDetailVO.headName}</td>
-						<td class="left"><a href="./detail?aprvNo=${aprvDetailVO.aprvNo}">${aprvDetailVO.aprvTitle}</a></td>
+						<td class="left"><a href="./detail?aprvNo=${aprvDetailVO.aprvNo}&aprvHead=${param.aprvHead}&aprvStatus=${param.aprvStatus}&column=${param.column}&keyword=${param.keyword}<c:if test="${param.page != null}">&page=${param.page}</c:if>" >${aprvDetailVO.aprvTitle}</a></td>
 						<td style="font-weight:bold;">
 							<c:choose>
 							<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvDetailVO.aprvStatus}</span></c:when>

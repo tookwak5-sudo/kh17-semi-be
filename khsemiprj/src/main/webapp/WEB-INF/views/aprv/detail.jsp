@@ -22,6 +22,10 @@
             padding: 16px 0;
             border-bottom: 1px solid #f1f3f5;
         }
+        .aprv-info-row-split {
+            display: flex;
+            align-items: center;
+        }
         .aprv-info-row:last-child {
             border-bottom: none;
         }
@@ -53,6 +57,33 @@
             color: #739BED;
             font-weight: 600;
         }
+        
+        #aprv-context-menu {
+	   		position: absolute;
+	   		background-color: white;
+	   		border: 1px solid #ccc;
+	   		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	   		border-radius: 3px;
+	   		padding: 10px;
+	   		z-index: 1000; 
+	   		max-width:400px;
+		}
+	
+		#aprv-context-menu a {
+	   		display: block;
+	   		padding: 8px 15px;
+	   		color: #333;
+	   		text-decoration: none;
+	   		font-size: 14px;
+		}
+	
+		#aprv-context-menu a:hover {
+	   		background-color: #f1f3f5; 
+		}
+		
+		.aprv-comment {
+			cursor:pointer;
+		}
 </style>
 
 <script>
@@ -95,7 +126,29 @@
 		});
 	});
 
+	$(document).on("click", ".aprv-comment", function(e) {
+	    e.stopPropagation(); //클릭 이벤트가 문서 전체로 퍼지는 것을 막음 (바로 닫히는 현상 방지)
+	    var comment = $(this).data("comment");
+	
+		// 코멘트 표시
+		$(".comment-view").text(comment);
+	
+		// 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
+		$("#aprv-context-menu").css({
+	    	top: e.pageY + 10 + "px", // 마우스 포인터보다 살짝 아래
+	    	left: e.pageX + "px"      // 마우스 포인터 위치
+		}).show();
+	});
+	
+	$(document).on("click", function() {
+    	$("#aprv-context-menu").hide();
+	});
 </script>
+
+<!-- 사유 클릭 시 나타날 창 -->
+<div id="aprv-context-menu" style="display: none;">
+	<span class="comment-view"></span>
+</div>
 
 <div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell">
@@ -116,41 +169,106 @@
 	
 	<div class="aprv-info-card">
 		<div class="aprv-info-row">
-			<div class="aprv-info-label">기안자</div>
-			<div class="aprv-info-value"><span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span></div>
+			<div class="flex-area w-100">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">기안자</div>
+					<div class="aprv-info-value"><span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span></div>
+				</div>
+				<div class="w-33 aprv-info-row-split">
+					<c:if test="${not empty aprvDetailVO.aprvWtime}">
+					<div class="aprv-info-label">기안일</div>
+					<div class="aprv-info-value"><fmt:formatDate value="${aprvDetailVO.aprvWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
+					</c:if>
+				</div>
+			</div>
 		</div>
-		<c:if test="${not empty aprvDetailVO.aprvWtime}">
-		<div class="aprv-info-row">
-			<div class="aprv-info-label">기안일</div>
-			<div class="aprv-info-value"><fmt:formatDate value="${aprvDetailVO.aprvWtime}" pattern="yyyy-MM-dd HH:mm"></fmt:formatDate></div>
-		</div>
-		</c:if>
-		<div class="aprv-info-row">
 		<c:choose>
+		<c:when test="${aprvDetailVO.headName == '연차'}">
+		<div class="aprv-info-row">
+			<div class="flex-area w-100">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">휴가기간</div>
+					<div class="aprv-info-value">
+						${aprvDetailVO.aprvSdate}
+						<c:if test="${aprvDetailVO.aprvSdate != aprvDetailVO.aprvEdate}"> ~ ${aprvDetailVO.aprvEdate}</c:if>
+					</div>
+				</div>
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">연차적용</div>
+					<div class="aprv-info-value">
+						${aprvDetailVO.aprvLeave} 일
+					</div>
+				</div>
+			</div>
+		</div>
+		</c:when>
 		<c:when test="${aprvDetailVO.headName == '비용'}">
-			<div class="aprv-info-label">지출일자</div>
-			<div class="aprv-info-value">${aprvDetailVO.aprvSdate}</div>
+		<div class="aprv-info-row">
+			<div class="flex-area w-100">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">지출일자</div>
+					<div class="aprv-info-value">${aprvDetailVO.aprvSdate}</div>
+				</div>
+			</div>
+		</div>
+		<div class="aprv-info-row">
+			<div class="flex-area w-100">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">지출금액</div>
+					<div class="aprv-info-value"><fmt:formatNumber value="${aprvDetailVO.aprvCost}" pattern="#,##0"></fmt:formatNumber> 원</div>
+				</div>
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">지출구분</div>
+					<div class="aprv-info-value">
+						${aprvDetailVO.aprvCostType}
+					</div>
+				</div>
+				<c:if test="${aprvDetailVO.aprvCostType == '개인'}">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">계좌정보</div>
+					<div class="aprv-info-value">
+						${aprvDetailVO.aprvCostReceiveBank} ${aprvDetailVO.aprvCostReceiveAccount} ${aprvDetailVO.aprvCostReceiver}
+					</div>
+				</div>
+				</c:if>
+			</div>
+		</div>
 		</c:when>
 		<c:when test="${aprvDetailVO.headName == '사직'}">
-			<div class="aprv-info-label">퇴사일자</div>
-			<div class="aprv-info-value">${aprvDetailVO.aprvSdate}</div>
+		<div class="aprv-info-row">
+			<div class="flex-area w-100">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">퇴사일자</div>
+					<div class="aprv-info-value">${aprvDetailVO.aprvSdate}</div>
+				</div>
+			</div>
+		</div>
 		</c:when>
 		<c:otherwise>
-			<div class="aprv-info-label">기한</div>
-			<div class="aprv-info-value">${aprvDetailVO.aprvSdate} ~ ${aprvDetailVO.aprvEdate} <c:if test="${not empty aprvDetailVO.aprvLeave}">[ 연차사용 ${aprvDetailVO.aprvLeave}일 ]</c:if></div>
+		<div class="aprv-info-row">
+			<div class="flex-area w-100">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">기한</div>
+					<div class="aprv-info-value">${aprvDetailVO.aprvSdate} ~ ${aprvDetailVO.aprvEdate}</div>
+				</div>
+			</div>
+		</div>
 		</c:otherwise>
 		</c:choose>
-		</div>
 		<div class="aprv-info-row">
-			<div class="aprv-info-label">상태</div>
-			<div class="aprv-info-value">
-				<c:choose>
-				<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue bold">${aprvDetailVO.aprvStatus}</span></c:when>
-				<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red bold">${aprvDetailVO.aprvStatus}</span></c:when>
-				<c:otherwise>
-				${aprvDetailVO.aprvStatus}
-				</c:otherwise>
-				</c:choose>
+			<div class="flex-area w-100">
+				<div class="w-33 aprv-info-row-split">
+					<div class="aprv-info-label">상태</div>
+					<div class="aprv-info-value">
+						<c:choose>
+						<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue bold">${aprvDetailVO.aprvStatus}</span></c:when>
+						<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red bold">${aprvDetailVO.aprvStatus}</span></c:when>
+						<c:otherwise>
+						${aprvDetailVO.aprvStatus}
+						</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="cell mb-10">
@@ -215,8 +333,8 @@
 			        				</c:when>
 			        				<c:otherwise>
 				        				<c:choose>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span></c:when>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span></c:when>
+				        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
+				        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
 				        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
 				        				</c:choose>
 			        				</c:otherwise>
@@ -258,8 +376,8 @@
 			        				</c:when>
 			        				<c:otherwise>
 				        				<c:choose>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span></c:when>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span></c:when>
+				        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
+				        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
 				        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
 				        				</c:choose>
 			        				</c:otherwise>
@@ -281,7 +399,7 @@
 		</div>
 		<div class="cell right">
 			<form method="post" class="form-check">
-			<a class="btn btn-neutral" href="./list">목록으로</a>
+			<a class="btn btn-neutral" href="./list?aprvHead=${param.aprvHead}&aprvStatus=${param.aprvStatus}&column=${param.column}&keyword=${param.keyword}<c:if test="${param.page != null}">&page=${param.page}</c:if>">목록으로</a>
 			<input type="hidden" name="aprvNo" value="${param.aprvNo}" />
 			<c:if test="${aprvDetailVO.aprvStatus == '임시저장' && aprvDetailVO.aprvWriter == sessionScope.loginId}">
 			<a class="btn btn-save" href="./edit?aprvNo=${aprvDetailVO.aprvNo}">수정</a>

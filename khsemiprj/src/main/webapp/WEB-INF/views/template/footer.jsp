@@ -26,15 +26,15 @@
 		            transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
 		        
-		        #send-ajax-alarm {
+		        #send-alarm, #send-ajax-alarm {
 		        	background-color: #ffffff;
 		        	transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
-		        #send-ajax-alarm.btn-positive:hover {
+		        #send-alarm.btn-positive:hover, #send-ajax-alarm.btn-positive:hover {
 		        	background-color: #5A86E3;
 		        	transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
-		        #send-ajax-alarm.btn-negative:hover {
+		        #send-alarm.btn-negitave:hover, #send-ajax-alarm.btn-negative:hover {
 		        	background-color: #E86A7A;
 		        	transition: transform 0.5s ease, opacity 0.5s ease;
 		        }
@@ -206,6 +206,11 @@
 			<c:choose>
 				<c:when test="${param.alarm != null}">
 					<c:choose>
+						<c:when test="${param.alarm == 'needLogin'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();" >로그인이 필요합니다.</a>
+						    </div>
+						</c:when>
 						<c:when test="${param.alarm == 'join'}">
 							<div style="position: absolute;top: 590px;left: 20px;">
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();" >회원가입이 완료되었습니다.</a>

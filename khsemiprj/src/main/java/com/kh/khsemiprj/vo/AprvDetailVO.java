@@ -23,6 +23,11 @@ public class AprvDetailVO {
 	private Timestamp aprvWtime;
 	private Timestamp aprvEtime;
 	private Double aprvLeave;
+	private Long aprvCost;
+	private String aprvCostType;
+	private String aprvCostReceiver;
+	private String aprvCostReceiveAccount;
+	private String aprvCostReceiveBank;
 	private int headNo;
 	private String headName;
 	private long deptNo;

@@ -92,8 +92,8 @@ public class EmpController {
 			return "redirect:./login?error";
 		}
 
-		// [3] 로그인 아이디의 승인 상태가 상태가 N이라면
-		if (findEmpDto.getEmpValid().equals("N")) {
+		// [3] 로그인 아이디의 승인 상태가 상태가 Y가 아니라면
+		if (!findEmpDto.getEmpValid().equals("Y")) {
 			return "redirect:./login?valid";
 		}
 
