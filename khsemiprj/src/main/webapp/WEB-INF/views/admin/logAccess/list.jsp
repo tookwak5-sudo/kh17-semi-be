@@ -49,7 +49,7 @@
 	                   <th>접근자</th>
 	                   <th>경로(URL)</th>
 	                   <th width="130px">접근IP</th>
-	                   <th width="130px">접근시각</th>
+	                   <th width="200px">접근시각</th>
 	               </tr>
 	  			</thead>
 	  			<tbody>
@@ -59,7 +59,7 @@
 	  					<td>${logAccessDto.accessEmpId} ([${logAccessDto.deptName}] ${logAccessDto.empName})</td>
 	  					<td  class="break-url">${logAccessDto.accessUrl}</td>
 	  					<td>${logAccessDto.accessIp}</td>
-	  					<td>${logAccessDto.accessDate}</td>
+	  					<td><fmt:formatDate value="${logAccessDto.accessDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	  				</tr>
 	  				</c:forEach>
 	  			</tbody>
