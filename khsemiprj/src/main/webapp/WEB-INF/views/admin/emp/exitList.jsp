@@ -56,7 +56,7 @@ $(function() {
 });
 </script>
 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
-    <div class="container w-1000 mt-20 mb-50 background-card">
+    <div class="container w-100 mt-20 mb-50 background-card">
       <div class="cell center flex-area">
 		<div class="w-20 flex-area" style="justify-content: left">
 			<div>

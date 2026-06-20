@@ -11,7 +11,7 @@
 }
 </style>
 	
-<div class="container w-1200 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">		
 		<div class="w-25 flex-area" style="justify-content: left">
 			<div>

@@ -5,7 +5,7 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 	
-	<div class="container w-1200 mt-20 mb-50 background-card">
+	<div class="container w-100 mt-20 mb-50 background-card">
 		<div class="cell center flex-area">
 			<div class="w-15 flex-area" style="justify-content: left">
 				<div>

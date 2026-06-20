@@ -23,6 +23,8 @@ public class ErrorController {
 		model.addAttribute("message", e.getMessage());//메세지 화면에 전달하고
 		return "error/404";//오류 페이지 연결
 	}
+	
+	@ExceptionHandler(WhoAreYouException.class)
 	public String unauthorize(Exception e, Model model) {
 		model.addAttribute("message", e.getMessage());//메세지 화면에 전달하고
 		return "redirect:/emp/login";//로그인 페이지 연결

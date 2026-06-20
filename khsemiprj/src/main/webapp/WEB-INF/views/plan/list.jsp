@@ -47,7 +47,7 @@
 		});
 	})
 </script>
-<div class="container w-1200 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
     <div>
         <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
