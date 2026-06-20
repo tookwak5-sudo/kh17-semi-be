@@ -27,7 +27,7 @@
 	
 	
 	<div class="cell center flex-area">
-		<div class="w-15 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 		            결재 목록
@@ -68,8 +68,8 @@
 		</div>
 	</div>
 
-	<div class="cell right">
-		${pageVO.getBeginRownum()}-${pageVO.endRownum} / 총 ${pageVO.count}개의 글
+	<div class="right" style="font-size: 14px; color: #666;">
+	    <strong style="color: #007bff;">${pageVO.count}</strong>개의 항목
 	</div>
 
 	<div class="cell">

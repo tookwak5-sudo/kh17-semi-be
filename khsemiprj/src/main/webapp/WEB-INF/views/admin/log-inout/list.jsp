@@ -7,7 +7,7 @@
 	
 	<div class="container w-100 mt-20 mb-50 background-card">
 		<div class="cell center flex-area">
-			<div class="w-15 flex-area" style="justify-content: left">
+			<div class="w-25 flex-area" style="justify-content: left">
 				<div>
 			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 			            출퇴근 로그
@@ -15,9 +15,8 @@
 			        </h1>
 				</div>
 	        </div>
-	        <div class="w-70 flex-area flex-center">
+	         <div class="cell flex-area background-fill">
 				<!-- 검색창 -->
-		        <div class="cell center">
 		            <form autocomplete="off">
 		                <select name="column" class="field">
 		                    <option value="log_inout_emp_id" ${param.column == 'log_inout_emp_id' ? 'selected' : ''}>사원아이디</option>
@@ -30,13 +29,11 @@
 		                    <span>검색</span>
 		                </button>
 		            </form>
-		        </div>
 	        </div>
 		</div>
-		<div class="cell right mt-0">
-	      <!-- 출퇴근 목록 -->
-			<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총 ${pageVO.count}개</span>
-	   </div>
+		<div class="right" style="font-size: 14px; color: #666;">
+		    <strong style="color: #007bff;">${pageVO.count}</strong>개의 로그
+		</div>
 	   
 	   <div class="cell">
 	   		<table class="table">

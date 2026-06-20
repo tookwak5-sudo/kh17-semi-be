@@ -493,7 +493,13 @@ a.btn {
     flex-direction: column;
 }
 
-
+/* 필터링과 검색창 배경 디자인 */
+.background-fill {
+background-color: #f8fafc; 
+padding: 20px; 
+border-radius: 8px; 
+border: 1px solid #e2e8f0;
+}
 /* 말줄임표 처리 */
 .ellipsis {
     white-space: nowrap;    /*줄바꿈 금지*/

@@ -82,9 +82,8 @@
     </div>    
 </div>
 
-	<div class="cell right mt-0">
-		<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총
-			${pageVO.count}개 로그</span>
+	<div class="right" style="font-size: 14px; color: #666;">
+		  <strong style="color: #007bff;">${pageVO.count}</strong>개의 일정
 	</div>
 
 	<div class="cell">

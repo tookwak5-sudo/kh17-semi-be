@@ -21,7 +21,7 @@
 		        </h1>
 			</div>
         </div>
-		<div class="w-60 flex-area flex-center">
+		<div class="cell flex-area background-fill">
 			<!-- 검색창 -->
 	            <form autocomplete="off">
 	                <select name="column" class="field-ph">
@@ -37,10 +37,9 @@
 	            </form>
 		</div>
 	</div>
-		<div class="cell right mt-0">
-	      <!-- 페이지접근로그목록 목록 -->
-			<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총 ${pageVO.count}개 로그</span>
-	   </div>
+		<div class="right" style="font-size: 14px; color: #666;">
+		    <strong style="color: #007bff;">${pageVO.count}</strong>개의 로그
+		</div>
 	   
 	   <div class="cell">
 	   		<table class="table">
