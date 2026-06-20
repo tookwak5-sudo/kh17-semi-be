@@ -46,12 +46,12 @@
 	               </tr>
 	  			</thead>
 	  			<tbody>
-	  				<c:forEach var="logInoutDto" items="${list}">
+	  				<c:forEach var="EmpLogInoutDto" items="${list}">
 	  				<tr>
-	  					<td>${logInoutDto.logInoutNo}</td>
-	  					<td>${logInoutDto.logInoutEmpId}</td>
-	  					<td>${logInoutDto.logInoutType}</td>
-	  					<td>${logInoutDto.logInoutTime}</td>
+	  					<td>${EmpLogInoutDto.logInoutNo}</td>
+	  					<td>${EmpLogInoutDto.empName} (${EmpLogInoutDto.logInoutEmpId})</td>
+	  					<td>${EmpLogInoutDto.logInoutType}</td>
+	  					<td>${EmpLogInoutDto.logInoutTime}</td>
 	  				</tr>
 	  				</c:forEach>
 	  			</tbody>

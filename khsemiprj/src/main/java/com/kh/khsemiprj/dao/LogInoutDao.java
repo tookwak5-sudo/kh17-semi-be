@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.LogInoutDto;
+import com.kh.khsemiprj.mapper.EmpLogInoutMapper;
 import com.kh.khsemiprj.mapper.LogInoutMapper;
+import com.kh.khsemiprj.vo.EmpLogInoutVO;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Repository
@@ -18,6 +20,8 @@ public class LogInoutDao {
 	@Autowired
 	private LogInoutMapper logInoutMapper;
 	
+	@Autowired
+	private EmpLogInoutMapper empLogInoutMapper;
 	
 	//검색 허용할 컬럼
 	Set<String> allowColumns = Set.of("log_inout_emp_id", "log_inout_type");
@@ -31,19 +35,22 @@ public class LogInoutDao {
 	}
 	
 	// 촐퇴근 목록 조회
-	public List<LogInoutDto> selectList(int page, int size) {
+	public List<EmpLogInoutVO> selectList(int page, int size) {
 		String sql = "SELECT * FROM ("
-	               + "    SELECT ROWNUM RN, A.* FROM ("
-	               + "        SELECT log_inout_no, log_inout_emp_id, log_inout_time, log_inout_type FROM log_inout ORDER BY log_inout_no DESC"
-	               + "    ) A"
+	               		+ "SELECT ROWNUM RN, A.* FROM ("
+		               		+ "SELECT l.log_inout_no, l.log_inout_emp_id, l.log_inout_time, l.log_inout_type, e.emp_name "
+		               		+ "FROM log_inout l left join emp e on l.log_inout_emp_id = e.emp_id "
+		               		+ "ORDER BY log_inout_no DESC"
+	               		+ ") A"
 	               + ") WHERE RN BETWEEN ? AND ?";
 		int beginRow = page * size - (size - 1);
 		int endRow = page * size;
 		Object[] params = {beginRow, endRow};
-		return jdbcTemplate.query(sql, logInoutMapper, params);
+		return jdbcTemplate.query(sql, empLogInoutMapper, params);
 	}
+	
 	// 출퇴근 검색
-	public List<LogInoutDto> selectList(PageVO pageVO){
+	public List<EmpLogInoutVO> selectList(PageVO pageVO){
 		if(pageVO.isList())
 			return selectList(pageVO.getPage(), pageVO.getSize());
 		if(!allowColumns.contains(pageVO.getColumn())) 
@@ -61,7 +68,7 @@ public class LogInoutDao {
 				pageVO.getBeginRownum(),
 				pageVO.getEndRownum()
 			};
-			return jdbcTemplate.query(sql, logInoutMapper, params);
+			return jdbcTemplate.query(sql, empLogInoutMapper, params);
 	}
 	
 	// 출퇴근 로그 등록

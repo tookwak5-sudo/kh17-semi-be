@@ -240,7 +240,6 @@
 <body>
 
 <%-- 세션ID : ${pageContext.session.id} --%>
-<%-- loginId : ${sessionScope.loginId} --%>
 <%-- empGrade : ${sessionScope.empGrade} --%>
 <%-- 부서 정보 : ${sessionScope.empDept} --%>
 <%-- 직책 정보 : ${sessionScope.empPosition} --%>
