@@ -104,7 +104,6 @@
 					        
 					        var count = getWeekdaysCount(moment(sDate), moment(eDate));
 							if(count > ${leaveRemain}) {
-								//alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
 								showAjaxAlarm("휴가 잔여일 : ${leaveRemain}일 / 휴가 선택일 : " + count + "일 / 휴가 잔여일보다 휴가 선택일이 많습니다. 다시 선택하세요.", 'btn-negative', '[name=aprvEdate]', 'right');
 								picker1.setDateRange(null, null);
 								$(".picker-sdate").val("");
@@ -222,7 +221,6 @@
 
          	// [3] 순차적 유효성 검사 및 경고창 출력
             if(!state.aprvTitleValid) {
-                //window.alert("제목을 입력하세요.");
                 showAjaxAlarm('제목을 입력하세요', 'btn-negative', '[name=aprvTitle]', 'left');
                 $("[name=aprvTitle]").focus();
                 return false; 
@@ -231,7 +229,6 @@
             var formHead = $(".aprv-form-list option:selected").attr("data-head");
             
             if(!state.aprvSdateValid) {
-                //window.alert("결재 시작일을 입력하세요.");
                 var message = "";
                 switch(formHead) {
                 	case "비용":
@@ -249,7 +246,6 @@
                 return false; 
             }
             if(!state.aprvEdateValid) {
-                //window.alert("결재 종료일을 입력하세요.");
                 showAjaxAlarm('종료일을 입력하세요', 'btn-negative', '[name=aprvEdate]', 'right');
                 $("[name=aprvEdate]").focus();
                 return false; 
@@ -280,16 +276,13 @@
             }
             
             if(!state.aprvContentValid) {
-                //window.alert("내용을 입력하세요.");
                 showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=aprvContent]', 'left');
                 $("[name=aprvContent]").focus();
                 return false;
             }
             // 🚨 결재자 미선택 시 명확하게 경고창을 띄우고 전송 중단
             if(!state.aprvLineNo1Valid) {
-                //window.alert("1차 결재 라인 결재자를 추가하세요.");
                 showAjaxAlarm('1차 결재 라인 결재자를 추가하세요', 'btn-negative', '.aprv-line-1', 'left');
-                //$(".aprv-line-1").click();
                 return false; // 무조건 전송 차단
             }
             
@@ -300,7 +293,6 @@
 	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
 	            if ($(clickedButton).hasClass("aprv-update")) {
 	            	$(".aprv-status").val("대기");
-	            	//return confirm("문서를 기안하시겠습니까?");
 	            	openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-update").click();');
 	            } else {
 	            	$(".aprv-status").val("임시저장");
@@ -442,7 +434,10 @@
 </script>
 <script type="text/template" id="emp-template">
 <tr>
-	<td><input type="checkbox" name="emp" class="emp-checkbox" id="emp"></td>
+	<td>
+		<input type="checkbox" name="emp" class="emp-checkbox checkbox-custom" id="emp_DYNAMIC">
+        <label for="emp_DYNAMIC" class="my-checkbox-label"></label> </td>
+	</td>
 	<td></td>
 	<td></td>
 	<td></td>

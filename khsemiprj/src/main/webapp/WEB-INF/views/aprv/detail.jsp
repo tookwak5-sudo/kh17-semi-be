@@ -106,19 +106,12 @@
 	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
 	            if ($(clickedButton).hasClass("aprv-save")) {
 	            	$(".form-check").attr("action", "./save");
-	            	/* if(confirm("문서를 기안하시겠습니까?")) {
-	    				state.aprvValid = true;
-	    			} */
 	    			openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-save").click();');
 	            } else if($(clickedButton).hasClass("aprv-delete")) {
 	            	$(".form-check").attr("action", "./delete");
-	            	/* if(confirm("문서를 삭제하시겠습니까?")) {
-	    				state.aprvValid = true;
-	    			} */
 	            	openConfirm('문서를 삭제하시겠습니까?', 'state.aprvValid = true; $(".aprv-delete").click();');
 	            } else {
-	            	alert("잘못된 접근입니다. 페이지를 새로고침합니다.");
-	            	location.reload();
+					openAlert("잘못된 접근입니다.<br><br>페이지를 새로고침합니다.", "location.reload();");
 	            }
 			}
 			
@@ -333,8 +326,8 @@
 			        				</c:when>
 			        				<c:otherwise>
 				        				<c:choose>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
+				        					<c:when test="${aprvLineList.aprvLineStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
+				        					<c:when test="${aprvLineList.aprvLineStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
 				        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
 				        				</c:choose>
 			        				</c:otherwise>

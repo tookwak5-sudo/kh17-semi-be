@@ -1,83 +1,5 @@
 @charset "UTF-8";
 
-/* 기본 스타일 초기화 */
-/* .dept-tree, .dept-tree ul {
-    list-style: none;
-    padding-left: 24px;
-    font-family: 'Malgun Gothic', sans-serif;
-    color: #333;
-}
-.dept-tree.height-limit {
-	max-height: 300px;
-	overflow-y: auto;
-}
-.dept-tree > ul {
-    padding-left: 0;
-}
-
-각 부서 항목 스타일
-.dept-item {
-    margin: 6px 0;
-}
-
-.dept-row {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.dept-row:hover {
-    background-color: #f0f4f9;
-}
-
-토글 화살표
-.toggle-btn {
-    display: inline-block;
-    width: 16px;
-    font-size: 10px;
-    color: #888;
-    user-select: none;
-    margin-right: 4px;
-    cursor: pointer;
-    text-align: center;
-}
-
-체크박스 스타일 커스텀
-.dept-checkbox, .emp-checkbox {
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-부서명
-.dept-name {
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-하위 부서가 없는 최하단 팀은 화살표를 숨김 처리
-.no-children .toggle-btn {
-    visibility: hidden;
-    cursor: default;
-}
-
-[핵심] 하위 메뉴를 숨기기 위한 클래스
-.collapsed > ul {
-    display: none;
-}
-
-
-.dept-change-list.active {
-	display: block;
-}
-.dept-change-list {
-	display: none;
-} */
-
 /* 1. 기본 체크박스 숨김 */
 .dept-checkbox, .emp-checkbox {
     display: none;
@@ -189,7 +111,15 @@
 
 /* 마지막 자식 노드의 세로선은 체크박스 중앙 높이까지만 내려옴 */
 .dept-tree ul li:last-child::before {
-    height: 20px; /* .dept-row의 높이 절반 지점에서 딱 끊기도록 고정 */
+    height: 18px; /* .dept-row의 높이 절반 지점에서 딱 끊기도록 고정 */
+}
+
+.dept-tree ul li.no-children::before {
+    height: 36px; /* 마지막이 아닌 줄들은 아래와 이어지도록 높이를 많이 늘려줌 */
+}
+
+.dept-tree ul li.no-children:last-child::before {
+    height: 20px; /* 마지막 줄에서 공백 안생기도록 높이를 살짝 늘려줌 */
 }
 
 /* 2. 가로 연결선 (★ li가 아니라 .dept-row의 가상요소로 배치 ★)

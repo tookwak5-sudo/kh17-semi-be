@@ -45,6 +45,12 @@ public class DeptDao {
 	}
 	
 	public List<DeptVO> selectListAll() {
+		String sql = "select * from dept order by dept_name asc";
+		Object[] params = {  };
+		return jdbcTemplate.query(sql, deptVOMapper, params);
+	}
+	
+	public List<DeptVO> selectListY() {
 		String sql = "select * from dept where dept_use_yn = 'Y' order by dept_name asc";
 		Object[] params = {  };
 		return jdbcTemplate.query(sql, deptVOMapper, params);

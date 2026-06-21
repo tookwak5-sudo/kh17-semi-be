@@ -57,7 +57,8 @@ function aprvLineUpdate() {
 	var aprvLineComment = $('input[name=aprvLineComment]').val();
 	
 	if(aprvLineComment.length == 0) {
-		alert('결재 코멘트를 입력해주세요');
+		//alert('결재 코멘트를 입력해주세요');
+		openAlert("결재 코멘트를 입력해주세요");
 		$('input[name=aprvLineComment]').focus();
 		return false;
 	}

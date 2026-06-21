@@ -176,8 +176,11 @@
 				}
 				
 				// 얼럿 열기
-				function openAlert(message) {
+				function openAlert(message, clickScript) {
 					$('#alertMessage').html(message);
+					if(clickScript != undefined) {
+						$('#btnAlertAction').attr('onclick', clickScript + ' closeAlert();');
+					}
 					var alert = document.getElementById('modalAlert');
 					alert.classList.add('active');
 				}
@@ -311,7 +314,7 @@
 			            </form>
 			        </div>
 			        <div class="modal-footer" style="txt-align:center;">
-			        	<button type="button" class="btn btn-positive" onclick="closeAlert()">확인</button>
+			        	<button id="btnAlertAction" type="button" class="btn btn-positive" onclick="closeAlert()">확인</button>
 			        </div>
 			    </div>
 			</div>
