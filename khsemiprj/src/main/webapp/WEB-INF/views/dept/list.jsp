@@ -117,7 +117,9 @@
 			<div class="cell card-header">
 				<h2>부서 목록</h2>
 				<div class="btn-area">
-					<a href="/dept/insert" class="btn btn-positive">부서 등록</a>				
+					<a href="/dept/insert" class="btn btn-positive">등록</a>
+					<a onclick="deptEdit();" class="btn btn-save">수정</a>
+					<a onclick="deptDelete();" class="btn btn-negative">삭제</a>
 				</div>
 			</div>
 			<div id="deptList" class="dept-tree" style="margin-top: 20px;">

@@ -44,15 +44,8 @@ public class DeptController {
 		
 		deptDao.insert(deptDto);
 		
-		return "redirect:./insertComplete";
+		return "redirect:./list?alarm=deptInsert";
 	}
-	
-	// 부서 정보 등록 완료
-	@RequestMapping("/insertComplete")
-	public String insertComplete() {
-		return "dept/insertComplete";
-	}
- 	
 	
 	// 부서 목록 
 	@RequestMapping("/list")

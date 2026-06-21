@@ -57,9 +57,12 @@ input[type="checkbox"]:checked + label::after {
 
 	<div class="container w-400 mt-20 mb-50 background-card">
 		
-    	<div class="cell center">
-            <h1>부서 등록</h1>
-        </div>
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            부서등록
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+		</div>
         <div class="cell">
         	<label>부서 번호<i class="fa-solid fa-asterisk red"></i></label>
         	<input type="text" inputmode="numeric" name="deptNo" class="field w-100" required>

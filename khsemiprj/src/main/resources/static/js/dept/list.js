@@ -291,3 +291,33 @@ document.addEventListener('change', function(e) {
         });
     }
 });
+
+function deptEdit() {
+	var deptNo = $("#deptList input[type=checkbox]:checked").val();
+	if(deptNo == undefined) {
+		openAlert('수정할 부서를 선택하세요');
+		return false;
+	}
+	if(deptNo == '') {
+		openAlert('[부서없음]은 수정할 수 없습니다');
+		return false;
+	} else {
+		location.href = "./edit?deptNo=" + deptNo;
+	}
+}
+
+function deptDelete() {
+	var deptNo = $("#deptList input[type=checkbox]:checked").val();
+	var deptName = $("#deptList input[type=checkbox]:checked").next().text();
+	if(deptNo == undefined) {
+		openAlert('삭제할 부서를 선택하세요');
+		return false;
+	}
+	if(deptNo == '') {
+		openAlert('[부서없음]은 삭제할 수 없습니다.');
+		return false;
+	} else {
+		//location.href = "./delete?deptNo=" + deptNo;
+		openConfirm("[" + deptName + "] 부서를 삭제하시겠습니까?", "location.href='./delete?deptNo=" + deptNo + "';");
+	}
+}
