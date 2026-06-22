@@ -35,6 +35,41 @@
 	}
 </style>
 
+<script>
+$(function(){
+    // 1. 현재 페이지 경로를 키값으로 사용 (예: /board/list) -> 다른 메뉴와 검색어 섞임 방지
+    var menuKey = window.location.pathname; 
+
+    // 2. 세션 스토리지에서 현재 메뉴의 이전 검색어 가져오기
+    var savedColumn = sessionStorage.getItem(menuKey + '_column');
+    var savedKeyword = sessionStorage.getItem(menuKey + '_keyword');
+    
+    // 3. 디테일에서 목록으로 돌아왔을 때 (주소창에 파라미터가 없는데 스토리지에 검색어가 있다면?)
+    var urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('column') && savedColumn && savedKeyword) {
+        // 기억해둔 검색어를 주소창에 붙여서 강제 이동 (검색 복구)
+        location.href = './list?column=' + savedColumn + '&keyword=' + encodeURIComponent(savedKeyword);
+        return;
+    }
+
+    // 4. 사용자가 새롭게 검색 폼을 제출(검색 버튼 클릭)할 때 스토리지 갱신
+    $("form").on("submit", function() {
+        // 폼 안에서 column과 활성화된 keyword 값을 찾음
+        var column = $(this).find("[name=column]").val();
+        var keyword = $(this).find("[name=keyword]:not(:disabled)").val();
+        
+        if(column && keyword) {
+            sessionStorage.setItem(menuKey + '_column', column);
+            sessionStorage.setItem(menuKey + '_keyword', keyword);
+        } else {
+            // 검색어 없이 전체 검색 시 메모리 초기화
+            sessionStorage.removeItem(menuKey + '_column');
+            sessionStorage.removeItem(menuKey + '_keyword');
+        }
+    });
+});
+</script>
+
 <div class="container w-90 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
 		<div class="w-25 flex-area" style="justify-content: left">

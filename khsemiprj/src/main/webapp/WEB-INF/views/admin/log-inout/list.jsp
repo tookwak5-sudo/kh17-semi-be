@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
-	
+
 	<div class="container w-100 mt-20 mb-50 background-card">
 		<div class="cell center flex-area">
 			<div class="w-25 flex-area" style="justify-content: left">

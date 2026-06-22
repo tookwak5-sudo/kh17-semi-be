@@ -7,41 +7,108 @@
 
 <script>
 $(function(){
-    // 검색 조건 변경 시 입력창 스위칭 이벤트
+    // 1. 현재 페이지 경로를 키값으로 사용 (예: /board/list) -> 다른 메뉴와 검색어 섞임 방지
+    var menuKey = window.location.pathname; 
+
+    // 2. 세션 스토리지에서 현재 메뉴의 이전 검색어 가져오기
+    var savedColumn = sessionStorage.getItem(menuKey + '_column');
+    var savedKeyword = sessionStorage.getItem(menuKey + '_keyword');
+    
+    // 3. 디테일에서 목록으로 돌아왔을 때 (주소창에 파라미터가 없는데 스토리지에 검색어가 있다면?)
+    var urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('column') && savedColumn && savedKeyword) {
+        // 기억해둔 검색어를 주소창에 붙여서 강제 이동 (검색 복구)
+        location.href = './list?column=' + savedColumn + '&keyword=' + encodeURIComponent(savedKeyword);
+        return;
+    }
+
+    // 4. 사용자가 새롭게 검색 폼을 제출(검색 버튼 클릭)할 때 스토리지 갱신
+    $("form").on("submit", function() {
+        // 폼 안에서 column과 활성화된 keyword 값을 찾음
+        var column = $(this).find("[name=column]").val();
+        var keyword = $(this).find("[name=keyword]:not(:disabled)").val();
+        
+        if(column && keyword) {
+            sessionStorage.setItem(menuKey + '_column', column);
+            sessionStorage.setItem(menuKey + '_keyword', keyword);
+        } else {
+            // 검색어 없이 전체 검색 시 메모리 초기화
+            sessionStorage.removeItem(menuKey + '_column');
+            sessionStorage.removeItem(menuKey + '_keyword');
+        }
+    });
+});
+</script>
+
+<script>
+$(function(){
+    // 1. 페이지 켜지자마자 세션 스토리지에 저장된 검색 조건이 있는지 확인
+    var savedColumn = sessionStorage.getItem('searchColumn');
+    var savedKeyword = sessionStorage.getItem('searchKeyword');
+    
+    // 현재 주소창에 파라미터(column)가 없고, 브라우저 메모리에 저장된 이전 검색어가 있다면?
+    var urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('column') && savedColumn && savedKeyword) {
+        // 상세페이지 갔다가 그냥 목록 버튼 눌러서 돌아온 상황이므로, 저장된 주소로 강제 리다이렉트
+        location.href = './list?column=' + savedColumn + '&keyword=' + encodeURIComponent(savedKeyword);
+        return; // 아래 코드 실행 막기
+    }
+
+    // 기존의 검색 조건 변경 시 입력창 스위칭 이벤트
     $("[name=column]").on("change", function() {
         var column = $(this).val();
         
-        // 1. 구분을 선택했을 때 (네 select의 value가 form_head_no 일 때)
         if (column === "form_head_no") {
-            // 구분 검색 존(셀렉트 박스 영역)을 보여줌
-            $(".head-search-zone").show()
-                                  .find("select").prop("disabled", false); // select 활성화
-            
-            // 양식명 검색 존(텍스트 입력창 영역)을 숨김
-            $(".form-search-zone").hide()
-                                  .find("input").prop("disabled", true);  // input 비활성화 (값 전송 안 됨)
+            $(".head-search-zone").show().find("select").prop("disabled", false); 
+            $(".form-search-zone").hide().find("input").prop("disabled", true);  
         } 
-        // 2. 양식명을 선택했을 때 (form_name 일 때)
         else if(column === "form_name") {
-            // 구분 검색 존을 숨김
-            $(".head-search-zone").hide()
-                                  .find("select").prop("disabled", true);  // select 비활성화
-            
-            // 양식명 검색 존을 보여줌
-            $(".form-search-zone").css("display", "inline-flex")
-                                  .find("input").prop("disabled", false); // input 활성화
+            $(".head-search-zone").hide().find("select").prop("disabled", true);  
+            $(".form-search-zone").css("display", "inline-flex").find("input").prop("disabled", false); 
         }
     });
 
-    // 페이지 로드 시 기존 검색 조건에 맞게 인풋 세팅 초기화 (새로고침 시 풀림 방지)
+    // 페이지 로드 시 기존 검색 조건에 맞게 인풋 세팅 초기화
     $("[name=column]").trigger("change");
+
+    // 2. 사용자가 실제 검색 폼을 제출할 때(검색 버튼 클릭 시) 현재 검색 조건을 저장소에 기억
+    $("form").on("submit", function() {
+        var column = $("[name=column]").val();
+        // 텍스트 인풋창이냐, 셀렉트 박스냐에 따라 활성화된 keyword 값을 유연하게 따옴
+        var keyword = $("[name=keyword]:not(:disabled)").val();
+        
+        if(column && keyword) {
+            sessionStorage.setItem('searchColumn', column);
+            sessionStorage.setItem('searchKeyword', keyword);
+        } else {
+            // 검색어 없이 그냥 검색하거나 초기화되면 메모리도 비움
+            sessionStorage.removeItem('searchColumn');
+            sessionStorage.removeItem('searchKeyword');
+        }
+    });
 });
-
-
-
-
-
 </script>
+<!-- 삭제 시 -->
+<script>
+$(document).ready(function() {
+    // 세션 스토리지에 formDeleted 값이 true로 들어있는지 확인
+    if(sessionStorage.getItem('formDeleted') === 'true') {
+        
+        // 오른쪽 아래 위치 세팅
+        $('#div-alarm').css({'left': 'auto', 'right': '20px', 'bottom': '40px', 'top': 'auto'});
+        
+        // 팝업 띄우기
+        showAjaxAlarm('양식이 삭제가 되었습니다.', 'btn-negative');
+        
+        
+        sessionStorage.removeItem('formDeleted');
+    }
+});
+</script>
+
+
+
+
 
 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
 <div class="container w-100 mt-20 mb-50 background-card">
