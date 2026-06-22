@@ -83,7 +83,12 @@ $(function () {
 	           <textarea name="planExplain" class="field w-100" rows="5">${planDto.planExplain}</textarea>
 	       </div>
 	       <div class="cell mt-40 right">
+	       <a href="/plan/list" class="btn btn-neutral">
+	       		<i class="fa-solid fa-list"></i>
+	       		목록으로
+	       </a>
 	           <button type="submit" class="btn btn-positive btn-plan-edit">
+	           		<i class="fa-solid fa-floppy-disk"></i>
 	               수정하기
 	           </button>
 	      </div>
