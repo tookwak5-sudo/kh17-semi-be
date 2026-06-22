@@ -51,38 +51,54 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
-var deleteConfirmState = {
-	    deleteConfirmValid: false,
-	    ok: function(){
-	        return Object.values(this)
-	        // 오타 수정 (typeof =>===  ->  typeof v === "boolean")
-	        .filter(v => typeof v === "boolean")
-	        .every(v => v === true);
-	    }
-	};
+$(function(){
+    // 삭제 버튼 클릭 시 컨펌창 띄우고 비동기 삭제 처리
+    $("#btnDeleteConfirm").on("click", function(e){
+        e.preventDefault(); 
+        var deleteUrl = $(this).attr("href"); 
+        
+        openConfirm(
+            '정말 삭제 하시겠습니까?', 
+            'ajaxDelete("' + deleteUrl + '");'
+        );
+    });
+});
 
-	$(function(){
-	    // submit 대신 a 태그의 click 이벤트로 변경
-	    $("#btnDeleteConfirm").on("click", function(e){
-	        
-	        // 검증이 안 끝났으면 일단 a 태그의 기본 이동(href)을 막음
-	        if(!deleteConfirmState.deleteConfirmValid){
-	            e.preventDefault();
-	            var deleteUrl = $(this).attr("href"); // 이동할 주소 따두기
-	            
-	            // 팝업 확인 누르면 Valid를 true로 바꾸고, 저장해둔 URL로 강제 주소 이동
-	            openConfirm(
-	                '정말 삭제 하시겠습니까?', 
-	                'deleteConfirmState.deleteConfirmValid = true; location.href="' + deleteUrl + '";'
-	            );
-	        }
-	        
-	        // workOutState -> deleteConfirmState로 이름 수정
-	        return deleteConfirmState.ok();
-	    });
-	});
+function ajaxDelete(url) {
+    $.ajax({
+        url: url,
+        type: 'GET', 
+        success: function(response) {
+            // 세션 스토리지에 플래그 저장 후 목록으로 이동
+            sessionStorage.setItem('formDeleted', 'true');
+            
+            setTimeout(function() {
+                location.href = './list'; 
+            }, 500);
+        },
+        error: function() {
+            openAlert("삭제 처리 중 오류가 발생했습니다.");
+        }
+    });
+}
+</script>
 
+<script>
+$(document).ready(function() {
+    // 1. 세션 스토리지에 등록 완료 플래그가 있는지 확인
+    if(sessionStorage.getItem('formInserted') === 'true') {
+        $('#div-alarm').css({'left': 'auto', 'right': '20px', 'bottom': '40px', 'top': 'auto'});
+        showAjaxAlarm('양식이 등록 되었습니다.', 'btn-positive');
+        sessionStorage.removeItem('formInserted');
+    }
 
+    // 2. 세션 스토리지에 수정 완료 플래그가 있는지 확인 (edit.jsp에서 submit 성공 후 넘어왔을 때 실행됨)
+    if(sessionStorage.getItem('formEdited') === 'true') {
+        $('#div-alarm').css({'left': 'auto', 'right': '20px', 'bottom': '40px', 'top': 'auto'});
+        showAjaxAlarm('양식이 수정 되었습니다.', 'btn-positive');
+        sessionStorage.removeItem('formEdited');
+    }
+});
 </script>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
@@ -135,11 +151,34 @@ var deleteConfirmState = {
                     <c:if test="${aprvFormSelectVO.formUseYn == 'N'}">미사용</c:if>
                 </div>
 			</div>
+			
 		</div>
 	</form>
     
-<div class="cell mb-10">
-    <span class="gray" style="font-weight: bold;">양식 파일</span>
+    <div class="mb-40" style="display: flex; align-items: flex-start; flex-direction: column; gap: 8px;">
+			    <div class="emp-info-label" style="font-size: 15px; color: #495057; font-weight: 700; width: 100%;">
+			        양식 설명
+			    </div>
+			    
+			    <div class="emp-info-value" style="
+			        width: 100%;
+			        box-sizing: border-box;
+			        padding: 16px 20px;
+			        background-color: #f8fafc;
+			        border: 1px solid #e2e8f0;
+			        border-radius: 8px;
+			        white-space: pre-wrap;
+			        line-height: 1.6;
+			        color: #334155;
+			        font-size: 14px;
+			        letter-spacing: -0.3px;
+			    ">${aprvFormSelectVO.formExplain}</div>
+			</div>
+    
+<div class="cell mb-10 mt-30"> <span class="gray" style="font-weight: bold;">양식 파일</span>
+
+
+
 </div>
         
 <div class="cell mb-40">
@@ -176,7 +215,12 @@ var deleteConfirmState = {
             <a href="./delete?formNo=${aprvFormSelectVO.formNo}" class="btn btn-negative" id="btnDeleteConfirm">삭제하기</a>
         </c:if>
 
-        <a href="./list" class="btn btn-neutral">목록</a>
+		<c:if test="${param.keyword==null}">
+	        <a href="./list" class="btn btn-neutral">목록</a>
+		</c:if>
+		<c:if test="${param.keyword!=null}">
+	        <a href="./list?column=${param.column}&keyword=${param.keyword}" class="btn btn-neutral">목록</a>
+		</c:if>
     </div>
 
 </div>

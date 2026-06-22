@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
  	
- // 3. 헤더 추가창 숨겼다가 보이게 (직책)
+ 	// 3. 헤더 추가창 숨겼다가 보이게 (직책)
     if (btnTogglePositionWrite && positionWriteArea) {
     	btnTogglePositionWrite.addEventListener('click', function() {
             // 현재 숨겨져 있으면 보이고, 보이고 있으면 숨기기 (토글)
@@ -142,6 +142,83 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+ 
+ 		//상태객체
+		var state = {
+			headNameValid: false,//형식 검사 반영
+			headTypeValid : false,
+			
+			ok : function(){
+                return Object.values(this)
+                .filter(v => typeof v == "boolean")
+                .every(v => v == true);
+            }
+        }
+		$("[name=headName]").on("blur", function(){
+	        state.headNameValid = $(this).val().trim().length > 0;
+	    });
+		 	
+	    $("[name=headType]").on("blur", function(){
+	        state.headTypeValid = $(this).val().trim().length > 0;
+	    });
+ 		 
+		$(".form-check").on("submit", function(e){
+	    	$(this).find("select[name]").trigger("input");
+	        $(this).find("input[name], textarea[name]").trigger("blur");
+	    	
+	    	if(!state.headNameValid) {
+	    		showAjaxAlarm('헤드명을 입력하세요', 'btn-negative', '[name=headName]', 'left');
+	            $("[name=headName]").focus();
+	            return false;
+	    	}
+	    	
+	    	if(!state.headTypeValid) {    		
+	    		showAjaxAlarm('헤드타입을 입력하세요', 'btn-negative', '[name=headType]', 'left');
+	            $("[name=headType]").focus();
+	            return false;
+	    	}
+	    	
+	    	return state.ok();
+	  	});
+
+		//상태객체
+		var positionState = {
+			empPositionNameValid: false,
+			empPositionLevelValid: false,
+		
+			ok : function(){
+                return Object.values(this)
+                .filter(v => typeof v == "boolean")
+                .every(v => v == true);
+            }
+        }
+		$("[name=empPositionName]").on("blur", function(){
+			positionState.empPositionNameValid = $(this).val().trim().length > 0;
+	    });
+		 	
+	    $("[name=empPositionLevel]").on("blur", function(){
+	    	positionState.empPositionLevelValid = $(this).val().trim().length > 0;
+	    });
+ 		 
+		$(".form-check").on("submit", function(e){
+	    	$(this).find("select[name]").trigger("input");
+	        $(this).find("input[name], textarea[name]").trigger("blur");
+	    	
+	    	if(!positionState.empPositionNameValid) {
+	    		showAjaxAlarm('직책명을 입력하세요', 'btn-negative', '[name=empPositionName]', 'left');
+	            $("[name=empPositionName]").focus();
+	            return false;
+	    	}
+	    	
+	    	if(!positionState.empPositionLevelValid) {    		
+	    		showAjaxAlarm('직책등급을 입력하세요', 'btn-negative', '[name=empPositionLevel]', 'left');
+	            $("[name=empPositionLevel]").focus();
+	            return false;
+	    	}
+	    	
+	    	return positionState.ok();
+	  	});
+		
 });
 </script>
 <div class="container w-100 mt-20 mb-50 background-card">
@@ -154,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		</div>
 	</div>
 	
-	<div class="container w-1200 mt-20 mb-50">
+	<div class="container w-100 mt-20 mb-50">
 		<div class="cell flex-area" style="align-items: flex-start;">
 			<div class="cell w-50 me-10 card p-20">
 				<div class="cell">
@@ -203,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				<hr>
 				<div id="headWriteArea" style="display: none;">
 					<div class="cell">
-						<form action="/admin/headWrite" method="post">
+						<form action="/admin/headWrite" method="post" class="form-check">
 					    	<div class="cell">
 								<label>헤더 이름</label> <input type="text" name="headName" class="w-100">
 							</div>
@@ -229,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
 					<span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
 					</h1>
 					
-					<form id="empPositionDeleteForm" action="/admin/empPositionDelete" method="POST">
+					<form id="empPositionDeleteForm" action="/admin/empPositionDelete" method="POST" class="form-check">
 						<div class="cell list-area">
 							<table class="table">
 							    <thead>
@@ -269,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
 					<hr>
 					<div id="positionWriteArea" style="display: none;">
 						<div class="cell">
-							<form action="/admin/empPositionWrite" method="post">
+							<form action="/admin/empPositionWrite" method="post" class="form-check">
 						    	<div class="cell">
 									<label>직급명</label> <input type="text" name="empPositionName" class="w-100">
 								</div>

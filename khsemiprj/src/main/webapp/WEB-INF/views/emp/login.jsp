@@ -46,7 +46,7 @@ $(function() {
 		</div>
 		<div class="cell">
 			<label>아이디</label>
-			<input type="text" name="empId" maxlength="20" class="field w-100" />
+			<input type="text" name="empId" maxlength="20" class="field w-100"  autocomplete="off"/>
 		</div>
 		<div class="cell">
 			<label>비밀번호</label>
@@ -55,7 +55,7 @@ $(function() {
 			<i class="fa-solid fa-eye-slash"></i> 
 			<i class="fa-solid fa-eye"></i>
 			</label>
-			<input type="password" name="empPassword" maxlength="16" class="field w-100" />
+			<input type="password" name="empPassword" maxlength="16" class="field w-100" autocomplete="off"/>
 		</div>
 		
 		<div class="cell">

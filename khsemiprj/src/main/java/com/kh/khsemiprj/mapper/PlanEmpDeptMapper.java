@@ -25,6 +25,7 @@ public class PlanEmpDeptMapper implements RowMapper<PlanEmpDeptVO> {
 				.planType(rs.getString("plan_type"))
 				.empName(rs.getString("emp_name"))
 				.deptName(rs.getString("dept_name"))
+				.headType(rs.getString("head_type"))
 			.build();
 	}
 	

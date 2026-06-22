@@ -21,6 +21,86 @@
 
 <script>
 $(function() {
+    var menuKey = window.location.pathname; 
+    var urlParams = new URLSearchParams(window.location.search);
+
+    // 1. 현재 페이지 경로와 이전 페이지(referrer) 경로가 완전히 똑같은지 검사
+    var isSameListMenu = false;
+    if (document.referrer) {
+        var referrerUrl = new URL(document.referrer);
+        if (referrerUrl.pathname === window.location.pathname && !urlParams.toString()) {
+            isSameListMenu = true; // 목록 메뉴를 다시 직접 누른 경우
+        }
+    }
+
+    // 2. URL에 파라미터가 있으면 그걸 무조건 스토리지에 저장 (퇴사자 조건 맞춤)
+    if (urlParams.toString()) {
+        if (urlParams.has('column')) sessionStorage.setItem(menuKey + '_column', urlParams.get('column'));
+        else sessionStorage.removeItem(menuKey + '_column');
+
+        if (urlParams.has('empName')) sessionStorage.setItem(menuKey + '_empName', urlParams.get('empName'));
+        else sessionStorage.removeItem(menuKey + '_empName');
+
+        if (urlParams.has('startDate')) sessionStorage.setItem(menuKey + '_startDate', urlParams.get('startDate'));
+        else sessionStorage.removeItem(menuKey + '_startDate');
+
+        if (urlParams.has('endDate')) sessionStorage.setItem(menuKey + '_endDate', urlParams.get('endDate'));
+        else sessionStorage.removeItem(menuKey + '_endDate');
+    } 
+    // 3. URL에 파라미터가 비어있을 때 분기 처리 (복구 또는 초기화)
+    else {
+        if (isSameListMenu) {
+            sessionStorage.removeItem(menuKey + '_column');
+            sessionStorage.removeItem(menuKey + '_empName');
+            sessionStorage.removeItem(menuKey + '_startDate');
+            sessionStorage.removeItem(menuKey + '_endDate');
+        } else {
+            var savedColumn = sessionStorage.getItem(menuKey + '_column');
+            var savedEmpName = sessionStorage.getItem(menuKey + '_empName');
+            var savedStartDate = sessionStorage.getItem(menuKey + '_startDate');
+            var savedEndDate = sessionStorage.getItem(menuKey + '_endDate');
+
+            if (savedColumn || savedEmpName || savedStartDate || savedEndDate) {
+                var qs = [];
+                if(savedColumn) qs.push('column=' + savedColumn);
+                if(savedEmpName) qs.push('empName=' + encodeURIComponent(savedEmpName));
+                if(savedStartDate) qs.push('startDate=' + savedStartDate);
+                if(savedEndDate) qs.push('endDate=' + savedEndDate);
+                
+                location.href = './exitList?' + qs.join('&');
+                return;
+            }
+        }
+    }
+
+    // 4. 검색 조건(column) 변경 시 입력창 활성화/비활성화 스위칭 로직
+    $("[name=column]").on("change", function() {
+        var column = $(this).val();
+        if (column === "emp_name") {
+            $(".text-search-zone").show().find("input").prop("disabled", false);
+            $(".date-search-zone").hide().find("input").prop("disabled", true);
+        } else if (column === "emp_exit_time" || column === "aprv_etime") {
+            $(".text-search-zone").hide().find("input").prop("disabled", true);
+            $(".date-search-zone").css("display", "inline-flex").find("input").prop("disabled", false);
+        }
+    });
+
+    // 최초 로드 시 검색 조건창 세팅 트리거
+    $("[name=column]").trigger("change");
+
+    // 5. 초기화 버튼 클릭 시 세션 날리고 새로고침
+    $("#reset-btn").on("click", function() {
+        sessionStorage.removeItem(menuKey + '_column');
+        sessionStorage.removeItem(menuKey + '_empName');
+        sessionStorage.removeItem(menuKey + '_startDate');
+        sessionStorage.removeItem(menuKey + '_endDate');
+        location.href = './exitList';
+    });
+});
+</script>
+
+<script>
+$(function() {
     // 검색 조건 변경 시 입력창 스위칭 이벤트
     $("[name=column]").on("change", function() {
         var column = $(this).val();
@@ -56,9 +136,9 @@ $(function() {
 });
 </script>
 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
-    <div class="container w-1000 mt-20 mb-50 background-card">
+    <div class="container w-100 mt-20 mb-50 background-card">
       <div class="cell center flex-area">
-		<div class="w-20 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 		            퇴사자 조회
@@ -66,9 +146,9 @@ $(function() {
 		        </h1>
 			</div>
         </div>
-
-
-        <div class="cell flex-area flex-vertical" style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+		
+        <div class="cell flex-area flex-vertical background-fill">
+            
             <form action="exitList" method="get" class="w-100" autocomplete="off">
 
                 <input type="hidden" name="size" value="${pageVO.size}">
@@ -94,13 +174,16 @@ $(function() {
                     <button type="submit" class="btn btn-positive ms-10"><i class="fa-solid fa-magnifying-glass"></i>검색</button>
                     
                     <c:if test="${not empty param.empName or (not empty pageVO.startDate and not empty pageVO.endDate)}">
-                        <button type="button" class="btn btn-neutral" id="reset-btn"><i class="fa-solid fa-xmark red" style="width:102px"></i>초기화</button>
+                        <button type="button" class="btn btn-neutral" id="reset-btn"><i class="fa-solid fa-xmark" style="width:25px"></i>초기화</button>
                     </c:if>
                 </div>
             </form>
         </div>
 	</div>
         <div class="cell">
+        	<div class="right" style="font-size: 14px; color: #666;">
+		    	<strong style="color: #007bff;">${pageVO.count}</strong>명의 퇴사자 및 퇴사예정자
+			</div>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -141,7 +224,6 @@ $(function() {
                 </tbody>
             </table>
         </div>
-
         <div class="cell pagination mt-30">
             
             <%-- [이전 블록] 이동 버튼 --%>

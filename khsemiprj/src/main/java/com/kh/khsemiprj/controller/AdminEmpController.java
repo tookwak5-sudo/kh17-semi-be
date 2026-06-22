@@ -79,6 +79,10 @@ public class AdminEmpController {
 		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
 		model.addAttribute("positionList", positionList);
 		
+		List<DeptDto> deptList = deptDao.deptList();
+		model.addAttribute("deptList", deptList);
+		
+		
 		return "admin/emp/detail";
 	}
 	

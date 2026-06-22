@@ -34,10 +34,59 @@
 	    height: 36px !important;
 	}
 </style>
+<!-- 목록->검색->다른 페이지->목록 경로에서 검색어가 안 남는 현상 제거(목록을 한 번 더 누르면 제거됨) -->
 
+<script>
+$(function() {
+    // ==========================================
+    // 1. 검색 조건 세션 스토리지 유지 및 복구 로직
+    // ==========================================
+    var menuKey = window.location.pathname; 
+    var urlParams = new URLSearchParams(window.location.search);
+
+    // 현재 페이지 경로와 이전 페이지(referrer) 경로가 완전히 똑같은지 검사
+    var isSameListMenu = false;
+    if (document.referrer) {
+        var referrerUrl = new URL(document.referrer);
+        // 이전 주소와 현재 주소의 path가 같고, 현재 주소에 파라미터가 아예 없는 경우
+        if (referrerUrl.pathname === window.location.pathname && !urlParams.toString()) {
+            isSameListMenu = true; // 목록 메뉴를 다시 직접 누른 경우
+        }
+    }
+
+    // URL에 파라미터가 있으면 그걸 무조건 스토리지에 저장
+    if (urlParams.toString()) {
+        if (urlParams.has('column')) sessionStorage.setItem(menuKey + '_column', urlParams.get('column'));
+        else sessionStorage.removeItem(menuKey + '_column');
+
+        if (urlParams.has('keyword')) sessionStorage.setItem(menuKey + '_keyword', urlParams.get('keyword'));
+        else sessionStorage.removeItem(menuKey + '_keyword');
+    } 
+    // URL에 파라미터가 비어있을 때 분기 처리
+    else {
+        if (isSameListMenu) {
+            // 목록 화면에서 메뉴를 한 번 더 클릭한 경우 -> 싹 초기화
+            sessionStorage.removeItem(menuKey + '_column');
+            sessionStorage.removeItem(menuKey + '_keyword');
+        } else {
+            // 상세 정보(detail) 보고 돌아왔는데 스토리지에 저장된 값이 있는 경우 -> 복구
+            var savedColumn = sessionStorage.getItem(menuKey + '_column');
+            var savedKeyword = sessionStorage.getItem(menuKey + '_keyword');
+
+            if (savedColumn || savedKeyword) {
+                var qs = [];
+                if(savedColumn) qs.push('column=' + savedColumn);
+                if(savedKeyword) qs.push('keyword=' + encodeURIComponent(savedKeyword));
+                
+                location.href = './list?' + qs.join('&');
+                return;
+            }
+        }
+    }
+</script>
 <div class="container w-90 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-		<div class="w-20 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 		            사원 관리
@@ -46,7 +95,7 @@
 			</div>
         </div>
         
-        <div class="w-60 flex-area flex-center">
+        <div class="cell flex-area flex-vertical background-fill">
 			<form action="./list" method="get" style="display: flex; align-items: center; gap: 8px;">
 				<select name="column" class="field">
 					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
@@ -77,7 +126,6 @@
             </button>
        	</div>
        	<div id="waitListArea" style="display: none; margin-top: 0px;">
-<!-- 				<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3> -->
 					<table class="table" style="background-color: white; margin-bottom: 0;">
 						<thead>
 							<tr style="border-bottom: 2px solid #e9ecef;">
@@ -88,14 +136,19 @@
 						</thead>
 						<tbody align="center">
 							<c:forEach var="waitEmp" items="${wList}">
-							<tr>
-								<td style="padding: 12px 0;">${waitEmp.empId}</td>
-								<td style="padding: 12px 0;">${waitEmp.empName}</td>
-								<td>
-									<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
-									<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative btn-reject-action" style="text-decoration: none; padding: 6px 12px; font-size: 18px;">거절</a>
-								</td>
-							</tr>
+								<c:if test="${param.keyword==null}">
+									<tr onclick="location.href='detail?empId=${waitEmp.empId}'">
+								</c:if>
+								<c:if test="${param.keyword!=null}">
+									<tr onclick="location.href='detail?column-${param.column}&keyword=${param.keyword}&empId=${waitEmp.empId}'">
+								</c:if>
+									<td style="padding: 12px 0;">${waitEmp.empId}</td>
+									<td style="padding: 12px 0;">${waitEmp.empName}</td>
+									<td>
+										<button type="button" class="btn btn-positive" onclick="event.stopPropagation(); openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
+										<a class="btn btn-negative btn-reject-action" onclick="event.stopPropagation(); rejectConfirm('${waitEmp.empId}');" style="text-decoration: none; padding: 6px 12px; font-size: 18px;">거절</a>
+									</td>
+								</tr>
 							</c:forEach>
 						</tbody>
 					</table>
@@ -104,25 +157,6 @@
 		<hr class="mt-20 mb-30">
 		</c:if>
 				
-				
-		<!-- 기존 검색창 -->
-		<%-- <div class="cell" style="display: flex; justify-content: flex-end;">
-			<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
-				<select name="column" class="field">
-					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
-					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>이름</option>
-					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
-					<option value="emp_position_name" ${param.column == 'emp_position_name' ? 'selected' : ''}>직급</option>
-				</select>
-				<input type="text" name="keyword" class="field-sm" value="${param.keyword}">
-				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
-					<i class="fa-solid fa-magnifying-glass"></i>
-					<span>검색</span>
-				</button>
-			</form>
-	</div> --%>
-	
-	
 	<c:if test="${param.column != null && param.keyword != null && param.keyword != ''}">
 	<div class="cell">
 		<h3>총 <span class="red">${list.size()}</span>명의 회원이 검색되었습니다</h3>
@@ -144,7 +178,12 @@
 				<tbody align="center">
 					<c:forEach var="empPositionDto" items="${list}">
 					
-					<tr onclick="location.href='detail?empId=${empPositionDto.empId}'">
+					<c:if test="${param.keyword==null}">
+						<tr onclick="location.href='detail?empId=${empPositionDto.empId}'">
+					</c:if>
+					<c:if test="${param.keyword!=null}">
+						<tr onclick="location.href='detail?column=${param.column}&keyword=${param.keyword}&empId=${empPositionDto.empId}'">
+					</c:if>
 						<td>${empPositionDto.empId}</td>
 						<td>${empPositionDto.empName}</td>
 						<td>${empPositionDto.deptName}</td>
@@ -272,6 +311,7 @@
     });
     
     function checkApproveForm() {
+    	e.stopPropagation();
         var hireDate = document.querySelector('[name="empHireDate"]');
         var deptNo = document.querySelector('[name="deptNo"]');
         var positionNo = document.querySelector('[name="empPositionNo"]');
@@ -309,15 +349,22 @@
     $(function () {
         // id(#)가 아닌 클래스(.) 기반으로 이벤트를 잡아야 모든 행에서 작동합니다.
         $(document).on("click", ".btn-reject-action", function(e){
+        	e.stopPropagation();
             e.preventDefault(); // 링크 이동을 일단 막음
             
             var rejectUrl = $(this).attr("href"); // 클릭한 버튼의 거절 URL 수집
             
-            openConfirm(
-                '승인 거절하시겠습니까?', 
-                "location.href = '" + rejectUrl + "';"
-            );
+            openConfirm('승인 거절하시겠습니까?', 
+                "location.href = 'reject?empId='"+${waitEmp.empId} + "';");
         });	
     });
+    
+    function rejectConfirm(empId) {
+    	openConfirm('승인 거절하시겠습니까?', "rejectOk('" + empId + "');");
+	}
+    
+    function rejectOk(empId) {
+    	location.href = "reject?empId=" + empId;
+    }
 </script>
 

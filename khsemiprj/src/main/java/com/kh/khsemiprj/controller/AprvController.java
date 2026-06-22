@@ -96,6 +96,8 @@ public class AprvController {
 		//System.out.println(pageForAprvVO);
 		List<AprvDetailVO> aprvList = aprvDao.selectList(pageForAprvVO, loginId);
 		model.addAttribute("aprvList", aprvList);
+		System.out.println("count = " + count);
+		System.out.println("aprvList = " + aprvList);
 		return "aprv/list";
 	}
 	
@@ -111,7 +113,7 @@ public class AprvController {
 		model.addAttribute("leaveRemain", leaveRemain);
 		
 		// 1. 부서 목록 가져오기
-		List<DeptVO> list = deptDao.selectListAll();
+		List<DeptVO> list = deptDao.selectListY();
  		
  		// 2. 부서 목록 트리구조로 변경
  		List<DeptVO> rootList = new ArrayList<>();
@@ -312,7 +314,7 @@ public class AprvController {
 		model.addAttribute("leaveRemain", leaveRemain);
 		
 		// 1. 부서 목록 가져오기
-		List<DeptVO> list = deptDao.selectListAll();
+		List<DeptVO> list = deptDao.selectListY();
  		
  		// 2. 부서 목록 트리구조로 변경
  		List<DeptVO> rootList = new ArrayList<>();

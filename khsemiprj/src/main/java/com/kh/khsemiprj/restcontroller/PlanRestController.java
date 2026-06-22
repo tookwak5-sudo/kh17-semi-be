@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kh.khsemiprj.dao.AprvHeadDao;
 import com.kh.khsemiprj.dao.PlanDao;
+import com.kh.khsemiprj.dto.AprvHeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.service.PlanService;
 
@@ -24,6 +26,8 @@ public class PlanRestController {
 	private PlanDao planDao;
 	@Autowired
 	private PlanService planService;
+	@Autowired
+	private AprvHeadDao aprvHeadDao;
 	
 	// 등록
 	// 유형 및 헤더 목록을 가져오는 메서드 추가
@@ -42,7 +46,6 @@ public class PlanRestController {
 		planDto.setPlanNo(planNo);
 		
 		planDto.setPlanEmpId(loginId);
-		
 		planDao.insert(planDto);
 	}
 	

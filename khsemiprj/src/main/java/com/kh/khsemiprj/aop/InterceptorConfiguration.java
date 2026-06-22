@@ -28,9 +28,8 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(pageLogInterceptor)
 		.addPathPatterns("/**")
-		.excludePathPatterns("/emp/login", "/admin/logAccess/list","/css/**","/js/**", "/images/**")
-		;
-		
+		.excludePathPatterns("/emp/login", "/admin/logAccess/**","/css/**","/js/**", "/images/**");													
+											
 		//조회수 증가 처리를 하는 인터셉터
 		registry.addInterceptor(boardReadInterceptor)
 				.addPathPatterns("/board/detail");

@@ -106,6 +106,10 @@ $(function() {
         }
     });
 
+    // 기존 데이터 세팅 상태값 보정
+    if($("[name=formName]").val().trim().length > 0) state.formNameValid = true;
+    if($("[name=formExplain]").val().trim().length > 0) state.formExplainValid = true;
+
     $("[name=formName]").on("blur", function(){
         var value = $(this).val().trim(); 
         if(value.length == 0){ 
@@ -128,29 +132,28 @@ $(function() {
     	$(this).find("select[name]").trigger("input");
         $(this).find("input[name], textarea[name]").trigger("blur");
     	
-        var canSubmit = false;
-
         if(state.formNameValid == false) {
-            //window.alert("양식명을 입력하세요.");
             showAjaxAlarm('양식명을 입력하세요', 'btn-negative', '[name=formName]', 'left');
             $("[name=formName]").focus();
-            return canSubmit; 
+            return false; 
         }
 
         if(state.formExplainValid == false) {
-            //window.alert("양식 내용을 입력하세요.");
             showAjaxAlarm('양식 내용을 입력하세요', 'btn-negative', '[name=formExplain]', 'left');
             $("[name=formExplain]").focus();
-            return canSubmit; 
+            return false; 
         }
-
-        canSubmit = true;
-        return canSubmit;
+		
+        // 세션스토리지 오타 전면 수정 완료
+        sessionStorage.setItem('formEdited', 'true');
+        
+        return true;
     });
     
     $(".preview-input").trigger("change");
 }); 
 </script>
+
 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
 <div class="container w-800 mt-20 mb-50 background-card">
 
@@ -169,84 +172,72 @@ $(function() {
 			<label class="font-bold" style="color: #666;">양식 분류</label>
 		</div>
 		<div class="cell mb-20">
-
 			<div class="cell mb-20">
-
-				<select name="head_name" class="input w-100"
-					style="border: 1px solid #ccc; padding: 10px;">
+				<select name="head_name" class="input w-100" style="border: 1px solid #ccc; padding: 10px;">
 					<c:forEach var="head" items="${headList}">
-						<option value="${head.headName}"
-							${findHeadName.headName == head.headName ? 'selected' : ''}>
-							${head.headName}</option>
+						<option value="${head.headName}" ${findHeadName.headName == head.headName ? 'selected' : ''}>
+							${head.headName}
+						</option>
 					</c:forEach>
 				</select> 
 				
-				<select name="head_type" class="input w-100"
-					style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+				<select name="head_type" class="input w-100" style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
 					<c:forEach var="type" items="${typeList}">
-						<option value="${type.headType}"
-							${findHeadType.headType == type.headType ? 'selected' : ''}>
-							${type.headType}</option>
+						<option value="${type.headType}" ${findHeadType.headType == type.headType ? 'selected' : ''}>
+							${type.headType}
+						</option>
 					</c:forEach>
 				</select>
 			</div>
 		</div>
 
-
-		<!--         pk라 리드온리 있습니다. -->
 		<div class="cell mb-20">
-			<input type="hidden" name="formNo" value="${aprvFormDto.formNo}"
-				class="input w-100" readonly
-				style="background-color: #f8f9fa; border: 1px solid #ccc; padding: 10px;">
+			<input type="hidden" name="formNo" value="${aprvFormDto.formNo}" class="input w-100" readonly style="background-color: #f8f9fa; border: 1px solid #ccc; padding: 10px;">
 		</div>
 
 		<div class="cell mb-10">
 			<label class="font-bold" style="color: #666;">양식명</label>
 		</div>
 		<div class="cell mb-20">
-			<input type="text" name="formName" value="${aprvFormDto.formName}"
-				class="input w-100"
-				style="border: 1px solid #ccc; padding: 10px;">
+			<input type="text" name="formName" value="${aprvFormDto.formName}" class="input w-100" style="border: 1px solid #ccc; padding: 10px;">
 		</div>
 
 		<div class="cell mb-10">
 			<label class="font-bold" style="color: #666;">양식 설명</label>
 		</div>
 		<div class="cell mb-20">
-			<textarea name="formExplain" class="input w-100"
-				style="min-height: 150px; resize: vertical; border: 1px solid #ccc; padding: 10px;">${aprvFormDto.formExplain}</textarea>
+			<textarea name="formExplain" class="input w-100" style="min-height: 150px; resize: vertical; border: 1px solid #ccc; padding: 10px;">${aprvFormDto.formExplain}</textarea>
 		</div>
 
 		<div class="cell mb-20 flex-area" style="align-items: center;">
-			<label class="font-bold" style="color: #666; margin-right: 20px;">양식
-				사용 여부</label> <input type="checkbox" name="formUseYn" value="Y"
-				<c:if test="${aprvFormDto.formUseYn == 'Y'}">checked</c:if>>
+			<label class="font-bold" style="color: #666; margin-right: 20px;">양식 사용 여부</label> 
+			<input type="checkbox" name="formUseYn" value="Y" <c:if test="${aprvFormDto.formUseYn == 'Y'}">checked</c:if>>
 		</div>
 
 		<div class="cell mb-10">
 			<label class="font-bold" style="color: #666;">첨부</label>
 			<c:if test="${attachNo != null}">
-				<span style="font-size: 13px; color: #ff1744; margin-left: 10px;">(※
-					새 파일을 첨부하면 기존 파일은 삭제되고 덮어씌워집니다.)</span>
+				<span style="font-size: 13px; color: #ff1744; margin-left: 10px;">(※ 새 파일을 첨부하면 기존 파일은 삭제되고 덮어씌워집니다.)</span>
 			</c:if>
 		</div>
 		<div class="cell mb-40">
     		<c:if test="${attachNo != null}">
        			 <input type="hidden" name="attachNo" value="${attachNo}">
     		</c:if>
-    			<input type="file" name="attach" class="input w-100 preview-input"
-        			style="display: none;">
+   			<input type="file" name="attach" class="input w-100 preview-input" style="display: none;">
 		</div>
 		
 		<div class="cell file-info-area"></div>
 		
-
-		<div class="cell right">
-			<button type="submit" class="btn"
-				style="background-color: #556b82; color: white; border: none; padding: 10px 30px; font-size: 16px;">수정하기</button>
-		</div>
+		<div class="flex-area" style="display: flex; justify-content: flex-end; gap: 10px; width: 100%;">
+			<a href="./detail?formNo=${aprvFormDto.formNo}" class="btn btn-neutral" style="border: 1px solid #ccc; padding: 10px 30px; font-size: 16px; text-decoration: none;">
+			   취소하기
+			</a>
+			<button type="submit" class="btn" style="background-color: #556b82; color: white; border: none; padding: 10px 30px; font-size: 16px; cursor: pointer;">
+				수정하기
+			</button>
+		</div>	
 	</form>
-
 
 </div>
 </c:if>

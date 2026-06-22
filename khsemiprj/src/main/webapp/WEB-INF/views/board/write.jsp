@@ -28,7 +28,7 @@
 	<div class="cell mt-0">
 		<select name="boardHead" class="field select-head">
 			<option value="">선택 안함</option>
-			<c:if test="${sessionScope.empGrade == '0'}">
+			<c:if test="${sessionScope.empGrade == '2'}">
 				<option value="공지">공지</option>
 			</c:if>
 			<option value="자유">자유</option>

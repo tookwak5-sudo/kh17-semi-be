@@ -20,6 +20,12 @@ public class DeptDao {
 	@Autowired
 	private DeptVOMapper deptVOMapper;
 	
+	public int sequence() {
+		String sql = "select dept_seq.nextval from dual";
+		int nextNo = jdbcTemplate.queryForObject(sql, int.class);
+		return nextNo;
+	}
+	
 	//부서 등록
 	public void insert(DeptDto deptDto) {
 		
@@ -45,6 +51,12 @@ public class DeptDao {
 	}
 	
 	public List<DeptVO> selectListAll() {
+		String sql = "select * from dept order by dept_name asc";
+		Object[] params = {  };
+		return jdbcTemplate.query(sql, deptVOMapper, params);
+	}
+	
+	public List<DeptVO> selectListY() {
 		String sql = "select * from dept where dept_use_yn = 'Y' order by dept_name asc";
 		Object[] params = {  };
 		return jdbcTemplate.query(sql, deptVOMapper, params);

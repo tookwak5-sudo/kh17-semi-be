@@ -54,6 +54,38 @@ input[type="checkbox"]:checked + label::after {
 </style>
 
 <script>
+$(function(){
+    $("#btnInsertConfirm").on("click", function(e){
+        e.preventDefault(); 
+        var insertUrl = $(this).attr("href"); 
+        
+        
+        openConfirm(
+            '정말 등록 하시겠습니까?', 
+            'ajaxInsert("' + insertUrl + '");'
+        );
+    });
+});
+
+function ajaxInsert(url) {
+    $.ajax({
+        url: url,
+        type: 'GET', 
+        success: function(response) {
+            sessionStorage.setItem('formInserted', 'true');
+            
+            setTimeout(function() {
+                location.href = './list'; 
+            }, 500);
+        },
+        error: function() {
+            openAlert("등록 처리 중 오류가 발생했습니다.");
+        }
+    });
+}
+</script>
+
+<script>
 $(function() {
     var state = {
         formNameValid: false,
@@ -210,6 +242,7 @@ $(function() {
         }
 
         canSubmit = true;
+        sessionStorage.setItem('formInserted', 'true');
         return canSubmit;
     });
 });

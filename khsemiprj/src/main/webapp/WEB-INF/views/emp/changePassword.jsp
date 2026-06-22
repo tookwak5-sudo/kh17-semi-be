@@ -169,7 +169,7 @@ $(function() {
 });
 </script>
 <form action="./changePassword" method="post" autocomplete="off" class="password-change-form">
-	<div class="container w-500 mt-50 mb-50">
+	<div class="container w-500 mt-20 mb-50 background-card">
 		<div class="cell center">
 			<h1>비밀번호 변경</h1>
 		</div>
@@ -217,10 +217,10 @@ $(function() {
 				<i class="fa-solid fa-key"></i> <span>비밀번호 변경하기</span>
 			</button>
 		</div>
+		<a href="./mypage" class="btn btn-negative w-100 mt-10">
+				<span>취소하고 마이페이지로 돌아가기</span>			
+		</a>
 		
-		<div class="cell center mt-10">
-			<a href="./mypage" class="link">취소하고 마이페이지로 돌아가기</a>
-		</div>
 	</div>
 </form>
 <jsp:include page="/WEB-INF/views/template/footer.jsp" />

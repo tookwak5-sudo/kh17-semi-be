@@ -249,20 +249,22 @@ $(function() {
     });
     // 인증메일 보내기 버튼
     $(".btn-cert-send").on("click", function(){
-        var empEmail = $("[name=empEmail]").val();
-        if(state.empEmailValid == false) return;
-		
-     	// 비어있으면 막기
-        if(empEmail.length === 0) {
-            alert("이메일을 입력해주세요.");
-            return;
-        }
-        
-        // 이미 유효성 검사에서 실패했으면 막기
-        if(state.empEmailValid == false) {
-            alert("이메일 형식을 확인하거나 중복 검사를 통과해야 합니다.");
-            return;
-        }
+        var $emailInput = $("[name=empEmail]");
+    	var empEmail = $emailInput.val();
+    	
+    	// 이메일 칸이 비어있는 지 확인
+		if(empEmail.trim().length === 0) {
+			$emailInput.removeClass("success fail").addClass("fail").attr("data-error", "3");
+			$emailInput.focus();
+			state.emailValid = false;
+			return;
+		}
+		// 2. 유효성/중복 검사 통과 여부 확인
+	    if (state.empEmailValid == false) {
+	        // 이미 blur 이벤트에서 data-error가 1이나 2로 설정되어 있을 것임
+	        $emailInput.focus();
+	        return;
+	    }
         
         $.ajax({
             url:"/rest/cert/send",
@@ -432,6 +434,7 @@ $(function() {
 		            <div class="fail-feedback w-100 mt-5">
 		                <div>이메일이 형식에 맞지 않습니다.</div>
 		                <div>중복된 이메일입니다.</div>
+		                <div>이메일을 입력해주세요.</div>
 		            </div>
 		        </div>
 		        

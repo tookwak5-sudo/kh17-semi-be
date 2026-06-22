@@ -26,7 +26,7 @@ public class PlanHeadMapper implements RowMapper<PlanHeadVO> {
 				.planEdate(rs.getString("plan_edate"))
 				.planWtime(rs.getTimestamp("plan_Wtime"))
 				.planType(rs.getString("plan_type"))
-				.headNo(rs.getInt("head_name"))
+				.headNo(rs.getInt("head_no"))
 				.headName(rs.getString("head_name"))
 				.headType(rs.getString("head_type"))
 			.build();

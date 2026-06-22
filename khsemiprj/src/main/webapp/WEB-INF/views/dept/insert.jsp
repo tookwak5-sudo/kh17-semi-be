@@ -53,17 +53,59 @@ input[type="checkbox"]:checked + label::after {
 }
 </style>
 
+<script>
+
+	//유효성 검사 상태 객체
+	var state = {
+		deptNameValid: false,
+		deptParentNoValid: true,
+		deptUseYn: true,
+		ok: function(){
+			return Object.values(this)
+			.filter(v => typeof v==="boolean")
+			.every(v => v === true);
+		}
+	};
+	
+	$(function() {
+		
+		// 블러/체인지 이벤트 핸들러들
+	    $("[name=deptName]").on("input", function(){
+	        state.deptNameValid = $(this).val().trim().length > 0;
+	    });
+	    $("[name=deptParentNo]").on("change", function(){
+	        state.deptParentNoValid = $(this).val().trim().length > 0;
+	    });
+		
+		$(".form-check").on("submit", function(e){
+	    	$(this).find("select[name]").trigger("input");
+	        $(this).find("input[name], textarea[name]").trigger("blur");
+	        
+	        if(!state.deptNameValid) {
+	            showAjaxAlarm('부서 이름을 입력하세요', 'btn-negative', '[name=deptName]', 'left');
+	            $("[name=deptName]").focus();
+	            return false; 
+	        }
+	        
+	        return state.ok();
+	    });
+	});
+</script>
+
 <form action="./insert" autocomplete="off" method="post" class="form-check">
 
 	<div class="container w-400 mt-20 mb-50 background-card">
 		
-    	<div class="cell center">
-            <h1>부서 등록</h1>
-        </div>
-        <div class="cell">
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            부서등록
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+		</div>
+        <!-- <div class="cell">
         	<label>부서 번호<i class="fa-solid fa-asterisk red"></i></label>
         	<input type="text" inputmode="numeric" name="deptNo" class="field w-100" required>
-        </div>
+        </div> -->
         <div class="cell">
             <label>부서 이름 <i class="fa-solid fa-asterisk red"></i></label>
             <input type="text" name="deptName"
