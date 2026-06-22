@@ -224,7 +224,6 @@ $(function() {
                 </tbody>
             </table>
         </div>
-
         <div class="cell pagination mt-30">
             
             <%-- [이전 블록] 이동 버튼 --%>
