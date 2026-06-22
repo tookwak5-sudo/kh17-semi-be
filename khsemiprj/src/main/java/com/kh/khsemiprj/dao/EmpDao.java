@@ -115,6 +115,13 @@ public class EmpDao {
 		List<EmpDto> list = jdbcTemplate.query(sql, empMapper, params);
 		return list.isEmpty() ? null : list.get(0);
 	}
+	
+	//현재 비밀번호 삭제 후 임시비밀번호로 업데이트
+	public boolean updateTempPassword(EmpDto empDto) {
+		String sql = "update emp set emp_password = ? where emp_id = ?";
+		Object[] params = {empDto.getEmpPassword(), empDto.getEmpId()}; 
+		return jdbcTemplate.update(sql, params) > 0;
+	}
 
 	//프로필 이미지 찾기
 	public int searchProfile(String empId) {

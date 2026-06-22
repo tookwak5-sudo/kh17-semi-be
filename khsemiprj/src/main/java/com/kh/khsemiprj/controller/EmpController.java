@@ -33,6 +33,7 @@ import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.WhoAreYouException;
 import com.kh.khsemiprj.service.AttachService;
+import com.kh.khsemiprj.service.PasswordService;
 import com.kh.khsemiprj.vo.EmpPositionDeptVO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,6 +68,9 @@ public class EmpController {
 
 	@Autowired
 	private MemoDao memoDao;
+	
+	@Autowired
+	private PasswordService passwordService;
 	
 	@GetMapping("/login")
 	public String login() {
@@ -314,6 +318,9 @@ public class EmpController {
 			// 일치하는 회원이 없었을때
 			return "redirect:./findPassword?error";
 		} else {
+			
+			passwordService.sendTempPassword(empDto);
+			
 			model.addAttribute("empPassword", empDto.getEmpPassword());
 			return "emp/findPasswordResult";
 		}

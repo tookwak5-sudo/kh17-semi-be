@@ -491,12 +491,29 @@
 		    var headList = JSON.parse('${planHeadJson}');
             var options = "";
             for(var i = 0; i < headList.length; i++) {
-        		options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+            	if(headList[i].headType == "일반"){
+        			options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+            	}
             }
             //가져온 option을 헤더 select 아래에 append 
             $("select[name='planHeadNo']").empty().append(options);
 		    
 		    $(".calendarModal").show();
+		    
+		    var $startDate = $("#modal-body [name=planSdate]");
+		    var $endDate = $("#modal-body [name=planEdate]");
+		    
+		    new Lightpick({
+            	field: $startDate[0],
+                secondField: $endDate[0],
+                singleDate: false,
+                format: "YYYY-MM-DD",
+                firstDay: 7,
+                numberOfMonths: 2,
+                numberOfColumns: 2,
+                selectForward: true,
+                minDays: 1
+            })
 		});
 		
 		//목표 : 수정완료버튼을 누르면 ajax통신을 이용해 수정요청을 한 뒤 목록 갱신
@@ -548,7 +565,7 @@
 	            selectable: true,
 	            
 	            
-	       		select: function(info) { // select : 날짜 시간을 선택할 때 사용
+	       	select: function(info) { // select : 날짜 시간을 선택할 때 사용
 							       		
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
