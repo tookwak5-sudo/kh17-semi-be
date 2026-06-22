@@ -165,7 +165,16 @@
 			<div class="flex-area w-100">
 				<div class="w-33 aprv-info-row-split">
 					<div class="aprv-info-label">기안자</div>
-					<div class="aprv-info-value"><span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span></div>
+					<div class="aprv-info-value">
+						<c:choose>
+						<c:when test="${aprvDetailVO.aprvWriter == null || aprvDetailVO.aprvWriter == ''}">
+						<span class="gray">(탈퇴한 사원)</span>
+						</c:when>
+						<c:otherwise>
+						<span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span>
+						</c:otherwise>
+						</c:choose>
+					</div>
 				</div>
 				<div class="w-33 aprv-info-row-split">
 					<c:if test="${not empty aprvDetailVO.aprvWtime}">

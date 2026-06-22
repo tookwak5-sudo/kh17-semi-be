@@ -96,6 +96,8 @@ public class AprvController {
 		//System.out.println(pageForAprvVO);
 		List<AprvDetailVO> aprvList = aprvDao.selectList(pageForAprvVO, loginId);
 		model.addAttribute("aprvList", aprvList);
+		System.out.println("count = " + count);
+		System.out.println("aprvList = " + aprvList);
 		return "aprv/list";
 	}
 	

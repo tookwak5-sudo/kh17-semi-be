@@ -99,7 +99,16 @@
 							<c:otherwise>${aprvDetailVO.aprvStatus}</c:otherwise>
 							</c:choose>
 						</td>
-						<td class="left" style="padding-left:20px;"><a class="writer-name" data-id="${aprvDetailVO.aprvWriter}">[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</a></td>
+						<td class="left" style="padding-left:20px;">
+							<c:choose>
+							<c:when test="${aprvDetailVO.aprvWriter == null || aprvDetailVO.aprvWriter == ''}">
+							<span class="gray">(탈퇴한 사원)</span>
+							</c:when>
+							<c:otherwise>
+							<a class="writer-name" data-id="${aprvDetailVO.aprvWriter}">[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</a>
+							</c:otherwise>
+							</c:choose>
+						</td>
 						<td><fmt:formatDate value="${aprvDetailVO.aprvWtime}" pattern="yyyy-MM-dd HH:mm" /></td>
 					</tr>
 				</c:forEach>
