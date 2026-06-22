@@ -316,7 +316,7 @@ $(function() {
         var hireDate = document.querySelector('[name="empHireDate"]');
         var deptNo = document.querySelector('[name="deptNo"]');
         var positionNo = document.querySelector('[name="empPositionNo"]');
-        
+         
         if (!hireDate.value.trim()) {
             openAlert("입사일을 지정해 주세요.", "$('[name=deptNo]').focus();");
             //hireDate.focus();
