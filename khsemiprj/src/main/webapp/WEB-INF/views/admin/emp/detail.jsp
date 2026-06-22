@@ -7,6 +7,8 @@
 
 <script
 	src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
 	/* 기존 스타일 수정 및 추가 */
@@ -85,6 +87,29 @@
 			color: #739BED;
 			font-weight: 600;
 		}
+		
+	.select2-results__options {
+        max-height: 150px !important;
+        overflow-y: auto !important;
+    }
+    
+	.select2-container .select2-selection--single {
+	    height: 38px !important; /* 기존 field와 비슷한 높이로 설정 */
+	    border: 1px solid #ced4da !important; 
+	    border-radius: 6px !important;
+	    display: flex;
+	    align-items: center;
+	}
+	
+	/* 텍스트가 위아래 정중앙에 오도록 설정 */
+	.select2-container--default .select2-selection--single .select2-selection__rendered {
+	    line-height: 38px !important;
+	    padding-left: 10px !important;
+	}
+	
+	.select2-container--default .select2-selection--single .select2-selection__arrow {
+	    height: 36px !important;
+	}
 	</style>
 <div class="container w-100 mt-20 mb-50 background-card">
 	<div class="profile-info">
@@ -96,7 +121,7 @@
 			style="border-radius:50%; box-shadow:0 0 1px 0 black">
 	</div>
 	
-	<form action="edit" method="post" id="editForm">
+	<form action="edit" method="post" id="editForm" class="form-check">
 		<input type="hidden" name="empId" value="${empDto.empId}">
 		
 		<div class="cell mt-40 emp-info-card">
@@ -212,7 +237,7 @@
 		</div>
 	</form>
 </div>
-<div id="popUp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;">
+<div id="popUp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999;">
     <div style="background-color: white; width: 400px; margin: 15% auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <h3 class="mt-0 blue">사원 가입 승인</h3>
         
@@ -220,7 +245,7 @@
             사원 ID : <span id="targetEmpId" class="blue"></span>
         </div>
         
-        <form action="approve" method="post" style="display: flex; flex-direction: column; gap: 15px;" onsubmit="return checkApproveForm();">
+        <form id="formEmp" action="approve" method="post" style="display: flex; flex-direction: column; gap: 15px;" onsubmit="return checkApproveValidate();">
             <input type="hidden" name="empId" id="postEmpId">
             
             <div>
@@ -249,7 +274,7 @@
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="submit" class="btn btn-positive">입력 완료</button>
+                <button id="btnEmpPopup" type="submit" class="btn btn-positive">입력 완료</button>
                 <button type="button" class="btn btn-negative" onclick="closePopUp()">취소</button>
             </div>
         </form>
@@ -274,7 +299,7 @@
 		}
 	}
 	
-    // 주소 검사 로직
+    /* // 주소 검사 로직
     $("[name=empAddress2]").on("blur", function () {
         var empPost = $("[name=empPost]").val();
         var empAddress1 = $("[name=empAddress1]").val();
@@ -283,7 +308,9 @@
         var stable = $(this).prop("readonly");
         if(stable){
             $("[name=empPost],[name=empAddress1],[name=empAddress2]").removeClass("success fail");
-            state.empAddressValid = true;
+            formState.empPostValid = true;
+            formState.empAddress1Valid = true;
+            formState.empAddress2Valid = true;
             return;
         }
         
@@ -292,8 +319,10 @@
         $("[name=empPost],[name=empAddress1],[name=empAddress2]")
             .removeClass("success fail").addClass(valid ? "success" : "fail");
 
-        state.empAddressValid = valid;
-    });
+        formState.empPostValid = valid;
+        formState.empAddress1Valid = valid;
+        formState.empAddress2Valid = valid;
+    }); */
     
     $("[name=empPost], [name=empAddress1], .btn-address-search").on("click", function () {
         new kakao.Postcode({
@@ -349,25 +378,12 @@
     });
     
     $(document).ready(function() {
-        $('select[name="deptNo"], select[name="empPositionNo"]').select2({
+        $('select[name="deptNo"], select[name="empPositionNo"]:eq(1)').select2({
             dropdownParent: $('#popUp'),
             width: '100%',
             minimumResultsForSearch: Infinity
         });
         
-        /* $("#toggleWaitBtn").click(function() {
-            
-           $("#waitListArea").slideToggle(300, function() {
-               
-            if ($(this).is(":visible")) {
-                $("#toggleIcon").html("▲"); 
-                $("#toggleWaitBtn").css("border-bottom", "none");
-            } else {
-                $("#toggleIcon").html("▼"); 
-                $("#toggleWaitBtn").css("border-bottom", "1px solid #739BED");
-            }
-         });
-    }); */
     
         $("#toggleWaitBtn").click(function() {
             $("#waitListArea").slideToggle(300, function() {
@@ -380,32 +396,124 @@
         });
     });
     
-    function checkApproveForm() {
-    	e.stopPropagation();
+  //유효성 검사 상태 객체
+    var formState = {
+   		empPositionNoValid: false,
+   		empEmailValid: false,
+   		empContactValid: false,
+   		empPostValid: false,
+   		empAddress1Valid: false,
+   		empAddress2Valid: false,
+    	ok: function(){
+    		return Object.values(this)
+    		.filter(v => typeof v==="boolean")
+    		.every(v => v === true);
+    	}
+    };
+    
+ 	// 블러/체인지 이벤트 핸들러들
+    $("[name=empPositionNo]:eq(0)").on("input", function(){
+    	formState.empPositionNoValid = $(this).val().trim().length > 0;
+    });
+    $("[name=empEmail]").on("blur", function(){
+    	formState.empEmailValid = $(this).val().trim().length > 0;
+    });
+    $("[name=empContact]").on("blur", function(){
+    	formState.empContactValid = $(this).val().trim().length > 0;
+    });
+    $("[name=empPost]").on("blur", function(){
+    	formState.empPostValid = $(this).val().trim().length > 0;
+    });
+    $("[name=empAddress1]").on("blur", function(){
+    	formState.empAddress1Valid = $(this).val().trim().length > 0;
+    });
+    $("[name=empAddress2]").on("blur", function(){
+    	formState.empAddress2Valid = $(this).val().trim().length > 0;
+    });
+  
+    $(".form-check").on("submit", function(e){
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+
+        if(!formState.empPositionNoValid) {
+            showAjaxAlarm('직책을 선택하세요', 'btn-negative', '[name=empPositionNo]', 'left');
+            $("[name=empPositionNo]").focus();
+            return false; 
+        }
+        
+        if(!formState.empEmailValid) {
+            showAjaxAlarm('이메일을 입력하세요', 'btn-negative', '[name=empEmail]', 'left');
+            $("[name=empEmail]").focus();
+            return false; 
+        }
+        
+        if(!formState.empContactValid) {
+            showAjaxAlarm('연락처를 입력하세요', 'btn-negative', '[name=empContact]', 'left');
+            $("[name=empContact]").focus();
+            return false; 
+        }
+        
+        if(!formState.empPostValid) {
+            showAjaxAlarm('우편번호를 입력하세요', 'btn-negative', '[name=empPost]', 'left');
+            $("[name=empPost]").focus();
+            return false; 
+        }
+        
+        if(!formState.empAddress1Valid) {
+            showAjaxAlarm('기본주소를 입력하세요', 'btn-negative', '[name=empAddress1]', 'left');
+            $("[name=empAddress1]").focus();
+            return false; 
+        }
+        
+        if(!formState.empAddress2Valid) {
+            showAjaxAlarm('상세주소를 입력하세요', 'btn-negative', '[name=empAddress2]', 'left');
+            $("[name=empAddress2]").focus();
+            return false; 
+        }
+
+        return formState.ok();
+    });
+    
+  	//유효성 검사 상태 객체
+    var approveState = {
+    	empConfirmValid: false,
+    	ok: function(){
+    		return Object.values(this)
+    		.filter(v => typeof v==="boolean")
+    		.every(v => v === true);
+    	}
+    };
+  
+    function checkApproveValidate() {
+    	$(this).find("select[name]").trigger("input");
+        $(this).find("input[name], textarea[name]").trigger("blur");
+    	
         var hireDate = document.querySelector('[name="empHireDate"]');
         var deptNo = document.querySelector('[name="deptNo"]');
-        var positionNo = document.querySelector('[name="empPositionNo"]');
+        var positionNo = document.querySelectorAll('[name="empPositionNo"]')[1];
         
         if (!hireDate.value.trim()) {
-            window.alert("입사일을 지정해 주세요.");
-            hireDate.focus();
+            openAlert("입사일을 지정해 주세요.", "$('[name=empHireDate]').focus();");
             return false; // 전송 중단
         }
         
         if (!deptNo.value) {
-            window.alert("부서를 배치해 주세요.");
-            $(deptNo).select2('open'); // Select2 창 열기
+            openAlert("부서를 배치해 주세요.", "$('[name=deptNo]').select2('open');");
             return false;
         }
         
         if (!positionNo.value) {
-            window.alert("직급을 지정해 주세요.");
-            $(positionNo).select2('open'); // Select2 창 열기
+            openAlert("직급을 지정해 주세요.", "$('[name=empPositionNo]:eq(1)').select2('open');");
             return false;
         }
 
         // 3개 모두 입력되었다면 마지막으로 확인받고 전송
-        return confirm("해당 사원의 가입을 승인하시겠습니까?");
+        if(!approveState.empConfirmValid) {
+        	openConfirm("해당 사원의 가입을 승인하시겠습니까?", "approveState.empConfirmValid = true; $('#btnEmpPopup').click();");
+        	return false;
+        }
+        
+        return approveState.ok();
     }
     
     var rejectState = {

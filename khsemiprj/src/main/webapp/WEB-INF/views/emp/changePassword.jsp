@@ -117,14 +117,24 @@ $(function() {
 	
 	// 2. 새 비밀번호 및 확인 검증
 	$("[name=newPassword], [name=newPasswordCheck]").on("input blur", function(){
+		var oldPassword = $("[name=empPassword]").val();
 		var newPassword = $("[name=newPassword]").val();
 		var newPasswordCheck = $("[name=newPasswordCheck]").val();
 			
 		// 새 비밀번호 유효성 검사
 		if(newPassword.length > 0) {
-			state.newPasswordValid = passwordRegex.test(newPassword);
-			$("[name=newPassword]").removeClass("success fail")
-				.addClass(state.newPasswordValid ? "success" : "fail");
+			if(oldPassword == newPassword) {
+				$("[name=newPassword]").removeClass("success fail").addClass("fail").attr("data-error", "2");//실패 표시(2번 에러);
+			} else {
+				state.newPasswordValid = passwordRegex.test(newPassword);
+				if(state.newPasswordValid) {
+					$("[name=newPassword]").removeClass("success fail").addClass("success");
+				} else {
+					$("[name=newPassword]").removeClass("success fail").addClass("fail").attr("data-error", "1");//실패 표시(1번 에러);
+				}
+				/* $("[name=newPassword]").removeClass("success fail")
+					.addClass(state.newPasswordValid ? "success" : "fail"); */
+			}
 		} else {
 			$("[name=newPassword]").removeClass("success fail");
 		}
@@ -197,7 +207,10 @@ $(function() {
 			</label> 
 			<input type="password" name="newPassword" class="field w-100">
 			<div class="success-feedback">올바른 비밀 번호 입니다.</div>
-			<div class="fail-feedback">영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여 8~16글자로 작성하세요</div>
+			<div class="fail-feedback">
+				<div>영문 대/소문자, 숫자, 특수문자를 1개이상 포함하여 8~16글자로 작성하세요</div>
+				<div>기존 비밀번호와 동일한 비밀번호로는 변경할 수 없습니다</div>
+			</div>
 		</div>
 	
 		<div class="cell step-2" style="display: none;">

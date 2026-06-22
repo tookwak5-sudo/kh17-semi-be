@@ -540,7 +540,7 @@
 			var file = e.target.files[0];
 			if(!file) return; 
 			if(!file.type.match("image.*")) {
-				alert("이미지 파일만 첨부할 수 있습니다.");
+				openAlert("이미지 파일만 첨부할 수 있습니다.");
 				$(this).val(""); 
 				return;
 			}
@@ -630,7 +630,7 @@
 		    var file = e.target.files[0];
 		    if(!file) return;
 		    if(!file.type.match("image.*")) {
-		        alert("이미지 파일만 첨부할 수 있습니다.");
+		        openAlert("이미지 파일만 첨부할 수 있습니다.");
 		        $(this).val(""); 
 		        return;
 		    }

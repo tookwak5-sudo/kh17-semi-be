@@ -17,9 +17,7 @@ import com.kh.khsemiprj.dao.AprvDao;
 import com.kh.khsemiprj.dao.BoardDao;
 import com.kh.khsemiprj.dao.EmpPositionDeptDao;
 import com.kh.khsemiprj.dao.PlanDao;
-import com.kh.khsemiprj.dto.AprvDto;
 import com.kh.khsemiprj.dto.BoardDto;
-import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.vo.EmpAprvLineVO;
@@ -47,22 +45,24 @@ public class HomeController {
 		// 목표 아이디를 통해 일정에 부서번호 등록하기
 		// [1] 아이디 입력을 통해 부서번호 조회
 		Long deptNo = empPositionDeptDao.selectDeptbyId(loginId);  
-		List<PlanDto> planList = planDao.selectList(loginId);
-		
+		//List<PlanDto> planList = planDao.selectList(loginId);
+		List<PlanHeadVO> planList = planDao.selectVOList(loginId);
+		System.out.println("planList = " + planList);
 		List<Map<String, Object>> eventList = new ArrayList<>();
-		for(PlanDto planDto : planList) {
+		for(PlanHeadVO planHeadVO : planList) {
 			Map<String, Object> event = new HashMap<>();
-			event.put("title", planDto.getPlanName());
+			event.put("title", planHeadVO.getPlanName());
 			Map<String, Object> extendedProps = new HashMap<>();
-			extendedProps.put("planNo", planDto.getPlanNo());
-			extendedProps.put("planHeadNo", planDto.getPlanHeadNo());
-			extendedProps.put("planType", planDto.getPlanType());
-			extendedProps.put("planExplain", planDto.getPlanExplain());
-			extendedProps.put("planDeptNo", planDto.getPlanDeptNo());
-			extendedProps.put("planEmpId", planDto.getPlanEmpId());
+			extendedProps.put("planNo", planHeadVO.getPlanNo());
+			extendedProps.put("planHeadNo", planHeadVO.getPlanHeadNo());
+			extendedProps.put("planHeadType", planHeadVO.getHeadType());
+			extendedProps.put("planType", planHeadVO.getPlanType());
+			extendedProps.put("planExplain", planHeadVO.getPlanExplain());
+			extendedProps.put("planDeptNo", planHeadVO.getPlanDeptNo());
+			extendedProps.put("planEmpId", planHeadVO.getPlanEmpId());
 			event.put("extendedProps", extendedProps);
-	        event.put("start", planDto.getPlanSdate());
-	        event.put("end", planDto.getPlanEdate() + "T23:59:59");
+	        event.put("start", planHeadVO.getPlanSdate());
+	        event.put("end", planHeadVO.getPlanEdate() + "T23:59:59");
 	        eventList.add(event);
 		}
 		

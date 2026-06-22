@@ -133,47 +133,6 @@ $(function(){
     	$("#deptList2 input[type=checkbox][name=dept]").prop("checked", false);
     }
     
-    function getEmpPositionDeptList(deptNo) {
-		if(deptNo == "") deptNo = null;
-    	$.ajax({
-            url : "/rest/dept/empPositionDeptList",
-            method:"post",
-            data: { deptNo : deptNo },
-            success : function(response) {
-            	$("#empList").empty();
-            	if(response.length > 0) {
-                	var deptList = response;
-                	for(var i = 0; i < deptList.length; i++) {
-	                	var empId = deptList[i].empId;
-	                	var deptName = deptList[i].deptName;
-	                	var empName = deptList[i].empName;
-	                	var empPositionName = deptList[i].empPositionName;
-	                	var deptEmpId = deptList[i].deptEmpId;
-	                	
-	                	var template = $("#emp-template").text();
-	                	const tr = $.parseHTML(template)[1];
-	                	$(tr).find(".emp-checkbox").attr("value", empId);
-						$(tr).find(".emp-checkbox").attr("id", "emp_" + empId);
-						$(tr).find("label").attr("for", "emp_" + empId);
-	                	$(tr).find("td:eq(1)").text(deptName);
-	                	$(tr).find("td:eq(2)").text(empId);
-	                	if(empId == deptEmpId) {
-	                		$(tr).find("td:eq(3)").html("<i class=\"fa-solid fa-crown gold\"></i> " + empName);
-	                	} else {
-	                		$(tr).find("td:eq(3)").html(empName);
-	                	}
-	                	$(tr).find("td:eq(4)").text(empPositionName);
-	                	$("#empList").append(tr);
-                	}
-            	} else {
-            		var template = $("#emp-empty-template").text();
-            		const tr = $.parseHTML(template)[1];
-            		$("#empList").append(tr);
-            	}
-            }
-        });
-    }
-    
     $(".dept-change").click(function () {
     	var empIdList = $("#empList input[type=checkbox]:checked").map(function () {
     		return $(this).val();
@@ -182,11 +141,12 @@ $(function(){
     	var deptNo = $("#deptList2 input[type=checkbox]:checked").val();
     	
     	if(deptNo == undefined) {
-    		alert("이동할 부서를 선택하세요");
+			openAlert("이동할 부서를 선택하세요");
     		return false;
     	}
     	
-    	if(confirm("선택한 사원들의 부서를 변경하시겠습니까?")) {
+		openConfirm("선택한 사원들의 부서를 변경하시겠습니까?", "empPositionDeptUpdate('" + fromDeptNo + "', '" + deptNo + "');")
+    	/*if(confirm("선택한 사원들의 부서를 변경하시겠습니까?")) {
     		$.ajax({
                 url : "/rest/dept/empPositionDeptUpdate",
                 method:"post",
@@ -200,26 +160,27 @@ $(function(){
                 		//부서원 목록 다시 가져오기
                 		getEmpPositionDeptList(fromDeptNo);
                 	} else {
-                		alert("부서 변경 중 오류가 발생했습니다.");
+                		openAlert("부서 변경 중 오류가 발생했습니다.");
                 	}
                 }
             });
-    	}
+    	}*/
     });
 	
 	$(".dept-emp-change").click(function () {
 		if($("#empList input[type=checkbox]:checked").length == 0) {
-			alert("부서원을 선택해주세요");
+			openAlert("부서원을 선택해주세요");
 			return false;
 		}
 		if($("#empList input[type=checkbox]:checked").length > 1) {
-			alert("부서장으로 지정할 부서원은 한명만 선택해주세요");
+			openAlert("부서장으로 지정할 부서원은 한명만 선택해주세요");
 			return false;
 		}
 		var deptNo = $("#deptList input[type=checkbox]:checked").val();
 		var empId = $("#empList input[type=checkbox]:checked").val();
 		
-		if(confirm("선택한 사원을 부서장으로 변경하시겠습니까?")) {
+		openConfirm("선택한 사원을 부서장으로 변경하시겠습니까?", "deptEmpIdUpdate('" + empId + "', " + deptNo + ");")
+		/*if(confirm("선택한 사원을 부서장으로 변경하시겠습니까?")) {
     		$.ajax({
                 url : "/rest/dept/deptEmpIdUpdate",
                 method:"post",
@@ -232,17 +193,18 @@ $(function(){
                 		//부서원 목록 다시 가져오기
                 		getEmpPositionDeptList(deptNo);
                 	} else {
-                		alert("부서장 변경 중 오류가 발생했습니다.");
+						openAlert("부서장 변경 중 오류가 발생했습니다")
                 	}
                 }
             });
-    	}
+    	}*/
 	});
 	
 	$(".dept-emp-demotion").click(function () {
 		var deptNo = $("#deptList input[type=checkbox]:checked").val();
 		
-		if(confirm("해당 부서의 부서장을 해제하시겠습니까?")) {
+		openConfirm("해당 부서의 부서장을 해제하시겠습니까?", "deptEmpIdDemotion(" + deptNo + ");");
+		/*if(confirm("해당 부서의 부서장을 해제하시겠습니까?")) {
     		$.ajax({
                 url : "/rest/dept/deptEmpIdDemotion",
                 method:"post",
@@ -254,11 +216,11 @@ $(function(){
                 		//부서원 목록 다시 가져오기
                 		getEmpPositionDeptList(deptNo);
                 	} else {
-                		alert("부서장 해제 중 오류가 발생했습니다.");
+                		openAlert("부서장 해제 중 오류가 발생했습니다.");
                 	}
                 }
             });
-    	}
+    	}*/
 	});
 });
 
@@ -292,6 +254,47 @@ document.addEventListener('change', function(e) {
     }
 });
 
+function getEmpPositionDeptList(deptNo) {
+	if(deptNo == "") deptNo = null;
+	$.ajax({
+        url : "/rest/dept/empPositionDeptList",
+        method:"post",
+        data: { deptNo : deptNo },
+        success : function(response) {
+        	$("#empList").empty();
+        	if(response.length > 0) {
+            	var deptList = response;
+            	for(var i = 0; i < deptList.length; i++) {
+                	var empId = deptList[i].empId;
+                	var deptName = deptList[i].deptName;
+                	var empName = deptList[i].empName;
+                	var empPositionName = deptList[i].empPositionName;
+                	var deptEmpId = deptList[i].deptEmpId;
+                	
+                	var template = $("#emp-template").text();
+                	const tr = $.parseHTML(template)[1];
+                	$(tr).find(".emp-checkbox").attr("value", empId);
+					$(tr).find(".emp-checkbox").attr("id", "emp_" + empId);
+					$(tr).find("label").attr("for", "emp_" + empId);
+                	$(tr).find("td:eq(1)").text(deptName);
+                	$(tr).find("td:eq(2)").text(empId);
+                	if(empId == deptEmpId) {
+                		$(tr).find("td:eq(3)").html("<i class=\"fa-solid fa-crown gold\"></i> " + empName);
+                	} else {
+                		$(tr).find("td:eq(3)").html(empName);
+                	}
+                	$(tr).find("td:eq(4)").text(empPositionName);
+                	$("#empList").append(tr);
+            	}
+        	} else {
+        		var template = $("#emp-empty-template").text();
+        		const tr = $.parseHTML(template)[1];
+        		$("#empList").append(tr);
+        	}
+        }
+    });
+}
+
 function deptEdit() {
 	var deptNo = $("#deptList input[type=checkbox]:checked").val();
 	if(deptNo == undefined) {
@@ -317,7 +320,66 @@ function deptDelete() {
 		openAlert('[부서없음]은 삭제할 수 없습니다.');
 		return false;
 	} else {
-		//location.href = "./delete?deptNo=" + deptNo;
 		openConfirm("[" + deptName + "] 부서를 삭제하시겠습니까?", "location.href='./delete?deptNo=" + deptNo + "';");
 	}
+}
+
+function deptEmpIdUpdate(empId, deptNo) {
+	$.ajax({
+        url : "/rest/dept/deptEmpIdUpdate",
+        method:"post",
+        data: { 
+        	empId : empId
+			, deptNo : deptNo
+        	},
+        success : function(response) {
+        	if(response) {
+        		//부서원 목록 다시 가져오기
+        		getEmpPositionDeptList(deptNo);
+        	} else {
+				openAlert("부서장 변경 중 오류가 발생했습니다")
+        	}
+        }
+    });
+}
+
+function deptEmpIdDemotion(deptNo) {
+	$.ajax({
+        url : "/rest/dept/deptEmpIdDemotion",
+        method:"post",
+        data: { 
+        	deptNo : deptNo
+        	},
+        success : function(response) {
+        	if(response) {
+        		//부서원 목록 다시 가져오기
+        		getEmpPositionDeptList(deptNo);
+        	} else {
+        		openAlert("부서장 해제 중 오류가 발생했습니다.");
+        	}
+        }
+    });
+}
+
+function empPositionDeptUpdate(fromDeptNo, toDeptNo) {
+	var empIdList = $("#empList input[type=checkbox]:checked").map(function () {
+		return $(this).val();
+	}).get();
+	$.ajax({
+        url : "/rest/dept/empPositionDeptUpdate",
+        method:"post",
+        data: { 
+        	empIdList : empIdList
+			, fromDeptNo : fromDeptNo
+        	, toDeptNo : toDeptNo 
+        	},
+        success : function(response) {
+        	if(response) {
+        		//부서원 목록 다시 가져오기
+        		getEmpPositionDeptList(fromDeptNo);
+        	} else {
+        		openAlert("부서 변경 중 오류가 발생했습니다.");
+        	}
+        }
+    });
 }

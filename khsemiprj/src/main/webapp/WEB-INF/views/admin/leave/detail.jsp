@@ -168,7 +168,7 @@
 	            });
 	            
 	        } else {
-	            alert("0 이상이어야 합니다."); 
+	            openAlert("0 이상이어야 합니다."); 
 	        }
 	        
 	        leaveTotalInput.focus();

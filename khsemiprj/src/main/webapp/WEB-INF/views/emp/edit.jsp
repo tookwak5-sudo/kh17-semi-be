@@ -278,7 +278,7 @@ $(function() {
                 $(".btn-cert-retry").show();
             },
             error:function(){
-                window.alert("이메일 발송에 실패했습니다.\n잠시 후 다시 시도해보세요");
+            	openAlert("이메일 발송에 실패했습니다.<br><br>잠시 후 다시 시도해보세요");
             },
             beforeSend:function(){//요청 시작 직전에 실행되는 함수 (디자인 변화를 부여)
                 $(".btn-cert-send").find("span").text("인증메일 발송중");
