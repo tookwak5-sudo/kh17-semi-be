@@ -125,4 +125,10 @@ public class MemoController {
 		return "redirect:./list?delete";
 	}
 	
+//	@RequestMapping("/writeDelete")
+//	public String writeDelete(HttpSession session) {
+//		
+//		
+//	}
+	
 }

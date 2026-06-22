@@ -44,6 +44,12 @@ public class MemoDao {
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
+	public boolean writeDelete(String memoReceiver) {
+		String sql = "delete from memo where memo_receiver_id= ? and memo_read_status= 'Y' ";
+		Object[] params = { memoReceiver };
+		return jdbcTemplate.update(sql, params) > 0;
+	}
+	
 	//전사원 쪽지 전송
 	public void insertAll(MemoDto memoDto) {
 		String sql = "INSERT INTO memo (memo_no, memo_receiver_id, memo_sender_id, memo_title, memo_content, memo_type) "
