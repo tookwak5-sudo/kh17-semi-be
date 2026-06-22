@@ -45,8 +45,16 @@ public class AprvFormController {
 	private EmpDao empDao;
 
 	@GetMapping("/list")
-	public String list(@ModelAttribute PageVO pageVO, Model model) {
+	public String list(@ModelAttribute PageVO pageVO, Model model,HttpSession session) {
 	    
+		String loginId = (String)session.getAttribute("loginId");
+		
+		EmpDto findEmpDto = new EmpDto();
+		findEmpDto = empDao.selectOne(loginId);
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<1) {
+			return "error/403";
+		}
+		
 	    int count = aprvFormDao.count(pageVO);
 	    pageVO.setCount(count);
 	    
@@ -87,8 +95,8 @@ public class AprvFormController {
 		
 		EmpDto findEmpDto = new EmpDto();
 		findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
-			return "redirect:/error/500";
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<1) {
+			return "error/403";
 		}
 		
 		
@@ -115,8 +123,8 @@ public class AprvFormController {
 		
 		EmpDto findEmpDto = new EmpDto();
 		findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
-			return "redirect:/error/500";
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<1) {
+			return "redirect:/error/403";
 		}
 		
 		
@@ -142,7 +150,8 @@ public class AprvFormController {
 	    // 5. 서비스 호출해서 인서트 진행 (파일이 없어도 알아서 처리됨)
 	    aprvFormService.registerFormFile(aprvFormDto, attach);
 
-	    return "redirect:./list";
+	    int newFormNo = aprvFormDto.getFormNo();
+	    return "redirect:./detail?formNo="+newFormNo;
 	}
 
 	// 5. 결재 양식 수정 페이지 열기
@@ -182,7 +191,7 @@ public class AprvFormController {
 		}
 
 		catch (TargetNotfoundException e) {
-			return "redirect:/error/500";
+			return "redirect:/error/403";
 		}
 	}
 
@@ -196,8 +205,8 @@ public class AprvFormController {
 		
 		EmpDto findEmpDto = new EmpDto();
 		findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
-			return "redirect:/error/500";
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<1) {
+			return "redirect:/error/403";
 		}
 		
 		
@@ -232,8 +241,8 @@ public class AprvFormController {
 		
 		EmpDto findEmpDto = new EmpDto();
 		findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
-			return "redirect:/error/500";
+		if(findEmpDto == null || findEmpDto.getEmpGrade()<1) {
+			return "redirect:/error/403";
 		}
 		
 		
@@ -253,25 +262,10 @@ public class AprvFormController {
 		}
 
 		catch (TargetNotfoundException e) {
-			return "redirect:/error/500";
+			return "redirect:/error/403";
 		}
 
-		return "redirect:/aprvForm/deleteFinish";
+		return "redirect:/aprvForm/list";
 	}
 
-	// 8. 결재 양식 삭제 완료 페이지 열기
-	@GetMapping("/deleteFinish")
-	public String deleteFinish(HttpSession session) {
-
-		String loginId = (String)session.getAttribute("loginId");
-		
-		EmpDto findEmpDto = new EmpDto();
-		findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
-			return "redirect:/error/500";
-		}
-		
-		
-		return "aprvForm/deleteFinish";
-	}
 }

@@ -4,43 +4,90 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
-
+<!-- 목록->검색->다른 페이지->목록 경로에서 검색어가 안 남는 현상 제거(목록을 한 번 더 누르면 제거됨) -->
 <script>
-$(function(){
-    // 검색 조건 변경 시 입력창 스위칭 이벤트
+$(function() {
+    var menuKey = window.location.pathname; 
+    var urlParams = new URLSearchParams(window.location.search);
+
+    // 1. 현재 페이지 경로와 이전 페이지(referrer) 경로가 완전히 똑같은지 검사
+    var isSameListMenu = false;
+    if (document.referrer) {
+        var referrerUrl = new URL(document.referrer);
+        if (referrerUrl.pathname === window.location.pathname && !urlParams.toString()) {
+            isSameListMenu = true; // 목록에서 목록 메뉴를 또 누른 경우 -> 초기화용
+        }
+    }
+
+    // 2. URL에 파라미터가 있으면 그걸 무조건 스토리지에 저장
+    if (urlParams.toString()) {
+        if (urlParams.has('column')) sessionStorage.setItem(menuKey + '_column', urlParams.get('column'));
+        else sessionStorage.removeItem(menuKey + '_column');
+
+        if (urlParams.has('keyword')) sessionStorage.setItem(menuKey + '_keyword', urlParams.get('keyword'));
+        else sessionStorage.removeItem(menuKey + '_keyword');
+    } 
+    // 3. URL에 파라미터가 비어있을 때 분기 처리 (복구 또는 초기화)
+    else {
+        if (isSameListMenu) {
+            sessionStorage.removeItem(menuKey + '_column');
+            sessionStorage.removeItem(menuKey + '_keyword');
+        } else {
+            var savedColumn = sessionStorage.getItem(menuKey + '_column');
+            var savedKeyword = sessionStorage.getItem(menuKey + '_keyword');
+
+            if (savedColumn || savedKeyword) {
+                var qs = [];
+                if(savedColumn) qs.push('column=' + savedColumn);
+                if(savedKeyword) qs.push('keyword=' + encodeURIComponent(savedKeyword));
+                
+                location.href = './list?' + qs.join('&');
+                return;
+            }
+        }
+    }
+
+    // 4. 검색 조건 변경 시 입력창 활성화/비활성화 스위칭 (동일 name 파라미터 꼬임 방지)
     $("[name=column]").on("change", function() {
         var column = $(this).val();
-        
-        // 1. 구분을 선택했을 때 (네 select의 value가 form_head_no 일 때)
         if (column === "form_head_no") {
-            // 구분 검색 존(셀렉트 박스 영역)을 보여줌
-            $(".head-search-zone").show()
-                                  .find("select").prop("disabled", false); // select 활성화
-            
-            // 양식명 검색 존(텍스트 입력창 영역)을 숨김
-            $(".form-search-zone").hide()
-                                  .find("input").prop("disabled", true);  // input 비활성화 (값 전송 안 됨)
+            $(".head-search-zone").show().find("select").prop("disabled", false); 
+            $(".form-search-zone").hide().find("input").prop("disabled", true);  
         } 
-        // 2. 양식명을 선택했을 때 (form_name 일 때)
-        else if(column === "form_name") {
-            // 구분 검색 존을 숨김
-            $(".head-search-zone").hide()
-                                  .find("select").prop("disabled", true);  // select 비활성화
-            
-            // 양식명 검색 존을 보여줌
-            $(".form-search-zone").css("display", "inline-flex")
-                                  .find("input").prop("disabled", false); // input 활성화
+        else if (column === "form_name") {
+            $(".head-search-zone").hide().find("select").prop("disabled", true);  
+            $(".form-search-zone").css("display", "inline-block").find("input").prop("disabled", false); 
         }
     });
 
-    // 페이지 로드 시 기존 검색 조건에 맞게 인풋 세팅 초기화 (새로고침 시 풀림 방지)
+    // 페이지 로드 시 최초 1회 트리거 실행
     $("[name=column]").trigger("change");
+
+    // 5. 삭제 완료 알림 체크 (양식 삭제 후 세션에 값 넘어올 때 대응)
+    if (sessionStorage.getItem('formDeleted') === 'true') {
+        $('#div-alarm').css({'left': 'auto', 'right': '20px', 'bottom': '40px', 'top': 'auto'});
+        showAjaxAlarm('양식이 삭제되었습니다.', 'btn-negative');
+        sessionStorage.removeItem('formDeleted');
+    }
 });
+</script>
 
-
-
-
-
+<!-- 삭제 시 -->
+<script>
+$(document).ready(function() {
+    // 세션 스토리지에 formDeleted 값이 true로 들어있는지 확인
+    if(sessionStorage.getItem('formDeleted') === 'true') {
+        
+        // 오른쪽 아래 위치 세팅
+        $('#div-alarm').css({'left': 'auto', 'right': '20px', 'bottom': '40px', 'top': 'auto'});
+        
+        // 팝업 띄우기
+        showAjaxAlarm('양식이 삭제가 되었습니다.', 'btn-negative');
+        
+        
+        sessionStorage.removeItem('formDeleted');
+    }
+});
 </script>
 
 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">

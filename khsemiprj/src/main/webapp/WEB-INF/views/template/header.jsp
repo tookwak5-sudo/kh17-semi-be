@@ -291,48 +291,54 @@
 					type: "GET",
 					dataType: "json",
 					success: function(data) {
+					
+						// 1. 새 쪽지가 왔을 때만 팝업 띄우는 로직
 						if(data.hasNewMemo) {
-						    // 1. 프사 옆 좌표 계산 다 지우고, 화면 기준 왼쪽 아래(fixed)로 완벽하게 고정
-						    // 보라색 말풍선 스타일에 푸터 오리지널 애니메이션 클래스 호환되도록 세팅
 						    $('#send-ajax-alarm').css({
-// 						        'background-color': '#6c5ce7', /* 네온 퍼플 */
-// 						        'color': '#ffffff',
-// 						        'border': 'none',
 						        'font-weight': 'bold',
 						        'box-shadow': '0 4px 15px rgba(0,0,0,0.2)',
 						        'padding': '15px 25px',
-						        'border-radius': '50px', /* 너희가 준 스타일대로 완전 둥글게 */
+						        'border-radius': '50px',
 						        'font-size': '16px',
 						        'white-space': 'nowrap',
-						        'transition': 'transform 0.5s ease, opacity 0.5s ease' /* 너희 핵심 속성 유지 */
+						        'transition': 'transform 0.5s ease, opacity 0.5s ease'
 						    });
 						    
-						    // 2. 외부 div 박스를 화면 기준 왼쪽 하단으로 박아버리기
 						    $('#div-alarm').css({
 						        'position': 'fixed',
 						        'bottom': '40px',
-						        'left': '20px',    /* 💡 오른쪽(right)이 아니라 왼쪽(left)으로 배치! */
-						        'right': 'auto',   /* 기존에 잡혀있을지 모를 right 속성 무력화 */
-						        'top': 'auto',     /* 기존에 잡혀있을지 모를 top 속성 무력화 */
+						        'left': '20px',
+						        'right': 'auto',
+						        'top': 'auto',
 						        'width': 'fit-content',
 						        'height': 'auto',
 						        'z-index': '1000'
 						    });
 						    
-						    // 3. 푸터 함수 실행 
-						    // (세 번째 인자에 targetElement 대신 null이나 아무거나 던져서 오프셋 계산 무력화)
 						    showAjaxAlarm("새 쪽지가 왔어요!", "btn-positive", undefined);
+						}
+						
+						// 2. 상단바 뱃지 갱신 (팝업 조건문 밖으로 뺌. 무조건 실행됨)
+						var $badge = $('.badge');
+
+						if ($badge.length > 0) {
+						    var hasCountChanged = 'unreadCount' in data;
 						    
-						    // 4. 상단바 뱃지 갱신
-						    var $badge = $('.badge');
-						    if($badge.length > 0) {
-						        var currentCount = parseInt($badge.text()) || 0;
-						        $badge.text(currentCount);
+						    if (hasCountChanged) {
+						        var totalUnread = data.unreadCount; 
+						        
+						        if (totalUnread > 0) {
+						            $badge.text(totalUnread);
+						            $badge.show(); 
+						        } else {
+						            $badge.hide(); 
+						        }
 						    }
 						}
-					}, // success 끝
+						
+					}, // success 괄호 정상적으로 닫음
 					error: function(err) {
-						console.log("쪽지 동기화 중");
+						console.log("쪽지 동기화 중 에러");
 					}
 				});
 			}, 3000);

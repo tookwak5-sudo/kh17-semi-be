@@ -21,6 +21,86 @@
 
 <script>
 $(function() {
+    var menuKey = window.location.pathname; 
+    var urlParams = new URLSearchParams(window.location.search);
+
+    // 1. 현재 페이지 경로와 이전 페이지(referrer) 경로가 완전히 똑같은지 검사
+    var isSameListMenu = false;
+    if (document.referrer) {
+        var referrerUrl = new URL(document.referrer);
+        if (referrerUrl.pathname === window.location.pathname && !urlParams.toString()) {
+            isSameListMenu = true; // 목록 메뉴를 다시 직접 누른 경우
+        }
+    }
+
+    // 2. URL에 파라미터가 있으면 그걸 무조건 스토리지에 저장 (퇴사자 조건 맞춤)
+    if (urlParams.toString()) {
+        if (urlParams.has('column')) sessionStorage.setItem(menuKey + '_column', urlParams.get('column'));
+        else sessionStorage.removeItem(menuKey + '_column');
+
+        if (urlParams.has('empName')) sessionStorage.setItem(menuKey + '_empName', urlParams.get('empName'));
+        else sessionStorage.removeItem(menuKey + '_empName');
+
+        if (urlParams.has('startDate')) sessionStorage.setItem(menuKey + '_startDate', urlParams.get('startDate'));
+        else sessionStorage.removeItem(menuKey + '_startDate');
+
+        if (urlParams.has('endDate')) sessionStorage.setItem(menuKey + '_endDate', urlParams.get('endDate'));
+        else sessionStorage.removeItem(menuKey + '_endDate');
+    } 
+    // 3. URL에 파라미터가 비어있을 때 분기 처리 (복구 또는 초기화)
+    else {
+        if (isSameListMenu) {
+            sessionStorage.removeItem(menuKey + '_column');
+            sessionStorage.removeItem(menuKey + '_empName');
+            sessionStorage.removeItem(menuKey + '_startDate');
+            sessionStorage.removeItem(menuKey + '_endDate');
+        } else {
+            var savedColumn = sessionStorage.getItem(menuKey + '_column');
+            var savedEmpName = sessionStorage.getItem(menuKey + '_empName');
+            var savedStartDate = sessionStorage.getItem(menuKey + '_startDate');
+            var savedEndDate = sessionStorage.getItem(menuKey + '_endDate');
+
+            if (savedColumn || savedEmpName || savedStartDate || savedEndDate) {
+                var qs = [];
+                if(savedColumn) qs.push('column=' + savedColumn);
+                if(savedEmpName) qs.push('empName=' + encodeURIComponent(savedEmpName));
+                if(savedStartDate) qs.push('startDate=' + savedStartDate);
+                if(savedEndDate) qs.push('endDate=' + savedEndDate);
+                
+                location.href = './exitList?' + qs.join('&');
+                return;
+            }
+        }
+    }
+
+    // 4. 검색 조건(column) 변경 시 입력창 활성화/비활성화 스위칭 로직
+    $("[name=column]").on("change", function() {
+        var column = $(this).val();
+        if (column === "emp_name") {
+            $(".text-search-zone").show().find("input").prop("disabled", false);
+            $(".date-search-zone").hide().find("input").prop("disabled", true);
+        } else if (column === "emp_exit_time" || column === "aprv_etime") {
+            $(".text-search-zone").hide().find("input").prop("disabled", true);
+            $(".date-search-zone").css("display", "inline-flex").find("input").prop("disabled", false);
+        }
+    });
+
+    // 최초 로드 시 검색 조건창 세팅 트리거
+    $("[name=column]").trigger("change");
+
+    // 5. 초기화 버튼 클릭 시 세션 날리고 새로고침
+    $("#reset-btn").on("click", function() {
+        sessionStorage.removeItem(menuKey + '_column');
+        sessionStorage.removeItem(menuKey + '_empName');
+        sessionStorage.removeItem(menuKey + '_startDate');
+        sessionStorage.removeItem(menuKey + '_endDate');
+        location.href = './exitList';
+    });
+});
+</script>
+
+<script>
+$(function() {
     // 검색 조건 변경 시 입력창 스위칭 이벤트
     $("[name=column]").on("change", function() {
         var column = $(this).val();
