@@ -174,7 +174,7 @@ $(function() {
                     <button type="submit" class="btn btn-positive ms-10"><i class="fa-solid fa-magnifying-glass"></i>검색</button>
                     
                     <c:if test="${not empty param.empName or (not empty pageVO.startDate and not empty pageVO.endDate)}">
-                        <button type="button" class="btn btn-neutral" id="reset-btn"><i class="fa-solid fa-xmark red" style="width:102px"></i>초기화</button>
+                        <button type="button" class="btn btn-neutral" id="reset-btn"><i class="fa-solid fa-xmark" style="width:25px"></i>초기화</button>
                     </c:if>
                 </div>
             </form>
