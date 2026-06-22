@@ -87,14 +87,19 @@
 						</thead>
 						<tbody align="center">
 							<c:forEach var="waitEmp" items="${wList}">
-							<tr>
-								<td style="padding: 12px 0;">${waitEmp.empId}</td>
-								<td style="padding: 12px 0;">${waitEmp.empName}</td>
-								<td>
-									<button type="button" class="btn btn-positive" onclick="openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
-									<a href="reject?empId=${waitEmp.empId}" class="btn btn-negative btn-reject-action" style="text-decoration: none; padding: 6px 12px; font-size: 18px;">거절</a>
-								</td>
-							</tr>
+								<c:if test="${param.keyword==null}">
+									<tr onclick="location.href='detail?empId=${waitEmp.empId}'">
+								</c:if>
+								<c:if test="${param.keyword!=null}">
+									<tr onclick="location.href='detail?column-${param.column}&keyword=${param.keyword}&empId=${waitEmp.empId}'">
+								</c:if>
+									<td style="padding: 12px 0;">${waitEmp.empId}</td>
+									<td style="padding: 12px 0;">${waitEmp.empName}</td>
+									<td>
+										<button type="button" class="btn btn-positive" onclick="event.stopPropagation(); openPopUp('${waitEmp.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
+										<a class="btn btn-negative btn-reject-action" onclick="event.stopPropagation(); rejectConfirm('${waitEmp.empId}');" style="text-decoration: none; padding: 6px 12px; font-size: 18px;">거절</a>
+									</td>
+								</tr>
 							</c:forEach>
 						</tbody>
 					</table>
@@ -124,7 +129,12 @@
 				<tbody align="center">
 					<c:forEach var="empPositionDto" items="${list}">
 					
-					<tr onclick="location.href='detail?empId=${empPositionDto.empId}'">
+					<c:if test="${param.keyword==null}">
+						<tr onclick="location.href='detail?empId=${empPositionDto.empId}'">
+					</c:if>
+					<c:if test="${param.keyword!=null}">
+						<tr onclick="location.href='detail?column=${param.column}&keyword=${param.keyword}&empId=${empPositionDto.empId}'">
+					</c:if>
 						<td>${empPositionDto.empId}</td>
 						<td>${empPositionDto.empName}</td>
 						<td>${empPositionDto.deptName}</td>
@@ -252,6 +262,7 @@
     });
     
     function checkApproveForm() {
+    	e.stopPropagation();
         var hireDate = document.querySelector('[name="empHireDate"]');
         var deptNo = document.querySelector('[name="deptNo"]');
         var positionNo = document.querySelector('[name="empPositionNo"]');
@@ -289,15 +300,22 @@
     $(function () {
         // id(#)가 아닌 클래스(.) 기반으로 이벤트를 잡아야 모든 행에서 작동합니다.
         $(document).on("click", ".btn-reject-action", function(e){
+        	e.stopPropagation();
             e.preventDefault(); // 링크 이동을 일단 막음
             
             var rejectUrl = $(this).attr("href"); // 클릭한 버튼의 거절 URL 수집
             
-            openConfirm(
-                '승인 거절하시겠습니까?', 
-                "location.href = '" + rejectUrl + "';"
-            );
+            openConfirm('승인 거절하시겠습니까?', 
+                "location.href = 'reject?empId='"+${waitEmp.empId} + "';");
         });	
     });
+    
+    function rejectConfirm(empId) {
+    	openConfirm('승인 거절하시겠습니까?', "rejectOk('" + empId + "');");
+	}
+    
+    function rejectOk(empId) {
+    	location.href = "reject?empId=" + empId;
+    }
 </script>
 

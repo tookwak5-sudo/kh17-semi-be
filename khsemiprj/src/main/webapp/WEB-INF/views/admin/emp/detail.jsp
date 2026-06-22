@@ -170,12 +170,27 @@
 			</div>
 		</div>
 		
+		<c:if test="${empDto.empValid=='W' }">
+			<div>
+				<button type="button" class="btn btn-positive" onclick="openPopUp('${empDto.empId}')" style="padding: 6px 12px; font-size: 18px;">승인</button>
+				<%-- <a href="reject?empId=${waitEmp.empId}" class="btn btn-negative btn-reject-action" style="text-decoration: none; padding: 6px 12px; font-size: 18px;">거절</a> --%>
+				<a class="btn btn-negative btn-reject-action" onclick="event.stopPropagation(); rejectConfirm('${empDto.empId}');" style="text-decoration: none; padding: 6px 12px; font-size: 18px;">거절</a>
+			</div>
+		</c:if>
+		
 		<hr class="mt-50 mb-50">
 		
 		<div class="cell" style="display: flex; justify-content: flex-end; gap: 10px;">
-			<a href="list" class="btn btn-positive view-mode">
-				<i class="fa-solid fa-list"></i> 목록으로
-			</a>
+			<c:if test="${param.keyword==null}">
+				<a href="list" class="btn btn-positive view-mode">
+					<i class="fa-solid fa-list"></i> 목록으로
+				</a>
+			</c:if>
+			<c:if test="${param.keyword!=null}">
+				<a href="list?column=${param.column}&keyword=${param.keyword}" class="btn btn-positive view-mode">
+					<i class="fa-solid fa-list"></i> 목록으로
+				</a>
+			</c:if>
 		
 			<button type="button" class="btn btn-neutral view-mode" onclick="toggleEditMode(true)">정보 수정</button>
 			
@@ -183,6 +198,49 @@
 			<button type="submit" class="btn btn-positive edit-mode" style="display: none;">저장하기</button>
 		</div>
 	</form>
+</div>
+<div id="popUp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;">
+    <div style="background-color: white; width: 400px; margin: 15% auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <h3 class="mt-0 blue">사원 가입 승인</h3>
+        
+        <div style="background-color: #f5f6fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold;">
+            사원 ID : <span id="targetEmpId" class="blue"></span>
+        </div>
+        
+        <form action="approve" method="post" style="display: flex; flex-direction: column; gap: 15px;" onsubmit="return checkApproveForm();">
+            <input type="hidden" name="empId" id="postEmpId">
+            
+            <div>
+                <label>입사일 지정</label>
+                <input type="text" name="empHireDate" id="hireDatePicker" class="field w-100" placeholder="YYYY-MM-DD" autocomplete="off">
+            </div>
+            
+            <div>
+                <label>부서 배치</label>
+                <select name="deptNo" class="field w-100">
+                    <option value="">부서를 선택하세요</option>
+                    <c:forEach var="dept" items="${deptList}">
+                    <option value="${dept.deptNo}">${dept.deptName}</option>
+                    </c:forEach>
+                </select>
+            </div>
+            
+             <div>
+                <label>직급 지정</label>
+                <select name="empPositionNo" class="field w-100">
+                	<option value="">선택</option>
+                	<c:forEach var="position" items="${positionList}">
+		            	<option value="${position.empPositionNo}">${position.empPositionName}</option>
+                	</c:forEach>
+	            </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="submit" class="btn btn-positive">입력 완료</button>
+                <button type="button" class="btn btn-negative" onclick="closePopUp()">취소</button>
+            </div>
+        </form>
+    </div>
 </div>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
@@ -202,4 +260,105 @@
 			edits.forEach(function(el) { el.style.display = 'none'; });
 		}
 	}
+	
+    // 팝업 함수
+    function openPopUp(empId) {
+        document.getElementById('postEmpId').value = empId;
+        document.getElementById('targetEmpId').innerText = empId;
+        document.getElementById('popUp').style.display = 'block';
+    }
+
+    function closePopUp() {
+        document.getElementById('popUp').style.display = 'none';
+        document.getElementById('hireDatePicker').value = '';
+        
+        $('select[name="deptNo"]').val('').trigger('change');
+        $('select[name="empPositionNo"]').val('').trigger('change');
+    }
+     
+    document.addEventListener("DOMContentLoaded", function() {
+    	var hireDatePicker = new Lightpick({
+    		field: document.getElementById('hireDatePicker'),
+    		format: 'YYYY-MM-DD',
+    		firstDay: 7
+    	});
+    });
+    
+    $(document).ready(function() {
+        $('select[name="deptNo"], select[name="empPositionNo"]').select2({
+            dropdownParent: $('#popUp'),
+            width: '100%',
+            minimumResultsForSearch: Infinity
+        });
+        
+        /* $("#toggleWaitBtn").click(function() {
+            
+           $("#waitListArea").slideToggle(300, function() {
+               
+            if ($(this).is(":visible")) {
+                $("#toggleIcon").html("▲"); 
+                $("#toggleWaitBtn").css("border-bottom", "none");
+            } else {
+                $("#toggleIcon").html("▼"); 
+                $("#toggleWaitBtn").css("border-bottom", "1px solid #739BED");
+            }
+         });
+    }); */
+    
+        $("#toggleWaitBtn").click(function() {
+            $("#waitListArea").slideToggle(300, function() {
+                if ($(this).is(":visible")) {
+                    $("#toggleIcon").html("▲"); // 열리면 위 화살표
+                } else {
+                    $("#toggleIcon").html("▼"); // 닫히면 아래 화살표
+                }
+            });
+        });
+    });
+    
+    function checkApproveForm() {
+    	e.stopPropagation();
+        var hireDate = document.querySelector('[name="empHireDate"]');
+        var deptNo = document.querySelector('[name="deptNo"]');
+        var positionNo = document.querySelector('[name="empPositionNo"]');
+        
+        if (!hireDate.value.trim()) {
+            window.alert("입사일을 지정해 주세요.");
+            hireDate.focus();
+            return false; // 전송 중단
+        }
+        
+        if (!deptNo.value) {
+            window.alert("부서를 배치해 주세요.");
+            $(deptNo).select2('open'); // Select2 창 열기
+            return false;
+        }
+        
+        if (!positionNo.value) {
+            window.alert("직급을 지정해 주세요.");
+            $(positionNo).select2('open'); // Select2 창 열기
+            return false;
+        }
+
+        // 3개 모두 입력되었다면 마지막으로 확인받고 전송
+        return confirm("해당 사원의 가입을 승인하시겠습니까?");
+    }
+    
+    var rejectState = {
+    		rejectValid: false,
+			ok: function(){
+				return Object.values(this)
+				.filter(v => typeof v==="boolean")
+				.every(v => v === true);
+			}
+		};
+    
+    function rejectConfirm(empId) {
+    	openConfirm('승인 거절하시겠습니까?', "rejectOk('" + empId + "');");
+	}
+    
+    function rejectOk(empId) {
+    	location.href = "reject?empId=" + empId;
+    }
 </script>
+
