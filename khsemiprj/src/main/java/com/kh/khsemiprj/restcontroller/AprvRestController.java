@@ -16,12 +16,14 @@ import com.kh.khsemiprj.dao.AprvLineDao;
 import com.kh.khsemiprj.dao.AttachDao;
 import com.kh.khsemiprj.dao.EmpDao;
 import com.kh.khsemiprj.dao.EmpLeaveDao;
+import com.kh.khsemiprj.dao.LogCostDao;
 import com.kh.khsemiprj.dao.MemoDao;
 import com.kh.khsemiprj.dao.PlanDao;
 import com.kh.khsemiprj.dto.AprvFormDto;
 import com.kh.khsemiprj.dto.AprvLineDto;
 import com.kh.khsemiprj.dto.AttachDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
+import com.kh.khsemiprj.dto.LogCostDto;
 import com.kh.khsemiprj.dto.MemoDto;
 import com.kh.khsemiprj.dto.PlanDto;
 import com.kh.khsemiprj.vo.AprvDetailVO;
@@ -55,6 +57,9 @@ public class AprvRestController {
 	
 	@Autowired
 	private MemoDao memoDao;
+	
+	@Autowired
+	private LogCostDao logCostDao;
 	
 	@Autowired
 	private AttachDao attachDao;
@@ -160,7 +165,12 @@ public class AprvRestController {
 									if(headName.equals("사직")) {
 										empDao.insertEmpExit(aprvDetailVO.getAprvWriter(), aprvDetailVO.getAprvSdate());
 									} else if(headName.equals("비용")) {
-										
+										logCostDao.insert(LogCostDto.builder()
+												.logEmpId(aprvDetailVO.getAprvWriter())
+												.logAprvDocumentNo(aprvDetailVO.getAprvNo())
+												.logCostUsed(aprvDetailVO.getAprvCost()*-1)
+												.logAprvRecord(aprvDetailVO.getAprvSdate())
+												.build());
 									}
 								}
 								

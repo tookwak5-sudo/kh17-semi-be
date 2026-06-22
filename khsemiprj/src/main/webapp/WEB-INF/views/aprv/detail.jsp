@@ -418,7 +418,7 @@
         </div>
         <div class="modal-footer">
         	<button type="button" class="btn btn-negative" onclick="closeModal()">취소</button>
-        	<button type="button" class="btn btn-positive" onclick="aprvLineUpdate()">입력 완료</button>
+        	<button type="button" id="btnAprvLineUpdate" class="btn btn-positive" onclick="aprvLineUpdate()">입력 완료</button>
         </div>
     </div>
 </div>

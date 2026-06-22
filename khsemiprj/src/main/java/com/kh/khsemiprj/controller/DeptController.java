@@ -41,7 +41,9 @@ public class DeptController {
 	}
 	@PostMapping("/insert")
 	public String join(@ModelAttribute DeptDto deptDto, Model model) {
-		
+		long deptNo = deptDao.sequence();
+		System.out.println("deptNo = " + deptNo);
+		deptDto.setDeptNo(deptNo);
 		deptDao.insert(deptDto);
 		
 		return "redirect:./list?alarm=deptInsert";

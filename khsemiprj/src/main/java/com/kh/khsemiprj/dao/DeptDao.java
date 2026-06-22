@@ -20,6 +20,12 @@ public class DeptDao {
 	@Autowired
 	private DeptVOMapper deptVOMapper;
 	
+	public int sequence() {
+		String sql = "select dept_seq.nextval from dual";
+		int nextNo = jdbcTemplate.queryForObject(sql, int.class);
+		return nextNo;
+	}
+	
 	//부서 등록
 	public void insert(DeptDto deptDto) {
 		

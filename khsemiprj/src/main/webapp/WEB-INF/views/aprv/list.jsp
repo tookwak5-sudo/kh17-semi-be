@@ -124,7 +124,7 @@
     <div class="modal-box">
         <div class="modal-header center">결재 양식 선택</div>
         
-        <div class="modal-body">
+        <div class="modal-body" style="overflow-y: auto; max-height: 400px;">
             <form id="popupForm1" class="flex-area">
             	<div class="cell w-100">
             		<c:forEach var="aprvFormDto" items="${formList}">
@@ -135,7 +135,7 @@
 				</div>
             </form>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer mt-20">
         	<button type="button" class="btn btn-negative" onclick="closeModal()">취소</button>
         </div>
     </div>
