@@ -45,7 +45,7 @@
 	        var valid = regex.test(empEmail); 
 	        
 	        if(valid == false){
-	            $("[name=empEmail]").removeClass("success fail").addClass("fail");
+	            $("[name=empEmail]").removeClass("success fail").addClass("fail").attr("data-error", "1");
 	            state.empEmailValid = false; 
 	            return;
 	        } 
@@ -59,8 +59,22 @@
 		
 	  //인증메일 보내기 버튼(.btn-cert-send)
   		$(".btn-cert-send").on("click", function(){
-  			var empEmail = $("[name=empEmail]").val();
-  			 if(state.empEmailValid == false) return;
+  			var $emailInput = $("[name=empEmail]");
+  			var empEmail = $emailInput.val();
+  			
+  			//이메일 칸이 비어있는 지 확인
+  			if(empEmail.trim().length === 0) {
+  				$emailInput.removeClass("success fail").addClass("fail").attr("data-error", "2");
+  				$emailInput.focus();
+  				state.emailValid = false;
+  				return;
+  			}
+  			
+  			// 유효성 검사 통과 여부 확인
+  			if(state.empEmailValid == false){ 
+  				$emailInput.focus();
+  				return;
+  			}
 
                $.ajax({
                    url:"/rest/cert/send",
@@ -191,7 +205,7 @@
 		</div>
 	</div>
 	<div class="cell">
-		<label>이름</label> <input type="text" name="empName" class="field w-100">
+		<label>성함</label> <input type="text" name="empName" class="field w-100">
 	</div>
 	
 	<div class="cell">
@@ -211,6 +225,7 @@
 		<div class="success-feedback w-100 mt-5"></div>
 		<div class="fail-feedback w-100 mt-5">
 			<div>이메일이 형식에 맞지 않습니다.</div>
+			<div>이메일을 입력해주세요.</div>
 		</div>
 	</div>
        
@@ -221,6 +236,9 @@
 		<button type="submit" class="btn btn-positive w-100">
 			<i class="fa-solid fa-user"></i> <span>확인</span>
 		</button>
+		<a href="/emp/login" class="btn btn-negative w-100 mt-10">
+				<span>취소하기</span>			
+		</a>
 	</div>
 	<div class="red" style="white-space: nowrap;">
 		<c:if test="${param.error != null}">

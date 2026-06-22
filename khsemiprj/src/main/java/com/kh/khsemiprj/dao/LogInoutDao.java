@@ -58,7 +58,7 @@ public class LogInoutDao {
 		
 		String sql = "select * from ("
 				+ "select rownum rn, TMP.* from ("
-				+ "select * from log_inout "
+				+ "select * from log_inout l left join emp e on l.log_inout_emp_id = e.emp_id "
 				+ "where instr("+pageVO.getColumn()+", ?) > 0 "
 				+ "order by log_inout_no desc"
 			+ ") TMP"

@@ -53,9 +53,7 @@
         margin: 0;
     }
 </style>
-<div class="container w-400 mt-20 mb-50 background-card">
-    <div class="result-card">
-        
+<div class="container w-400 mt-20 mb-50 background-card result-card">
         <div class="result-icon">
             <i class="fa-solid fa-circle-check"></i>
         </div>
@@ -73,7 +71,6 @@
             	로그인하러 가기 <i class="fa-solid fa-right-to-bracket"></i>
             </a>
         </div>  
-    </div>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>
