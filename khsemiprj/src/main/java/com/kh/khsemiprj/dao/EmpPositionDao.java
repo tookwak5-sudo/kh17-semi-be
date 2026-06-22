@@ -44,5 +44,20 @@ public class EmpPositionDao {
 		String sql = "delete emp_position where emp_position_no=?";
 		Object[] params = { empPositionNo };
 		return jdbcTemplate.update(sql, params)>0;
-	}		
+	}
+	
+	//입력된 직급이름으로 같은 직급 이름이 있는 지 조회
+	public EmpPositionDto selectOneByName(String positionName) {
+		String sql = "select * from emp_position where emp_position_name = ? ";
+		Object[] params = {positionName};
+		List<EmpPositionDto> list = jdbcTemplate.query(sql, empPositionMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	//입력된 직급레벨로 같은 직급 레벨이 있는 지 조회
+		public EmpPositionDto selectOneByLevel(int positionLevel) {
+			String sql = "select * from emp_position where emp_position_level = ? ";
+			Object[] params = {positionLevel};
+			List<EmpPositionDto> list = jdbcTemplate.query(sql, empPositionMapper, params);
+			return list.isEmpty() ? null : list.get(0);
+		}
 }

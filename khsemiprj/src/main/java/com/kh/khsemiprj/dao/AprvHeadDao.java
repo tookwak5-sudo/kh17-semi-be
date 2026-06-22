@@ -52,4 +52,12 @@ public class AprvHeadDao {
 		return jdbcTemplate.query(sql, aprvHeadMapper);
 	}
 	
+	//입력된 헤더이름으로 같은 헤더 이름이 있는 지 조회
+	public AprvHeadDto selectOneByName(String headName) {
+		String sql = "select * from aprv_head where head_name = ? ";
+		Object[] params = {headName};
+		List<AprvHeadDto> list = jdbcTemplate.query(sql, aprvHeadMapper, params);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
 }

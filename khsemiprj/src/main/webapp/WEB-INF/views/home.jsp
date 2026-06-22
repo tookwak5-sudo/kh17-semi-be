@@ -161,7 +161,7 @@
 	        </div>
 			<div class="cell">
 	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="headNo">
+	        	<select class="field w-100" name="planHeadNo">
 	                <option value="">선택하세요</option>
 	            </select>
 	        </div>
@@ -225,6 +225,7 @@
 
 <script type="text/template" id="edit-template">
 <div class="calendarModal">
+	<input type="hidden" name="planDeptNo" value="${deptNo}">
 	<div class="flex-area flex-center mb-10">
 	        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
 	        	<button class="me-20 red" type="button" onclick="closeCalendarModal()" style="cursor: pointer; background: none; border: none; font-size: 18px;">
@@ -424,16 +425,6 @@
 				planExplain : $("[name=planExplain]").val(),
 				planDeptNo :  $("[name=planDeptNo]").val(),
 			};
-			
-			//console.log(data);
-			// 제목, 종류, 일정이 빈값이면 return (다른 건 입력값이 없어도 허용)
-// 			var check = data.planName.length == 0 || planType.length == 0 || planSdate.length == 0 || planEdate.length == 0;
-// 			if(check) return;
-			
-			//[1]결재문서
-			//planType(개인, 부서, 회사)이 부서이고, planAprvNo가 null이 아닌 경우
-			
-			//[2]결재문서가 아닌 경우 planAprvNo가 null인 경우
 			$.ajax({
 				url: "/rest/plan/write",
 				method: "post",
@@ -471,35 +462,34 @@
 		    var planSdate = $(this).data("plan-sdate");
 		    var planEdate = $(this).data("plan-edate");
 		    var planExplain = $(this).data("plan-explain");
-		    var planHeadNo = $(this).data("plan-head_no");
+		    var planHeadNo = $(this).data("plan-head-no");
 			
-// 			현재 수정하려는 수정 화면에 대한 처리		
-
 			// 수정 화면 가져오기
 			var template = $("#edit-template").text();
             $("#modal-body").html(template);
-			$("#modal-body").find("[name=planName]").val(planTitle);
-			$("#modal-body").find("[name=planType]").val(planType);
-			$("#modal-body").find("[name=planHead_no]").val(planHeadNo);
-		    $("#modal-body").find("[name=planSdate]").val(planSdate);
-		    $("#modal-body").find("[name=planEdate]").val(planEdate);
-		    $("#modal-body").find("[name=planExplain]").val(planExplain);
 			
 		    //수정 눌렀을때 고유키 심어주기
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
 			
 		    var headList = JSON.parse('${planHeadJson}');
-            var options = "";
+            var options = "<option value=''>선택하세요</option>";
             for(var i = 0; i < headList.length; i++) {
             	if(headList[i].headType == "일반"){
-        			options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+            		var isSelected = (headList[i].headNo == planHeadNo) ? "selected" : "";
+            		
+            		options += "<option value='" + headList[i].headNo + "' " + isSelected + ">" + headList[i].headName + "</option>";
             	}
             }
             //가져온 option을 헤더 select 아래에 append 
             $("select[name='planHeadNo']").empty().append(options);
 		    
+            $("#modal-body").find("[name=planName]").val(planTitle);
+			$("#modal-body").find("[name=planType]").val(planType);
+			$("#modal-body").find("[name=planHeadNo]").val(planHeadNo);
+		    $("#modal-body").find("[name=planSdate]").val(planSdate);
+		    $("#modal-body").find("[name=planEdate]").val(planEdate);
+		    $("#modal-body").find("[name=planExplain]").val(planExplain);
 		    $(".calendarModal").show();
-		    
 		    var $startDate = $("#modal-body [name=planSdate]");
 		    var $endDate = $("#modal-body [name=planEdate]");
 		    
@@ -524,7 +514,8 @@
 			        planNo : planNo, // 어떤 일정을 수정할지 알아야 하므로 무조건 필수!
 			        planName : $("#modal-body [name=planName]").val(),
 			        planType : $("#modal-body [name=planType]").val(),
-			        planHeader : $("#modal-body [name=planHeadNo]").val(),
+			        planHeadNo : $("#modal-body [name=planHeadNo]").val(),
+			        planDeptNo : $("#modal-body [name=planDeptNo]").val(),
 			        planSdate : $("#modal-body [name=planSdate]").val(),
 			        planEdate : $("#modal-body [name=planEdate]").val(),
 			        planExplain : $("#modal-body [name=planExplain]").val()
@@ -570,6 +561,16 @@
 	            // 1. 템플릿을 가져와 모달에 주입
 	            var template = $("#write-template").text();
 	            $("#modal-body").html(template);
+	            
+	            var headList = JSON.parse('${planHeadJson}');
+	            var options = "<option value=''>선택하세요</option>";
+	            for(var i = 0; i < headList.length; i++) {
+	            	if(headList[i].headType == "일반"){
+	        			options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
+	            	}
+	            }
+	            //가져온 option을 헤더 select 아래에 append 
+	            $("select[name='planHeadNo']").empty().append(options);
 	            
 	            // 부서 번호 넣기
 	            var headList = JSON.parse('${planHeadJson}');
@@ -668,7 +669,7 @@
                 $("#modalEditBtn").data("plan-sdate", sResult);
                 $("#modalEditBtn").data("plan-edate", eResult);
                 $("#modalEditBtn").data("plan-explain", planExplain);
-                $("#modalEditBtn").data("plan-headNo", planHeadNo);
+                $("#modalEditBtn").data("plan-head-no", planHeadNo);
             	
             	document.getElementById('detailTitle').innerText = planTitle;
                 document.getElementById('detailType').innerText = planType;

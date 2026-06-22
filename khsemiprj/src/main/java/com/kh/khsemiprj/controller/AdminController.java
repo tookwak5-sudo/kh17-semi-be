@@ -25,6 +25,7 @@ import com.kh.khsemiprj.dto.EmpDto;
 import com.kh.khsemiprj.dto.EmpLeaveDto;
 import com.kh.khsemiprj.dto.EmpPositionDeptDto;
 import com.kh.khsemiprj.dto.EmpPositionDto;
+import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.LogAccessDto;
 import com.kh.khsemiprj.dto.LogInoutDto;
 import com.kh.khsemiprj.vo.PageVO;
@@ -68,6 +69,14 @@ public class AdminController {
 	//헤더 등록
 	@PostMapping("/headWrite")
 	public String headWrite(@ModelAttribute AprvHeadDto aprvHeadDto) {
+		
+		// 1. DB에서 같은 이름의 헤더가 있는지 조회 (DAO에 selectOneByName 같은 메서드 필요)
+	    AprvHeadDto findDto = aprvHeadDao.selectOneByName(aprvHeadDto.getHeadName());
+	    
+		if(findDto != null || aprvHeadDto == null) {
+			return "redirect:/admin/manage?alarm=duplicateHead";
+		}
+		
 		int headNo = aprvHeadDao.sequence();
 		aprvHeadDto.setHeadNo(headNo);
 		aprvHeadDao.insert(aprvHeadDto);
@@ -86,6 +95,25 @@ public class AdminController {
 	//직급 등록
 	@PostMapping("/empPositionWrite")
 	public String empPositionWrite(@ModelAttribute EmpPositionDto empPositionDto) {
+		
+		
+		// 1. DB에서 같은 이름의 직급이 있는지 조회
+	    EmpPositionDto findNameDto = empPositionDao.selectOneByName(empPositionDto.getEmpPositionName());
+	    // 2. DB에서 같은 단계의 직급단계가 있는지 조회
+	    EmpPositionDto findLevelDto = empPositionDao.selectOneByLevel(empPositionDto.getEmpPositionLevel());
+	    
+	    if(empPositionDto.getEmpPositionName().length() == 0 || empPositionDto.getEmpPositionLevel() == 0) {
+	    	return "redirect:/admin/manage?alarm=duplicatePosition";
+	    }
+	    
+		if(findNameDto != null) {
+			return "redirect:/admin/manage?alarm=duplicatePositionName";
+		}
+		if(findLevelDto != null) {
+			return "redirect:/admin/manage?alarm=duplicatePositionLevel";
+		}
+		
+		
 		int empPositionNo = empPositionDao.sequence();
 		empPositionDto.setEmpPositionNo(empPositionNo);
 		empPositionDao.insert(empPositionDto);

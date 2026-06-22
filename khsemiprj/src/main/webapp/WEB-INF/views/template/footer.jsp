@@ -286,6 +286,21 @@
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();">휴가수정이 완료되었습니다.</a>
 						    </div>
 						</c:when>
+						<c:when test="${param.alarm == 'duplicateHead'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();">중복된 헤더입니다</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'duplicatePositionName'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();">중복된 직책명입니다</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'duplicatePositionLevel'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();">중복된 직책단계입니다</a>
+						    </div>
+						</c:when>
 					</c:choose>
 				</c:when>
 	    	</c:choose>

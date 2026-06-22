@@ -153,10 +153,9 @@ public class AprvFormController {
 		
 		EmpDto findEmpDto = new EmpDto();
 		findEmpDto = empDao.selectOne(loginId);
-		if(findEmpDto == null || findEmpDto.getEmpGrade()<=1) {
+		if(findEmpDto == null || findEmpDto.getEmpGrade() < 1) {
 			return "redirect:/error/500";
 		}
-		
 		
 		try {
 
