@@ -34,9 +34,9 @@
 					</div>
 				</div>
 				<div style="margin-left : auto">
-					<i class="fa-regular fa-thumbs-up red reply-btn-like"></i>
+					<i class="fa-regular fa-thumbs-up blue reply-btn-like"></i>
 					<span class="reply-thumbs-up-count">0</span>
-					<i class="fa-regular fa-thumbs-down blue reply-btn-dislike"></i>
+					<i class="fa-regular fa-thumbs-down red reply-btn-dislike"></i>
 					<span class="reply-thumbs-down-count">0</span>
 				</div>
 			</div>
@@ -113,12 +113,12 @@
 	<div class="cell mt-20 flex-area">
 		<div>
 			좋아요 
-			<i class="fa-solid fa-thumbs-up red board-btn-like"></i>
+			<i class="fa-solid fa-thumbs-up blue board-btn-like"></i>
 			<span class="thumbs-up-count">?</span>
 		</div>
 		<div class="ms-20">
 			싫어요 
-			<i class="fa-regular fa-thumbs-down blue board-btn-dislike"></i>
+			<i class="fa-regular fa-thumbs-down red board-btn-dislike"></i>
 			<span class="thumbs-down-count">?</span>
 		</div>
 		<div class="ms-20">

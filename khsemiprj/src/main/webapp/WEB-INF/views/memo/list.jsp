@@ -108,9 +108,16 @@
 													<span style="color: #adb5bd;">읽음</span>
 												</c:if>
 											</div>
+											<c:if test="${param.keyword==null}">
 												<a href="./detail?memoNo=${memo.memoNo}" class="memo-title" style="flex-grow: 1; min-width: 0; color: inherit; text-decoration: none;">
 													${memo.memoTitle}										
 												</a>
+											</c:if>
+											<c:if test="${param.keyword!=null}">
+												<a href="./detail?column=${param.column}&keyword=${param.keyword}&memoNo=${memo.memoNo}" class="memo-title" style="flex-grow: 1; min-width: 0; color: inherit; text-decoration: none;">
+													${memo.memoTitle}										
+												</a>
+											</c:if>
 										</div>
 									</td>
 									<td>${memo.memoSenderId}(${memo.empName})</td>
