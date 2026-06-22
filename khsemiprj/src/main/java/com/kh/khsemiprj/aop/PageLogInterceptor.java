@@ -20,6 +20,17 @@ public class PageLogInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		
+		String currentUrl = request.getRequestURI();
+		
+		// 로그를 남기지 말아야 할 경로 패턴 정의
+		if (currentUrl.contains("/memo/checkNewMemo") || 
+		        currentUrl.startsWith("/css/") || 
+		        currentUrl.startsWith("/js/") ||
+		        currentUrl.startsWith("/images/")) {
+		        return true; 
+		}
+		
 		//페이지 로그 인터셉터
 		// - 페이지 호출마다 로그 기록용 인터셉터
 		HttpSession session = request.getSession();
@@ -28,7 +39,6 @@ public class PageLogInterceptor implements HandlerInterceptor {
 		if(loginId == null) {
 			loginId = "비회원";
 		}
-		String currentUrl = request.getRequestURI();
 		String currentIp = request.getHeader("X-Forwarded-For");
 		if (currentIp == null || currentIp.isEmpty() || "unknown".equalsIgnoreCase(currentIp)) {
 			currentIp = request.getHeader("Proxy-Client-IP");

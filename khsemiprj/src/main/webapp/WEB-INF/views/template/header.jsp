@@ -327,7 +327,7 @@
 						    var $badge = $('.badge');
 						    if($badge.length > 0) {
 						        var currentCount = parseInt($badge.text()) || 0;
-						        $badge.text(currentCount + 1);
+						        $badge.text(currentCount);
 						    }
 						}
 					}, // success 끝

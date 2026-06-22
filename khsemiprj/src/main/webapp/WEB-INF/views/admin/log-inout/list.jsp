@@ -18,7 +18,7 @@
 	         <div class="cell flex-area background-fill">
 				<!-- 검색창 -->
 		            <form autocomplete="off">
-		                <select name="column" class="field">
+		                <select name="column" class="field-ph">
 		                    <option value="log_inout_emp_id" ${param.column == 'log_inout_emp_id' ? 'selected' : ''}>사원아이디</option>
 		                    <option value="log_inout_type" ${param.column == 'log_inout_type' ? 'selected' : ''}>분류</option>
 		                </select>
