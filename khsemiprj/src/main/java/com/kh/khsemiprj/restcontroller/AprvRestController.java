@@ -73,10 +73,12 @@ public class AprvRestController {
 			if (findAprvFormDto == null || findAttachDto == null) {
 				fileMap.put("attachNo", "");
 				fileMap.put("attachName", "");
+				fileMap.put("attachSize", "");
 				fileMap.put("result", "empty");
 			} else {
 				fileMap.put("attachNo", findAttachDto.getAttachNo());
 				fileMap.put("attachName", findAttachDto.getAttachName());
+				fileMap.put("attachSize", findAttachDto.getAttachSize());
 				fileMap.put("result", "success");
 			}
 			return fileMap;
@@ -84,6 +86,7 @@ public class AprvRestController {
 			e.printStackTrace();
 			fileMap.put("attachNo", "");
 			fileMap.put("attachName", "");
+			fileMap.put("attachSize", "");
 			fileMap.put("result", "error");
 			
 			return fileMap;
@@ -103,12 +106,12 @@ public class AprvRestController {
 				if(aprvLineVO.getAprvLineStatus().equals("대기")) {//상태값 비교
 					boolean dbResult = aprvLineDao.setAprvLineStatus(aprvLineDto);
 					if(dbResult) {
-						//결재상태 확인
-						AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvLineVO.getAprvDocumentNo());
 						if(aprvLineDto.getAprvLineStatus().equals("승인")) {
 							//System.out.println("aprv_no : " + aprvLineVO.getAprvDocumentNo() + ", aprvLineCurrentSeq : " + aprvLineVO.getAprvLineCurrentSeq());
 							//현재 순서의 결재가 모두 처리되었는지 확인 후 변경
 							aprvLineDao.setAprvStatus(aprvLineVO.getAprvDocumentNo(), aprvLineVO.getAprvLineCurrentSeq());
+							//결재상태 확인
+							AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvLineVO.getAprvDocumentNo());
 							//상태값이 승인으로 변경되었다면
 							if(aprvDetailVO.getAprvStatus().equals("승인")) {
 								String headName = aprvDetailVO.getHeadName();
@@ -156,6 +159,8 @@ public class AprvRestController {
 								} else {//일정 등록하지 않는 헤더라면
 									if(headName.equals("사직")) {
 										empDao.insertEmpExit(aprvDetailVO.getAprvWriter(), aprvDetailVO.getAprvSdate());
+									} else if(headName.equals("비용")) {
+										
 									}
 								}
 								
@@ -174,6 +179,8 @@ public class AprvRestController {
 						} else {
 							//반려라면 결재의 상태값도 반려로 변경
 							aprvDao.setAprvDeny(aprvLineVO.getAprvDocumentNo());
+							//결재상태 확인
+							AprvDetailVO aprvDetailVO = aprvDao.selectOneForAprv(aprvLineVO.getAprvDocumentNo());
 							//반려 결과 기안자에게 쪽지 보내기
 							MemoDto memoDto = MemoDto.builder()
 									.memoNo(memoDao.sequence())

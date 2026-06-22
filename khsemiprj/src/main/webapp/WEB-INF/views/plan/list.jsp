@@ -6,27 +6,77 @@
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
 <style>
-/* 공통 배지 스타일 */
-.type-badge {
-	font-weight: 600;
-	font-size: 16px;
-}
+	/* 공통 배지 스타일 */
+	.type-badge {
+		font-weight: 600;
+		font-size: 16px;
+	}
+	
+	/* 타입별 색상 설정 */
+	.type-personal {
+		color: #1565C0;
+	}
+	
+	.type-dept {
+		color: #2E7D32;
+	}
+	
+	.type-company {
+		color: #EF6C00;
+	}
+	#user-context-menu {
+   		position: absolute;
+   		background-color: white;
+   		border: 1px solid #ccc;
+   		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+   		border-radius: 3px;
+   		padding: 5px 0;
+   		z-index: 1000; 
+	}
 
-/* 타입별 색상 설정 */
-.type-personal {
-	color: #1565C0;
-}
+	#user-context-menu a {
+   		display: block;
+   		padding: 8px 15px;
+   		color: #333;
+   		text-decoration: none;
+   		font-size: 14px;
+	}
 
-.type-dept {
-	color: #2E7D32;
-}
-
-.type-company {
-	color: #EF6C00;
-}
+	#user-context-menu a:hover {
+   		background-color: #f1f3f5; 
+	}
+	
+	.writer-name {
+		cursor:pointer;
+	}
 </style>
 
-<script>
+<script type="text/javascript">
+var deleteConfirmState = {
+    deleteConfirmValid: false,
+    ok: function(){
+        return Object.values(this)
+        .filter(v => typeof v === "boolean")
+        .every(v => v === true);
+    }
+};
+	
+$(document).on("click", ".btn-delete-confirm", function(e){
+    var $btn = $(this); // 클릭된 버튼 요소
+    
+    if(!deleteConfirmState.deleteConfirmValid){
+        e.preventDefault();
+        var deleteUrl = $btn.attr("href"); // 클릭한 버튼의 href 가져오기
+        
+        openConfirm(
+            '정말 삭제 하시겠습니까?', 
+            'deleteConfirmState.deleteConfirmValid = true; location.href="' + deleteUrl + '";'
+        );
+    }
+    
+    return deleteConfirmState.ok();
+});
+
 	$(function () {
 		 var picker8 = new Lightpick({
              field : $(".picker-sdate")[0] ,
@@ -47,7 +97,7 @@
 		});
 	})
 </script>
-<div class="container w-1200 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
     <div>
         <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
@@ -82,9 +132,8 @@
     </div>    
 </div>
 
-	<div class="cell right mt-0">
-		<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총
-			${pageVO.count}개 로그</span>
+	<div class="right" style="font-size: 14px; color: #666;">
+		  <strong style="color: #007bff;">${pageVO.count}</strong>개의 일정
 	</div>
 
 	<div class="cell">
@@ -96,6 +145,7 @@
 					<th>일정 기간</th>
 					<th>부서</th>
 					<th>작성자</th>
+					<th>수정/삭제</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -126,7 +176,13 @@
 							${planDto.deptName} (${planDto.planDeptNo})
 						</c:otherwise>
 							</c:choose></td>
-						<td class="center">${planDto.empName}(${planDto.planEmpId})</td>
+						<td class="center"><a class="writer-name" data-id="${planDto.empName}">${planDto.empName}(${planDto.planEmpId})</a></td>
+						<td class="center">
+						    <c:if test="${sessionScope.loginId == planDto.planEmpId && planDto.headType == '일반'}">
+						        <a class="btn btn-neutral" href="/plan/edit?planNo=${planDto.planNo}">수정</a>
+						        <a class="btn btn-negative btn-delete-confirm" href="/plan/delete?planNo=${planDto.planNo}">삭제</a>
+						    </c:if>
+						</td>
 					</tr>
 				</c:forEach>
 
@@ -142,6 +198,50 @@
 </div>
 <div class="cell">
 	<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+</div>
+<script>
+	
+	$(document).on("click", ".writer-name", function(e){
+		e.stopPropagation(); //클릭 이벤트가 문서 전체로 퍼지는 것을 막음 (바로 닫히는 현상 방지)
+		var memberId = $(this).data("id"); // 현재 클릭한 작성자 이름 태그($(this))에 심어져 있는 data-id의 속성값을 가져오기
+		if(!memberId) return; //탈퇴한 사용자 등 아이디가 없으면 무시
+		
+		// 작성 글 보기 링크의 href 주소를 변경
+		var searchUrl = "/plan/list?planSdate=&planEdate=&column=emp_name&keyword=" + memberId;
+		$("#link-view-posts").attr("href", searchUrl);
+		
+		// 쪽지 보내기 링크의 아이디를 변경
+		$("#link-send-memo").attr("onclick", "sendMemo('"+ memberId +"')");
+		
+		// 마우스가 클릭된 좌표를 계산하여 메뉴를 이동
+		$("#user-context-menu").css({
+	    	top: e.pageY + 10 + "px", // 마우스 포인터보다 살짝 아래
+	    	left: e.pageX + "px"      // 마우스 포인터 위치
+		}).show();
+	});
+	
+	$(document).on("click", function(){
+		$("#user-context-menu").hide();
+	});
+	
+	function sendMemo(empId) {
+		var w = 650; 
+		var h = 650; 
+		var left = (screen.width/2) - (w/2); 
+		var top = (screen.height/2) - (h/2); 
+		window.open('/memo/write?memoSenderId=' + empId, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no');
+	}
+	
+</script>
+
+<!-- 닉네임 클릭 시 나타날 창 -->
+<div id="user-context-menu" style="display: none;">
+	<a href="#" id="link-view-posts">
+	 	<i class="fa-solid fa-magnifying-glass"></i> 작성 글 보기
+	</a>
+	 <a href="#" id="link-send-memo">
+    	<i class="fa-solid fa-paper-plane"></i> 쪽지 보내기
+   	</a>
 </div>
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>

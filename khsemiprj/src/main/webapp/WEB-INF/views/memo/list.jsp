@@ -4,7 +4,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include> 
-  
+
+<link rel="stylesheet" type="text/css" href="/css/modal.css">
 <style>
 	.table-hover tbody tr:hover {
 		background-color : #f8f9fa;
@@ -32,7 +33,34 @@
 		font-size: 12px;
 		font-weight: bold;
 	}
+	.memo-title {
+		white-space: nowrap; /*줄바꿈 금지*/
+        overflow: hidden; /* 넘어가면 숨김처리 */
+        text-overflow: ellipsis; /* 글자가 넘어간 부분을 말줄임표로 표시 */
+	}
+	.memo-content-area { word-break: break-all; overflow-wrap: break-word; }
 </style>
+
+<script>
+//컨펌 열기
+function openConfirm(message, clickScript) {
+	$('#confirmMessage').html(message);
+	$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
+	var confirm = document.getElementById('modalConfirm');
+	confirm.classList.add('active');
+}
+
+// 컨펌 닫기
+function closeConfirm() {
+	var confirm = document.getElementById('modalConfirm');
+	confirm.classList.remove('active');
+	$('#btnConfirmAction').attr("onclick", '');
+}
+
+function deleteMemo(no) {
+	location.href= "./delete?memoNo=" + no;
+}
+</script>
 
 <div class="container w-600 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
@@ -50,6 +78,7 @@
 					<option value="memo_sender_id" ${pageVO.column == 'memo_sender_id' ? 'selected' : ''}>보낸사람</option>
 					<option value="memo_title" ${pageVO.column == 'memo_title' ? 'selected' : ''}>제목</option>
 					<option value="memo_content" ${pageVO.column == 'memo_content' ? 'selected' : ''}>내용</option>
+					<option value="memo_type" ${pageVO.column == 'memo_type' ? 'selected' : ''}>분류</option>
 				</select>
 				<input type="text" name="keyword" class="field-sm" value="${pageVO.keyword}" placeholder="검색어를 입력하세요" style="padding: 8px 18px; font-size: 16px;">
 				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
@@ -93,16 +122,20 @@
 											<c:otherwise><span style="color: #7f8fa6;">[일반]</span></c:otherwise>
 										</c:choose>
 									</td>
-									<td align="left" style="padding-left: 15px; font-weight: ${memo.memoReadStatus == 'N' ? 'bold' : 'normal'};">
-										<c:if test="${memo.memoReadStatus == 'N'}">
-											<span class="unread-badge">New</span>
-										</c:if>
-										<c:if test="${memo.memoReadStatus == 'Y'}">
-											<span style="color: #adb5bd;">읽음</span>
-										</c:if>
-										<a href="./detail?memoNo=${memo.memoNo}">
-											${memo.memoTitle}										
-										</a>
+									<td align="left" style="padding-left: 15px; font-weight: ${memo.memoReadStatus == 'N' ? 'bold' : 'normal'}; max-width: 120px" >
+										<div style="display: flex; align-items: center; width: 100%; gap: 6px;">
+											<div style="flex-shrink: 0; display: inline-flex; align-items: center;">
+												<c:if test="${memo.memoReadStatus == 'N'}">
+													<span class="unread-badge">New</span>
+												</c:if>
+												<c:if test="${memo.memoReadStatus == 'Y'}">
+													<span style="color: #adb5bd;">읽음</span>
+												</c:if>
+											</div>
+												<a href="./detail?memoNo=${memo.memoNo}" class="memo-title" style="flex-grow: 1; min-width: 0; color: inherit; text-decoration: none;">
+													${memo.memoTitle}										
+												</a>
+										</div>
 									</td>
 									<td>${memo.memoSenderId}(${memo.empName})</td>
 									<td>
@@ -116,7 +149,11 @@
 			</table>
 		</div>
 		<div class="cell right">
-				<a class="btn btn-positive" href="./write">
+				<a class="btn btn-negative" style="width:147px" onclick="openConfirm('정말 삭제하시겠습니까?', 'location.href=\'./writeDelete\';')">
+					<i class="fa-solid fa-trash"></i>
+					읽은 쪽지 삭제
+				</a>
+				<a class="btn btn-positive" style="width:147px" href="./write">
 					<i class="fa-regular fa-pen-to-square"></i>
 					<span>쪽지쓰기</span>
 				</a>
@@ -126,39 +163,58 @@
 	<c:if test="${param.send != null}">
 	
 	<style>
-        /* [1] 버튼 기본 스타일 */
-        #send-alarm {
-            position: fixed; /* 화면 하단에 고정 */
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            background-color: transparent;
-            color: #5A86E3;
-            border: 2px solid #5A86E3;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000; /* 최상단 위치 */
-            
-            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
-            transition: transform 0.5s ease, opacity 0.5s ease;
-        }
-
-        /* [2] 처음 숨겨진 상태 (기본) */
-        #send-alarm.btn-slide-hidden {
-            /* 아래로 100px 내려가 있고 투명함 */
-            transform: translateY(100px); 
-            opacity: 0;
-        }
-
-        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
-        #send-alarm.btn-slide-show {
-            /* 제자리로 돌아오고 불투명함 */
-            transform: translateY(0);
-            opacity: 1;
-        }
-    </style>
+		        /* [1] 버튼 기본 스타일 */
+		        #send-alarm {
+		            position: fixed; /* 화면 하단에 고정 */
+		            bottom: 40px;
+		            left: 20px;
+		            padding: 15px 25px;
+		            /* background-color: transparent; */
+		            /* color: #5A86E3; */
+		            /* border: 2px solid #5A86E3; */
+		            border-radius: 50px;
+		            font-size: 16px;
+		            cursor: pointer;
+		            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+		            z-index: 1000; /* 최상단 위치 */
+		            
+		            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
+		            transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        
+		        #send-ajax-alarm {
+		        	background-color: #ffffff;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-positive:hover {
+		        	background-color: #5A86E3;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-negative:hover {
+		        	background-color: #E86A7A;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		
+		        /* [2] 처음 숨겨진 상태 (기본) */
+		        #send-alarm.btn-slide-hidden, #send-ajax-alarm.btn-slide-hidden {
+		            /* 아래로 100px 내려가 있고 투명함 */
+		            transform: translateY(100px); 
+		            opacity: 0;
+		        }
+		
+		        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
+		        #send-alarm.btn-slide-show, #send-ajax-alarm.btn-slide-show  {
+		            /* 제자리로 돌아오고 불투명함 */
+		            transform: translateY(0);
+		            opacity: 1;
+		        }
+		        
+		        /* 보여지는 상태 */
+				#div-alarm.is-visible {
+				    opacity: 1 !important;
+				    visibility: visible !important;
+				}
+		    </style>
 	
 	<script>
 		// 페이지가 완전히 로드되면 실행
@@ -199,39 +255,58 @@
     <c:if test="${param.delete != null}">
 	
 	<style>
-        /* [1] 버튼 기본 스타일 */
-        #send-alarm {
-            position: fixed; /* 화면 하단에 고정 */
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            background-color: transparent;
-            color: #E86A7A;
-            border: 2px solid #E86A7A;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000; /* 최상단 위치 */
-            
-            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
-            transition: transform 0.5s ease, opacity 0.5s ease;
-        }
-
-        /* [2] 처음 숨겨진 상태 (기본) */
-        #send-alarm.btn-slide-hidden {
-            /* 아래로 100px 내려가 있고 투명함 */
-            transform: translateY(100px); 
-            opacity: 0;
-        }
-
-        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
-        #send-alarm.btn-slide-show {
-            /* 제자리로 돌아오고 불투명함 */
-            transform: translateY(0);
-            opacity: 1;
-        }
-    </style>
+		        /* [1] 버튼 기본 스타일 */
+		        #send-alarm {
+		            position: fixed; /* 화면 하단에 고정 */
+		            bottom: 40px;
+		            left: 20px;
+		            padding: 15px 25px;
+		            /* background-color: transparent; */
+		            /* color: #5A86E3; */
+		            /* border: 2px solid #5A86E3; */
+		            border-radius: 50px;
+		            font-size: 16px;
+		            cursor: pointer;
+		            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+		            z-index: 1000; /* 최상단 위치 */
+		            
+		            /* 💡 핵심: 부드러운 움직임 설정 (transition) */
+		            transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        
+		        #send-ajax-alarm {
+		        	background-color: #ffffff;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-positive:hover {
+		        	background-color: #5A86E3;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		        #send-ajax-alarm.btn-negative:hover {
+		        	background-color: #E86A7A;
+		        	transition: transform 0.5s ease, opacity 0.5s ease;
+		        }
+		
+		        /* [2] 처음 숨겨진 상태 (기본) */
+		        #send-alarm.btn-slide-hidden, #send-ajax-alarm.btn-slide-hidden {
+		            /* 아래로 100px 내려가 있고 투명함 */
+		            transform: translateY(100px); 
+		            opacity: 0;
+		        }
+		
+		        /* [3] 자연스럽게 나타난 상태 (JS로 추가할 클래스) */
+		        #send-alarm.btn-slide-show, #send-ajax-alarm.btn-slide-show  {
+		            /* 제자리로 돌아오고 불투명함 */
+		            transform: translateY(0);
+		            opacity: 1;
+		        }
+		        
+		        /* 보여지는 상태 */
+				#div-alarm.is-visible {
+				    opacity: 1 !important;
+				    visibility: visible !important;
+				}
+		    </style>
 	
 	<script>
 		// 페이지가 완전히 로드되면 실행
@@ -270,5 +345,22 @@
 
 	<div class="cell">    
 		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+	</div>
+	<!-- 커스텀 컨펌 -->
+    <div class="modal-overlay" id="modalConfirm">
+	    <div class="modal-box" style="width:400px;">
+	        <!-- <div class="modal-header center"></div> -->
+	        <div class="modal-body">
+	            <form id="popupFormConfirm" class="flex-area">
+	            	<div class="cell w-100">
+	            		<span id="confirmMessage"></span>
+					</div>
+	            </form>
+	        </div>
+	        <div class="modal-footer" style="txt-align:center;">
+	        	<button id="btnConfirmAction" type="button" class="btn btn-positive" onclick="">확인</button>
+	        	<button type="button" class="btn btn-neutral" onclick="closeConfirm()">취소</button>
+	        </div>
+	    </div>
 	</div>
 </div>

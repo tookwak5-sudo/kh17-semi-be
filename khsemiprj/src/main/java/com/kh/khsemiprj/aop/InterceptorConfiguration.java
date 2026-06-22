@@ -28,9 +28,8 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(pageLogInterceptor)
 		.addPathPatterns("/**")
-		.excludePathPatterns("/emp/login", "/admin/logAccess/list","/css/**","/js/**", "/images/**")
-		;
-		
+		.excludePathPatterns("/emp/login", "/admin/logAccess/**","/css/**","/js/**", "/images/**");													
+											
 		//조회수 증가 처리를 하는 인터셉터
 		registry.addInterceptor(boardReadInterceptor)
 				.addPathPatterns("/board/detail");
@@ -67,23 +66,25 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 			        ,"/js/**"   
 			        ,"/images/**"
 			    );	
-				
-//				//부서장 이상만 갈 수 있는 페이지 설정
-//				registry.addInterceptor(adminOnlyInterceptor)
-//						.addPathPatterns(
-//								"/admin/**"
-//								,"/dept/list"
-//						);
-//				
+				//부서장 이상만 갈 수 있는 페이지 설정
+				registry.addInterceptor(adminOnlyInterceptor)
+						.addPathPatterns(
+								"/admin/**"
+						);
 				//관리자만 접근 가능
 				registry.addInterceptor(masterOnlyInterceptor)
 						.addPathPatterns(
-							"/admin/log-inout/**"
+							"/admin/manage/**"
+							,"/admin/log-inout/**"
 							,"/admin/logAccess/**"
+							,"/admin/emp/list"
+							,"/admin/emp/detail"
+							,"/admin/leave/list"
 							,"/dept/insert"
 							,"/dept/insertComplete"
 							,"/dept/edit"
-							,"/dept/delete"	
+							,"/dept/delete"
+							,"/dept/list"
 						);
 	}
 }

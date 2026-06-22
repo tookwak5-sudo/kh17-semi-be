@@ -11,19 +11,6 @@
 			transition: background-color 0.2s ease;
 	}
 	
-/* 	.field { */
-/* 	    border: 1px solid #ced4da;  */
-/* 	    border-radius: 6px;  */
-/* 	    padding: 5px 10px;  */
-/* 	    outline: none; */
-/* 	    transition: border-color 0.2s ease, box-shadow 0.2s ease; */
-/* 	} */
-	
-/* 	.field:focus { */
-/* 	    border-color: #739BED; */
-/* 	    box-shadow: 0 0 0 3px rgba(115, 155, 237, 0.2); */
-/* 	} */
-	
 	.select2-results__options {
         max-height: 150px !important;
         overflow-y: auto !important;
@@ -48,21 +35,48 @@
 	}
 </style>
 
-<div class="container w-950 mt-20 mb-50 background-card">
+<div class="container w-90 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-		<div class="w-15 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
-		            회원 관리
+		            사원 관리
 		            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
 		        </h1>
 			</div>
         </div>
+        
+        <div class="cell flex-area flex-vertical background-fill">
+			<form action="./list" method="get" style="display: flex; align-items: center; gap: 8px;">
+				<select name="column" class="field">
+					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
+					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>이름</option>
+					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
+					<option value="emp_position_name" ${param.column == 'emp_position_name' ? 'selected' : ''}>직급</option>
+				</select>
+				<input type="text" name="keyword" class="field-sm" value="${param.keyword}">
+				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
+					<i class="fa-solid fa-magnifying-glass"></i>
+					<span>검색</span>
+				</button>
+			</form>
+		</div>
+		
+		<div class="w-20 flex-area flex-center" style="justify-content: right;">
+		</div>
 	</div>
 			
 		<c:if test="${sessionScope.empGrade == 2 && wList.size() > 0}">
 		<div class="cell">
-				<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3>
+			<button type="button" id="toggleWaitBtn" style="width: 100%; height: 50px; padding: 15px; font-size: 16px; font-weight: bold; border: 1px solid #739BED; background-color: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 8px;">
+				<span>
+                <i class="fa-solid fa-bell" style="color: #f94b4b;"></i>
+                승인 대기 중인 사원이 <span style="color: #f94b4b; font-size: 18px;">${wList.size()}</span>명 있습니다.
+            	</span>
+            	<span id="toggleIcon" style="color: #666;">▼</span>
+            </button>
+       	</div>
+       	<div id="waitListArea" style="display: none; margin-top: 0px;">
 					<table class="table" style="background-color: white; margin-bottom: 0;">
 						<thead>
 							<tr style="border-bottom: 2px solid #e9ecef;">
@@ -85,27 +99,10 @@
 						</tbody>
 					</table>
 				</div>
-		<hr class="mt-30 mb-30">
+		
+		<hr class="mt-20 mb-30">
 		</c:if>
 				
-				
-		<div class="cell" style="display: flex; justify-content: flex-end;">
-			<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
-				<select name="column" class="field">
-					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
-					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>이름</option>
-					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
-					<option value="emp_position_name" ${param.column == 'emp_position_name' ? 'selected' : ''}>직급</option>
-				</select>
-				<input type="text" name="keyword" class="field-sm" value="${param.keyword}">
-				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
-					<i class="fa-solid fa-magnifying-glass"></i>
-					<span>검색</span>
-				</button>
-			</form>
-	</div>
-	
-	
 	<c:if test="${param.column != null && param.keyword != null && param.keyword != ''}">
 	<div class="cell">
 		<h3>총 <span class="red">${list.size()}</span>명의 회원이 검색되었습니다</h3>
@@ -179,8 +176,8 @@
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" class="btn btn-negative" onclick="closePopUp()">취소</button>
                 <button type="submit" class="btn btn-positive">입력 완료</button>
+                <button type="button" class="btn btn-negative" onclick="closePopUp()">취소</button>
             </div>
         </form>
     </div>
@@ -193,10 +190,10 @@
 
 <jsp:include page="/WEB-INF/views/template/footer.jsp"></jsp:include>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
     // 팝업 함수
@@ -227,6 +224,30 @@
             dropdownParent: $('#popUp'),
             width: '100%',
             minimumResultsForSearch: Infinity
+        });
+        
+        /* $("#toggleWaitBtn").click(function() {
+            
+           $("#waitListArea").slideToggle(300, function() {
+               
+            if ($(this).is(":visible")) {
+                $("#toggleIcon").html("▲"); 
+                $("#toggleWaitBtn").css("border-bottom", "none");
+            } else {
+                $("#toggleIcon").html("▼"); 
+                $("#toggleWaitBtn").css("border-bottom", "1px solid #739BED");
+            }
+         });
+    }); */
+    
+        $("#toggleWaitBtn").click(function() {
+            $("#waitListArea").slideToggle(300, function() {
+                if ($(this).is(":visible")) {
+                    $("#toggleIcon").html("▲"); // 열리면 위 화살표
+                } else {
+                    $("#toggleIcon").html("▼"); // 닫히면 아래 화살표
+                }
+            });
         });
     });
     

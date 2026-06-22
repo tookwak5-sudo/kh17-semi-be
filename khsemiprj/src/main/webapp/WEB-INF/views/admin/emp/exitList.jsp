@@ -47,12 +47,18 @@ $(function() {
         firstDay: 7,
         selectForward: true
     });
+    
+    $("#reset-btn").on("click", function() {
+       	$("#start").val("");
+       	$("#end").val("");
+       	$("#name").val("");
+    });
 });
 </script>
-
-    <div class="container w-1000 mt-20 mb-50 background-card">
+<c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
+    <div class="container w-100 mt-20 mb-50 background-card">
       <div class="cell center flex-area">
-		<div class="w-20 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 		            퇴사자 조회
@@ -60,9 +66,11 @@ $(function() {
 		        </h1>
 			</div>
         </div>
-	 
-        <div class="w-80 flex-area flex-center">
-            <form action="exitList" method="get" class="w-100">
+		
+        <div class="cell flex-area flex-vertical background-fill">
+            
+            <form action="exitList" method="get" class="w-100" autocomplete="off">
+
                 <input type="hidden" name="size" value="${pageVO.size}">
                 
                 <div class="flex-area" style="align-items: center; gap: 10px;">
@@ -74,25 +82,28 @@ $(function() {
                     
                     <div class="text-search-zone" style="display: inline-block;">
                         <input type="text" name="empName" class="field-sm" 
-                               placeholder="퇴사 사원명 입력" value="${param.empName}" style="width: 300px;">
+                               placeholder="퇴사 사원명 입력" value="${param.empName}" style="width: 300px;" id="name">
                     </div>
                     
                     <div class="date-search-zone flex-area" style="display: none; align-items: center; gap: 5px;">
-                        <input type="text" name="startDate" value="${pageVO.startDate}" class="field" style="width: 160px;">
+                        <input type="text" name="startDate" value="${pageVO.startDate}" class="field" style="width: 160px;" id="start">
                         <span style="color: #64748b;">~</span>
-                        <input type="text" name="endDate" value="${pageVO.endDate}" class="field" style="width: 160px;">
+                        <input type="text" name="endDate" value="${pageVO.endDate}" class="field" style="width: 160px;" id="end">
                     </div>
                     
-                    <button type="submit" class="btn btn-positive ms-10">검색</button>
+                    <button type="submit" class="btn btn-positive ms-10"><i class="fa-solid fa-magnifying-glass"></i>검색</button>
                     
                     <c:if test="${not empty param.empName or (not empty pageVO.startDate and not empty pageVO.endDate)}">
-                        <a href="exitList" class="btn btn-neutral">초기화</a>
+                        <button type="button" class="btn btn-neutral" id="reset-btn"><i class="fa-solid fa-xmark red" style="width:102px"></i>초기화</button>
                     </c:if>
                 </div>
             </form>
         </div>
 	</div>
         <div class="cell">
+        	<div class="right" style="font-size: 14px; color: #666;">
+		    	<strong style="color: #007bff;">${pageVO.count}</strong>명의 퇴사자 및 퇴사예정자
+			</div>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -127,7 +138,7 @@ $(function() {
                                         <fmt:formatDate value="${exit.aprvEtime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     </c:if>
                                 </td>
-                            </tr>
+                          	  </tr>
                         </c:forEach>
                     </c:if>
                 </tbody>
@@ -159,5 +170,5 @@ $(function() {
         </div>
 
     </div>
-
+</c:if>
 <jsp:include page="/WEB-INF/views/template/footer.jsp"/>

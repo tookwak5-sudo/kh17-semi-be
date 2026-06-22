@@ -101,4 +101,56 @@ public class EmpLeaveDao {
 		Object[] params = { usedLeave, usedLeave, empId };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
+	
+	// [관리자] 사원의 총 연차를 수정하고 변경 로그(log_leave)까지 함께 남기는 메서드
+		public boolean updateLeaveTotal(EmpLeaveDto empLeaveDto) {
+			// 1. 기존 데이터 조회
+			String selectSql = "select * from emp_leave where leave_emp_id = ? and leave_year = ?";
+			List<EmpLeaveDto> list = jdbcTemplate.query(selectSql, empLeaveMapper, 
+					empLeaveDto.getLeaveEmpId(), empLeaveDto.getLeaveYear());
+			
+			if (list.isEmpty()) return false;
+			EmpLeaveDto currentLeave = list.get(0);
+			
+			// 2. 자바 로직 단에서 체계적으로 계산 (데이터 타입 double에 맞춤)
+			// 잔여 연차 = 관리자가 새로 입력한 총 연차 - 이미 사용한 연차
+			double newRemain = empLeaveDto.getLeaveTotal() - currentLeave.getLeaveUsed();
+			
+			// 연차 변동량 = 관리자가 새로 입력한 총 연차 - 수정 전 원래 총 연차
+			double leaveAmount = empLeaveDto.getLeaveTotal() - currentLeave.getLeaveTotal();
+			
+			// 3. 휴가 테이블(emp_leave) 업데이트 실행
+			String updateSql = "update emp_leave set "
+					+ "leave_total = ?, leave_remain = ?, leave_update = systimestamp "
+					+ "where leave_emp_id = ? and leave_year = ?";
+			
+			Object[] updateParams = {
+					empLeaveDto.getLeaveTotal(), // 새 총 연차
+					newRemain,                   // 계산된 새 잔여 연차
+					empLeaveDto.getLeaveEmpId(), // 사원 ID
+					empLeaveDto.getLeaveYear()   // 해당 연도 (String)
+			};
+			
+			boolean isUpdateSuccess = jdbcTemplate.update(updateSql, updateParams) > 0;
+			
+			// 4. 업데이트 성공 시, 로그 테이블(log_leave)에 기록
+			if (isUpdateSuccess) {
+				String logSql = "insert into log_leave("
+						+ "leave_no, leave_log_id, leave_type, "
+						+ "leave_amount, leave_total_after, leave_used_after) "
+						+ "values(log_leave_seq.nextval, ?, ?, ?, ?, ?)";
+				
+				Object[] logParams = { 
+						empLeaveDto.getLeaveEmpId(),   // leave_log_id (사원아이디)
+						"관리자",                   // leave_type (휴가일수변동사유)
+						leaveAmount,                   // leave_amount (변동일수)
+						empLeaveDto.getLeaveTotal(),   // leave_total_after (변동후총일수)
+						currentLeave.getLeaveUsed()    // leave_used_after (변동후사용일수)
+				};
+				
+				jdbcTemplate.update(logSql, logParams);
+			}
+			
+			return isUpdateSuccess;
+		}
 }

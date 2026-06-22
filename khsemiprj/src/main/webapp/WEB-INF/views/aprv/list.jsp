@@ -27,7 +27,7 @@
 	
 	
 	<div class="cell center flex-area">
-		<div class="w-15 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 		            결재 목록
@@ -68,20 +68,20 @@
 		</div>
 	</div>
 
-	<div class="cell right">
-		${pageVO.getBeginRownum()}-${pageVO.endRownum} / 총 ${pageVO.count}개의 글
+	<div class="right" style="font-size: 14px; color: #666;">
+	    <strong style="color: #007bff;">${pageVO.count}</strong>개의 항목
 	</div>
 
 	<div class="cell">
 		<table class="table">
 			<thead>
 				<tr>
-					<th width="6%">번호</th>
-					<th width="5%">분류</th>
-					<th width="36%">제목</th>
-					<th width="5%">상태</th>
+					<th width="75px">번호</th>
+					<th width="75px">분류</th>
+					<th>제목</th>
+					<th width="90px">상태</th>
 					<th width="27%">기안자</th>
-					<th width="12%">기안일자</th>
+					<th width="200px">기안일자</th>
 				</tr>
 			</thead>
 				<tbody>
@@ -91,7 +91,7 @@
 					<tr>
 						<td>${aprvDetailVO.aprvNo}</td>
 						<td>${aprvDetailVO.headName}</td>
-						<td class="left"><a href="./detail?aprvNo=${aprvDetailVO.aprvNo}">${aprvDetailVO.aprvTitle}</a></td>
+						<td class="left"><a href="./detail?aprvNo=${aprvDetailVO.aprvNo}&aprvHead=${param.aprvHead}&aprvStatus=${param.aprvStatus}&column=${param.column}&keyword=${param.keyword}<c:if test="${param.page != null}">&page=${param.page}</c:if>" >${aprvDetailVO.aprvTitle}</a></td>
 						<td style="font-weight:bold;">
 							<c:choose>
 							<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvDetailVO.aprvStatus}</span></c:when>

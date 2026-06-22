@@ -25,6 +25,8 @@ import com.kh.khsemiprj.dto.EmpPositionDto;
 import com.kh.khsemiprj.vo.EmpExitVO;
 import com.kh.khsemiprj.vo.PageVO;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/admin/emp")
 public class AdminEmpController {
@@ -56,7 +58,6 @@ public class AdminEmpController {
 		List<EmpDto> wList = empDao.selectEmpByStatus(null);
 		model.addAttribute("wList", wList);
 		
-		//
 		
 		List<DeptDto> deptList = deptDao.deptList();
 		model.addAttribute("deptList", deptList);
@@ -125,8 +126,9 @@ public class AdminEmpController {
 	public String exitList(
 	        @ModelAttribute PageVO pageVO, 
 	        Model model, 
-	        @RequestParam(required = false, defaultValue = "") String empName) {
-	   
+	        @RequestParam(required = false, defaultValue = "") String empName
+	        ) {
+		
 	    // DAO 호출 시 empName도 같이 넘김
 	    int count = empExitDao.count(pageVO, empName);
 	    pageVO.setCount(count);

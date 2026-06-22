@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.khsemiprj.dto.LogInoutDto;
+import com.kh.khsemiprj.mapper.EmpLogInoutMapper;
 import com.kh.khsemiprj.mapper.LogInoutMapper;
+import com.kh.khsemiprj.vo.EmpLogInoutVO;
 import com.kh.khsemiprj.vo.PageVO;
 
 @Repository
@@ -18,6 +20,8 @@ public class LogInoutDao {
 	@Autowired
 	private LogInoutMapper logInoutMapper;
 	
+	@Autowired
+	private EmpLogInoutMapper empLogInoutMapper;
 	
 	//검색 허용할 컬럼
 	Set<String> allowColumns = Set.of("log_inout_emp_id", "log_inout_type");
@@ -31,37 +35,51 @@ public class LogInoutDao {
 	}
 	
 	// 촐퇴근 목록 조회
-	public List<LogInoutDto> selectList(int page, int size) {
+	public List<EmpLogInoutVO> selectList(int page, int size) {
 		String sql = "SELECT * FROM ("
-	               + "    SELECT ROWNUM RN, A.* FROM ("
-	               + "        SELECT log_inout_no, log_inout_emp_id, log_inout_time, log_inout_type FROM log_inout ORDER BY log_inout_no DESC"
-	               + "    ) A"
+	               		+ "SELECT ROWNUM RN, A.* FROM ("
+		               		+ "SELECT l.log_inout_no, l.log_inout_emp_id, l.log_inout_time, l.log_inout_type, e.emp_name "
+		               		+ "FROM log_inout l left join emp e on l.log_inout_emp_id = e.emp_id "
+		               		+ "ORDER BY log_inout_no DESC"
+	               		+ ") A"
 	               + ") WHERE RN BETWEEN ? AND ?";
 		int beginRow = page * size - (size - 1);
 		int endRow = page * size;
 		Object[] params = {beginRow, endRow};
-		return jdbcTemplate.query(sql, logInoutMapper, params);
+		return jdbcTemplate.query(sql, empLogInoutMapper, params);
 	}
-	// 출퇴근 검색
-	public List<LogInoutDto> selectList(PageVO pageVO){
-		if(pageVO.isList())
-			return selectList(pageVO.getPage(), pageVO.getSize());
-		if(!allowColumns.contains(pageVO.getColumn())) 
-			return selectList(pageVO.getPage(), pageVO.getSize());
-		
-		String sql = "select * from ("
-				+ "select rownum rn, TMP.* from ("
-				+ "select * from log_inout "
-				+ "where instr("+pageVO.getColumn()+", ?) > 0 "
-				+ "order by log_inout_no desc"
-			+ ") TMP"
-			+ ") where rn between ? and ?";
-		Object[] params = { 
-				pageVO.getKeyword(), 
-				pageVO.getBeginRownum(),
-				pageVO.getEndRownum()
-			};
-			return jdbcTemplate.query(sql, logInoutMapper, params);
+	
+	//출퇴근 검색
+	public List<EmpLogInoutVO> selectList(PageVO pageVO) {
+	    // 리스트 기본 조회이거나 허용되지 않은 컬럼인 경우
+	    if(pageVO.isList() || !allowColumns.contains(pageVO.getColumn())) {
+	        return selectList(pageVO.getPage(), pageVO.getSize());
+	    }
+	    Set<String> allowColumns = Set.of("log_inout_emp_id", "log_inout_type");
+	    if(allowColumns.contains(pageVO.getColumn()) == false)
+	    	return List.of();
+	    
+	    String col = pageVO.getColumn();
+	    // 💡 SQL 구성: log_inout과 emp 테이블 조인 후 검색
+	    String sql = "select * from ("
+	                + "select rownum rn, TMP.* from ("
+	                + "  select l.*, e.emp_name "
+	                + "  from log_inout l "
+	                + "  left outer join emp e on l.log_inout_emp_id = e.emp_id "
+	                + "  where "
+	                + "  (instr(" + (col.equals("log_inout_emp_id") ? "e.emp_name" : col) + ", ?) > 0 "
+	                + "  or instr(" + (col.equals("log_inout_emp_id") ? "l.log_inout_emp_id" : col) + ", ?) > 0 ) "
+	                + "  order by l.log_inout_no desc"
+	                + ") TMP"
+	            + ") where rn between ? and ?";
+	    Object[] params = { 
+	            pageVO.getKeyword(), 
+	            pageVO.getKeyword(), 
+	            pageVO.getBeginRownum(), 
+	            pageVO.getEndRownum() 
+	    };
+
+	    return jdbcTemplate.query(sql, empLogInoutMapper, params);
 	}
 	
 	// 출퇴근 로그 등록
@@ -92,12 +110,27 @@ public class LogInoutDao {
 		String sql = "select count(*) from log_inout";
 		return jdbcTemplate.queryForObject(sql, int.class);
 	}
+	
 	public int count(PageVO pageVO) {
-		if(pageVO.isList()) return count();
-		
-		String sql = "select count(*) from log_inout where instr("+pageVO.getColumn()+", ?) > 0";
-		Object[] params = {pageVO.getKeyword()};
-		return jdbcTemplate.queryForObject(sql, int.class, params);
+	    // 1. 기본 전체 카운트 처리
+	    if(pageVO.isList() || !allowColumns.contains(pageVO.getColumn())) {
+	        return count();
+	    }
+	    
+	    String col = pageVO.getColumn();
+	    
+	    // 2. 조인을 포함한 복합 검색 SQL 구성
+	    // col이 사원ID 필드(log_inout_emp_id)라면 이름과 ID를 모두 검색
+	    String sql = "select count(*) "
+	               + "from log_inout l "
+	               + "left outer join emp e on l.log_inout_emp_id = e.emp_id "
+	               + "where (instr(" + (col.equals("log_inout_emp_id") ? "e.emp_name" : col) + ", ?) > 0 "
+	               + "or instr(" + (col.equals("log_inout_emp_id") ? "l.log_inout_emp_id" : col) + ", ?) > 0 )";
+	    
+	    // 3. 파라미터 세팅 (OR 조건이므로 동일한 검색어를 두 번 전달)
+	    Object[] params = { pageVO.getKeyword(), pageVO.getKeyword() };
+	    
+	    return jdbcTemplate.queryForObject(sql, int.class, params);
 	}
 	
 	

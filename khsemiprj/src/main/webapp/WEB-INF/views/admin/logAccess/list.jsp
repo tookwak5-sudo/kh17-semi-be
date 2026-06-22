@@ -11,7 +11,7 @@
 }
 </style>
 	
-<div class="container w-1200 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">		
 		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
@@ -21,7 +21,7 @@
 		        </h1>
 			</div>
         </div>
-		<div class="w-60 flex-area flex-center">
+		<div class="cell flex-area background-fill">
 			<!-- 검색창 -->
 	            <form autocomplete="off">
 	                <select name="column" class="field-ph">
@@ -37,10 +37,9 @@
 	            </form>
 		</div>
 	</div>
-		<div class="cell right mt-0">
-	      <!-- 페이지접근로그목록 목록 -->
-			<span>${pageVO.beginRownum}-${pageVO.endRownum} / 총 ${pageVO.count}개 로그</span>
-	   </div>
+		<div class="right" style="font-size: 14px; color: #666;">
+		    <strong style="color: #007bff;">${pageVO.count}</strong>개의 로그
+		</div>
 	   
 	   <div class="cell">
 	   		<table class="table">
@@ -50,7 +49,7 @@
 	                   <th>접근자</th>
 	                   <th>경로(URL)</th>
 	                   <th width="130px">접근IP</th>
-	                   <th width="130px">접근시각</th>
+	                   <th width="200px">접근시각</th>
 	               </tr>
 	  			</thead>
 	  			<tbody>
@@ -60,7 +59,7 @@
 	  					<td>${logAccessDto.accessEmpId} ([${logAccessDto.deptName}] ${logAccessDto.empName})</td>
 	  					<td  class="break-url">${logAccessDto.accessUrl}</td>
 	  					<td>${logAccessDto.accessIp}</td>
-	  					<td>${logAccessDto.accessDate}</td>
+	  					<td><fmt:formatDate value="${logAccessDto.accessDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	  				</tr>
 	  				</c:forEach>
 	  			</tbody>

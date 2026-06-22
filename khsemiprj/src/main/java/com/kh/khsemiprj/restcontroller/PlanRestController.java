@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kh.khsemiprj.dao.PlanDao;
 import com.kh.khsemiprj.dto.PlanDto;
+import com.kh.khsemiprj.service.PlanService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -21,6 +22,8 @@ import jakarta.servlet.http.HttpSession;
 public class PlanRestController {
 	@Autowired
 	private PlanDao planDao;
+	@Autowired
+	private PlanService planService;
 	
 	// 등록
 	// 유형 및 헤더 목록을 가져오는 메서드 추가
@@ -47,31 +50,23 @@ public class PlanRestController {
 	@PostMapping("/detail")
 	public PlanDto detail(@RequestParam int planNo, HttpSession session) {
 		String loginId = (String) session.getAttribute("loginId");
-		PlanDto planDto = planDao.selectOne(planNo);
-		
-		//[1] 관리자 확인
-		
-		//[2] 부서장 확인
-		
-		//[3] 작성자 확인
-		//boolean owner = loginId != null && loginId.equals(planDto.getPlanEmpId());
-		
-		//작성자가 아니라면 -- 임시
-		
-		return planDto;
+		return planService.getMyPlan(planNo, loginId);
 	}
 	
 	//삭제
 	@PostMapping("/delete")
-	public void delete(@RequestParam int planNo) {
-		
+	public void delete(@RequestParam int planNo, HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
+		planService.getMyPlan(planNo, loginId);
 		planDao.delete(planNo);
 	}
 		
 	// 수정
 	@PostMapping("/edit")
-	public void edit(@ModelAttribute PlanDto planDto) {
+	public void edit(@ModelAttribute PlanDto planDto, HttpSession session) {
+		String loginId = (String) session.getAttribute("loginId");
 		
+		planService.getMyPlan(planDto.getPlanNo(), loginId);
 		planDao.update(planDto);
 	}
 }

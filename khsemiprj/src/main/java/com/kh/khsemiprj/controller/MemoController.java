@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.khsemiprj.dao.MemoDao;
 import com.kh.khsemiprj.dto.MemoDto;
+import com.kh.khsemiprj.exception.GetOutException;
 import com.kh.khsemiprj.exception.TargetNotfoundException;
 import com.kh.khsemiprj.vo.PageVO;
 
@@ -78,11 +79,10 @@ public class MemoController {
 			throw new TargetNotfoundException("존재하지 않는 쪽지입니다");
 		}
 		
-		// 로그인한 사람과 쪽지 수신자가 같은 경우에만 읽음 처리
-		if(loginId != null && loginId.equals(memoDto.getMemoReceiverId())) {
-			memoDao.update(memoNo);
+		if(!loginId.equals(memoDto.getMemoReceiverId())) {
+			throw new GetOutException("나에게 온 쪽지만 확인 할 수 있습니다."); 
 		}
-		
+			
 		memoDao.update(memoNo);
 		
 		model.addAttribute("memoDto",memoDto);
@@ -99,7 +99,6 @@ public class MemoController {
 		pageVO.setCount(count);
 		
 		List<MemoDto> list = memoDao.selectList(receiverId, pageVO);
-		
 		model.addAttribute("list", list);
 		
 		return "memo/list";
@@ -117,18 +116,26 @@ public class MemoController {
 	}
 	
 	@RequestMapping("/delete")
-	public String delete(@RequestParam int memoNo) {
+	public String delete(HttpSession session, @RequestParam int memoNo) {
+		String loginId = (String) session.getAttribute("loginId");
 		MemoDto memoDto = memoDao.selectOne(memoNo);
+		
 		if(memoDto == null) throw new TargetNotfoundException("존재하지 않는 메모");
+		
+		if(!loginId.equals(memoDto.getMemoReceiverId())) {
+			throw new GetOutException("나에게 온 쪽지만 삭제 할 수 있습니다."); 
+		}
 		
 		memoDao.delete(memoNo);
 		return "redirect:./list?delete";
 	}
 	
-//	@RequestMapping("/writeDelete")
-//	public String writeDelete(HttpSession session) {
-//		
-//		
-//	}
+	@RequestMapping("/writeDelete")
+	public String writeDelete(HttpSession session) {
+		String receiverId = (String) session.getAttribute("loginId");	
+			
+		memoDao.writeDelete(receiverId);
+		return "redirect:./list?delete";	
+	}
 	
 }

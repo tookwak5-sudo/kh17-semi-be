@@ -18,11 +18,11 @@ public class ErrorController {
 		return "error/500";
 	}
 	
-//	@ExceptionHandler(TargetNotfoundException.class)
-//	public String notFound(Exception e, Model model) {
-//		model.addAttribute("message", e.getMessage());//메세지 화면에 전달하고
-//		return "error/404";//오류 페이지 연결
-//	}
+	@ExceptionHandler(TargetNotfoundException.class)
+	public String notFound(Exception e, Model model) {
+		model.addAttribute("message", e.getMessage());//메세지 화면에 전달하고
+		return "error/404";//오류 페이지 연결
+	}
 	
 	@ExceptionHandler(WhoAreYouException.class)
 	public String unauthorize(Exception e, Model model) {

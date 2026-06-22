@@ -134,7 +134,7 @@ $(function () {
 	});
 	
 	//첨부 파일 변경 시
-	$(document).on("change", ".attach-input", function (e) {
+	/*$(document).on("change", ".attach-input", function (e) {
 		$(".aprv-form-file-down").empty();
 		// 선택된 파일 정보 가져오기
 	    const file = e.target.files[0];
@@ -149,7 +149,7 @@ $(function () {
 		
 		$('.aprv-form-file-down').append(a);
 		$('.aprv-form-file-down').append(button);
-	});
+	});*/
 	
 	$(document).on("click", ".check-emp-all-2", function () {
     	var checked = $(this).prop("checked");
@@ -253,6 +253,8 @@ $(function () {
 
 	    e.target.value = value;
     });
+	
+	$("[name=aprvCost]").trigger("input");
 });
 
 // 팝업 열기
@@ -360,9 +362,26 @@ function createTree(node, no) {
     return li;
 }
 
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024; // 1024 단위로 계산
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+  // 로그 함수를 사용하여 몇 번째 단위인지(i) 계산
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  // 변환 후 소수점 처리
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 function getAprmFormAttach(formNo) {
 	var title = $(".aprv-form-list option:selected").attr("data-name");
+	var name = $(".aprv-form-list option:selected").attr("data-head");
 	$(".h1-title").text(title);
+	$(".headName").text(name);
+	$(".formHead").text(title);
 	$.ajax({
 		url : "/rest/aprv/getAprvFormFile",
 		method: "post",
@@ -372,12 +391,14 @@ function getAprmFormAttach(formNo) {
 			
 			var attachNo = response.attachNo;
 			var attachName = response.attachName;
+			var attachSize = response.attachSize;
 			var result = response.result;
 			
 			if(result == "success") {
 				var template = $("#aprv-form-file-template").text();
 				const a = $.parseHTML(template)[1];
-				$(a).find("span").text(attachName);
+				$(a).find("span:eq(0)").text(attachName);
+				$(a).find("span:eq(1)").text(formatBytes(attachSize));
 				$(a).attr("href", "/download/legacy?attachNo=" + attachNo);
 				$(".aprv-form-file").append(a);
 			} else if(result == "empty") {
@@ -474,14 +495,11 @@ function getEmpPositionDeptList(deptNo, No) {
 }
 
 function removeFile(button) {
-    if (confirm("이 첨부파일을 삭제하시겠습니까?")) {
-        const fileDiv = button.closest('.aprv-form-file-down');
-        if (fileDiv) {
-            $(fileDiv).empty();
-			$('input[name=attach]').val('');
-			$('input[name=deleteFileNo').val($(button).attr("data-no"));
-        }
-    }
+	var no = $(button).data("no");
+	if($('input[name=deleteFileNo').val() == '' && no != undefined) {
+		$('input[name=deleteFileNo').val(no);
+	}
+	$(".preview-input").val("").trigger("change");
 }
 
 // 평일(주말 제외) 일수 계산 함수 (호이스팅을 위해 상단 정의 또는 바깥 배치)

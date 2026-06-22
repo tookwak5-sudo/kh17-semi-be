@@ -6,12 +6,6 @@
 <!-- 관리자가 아닌 회원일 때 보여줄 메뉴 -->
 <ul class="menu">
 	<li>
-	    <a href="/">
-	        <i class="fa-solid fa-house"></i>
-	        <span>홈</span>
-	    </a>
-	</li>
-	<li>
 	    <a href="/aprv/list">
 	        <i class="fa-solid fa-file-signature"></i>
 	        <span>결재</span>
@@ -55,33 +49,6 @@
 	
 	<li class="divider"></li>
 	
-	<li>
-	    <a href="/admin/manage">
-	        <i class="fa-solid fa-user"></i>
-	        <span>관리메뉴</span>
-	    </a>
-	     <!-- 하위메뉴 -->
-        <ul>
-        	<li>
-			    <a href="/admin/emp/list">
-			        <i class="fa-solid fa-people-group"></i>
-			        <span>사원관리</span>
-			    </a>
-			</li>
-			<li>
-			    <a href="/dept/list">
-			        <i class="fa-solid fa-building"></i>
-			        <span>부서관리</span>
-				</a>
-			</li>
-			<li>
-                <a href="/aprvForm/list">
-					<i class="fa-solid fa-box"></i>
-                    <span>결재 양식</span>
-                </a>
-            </li>
-        </ul>
-    </li>
     <li>
 	    <a href="/emp/mypage">
 	        <i class="fa-solid fa-user"></i>

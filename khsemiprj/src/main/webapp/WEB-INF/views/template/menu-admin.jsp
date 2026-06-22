@@ -6,7 +6,6 @@
 
 <!-- 관리자일 때 보여줄 메뉴 -->
 <ul class="menu">
-	
 	<li>
 	    <a href="/aprv/list">
 	    	<i class="fa-solid fa-file-signature"></i>
@@ -50,52 +49,6 @@
 	</li>
 	
 	<li class="divider"></li>
-	
-	<li>
-	    <a href="/admin/manage">
-	        <i class="fa-solid fa-user-gear"></i>
-	        <span>관리메뉴</span>
-	    </a>
-	     <!-- 하위메뉴 -->
-        <ul>
-        	<li>
-			    <a href="/admin/emp/list">
-			        <i class="fa-solid fa-people-group"></i>
-			        <span>사원관리</span>
-			    </a>
-			</li>
-			<li>
-			    <a href="/dept/list">
-			        <i class="fa-solid fa-building"></i>
-			        <span>부서관리</span>
-				</a>
-			</li>
-			<li>
-                <a href="/aprvForm/list">
-                    <i class="fa-solid fa-box"></i>
-                    <span>결재 양식</span>
-                </a>
-            </li>
-            <li>
-                <a href="/admin/logAccess/list">
-                    <i class="fa-solid fa-server"></i>
-                    <span>접속로그</span>
-                </a>
-            </li>
-            <li>
-                <a href="/admin/log-inout/list">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                    <span>근태로그</span>
-                </a>
-            </li>
-            <li>
-			    <a href="/admin/emp/exitList">
-			        <i class="fa-solid fa-people-group"></i>
-			        <span>퇴사자목록</span>
-			    </a>
-			</li>
-        </ul>
-    </li>
     <li>
 	    <a href="/emp/mypage">
 	        <i class="fa-solid fa-user"></i>

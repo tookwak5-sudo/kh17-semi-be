@@ -52,7 +52,7 @@ public class ReplyDao {
 				+ "LEFT JOIN reply_file rf ON rf.reply_no = r.reply_no "
 				+ "LEFT JOIN emp_profile ep ON ep.emp_id = r.reply_writer "//프사 장부와 연결
 				+ "where r.reply_origin = ? "
-				+ "order by r.reply_no asc";
+				+ "order by NVL(r.reply_parent, r.reply_no) asc, r.reply_no asc";
 		Object[] params = { empId, empId, empId, empId, replyOrigin };
 		return jdbcTemplate.query(sql, replyVOMapper, params);
 	}

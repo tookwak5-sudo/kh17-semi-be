@@ -290,14 +290,14 @@ $(function() {
             method: "post",
             data: { empEmail : empEmail }, 
             success: function (response){
-                if(response === true){ 
+                if(response ==true|| response==="true"){ 
                     $("[name=empEmail]").removeClass("success fail")
                                        .addClass("fail").attr("data-error","2");
                     state.empEmailValid = false; 
+                   
                 }
                 else { 
                     $("[name=empEmail]").removeClass("success fail")
-                                       .addClass("success");
                     state.empEmailValid = true; 
                    
                 }

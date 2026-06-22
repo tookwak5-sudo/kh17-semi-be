@@ -42,12 +42,13 @@ public class AprvDao {
 						+ "aprv_no, aprv_writer, aprv_form_no, aprv_title, aprv_content"
 						+ ", aprv_status, aprv_current_seq, aprv_sdate, aprv_edate, aprv_leave"
 						+ ", aprv_cost, aprv_cost_type, aprv_cost_receiver, aprv_cost_receive_account"
-						+ ", aprv_temp_wtime) "
-					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
+						+ ", aprv_cost_receive_bank, aprv_temp_wtime) "
+					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
 		Object[] params = { aprvDto.getAprvNo(), aprvDto.getAprvWriter(), aprvDto.getAprvFormNo()
 							, aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
 							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave()
-							, aprvDto.getAprvCost(), aprvDto.getAprvCostType(), aprvDto.getAprvCostReceiver(), aprvDto.getAprvCostReceiveAccount() };
+							, aprvDto.getAprvCost(), aprvDto.getAprvCostType(), aprvDto.getAprvCostReceiver(), aprvDto.getAprvCostReceiveAccount()
+							, aprvDto.getAprvCostReceiveBank() };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
@@ -56,12 +57,13 @@ public class AprvDao {
 						+ "aprv_no, aprv_writer, aprv_form_no, aprv_title, aprv_content"
 						+ ", aprv_status, aprv_current_seq, aprv_sdate, aprv_edate, aprv_leave"
 						+ ", aprv_cost, aprv_cost_type, aprv_cost_receiver, aprv_cost_receive_account"
-						+ ", aprv_wtime) "
-					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
+						+ ", aprv_cost_receive_bank, aprv_wtime) "
+					+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, systimestamp)";
 		Object[] params = { aprvDto.getAprvNo(), aprvDto.getAprvWriter(), aprvDto.getAprvFormNo()
 							, aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
 							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave()
-							, aprvDto.getAprvCost(), aprvDto.getAprvCostType(), aprvDto.getAprvCostReceiver(), aprvDto.getAprvCostReceiveAccount() };
+							, aprvDto.getAprvCost(), aprvDto.getAprvCostType(), aprvDto.getAprvCostReceiver(), aprvDto.getAprvCostReceiveAccount()
+							, aprvDto.getAprvCostReceiveBank() };
 		return jdbcTemplate.update(sql, params) > 0;
 	}
 	
@@ -78,11 +80,13 @@ public class AprvDao {
 					+ ", aprv_cost_type = ? "
 					+ ", aprv_cost_receiver = ? "
 					+ ", aprv_cost_receive_account = ? "
+					+ ", aprv_cost_receive_bank = ? "
 					+ ", aprv_temp_utime = systimestamp "
 					+ "where aprv_no = ?";
 		Object[] params = { aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
 							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave()
 							, aprvDto.getAprvCost(), aprvDto.getAprvCostType(), aprvDto.getAprvCostReceiver(), aprvDto.getAprvCostReceiveAccount()
+							, aprvDto.getAprvCostReceiveBank()
 							, aprvDto.getAprvNo()};
 		return jdbcTemplate.update(sql, params) > 0;
 	}
@@ -100,11 +104,13 @@ public class AprvDao {
 					+ ", aprv_cost_type = ? "
 					+ ", aprv_cost_receiver = ? "
 					+ ", aprv_cost_receive_account = ? "
+					+ ", aprv_cost_receive_bank = ? "
 					+ ", aprv_wtime = systimestamp "
 					+ "where aprv_no = ?";
 		Object[] params = { aprvDto.getAprvTitle(), aprvDto.getAprvContent(), aprvDto.getAprvStatus()
 							, aprvDto.getAprvCurrentSeq(), aprvDto.getAprvSdate(), aprvDto.getAprvEdate(), aprvDto.getAprvLeave()
 							, aprvDto.getAprvCost(), aprvDto.getAprvCostType(), aprvDto.getAprvCostReceiver(), aprvDto.getAprvCostReceiveAccount()
+							, aprvDto.getAprvCostReceiveBank()
 							, aprvDto.getAprvNo()};
 		return jdbcTemplate.update(sql, params) > 0;
 	}

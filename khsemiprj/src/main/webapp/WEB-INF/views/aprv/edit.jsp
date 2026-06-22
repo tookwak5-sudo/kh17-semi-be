@@ -24,8 +24,16 @@
 			case "병가":
 			case "기타":
 			default:
-				if(formHead == "연차") $(".date-title").text("기한 [잔여휴가일수 : ${leaveRemain}일]");
+				if(formHead == "연차" || formHead == "병가") $(".date-title").text("휴가 기간");
 				else $(".date-title").text("기한");
+				if(formHead == "연차"){
+					$('#divAprvLeave').show();
+					var sDate = $(".picker-sdate").val();
+					var eDate = $(".picker-edate").val();
+					if(sDate != "" && eDate != "" && sDate == eDate) {
+						$(".vacationType").show();
+					}
+				}
 				$(".timeTilde").show();
 				$(".picker-edate").show();
 				var picker1 = new Lightpick({ 
@@ -299,6 +307,11 @@
 	            	state.aprvValid = true;
 	            }
             }
+            
+            if(state.ok()) {
+            	//금액 저장 시 콤마 제거용
+            	$("[name=aprvCost]").val($("[name=aprvCost]").val().replaceAll(",", ""));
+            }
            	return state.ok();
         });
 		
@@ -319,6 +332,99 @@
 		    }
 		    return count;
 		}
+		
+		$(".preview-input").on("change", function(){
+	        $(".file-info-area").empty();
+	        if(this.files.length > 0) {
+	            var file = this.files[0];
+	            var fileName = file.name;
+	            var fileSize = formatBytes(file.size);
+				if(file.size >= 1024*1024) {
+					openAlert('첨부파일은 1MB 까지만 첨부 가능합니다.');
+					$(".preview-input").val("");	
+					var uploadPlaceholder = $("<div>")
+		                .css({
+		                    "padding": "30px",
+		                    "background-color": "#ffffff",
+		                    "border": "2px dashed #cbd5e0",
+		                    "border-radius": "6px",
+		                    "text-align": "center",
+		                    "cursor": "pointer",
+		                    "color": "#718096"
+		                })
+		                .html("<i class='fa-solid fa-cloud-arrow-up' style='font-size:24px; margin-bottom:8px; color:#a0aec0;'></i><br><span style='font-size:14px; font-weight:500;'>클릭하여 파일 첨부</span>")
+		                .on("click", function(){
+		                    $(".preview-input").click(); 
+		                });
+	
+		            $(".file-info-area").append(uploadPlaceholder);
+					return false;
+				}
+	            var fileContainer = $("<div>")
+	                .css({
+	                    "padding": "15px",
+	                    "background-color": "#f8f9fa",
+	                    "border": "1px solid #e2e8f0",
+	                    "border-radius": "6px",
+	                    "display": "flex",
+	                    "align-items": "center",
+	                    "justify-content": "space-between",
+	                    "width": "fit-content"
+	                });
+
+	            var fileLeft = $("<div>").css("display", "flex").css("align-items", "center");
+	            var fileIcon = $("<i>").addClass("fa-solid fa-file-lines purple me-10").css("font-size", "18px");
+	            var fileNameText = $("<span>").addClass("black").css("font-weight", "bold").css("font-size", "14px").text(fileName);
+	            
+	            var deleteBtn = $("<i>")
+	                .addClass("fa-solid fa-xmark gray ms-10")
+	                .css({"cursor": "pointer", "font-size": "14px"})
+	                .on("click", function(){
+	                    $(".preview-input").val("").trigger("change"); 
+	                });
+	            
+	            fileLeft.append(fileIcon).append(fileNameText).append(deleteBtn);
+
+	            var fileRight = $("<span>")
+	                .addClass("gray ms-10")
+	                .css({
+	                    "font-size": "12px",
+	                    "background-color": "#edf2f7",
+	                    "padding": "3px 8px",
+	                    "border-radius": "4px",
+	                    "font-weight": "500",
+	                    "width": "fit-content",
+	                    "min-width": "70px",
+	                    "text-align": "center"
+	                })
+	                .text(fileSize);
+
+	            fileContainer.append(fileLeft).append(fileRight);
+	            $(".file-info-area").append(fileContainer);
+
+	        } else {
+	            var uploadPlaceholder = $("<div>")
+	                .css({
+	                    "padding": "30px",
+	                    "background-color": "#ffffff",
+	                    "border": "2px dashed #cbd5e0",
+	                    "border-radius": "6px",
+	                    "text-align": "center",
+	                    "cursor": "pointer",
+	                    "color": "#718096"
+	                })
+	                .html("<i class='fa-solid fa-cloud-arrow-up' style='font-size:24px; margin-bottom:8px; color:#a0aec0;'></i><br><span style='font-size:14px; font-weight:500;'>클릭하여 파일 첨부</span>")
+	                .on("click", function(){
+	                    $(".preview-input").click(); 
+	                });
+
+	            $(".file-info-area").append(uploadPlaceholder);
+	        }
+	    });
+	    
+		<c:if test="${empty attachDto}">
+	    $(".preview-input").trigger("change");
+	    </c:if>
 	});
 </script>
 
@@ -359,10 +465,22 @@
 </tr>
 </script>
 <script type="text/template" id="aprv-form-file-template">
-<a style="display: inline-block; border: 1px solid #333; background: white; color: black; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-size: 14px;"><i class="fa-regular fa-file"></i><span>양식 파일 다운로드</span></a>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 6px; background-color: #ffffff; width: fit-content; box-sizing: border-box;">
+	<div style="display: flex; align-items: center;">
+		<i class="fa-solid fa-file-lines" style="color: #7c3aed; font-size: 16px; margin-right: 10px;"></i>
+		<a href="" style="font-size: 14px; font-weight: 500; color: #1e293b; text-decoration: none;">
+		<span>양식 파일 다운로드</span>
+		</a>
+	</div>    
+	<div class="ms-10" style="font-size: 12px; color: #64748b; background-color: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight: 500;">
+	<span>0.8 KB</span>
+	</div>
+</div>
 </script>
 <script type="text/template" id="aprv-form-file-empty-template">
-<a style="display: inline-block; border: 1px solid #333; background: white; color: black; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-size: 14px;"><span>양식 파일 없음</span></a>
+<div style="padding: 15px; background-color: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; color: #64748b; font-size: 14px;width:fit-content;">
+	첨부된 파일이 없습니다.
+</div>
 </script>
 <script type="text/template" id="aprv-form-file-delete-template">
 <button type="button" class="btn-delete-file" data-no="" onclick="removeFile(this)" style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid #dc3545; background: #fff; color: #dc3545; border-radius: 3px; cursor: pointer; font-size: 14px; transition: all 0.2s; margin-left: 2px;" onmouseover="this.style.background='#dc3545'; this.style.color='#fff';" onmouseout="this.style.background='#fff'; this.style.color='#dc3545';">
@@ -370,11 +488,9 @@
 </button>
 </script>
 <script type="text/template" id="vacation-type-template">
-<div>
-	<div class="cell">
-		<label>휴가 분류</label>
-	</div>
-	<div class="cell mb-0">
+<div class="flex-area">
+	<div class="aprv-info-label"><span>휴가 분류</span></div>
+	<div class="aprv-info-value">
 		<input type="radio" name="vacationType" value="연차" id="vacationType1" checked>
 		<label for="vacationType1">연차 ( 1일 )</label>
 		<input type="radio" name="vacationType" value="반차" id="vacationType2">
@@ -384,135 +500,237 @@
 </script>
 
 <style>
+	
+	.aprv-info-card {
+         background-color: #ffffff;
+         border: 1px solid #e9ecef;
+         border-radius: 12px;
+         padding: 10px 30px;
+     }
+     .aprv-info-row {
+         display: flex;
+         align-items: center;
+         padding: 16px 0;
+         border-bottom: 1px solid #f1f3f5;
+     }
+     .aprv-info-row-split {
+         display: flex;
+         align-items: center;
+     }
+     .aprv-info-row:last-child {
+         border-bottom: none;
+     }
+     .aprv-info-label {
+         width: 120px;
+         font-weight: 600;
+         color: #495057;
+         position: relative;
+         padding-left: 14px;
+         letter-spacing: -0.5px;
+         flex-shrink: 0; /* 라벨 너비 유지 */	
+     }
+     .aprv-info-label::before {
+         content: "";
+         position: absolute;
+         left: 0;
+         top: 50%;
+         transform: translateY(-50%);
+         width: 4px;
+         height: 14px;
+         background-color: #739BED;
+         border-radius: 2px;
+     }
+     .aprv-info-value {
+         width: 100%;
+         color: #343a40;
+         font-weight: 500;
+         flex-grow: 1; /* 나머지 공간 100% 사용 */
+     }
+     .aprv-info-edit {
+     	width: 100%;
+     	flex-grow: 1; /* 나머지 공간 100% 사용 */
+     }
+     .aprv-info-value.point-color {
+         color: #739BED;
+         font-weight: 600;
+     }
+
 	.cell { min-height: 32px; }
+	
+	.custom-card {
+	    background: #ffffff;
+	    border-radius: 12px; /* 모서리를 부드럽게 라운딩 */
+	    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 은은하고 부드러운 그림자 효과 */
+	    padding: 24px; /* 상자 내부 여백 */
+	    box-sizing: border-box;
+	    transition: all 0.3s ease; /* 마우스 올렸을 때 자연스러운 효과용 (선택) */
+	}
 </style>
 
 <form action="./edit" autocomplete="off" method="post" enctype="multipart/form-data" class="form-check">
 	<input type="hidden" name="aprvNo" value="${aprvDto.aprvNo}">
-	<div class="container w-80 mt-20 background-card">
-		
-    	<div class="cell center">
-            <h1 class="h1-title">결재 등록</h1>
+	<div class="container w-100 mt-20 background-card">
+    	<div class="cell">
+            <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+            	결재 수정
+				<span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+			</h1>
         </div>
-        <div class="cell mb-0" style="display:none;">
-            <label>양식 선택</label> 
-		</div>
-		<div class="cell mt-0" style="display:none;">
-            <select class="field w-40 aprv-form-list" name="aprvFormNo">
-                <option value="">선택하세요</option>
-                <c:forEach var="aprvFormDto" items="${formList}">
-                <option value="${aprvFormDto.formNo}" data-head="${aprvFormDto.headName}" data-name="${aprvFormDto.formName}" <c:if test="${aprvFormDto.formNo == aprvDto.aprvFormNo}">selected</c:if>>[${aprvFormDto.headName}] ${aprvFormDto.formName}</option>
-                </c:forEach>
-            </select>
-            <input type="hidden" class="">
-        </div>
-        <div class="cell mb-0">
-            <label>제목 <i class="fa-solid fa-asterisk red"></i></label>
-        </div>
-        <div class="cell mt-0">
-        	<input type="text" name="aprvTitle" class="field w-40" value="${aprvDto.aprvTitle}">
-        </div>
-        <div class="cell mb-0">
-            <label>양식 파일</label>
-        </div>
-        <div class="cell mt-0 aprv-form-file">
-        	
-        </div>
-        <div class="flex-area">
-	        <div>
-		        <div class="cell mb-0">
-		            <label><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i></label>
-		        </div>
-		        <div class="cell mt-0 mb-0">
-					<input type="hidden" name="aprvLeave" value="${aprvDto.aprvLeave}" />
-		        	<input type="text" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일">
-		        	<span class="timeTilde">~</span>
-		        	<input type="text" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvEdate}">
-		        </div>
-	        </div>
-	        <div class="vacationType ms-50">
-	        	<c:if test="${not empty aprvDto.aprvLeave && aprvDto.aprvLeave <= 1}">
-	        	<div>
-					<div class="cell">
-						<label>휴가 분류</label>
-					</div>
-					<div class="cell mb-0">
-						<input type="radio" name="vacationType" value="연차" id="vacationType1" <c:if test="${aprvDto.aprvLeave == 1}">checked</c:if>>
-						<label for="vacationType1">연차 ( 1일 )</label>
-						<input type="radio" name="vacationType" value="반차" id="vacationType2" <c:if test="${aprvDto.aprvLeave == 0.5}">checked</c:if>>
-						<label for="vacationType2">반차 ( 0.5일 )</label>
+        <div class="aprv-info-card">
+        	<div class="aprv-info-row" style="display:none;">
+				<div class="flex-area w-100">
+					<div class="w-33 aprv-info-row-split">
+						<div class="aprv-info-label">양식 선택</div>
+						<div class="aprv-info-value">
+							<select class="field w-40 aprv-form-list" name="aprvFormNo">
+				                <option value="">선택하세요</option>
+				                <c:forEach var="aprvFormDto" items="${formList}">
+				                <option value="${aprvFormDto.formNo}" data-head="${aprvFormDto.headName}" data-name="${aprvFormDto.formName}" <c:if test="${aprvFormDto.formNo == aprvDto.aprvFormNo}">selected</c:if>>[${aprvFormDto.headName}] ${aprvFormDto.formName}</option>
+				                </c:forEach>
+				            </select>
+				            <input type="hidden" class="">
+						</div>
 					</div>
 				</div>
-	        	</c:if>
-	        </div>
-        </div>
-        <div class="divAprvCost" style="display:none;">
-	        <div class="cell mb-0">
-	            <label>지출금액 <i class="fa-solid fa-asterisk red"></i></label>
-	        </div>
-	        <div class="cell mt-0 flex-area">
-	        	<input type="text" name="aprvCost" inputmode="numeric" class="field w-10" value="${aprvDto.aprvCost}">
-	        	<div class="korean-view ms-10" style="color: #666; font-size: 0.9rem; margin-top: 8px; min-height: 20px;"></div>
-	        </div>
-	        <div class="flex-area">
-		        <div>
-		        	<div class="cell mb-0">
-			            <label>지출 수단 <i class="fa-solid fa-asterisk red"></i></label>
-			        </div>
-			        <div class="cell mt-0 flex-area">
-			        	<input type="radio" name="aprvCostType" id="aprvCostType1" value="법인" <c:if test="${aprvDto.aprvCostType == '법인'}">checked</c:if>>
-						<label for="aprvCostType1" style="margin-top:4px;">법인카드</label>
-						<input type="radio" name="aprvCostType" id="aprvCostType2" value="개인" <c:if test="${aprvDto.aprvCostType == '개인'}">checked</c:if>>
-						<label for="aprvCostType2" style="margin-top:4px;">개인지출</label>
-			        </div>
-		        </div>
-		        <div id="divAprvCostTypePersonal" class="flex-area" <c:if test="${aprvDto.aprvCostType == '법인'}">style="display: none;"</c:if>>
-			        <div class="ms-20">
-			        	<div class="cell mb-0">
-				            <label>계좌주 <i class="fa-solid fa-asterisk red"></i></label>
+			</div>
+	        <div class="aprv-info-row">
+				<div class="flex-area w-100">
+					<div class="w-33 aprv-info-row-split">
+						<div class="aprv-info-label">양식분류</div>
+						<div class="aprv-info-value">[<span class="headName blue"></span>] <span class="formHead"></span></div>
+					</div>
+				</div>
+			</div>
+			<div class="aprv-info-row">
+				<div class="flex-area w-100">
+					<div class="w-100 aprv-info-row-split">
+						<div class="aprv-info-label">양식파일</div>
+						<div class="aprv-info-value aprv-form-file"></div>
+					</div>
+				</div>
+			</div>
+			<div class="aprv-info-row">
+				<div class="flex-area w-100">
+					<div class="w-33 aprv-info-row-split">
+						<div class="aprv-info-label">제목</div>
+						<div class="aprv-info-value"><input type="text" name="aprvTitle" class="field w-100" value="${aprvDto.aprvTitle}"></div>
+					</div>
+				</div>
+			</div>
+			<div id="divAprvLeave" style="display:none;">
+				<div class="aprv-info-row">
+					<div class="flex-area w-100">
+						<div class="w-33 aprv-info-row-split">
+							<div class="aprv-info-label"><span>잔여 연차</span></div>
+							<div class="aprv-info-value">${leaveRemain} 일</div>
+						</div>
+					</div>
+				</div>
+				<div class="aprv-info-row" style="display:none;"></div>
+			</div>
+			<div class="aprv-info-row">
+				<div class="flex-area w-100">
+					<div class="aprv-info-row-split">
+						<div class="aprv-info-label"><span class="date-title">기한</span> <i class="fa-solid fa-asterisk red"></i><span class="data-leave-remain gray" style="font-size:13px;"></span></div>
+						<div class="aprv-info-edit">
+							<input type="hidden" name="aprvLeave" value="${aprvDto.aprvLeave}" />
+				        	<input type="text" id="aprvSdate" name="aprvSdate" class="field picker-sdate" size="4" placeholder="시작일" value="${aprvDto.aprvSdate}" readonly>
+				        	<span class="timeTilde">~</span>
+				        	<input type="text" id="aprvEdate" name="aprvEdate" class="field picker-edate" size="4" placeholder="종료일" value="${aprvDto.aprvSdate}" readonly>
+						</div>
+					</div>
+					<div class="aprv-info-row-split vacationType ms-30" style="display:none;">
+						<c:if test="${aprvDto.aprvSdate == aprvDto.aprvEdate}">
+						<div class="flex-area">
+							<div class="aprv-info-label"><span>휴가 분류</span></div>
+							<div class="aprv-info-value">
+								<input type="radio" name="vacationType" value="연차" id="vacationType1" <c:if test="${aprvDto.aprvLeave == 1}">checked</c:if>>
+								<label for="vacationType1">연차 ( 1일 )</label>
+								<input type="radio" name="vacationType" value="반차" id="vacationType2" <c:if test="${aprvDto.aprvLeave == 0.5}">checked</c:if>>
+								<label for="vacationType2">반차 ( 0.5일 )</label>
+							</div>
+						</div>
+						</c:if>
+					</div>
+				</div>
+			</div>
+			<div class="divAprvCost" style="display:none;">
+				<div class="aprv-info-row">
+					<div class="w-33 aprv-info-row-split">
+						<div class="aprv-info-label">지출금액 <i class="fa-solid fa-asterisk red"></i></div>
+						<div class="aprv-info-edit flex-area">
+							<input type="text" name="aprvCost" inputmode="numeric" class="field" style="width:120px;" value="<fmt:formatNumber value="${aprvDto.aprvCost}" pattern="#,##0" />">
+		        			<div class="korean-view ms-10" style="color: #666; font-size: 0.9rem; margin-top: 8px; min-height: 20px;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="aprv-info-row" style="height:73px;">
+					<div class="aprv-info-row-split">
+						<div class="aprv-info-label">지출수단 <i class="fa-solid fa-asterisk red"></i></div>
+						<div class="aprv-info-edit flex-area">
+							<input type="radio" name="aprvCostType" id="aprvCostType1" value="법인" <c:if test="${aprvDto.aprvCostType == '법인'}">checked</c:if>>
+							<label for="aprvCostType1" style="margin-top:4px;">법인카드</label>
+							<input type="radio" name="aprvCostType" id="aprvCostType2" value="개인" <c:if test="${aprvDto.aprvCostType == '개인'}">checked</c:if>>
+							<label for="aprvCostType2" style="margin-top:4px;">개인지출</label>
+						</div>
+					</div>
+					<div id="divAprvCostTypePersonal" class="flex-area" <c:if test="${aprvDto.aprvCostType == '법인'}">style="display: none;"</c:if>>
+				        <div class="ms-30 aprv-info-row-split">
+				            <div class="aprv-info-label">계좌주 <i class="fa-solid fa-asterisk red"></i></div>
+				            <div class="aprv-info-edit"><input type="text" name="aprvCostReceiver" class="field" placeholder="계좌주" style="width:110px;" value="${aprvDto.aprvCostReceiver}" /></div>
 				        </div>
-				        <div class="cell mt-0 mb-0">
-				        	<input type="text" name="aprvCostReceiver" class="field" placeholder="계좌주" style="width:110px;" value="${aprvDto.aprvCostReceiver}" />
-			        	</div>
-			        </div>
-			        <div class="ms-20">
-			        	<div class="cell mb-0">
-				            <label>계좌번호 <i class="fa-solid fa-asterisk red"></i></label>
+				        <div class="ms-30 aprv-info-row-split">
+				        	<div class="aprv-info-label">계좌번호 <i class="fa-solid fa-asterisk red"></i></div>
+					        <div class="aprv-info-edit"><input type="text" name="aprvCostReceiveAccount" class="field" placeholder="계좌번호" style="width:240px;" value="${aprvDto.aprvCostReceiveAccount}" /></div>
 				        </div>
-				        <div class="cell mt-0 mb-0">
-				        	<input type="text" name="aprvCostReceiveAccount" class="field" placeholder="계좌번호" style="width:240px;" value="${aprvDto.aprvCostReceiveAccount}" />
-			        	</div>
+				        <div class="ms-30 aprv-info-row-split">
+				        	<div class="aprv-info-label">은행명 <i class="fa-solid fa-asterisk red"></i></div>
+					        <div class="aprv-info-edit"><input type="text" name="aprvCostReceiveBank" class="field" placeholder="은행명" style="width:110px;" value="${aprvDto.aprvCostReceiveBank}" /></div>
+				        </div>
 			        </div>
-		        </div>
-	        </div>
-	    </div>
-        <div class="cell">
-        	<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
-        	<input type="text" name="aprvContent" class="field w-100" value="${aprvDto.aprvContent}">
-        </div>
-        <div class="cell mb-0">
-            <label>첨부 파일</label>
-        </div>
-        <div class="cell mt-0">
-			<label>
-				<i class="fa-regular fa-file"></i>
-				<span>클릭해서 첨부파일을 선택하세요</span>
-				<input type="file" name="attach" class="field w-100 attach-input" style="display: none;" >
-			</label>
-			<input type="hidden" name="deleteFileNo" value="" />
-		</div>
-		<div class="cell aprv-form-file-down">
-			<c:if test="${not empty attachDto}">
-	  		<a style="display: inline-block; border: 1px solid #333; background: white; color: black; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-size: 14px;">
-			<i class="fa-regular fa-file"></i><span>${attachDto.attachName}</span>
-    		</a>
-    		<button type="button" class="btn-delete-file" data-no="${attachDto.attachNo}" onclick="removeFile(this)" style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid #dc3545; background: #fff; color: #dc3545; border-radius: 3px; cursor: pointer; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.background='#dc3545'; this.style.color='#fff';" onmouseout="this.style.background='#fff'; this.style.color='#dc3545';">
-		        <i class="fa-solid fa-xmark"></i>
-		    </button>
-		    </c:if>
+				</div>
+				<div class="aprv-info-row" style="display:none;">
+				</div>
+			</div>
+		    <div class="aprv-info-row">
+				<div class="flex-area w-100">
+					<div class="w-100 aprv-info-row-split">
+						<div class="aprv-info-label">내용 <i class="fa-solid fa-asterisk red"></i></div>
+						<div class="aprv-info-edit"><input type="text" name="aprvContent" class="field w-100" value="${aprvDto.aprvContent}"></div>
+					</div>
+				</div>
+			</div>
+			<div class="aprv-info-row">
+				<div class="flex-area w-100">
+					<div class="w-100 aprv-info-row-split">
+						<div class="aprv-info-label">첨부파일</div>
+						<div class="aprv-info-edit">
+							<div class="cell">
+								<input type="hidden" name="deleteFileNo" value="" />
+								<input type="file" name="attach" class="field w-100 attach-input preview-input" style="display: none;">
+								<div class="cell file-info-area">
+									<c:if test="${not empty attachDto}">
+									<div style="padding: 15px; background-color: rgb(248, 249, 250); border: 1px solid rgb(226, 232, 240); border-radius: 6px; display: flex; align-items: center; justify-content: space-between; width: fit-content;">
+										<div style="display: flex; align-items: center;">
+											<i class="fa-solid fa-file-lines purple me-10"style="font-size: 18px;"></i>
+											<span class="black" style="font-weight: bold; font-size: 14px;">${attachDto.attachName}</span>
+											<i class="fa-solid fa-xmark gray ms-10" style="cursor: pointer; font-size: 14px;" data-no="${attachDto.attachNo}" onclick="removeFile(this)"></i>
+										</div>
+										<span class="gray ms-10" style="font-size: 12px; background-color: rgb(237, 242, 247); padding: 3px 8px; border-radius: 4px; font-weight: 500; width: fit-content; min-width: 70px; text-align: center;">
+										<fmt:formatNumber value="${attachDto.attachSize > 1024*1024 ? attachDto.attachSize/1024/1024 : (attachDto.attachSize > 1024 ? attachDto.attachSize/1024 : attachDto.attachSize)}" pattern="#,##0.0" />
+										${attachDto.attachSize > 1024*1024 ? "MB" : (attachDto.attachSize > 1024 ? "KB" : "Bytes")}
+										</span>
+										</div>
+									</c:if>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
     	</div>
 		<div class="cell flex-area">
-			<div class="cell flex-vertical w-50 me-10">
+			<div class="cell flex-vertical aprv-info-card w-50 me-10">
 		        <div class="cell mb-0">
 		            <label>1차 결재 라인</label>
 		        </div>
@@ -543,7 +761,7 @@
 		        	<a onclick="openModal('1');" class="btn btn-positive aprv-line-1">결재자 추가</a>
 		        </div>
 		    </div>
-		    <div class="cell flex-vertical w-50 ms-10">
+		    <div class="cell flex-vertical aprv-info-card w-50 ms-10">
 		        <div class="cell mb-0">
 		            <label>2차 결재 라인</label>
 		        </div>
