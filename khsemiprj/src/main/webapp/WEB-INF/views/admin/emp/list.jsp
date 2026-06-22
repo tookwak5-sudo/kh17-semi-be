@@ -34,42 +34,56 @@
 	    height: 36px !important;
 	}
 </style>
+<!-- 목록->검색->다른 페이지->목록 경로에서 검색어가 안 남는 현상 제거(목록을 한 번 더 누르면 제거됨) -->
 
 <script>
-$(function(){
-    // 1. 현재 페이지 경로를 키값으로 사용 (예: /board/list) -> 다른 메뉴와 검색어 섞임 방지
+$(function() {
+    // ==========================================
+    // 1. 검색 조건 세션 스토리지 유지 및 복구 로직
+    // ==========================================
     var menuKey = window.location.pathname; 
-
-    // 2. 세션 스토리지에서 현재 메뉴의 이전 검색어 가져오기
-    var savedColumn = sessionStorage.getItem(menuKey + '_column');
-    var savedKeyword = sessionStorage.getItem(menuKey + '_keyword');
-    
-    // 3. 디테일에서 목록으로 돌아왔을 때 (주소창에 파라미터가 없는데 스토리지에 검색어가 있다면?)
     var urlParams = new URLSearchParams(window.location.search);
-    if (!urlParams.has('column') && savedColumn && savedKeyword) {
-        // 기억해둔 검색어를 주소창에 붙여서 강제 이동 (검색 복구)
-        location.href = './list?column=' + savedColumn + '&keyword=' + encodeURIComponent(savedKeyword);
-        return;
+
+    // 현재 페이지 경로와 이전 페이지(referrer) 경로가 완전히 똑같은지 검사
+    var isSameListMenu = false;
+    if (document.referrer) {
+        var referrerUrl = new URL(document.referrer);
+        // 이전 주소와 현재 주소의 path가 같고, 현재 주소에 파라미터가 아예 없는 경우
+        if (referrerUrl.pathname === window.location.pathname && !urlParams.toString()) {
+            isSameListMenu = true; // 목록 메뉴를 다시 직접 누른 경우
+        }
     }
 
-    // 4. 사용자가 새롭게 검색 폼을 제출(검색 버튼 클릭)할 때 스토리지 갱신
-    $("form").on("submit", function() {
-        // 폼 안에서 column과 활성화된 keyword 값을 찾음
-        var column = $(this).find("[name=column]").val();
-        var keyword = $(this).find("[name=keyword]:not(:disabled)").val();
-        
-        if(column && keyword) {
-            sessionStorage.setItem(menuKey + '_column', column);
-            sessionStorage.setItem(menuKey + '_keyword', keyword);
-        } else {
-            // 검색어 없이 전체 검색 시 메모리 초기화
+    // URL에 파라미터가 있으면 그걸 무조건 스토리지에 저장
+    if (urlParams.toString()) {
+        if (urlParams.has('column')) sessionStorage.setItem(menuKey + '_column', urlParams.get('column'));
+        else sessionStorage.removeItem(menuKey + '_column');
+
+        if (urlParams.has('keyword')) sessionStorage.setItem(menuKey + '_keyword', urlParams.get('keyword'));
+        else sessionStorage.removeItem(menuKey + '_keyword');
+    } 
+    // URL에 파라미터가 비어있을 때 분기 처리
+    else {
+        if (isSameListMenu) {
+            // 목록 화면에서 메뉴를 한 번 더 클릭한 경우 -> 싹 초기화
             sessionStorage.removeItem(menuKey + '_column');
             sessionStorage.removeItem(menuKey + '_keyword');
-        }
-    });
-});
-</script>
+        } else {
+            // 상세 정보(detail) 보고 돌아왔는데 스토리지에 저장된 값이 있는 경우 -> 복구
+            var savedColumn = sessionStorage.getItem(menuKey + '_column');
+            var savedKeyword = sessionStorage.getItem(menuKey + '_keyword');
 
+            if (savedColumn || savedKeyword) {
+                var qs = [];
+                if(savedColumn) qs.push('column=' + savedColumn);
+                if(savedKeyword) qs.push('keyword=' + encodeURIComponent(savedKeyword));
+                
+                location.href = './list?' + qs.join('&');
+                return;
+            }
+        }
+    }
+</script>
 <div class="container w-90 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
 		<div class="w-25 flex-area" style="justify-content: left">
