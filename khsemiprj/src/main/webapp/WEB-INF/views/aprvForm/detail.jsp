@@ -176,7 +176,12 @@ var deleteConfirmState = {
             <a href="./delete?formNo=${aprvFormSelectVO.formNo}" class="btn btn-negative" id="btnDeleteConfirm">삭제하기</a>
         </c:if>
 
-        <a href="./list" class="btn btn-neutral">목록</a>
+		<c:if test="${param.keyword==null}">
+	        <a href="./list" class="btn btn-neutral">목록</a>
+		</c:if>
+		<c:if test="${param.keyword!=null}">
+	        <a href="./list?column=${param.column}&keyword=${param.keyword}" class="btn btn-neutral">목록</a>
+		</c:if>
     </div>
 
 </div>

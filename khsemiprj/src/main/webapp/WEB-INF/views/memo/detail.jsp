@@ -92,10 +92,18 @@ function deleteMemo(no) {
 			<i class="fa-solid fa-reply"></i>
 	    	<span>답변</span>
 		</a>
-		<a class="btn btn-neutral" href="./list">
-			<i class="fa-solid fa-list"></i>
-			<span>목록</span>
-		</a>
+		<c:if test="${param.keyword==null}">
+			<a class="btn btn-neutral" href="./list">
+				<i class="fa-solid fa-list"></i>
+				<span>목록</span>
+			</a>
+		</c:if>
+		<c:if test="${param.keyword!=null}">
+			<a class="btn btn-neutral" href="./list?column=${param.column}&keyword=${param.keyword}">
+				<i class="fa-solid fa-list"></i>
+				<span>목록</span>
+			</a>
+		</c:if>
 		<%-- <a class="btn btn-negative" href="./delete?memoNo=${memoDto.memoNo}">
 			<i class="fa-solid fa-list"></i>
 			<span>삭제</span>

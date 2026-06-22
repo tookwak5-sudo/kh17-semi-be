@@ -98,12 +98,17 @@
 				</thead>
 				<tbody align="center">
 					<c:forEach var="empPositionDto" items="${list}">
-					<tr onclick="location.href='detail?empId=${empPositionDto.empId}'" style="cursor: pointer;">
-						<td>${empPositionDto.empId}</td>
-						<td>${empPositionDto.empName}</td>
-						<td>${empPositionDto.deptName}</td>
-						<td>${empPositionDto.empPositionName}</td>
-					</tr>
+						<c:if test="${param.keyword==null}">
+							<tr onclick="location.href='detail?empId=${empPositionDto.empId}'" style="cursor: pointer;">
+						</c:if>
+						<c:if test="${param.keyword!=null}">
+							<tr onclick="location.href='detail?column=${param.column}&keyword=${param.keyword}&empId=${empPositionDto.empId}'" style="cursor: pointer;">
+						</c:if>
+							<td>${empPositionDto.empId}</td>
+							<td>${empPositionDto.empName}</td>
+							<td>${empPositionDto.deptName}</td>
+							<td>${empPositionDto.empPositionName}</td>
+						</tr>
 					</c:forEach>
 				</tbody>
 			</table>

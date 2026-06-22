@@ -130,9 +130,16 @@
 	        </tbody>
 	    </table>
 	    <div class="cell" style="display: flex; justify-content: flex-end; gap: 10px;">
-			<a href="list" class="btn btn-positive view-mode">
-				<i class="fa-solid fa-list"></i> 목록으로
-			</a>
+			<c:if test="${param.keyword==null}">
+				<a href="list" class="btn btn-positive view-mode">
+					<i class="fa-solid fa-list"></i> 목록으로
+				</a>
+			</c:if>
+			<c:if test="${param.keyword!=null}">
+				<a href="list?column=${param.column}&keyword=${param.keyword}" class="btn btn-positive view-mode">
+					<i class="fa-solid fa-list"></i> 목록으로
+				</a>
+			</c:if>
 		</div>
 	</div>
 	

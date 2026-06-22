@@ -5,6 +5,9 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
 
+<script
+	src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 <style>
 	/* 기존 스타일 수정 및 추가 */
 		.profile-info {
@@ -141,11 +144,17 @@
 			
 			<div class="emp-info-row">
 				<div class="emp-info-label">우편번호</div>
-				<div class="emp-info-value">
-					<span class="view-mode">${empDto.empPost}</span>
-					<span class="edit-mode" style="display: none;">
-						<input type="text" name="empPost" value="${empDto.empPost}" class="field w-100">
-					</span>
+				<div class="emp-info-value flex-area">
+					<div class="view-mode">${empDto.empPost}</div>
+					<div class="edit-mode flex-area" style="display: none;">
+						<input type="text" name="empPost" id="postcode" value="${empDto.empPost}" class="field w-200 me-10">
+						<button type="button" class="btn btn-neutral btn-address-search">
+							주소검색
+						</button>
+						<button type="button" class="btn btn-negative ms-10 btn-address-clear" style="display: none;">
+							<i class="fa-solid fa-xmark"></i>
+						</button>
+					</div>
 				</div>
 			</div>
 			
@@ -154,7 +163,7 @@
 				<div class="emp-info-value">
 					<span class="view-mode">${empDto.empAddress1}</span>
 					<span class="edit-mode" style="display: none;">
-						<input type="text" name="empAddress1" value="${empDto.empAddress1}" class="field w-100">
+						<input type="text" id="basicAddress" name="empAddress1" value="${empDto.empAddress1}" class="field w-100">
 					</span>
 				</div>
 			</div>
@@ -164,8 +173,12 @@
 				<div class="emp-info-value">
 					<span class="view-mode">${empDto.empAddress2}</span>
 					<span class="edit-mode" style="display: none;">
-						<input type="text" name="empAddress2" value="${empDto.empAddress2}" class="field w-100">
+						<input type="text" id="detailAddress" name="empAddress2" value="${empDto.empAddress2}" class="field w-100">
 					</span>
+					<div class="gray mt-10 edit-mode" style="display: none; font-size: 13px;">
+						* 주소를 변경하려면
+						우편번호, 기본주소, 상세주소를 모두 입력해야 합니다.
+					</div>
 				</div>
 			</div>
 		</div>
@@ -253,13 +266,64 @@
 		if(isEdit) {
 			// 수정 모드 켜기: view는 숨기고, edit는 보여줌
 			views.forEach(function(el) { el.style.display = 'none'; });
-			edits.forEach(function(el) { el.style.display = 'inline-block'; }); // 또는 block
+			edits.forEach(function(el) { el.style.display = ''; }); // 또는 block
 		} else {
 			// 수정 모드 끄기(취소): edit는 숨기고, view는 다시 보여줌
-			views.forEach(function(el) { el.style.display = 'inline-block'; });
+			views.forEach(function(el) { el.style.display = ''; });
 			edits.forEach(function(el) { el.style.display = 'none'; });
 		}
 	}
+	
+    // 주소 검사 로직
+    $("[name=empAddress2]").on("blur", function () {
+        var empPost = $("[name=empPost]").val();
+        var empAddress1 = $("[name=empAddress1]").val();
+        var empAddress2 = $(this).val();
+
+        var stable = $(this).prop("readonly");
+        if(stable){
+            $("[name=empPost],[name=empAddress1],[name=empAddress2]").removeClass("success fail");
+            state.empAddressValid = true;
+            return;
+        }
+        
+        var valid = empPost.length > 0 && empAddress1.length > 0 && empAddress2.length > 0;
+       
+        $("[name=empPost],[name=empAddress1],[name=empAddress2]")
+            .removeClass("success fail").addClass(valid ? "success" : "fail");
+
+        state.empAddressValid = valid;
+    });
+    
+    $("[name=empPost], [name=empAddress1], .btn-address-search").on("click", function () {
+        new kakao.Postcode({
+            oncomplete: function (data) {
+                var addr = ''; 
+                if (data.userSelectedType === 'R') { 
+                    addr = data.roadAddress;
+                } else { 
+                    addr = data.jibunAddress;
+                }
+
+                $("[name=empPost]").val(data.zonecode);
+                $("[name=empAddress1]").val(addr);
+
+                $("[name=empAddress2]").prop("readonly", false).val("");
+                
+                $(".btn-address-clear").fadeIn();
+                $("[name=empAddress2]").trigger("focus");
+            }
+        }).open();
+    });
+
+    $(".btn-address-clear").on("click", function () {
+        $("[name=empPost], [name=empAddress1], [name=empAddress2]")
+            .val("").removeClass("success").addClass("fail");
+            
+        $("[name=empAddress2]").prop("readonly", true);
+        $(this).fadeOut();
+        state.empAddressValid = false;
+    });
 	
     // 팝업 함수
     function openPopUp(empId) {

@@ -121,9 +121,16 @@ $(function(){
                         </c:if>
                     </td>
                     <td align="left">
-                        <a href="./detail?formNo=${formDto.formNo}">
-                            ${formDto.formName}
-                        </a>
+                    	<c:if test="${param.keyword==null}">
+	                        <a href="./detail?formNo=${formDto.formNo}">
+	                            ${formDto.formName}
+	                        </a>
+                    	</c:if>
+                    	<c:if test="${param.keyword!=null}">
+	                        <a href="./detail?column=${param.column}&keyword=${param.keyword}&formNo=${formDto.formNo}">
+	                            ${formDto.formName}
+	                        </a>
+                    	</c:if>
                     </td>
                     <td>
                         <c:if test="${formDto.formUseYn == 'Y'}">사용중</c:if>
