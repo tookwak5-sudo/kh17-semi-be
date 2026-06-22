@@ -154,10 +154,10 @@ public class AprvDao {
 				+ ", edr.dept_no "
 				+ ", d.dept_name "
 				+ "from aprv_document a "
-				+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
-				+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
-				+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
-				+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
+				+ "LEFT JOIN emp e ON e.emp_id = a.aprv_writer "
+				+ "LEFT JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
+				+ "LEFT JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+				+ "LEFT JOIN aprv_head ah ON ah.head_no = af.form_head_no "
 				+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
 				+ "LEFT JOIN dept d ON d.dept_no = edr.dept_no "
 				+ "where a.aprv_no = ?";
@@ -177,10 +177,10 @@ public class AprvDao {
 					+ ", edr.dept_no "
 					+ ", d.dept_name "
 					+ "from aprv_document a "
-					+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
-					+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
-					+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
-					+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
+					+ "LEFT JOIN emp e ON e.emp_id = a.aprv_writer "
+					+ "LEFT JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
+					+ "LEFT JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+					+ "LEFT JOIN aprv_head ah ON ah.head_no = af.form_head_no "
 					+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
 					+ "LEFT JOIN dept d ON d.dept_no = edr.dept_no "
 					//임시저장은 작성자만 볼 수 있도록
@@ -193,6 +193,7 @@ public class AprvDao {
 		int beginRow = page * size - (size-1);
 		int endRow = page * size;
 		Object[] params = { empId, aprvStatus, aprvStatus, aprvHead, aprvHead, beginRow , endRow };
+		System.out.println("sql = " + sql);
 		return jdbcTemplate.query(sql, aprvDetailMapper, params);
 	}
 	
@@ -212,10 +213,10 @@ public class AprvDao {
 							+ ", edr.dept_no "
 							+ ", d.dept_name "
 							+ "from aprv_document a "
-							+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
-							+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
-							+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
-							+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
+							+ "LEFT JOIN emp e ON e.emp_id = a.aprv_writer "
+							+ "LEFT JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
+							+ "LEFT JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+							+ "LEFT JOIN aprv_head ah ON ah.head_no = af.form_head_no "
 							+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
 							+ "LEFT JOIN dept d ON d.dept_no = edr.dept_no "
 							+ "where a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
@@ -252,9 +253,9 @@ public class AprvDao {
 		//String sql = "select count(*) from aprv_document";
 		String sql = "select count(*) "
 				+ "from aprv_document a "
-				+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
+				+ "LEFT JOIN emp e ON e.emp_id = a.aprv_writer "
 				+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
-				+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+				+ "LEFT JOIN aprv_form af ON af.form_no = a.aprv_form_no "
 				+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
 				+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
 				+ "where a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "
@@ -290,10 +291,10 @@ public class AprvDao {
 					+ ", edr.dept_no "
 					+ ", d.dept_name "
 					+ "from aprv_document a "
-					+ "INNER JOIN emp e ON e.emp_id = a.aprv_writer "
-					+ "INNER JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
-					+ "INNER JOIN aprv_form af ON af.form_no = a.aprv_form_no "
-					+ "INNER JOIN aprv_head ah ON ah.head_no = af.form_head_no "
+					+ "LEFT JOIN emp e ON e.emp_id = a.aprv_writer "
+					+ "LEFT JOIN emp_position ep ON ep.emp_position_no = e.emp_position_no "
+					+ "LEFT JOIN aprv_form af ON af.form_no = a.aprv_form_no "
+					+ "LEFT JOIN aprv_head ah ON ah.head_no = af.form_head_no "
 					+ "LEFT JOIN emp_dept_relation edr ON edr.emp_id = a.aprv_writer "
 					+ "LEFT JOIN dept d ON d.dept_no = edr.dept_no "
 					+ "where a.aprv_status = CASE WHEN ? IS NULL THEN a.aprv_status ELSE ? END "

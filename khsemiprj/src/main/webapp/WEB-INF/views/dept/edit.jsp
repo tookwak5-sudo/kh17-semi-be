@@ -6,13 +6,22 @@
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"/>
 	
+<script>
+	function deptDelete(deptNo) {
+		openConfirm("부서를 삭제하시겠습니까?", "location.href='./delete?deptNo=" + deptNo + "';");
+	}
+</script>
+
 <form action="./edit" autocomplete="off" method="post" class="form-check">
       
-	<div class="container w-400 mt-50">
+	<div class="container w-400 mt-50 background-card">
 				
-    	<div class="cell center">
-            <h1>부서 정보 수정</h1>
-        </div>
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            부서 정보 수정
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+		</div>
 
        <!-- 기본키 숨김처리 -->
 <!--       부서 번호 -->
@@ -48,11 +57,11 @@
         
         <div class="cell mt-40 right">
         	<a href="./list" class="btn btn-neutral">목록으로</a>
-            <button type="submit" class="btn btn-netural">
+            <button type="submit" class="btn btn-save">
                 <i class="fa-solid fa-pen"></i>
 				<span>수정하기</span>
             </button>
-            <a class="btn btn-negative" href="./delete?deptNo=${deptDto.deptNo}">
+            <a class="btn btn-negative" onclick="deptDelete('${deptDto.deptNo}');">
 			<i class="fa-solid fa-trash"></i>
 			<span>삭제하기</span>
 			</a>

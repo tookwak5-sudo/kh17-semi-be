@@ -104,7 +104,6 @@ $(function () {
 				        
 				        var count = getWeekdaysCount(moment(sDate), moment(eDate));
 						if(count > ${leaveRemain}) {
-							//alert("휴가 잔여일 : ${leaveRemain}일\r\n휴가 선택일 : " + count + "일\r\n\r\n휴가 잔여일보다 휴가 선택일이 많습니다.\r\n\r\n다시 선택하세요.");
 							showAjaxAlarm("휴가 잔여일 : ${leaveRemain}일 / 휴가 선택일 : " + count + "일 / 휴가 잔여일보다 휴가 선택일이 많습니다. 다시 선택하세요.", 'btn-negative', '[name=aprvEdate]', 'right');
 							picker1.setDateRange(null, null);
 							$(".picker-sdate").val("");
@@ -226,7 +225,6 @@ $(function () {
 
         // [3] 순차적 유효성 검사 및 경고창 출력
         if(!state.aprvTitleValid) {
-            //window.alert("제목을 입력하세요.");
             showAjaxAlarm('제목을 입력하세요', 'btn-negative', '[name=aprvTitle]', 'left');
             $("[name=aprvTitle]").focus();
             return false; 
@@ -235,7 +233,6 @@ $(function () {
         var formHead = $(".aprv-form-list option:selected").attr("data-head");
         
         if(!state.aprvSdateValid) {
-            //window.alert("결재 시작일을 입력하세요.");
             var message = "";
             switch(formHead) {
             	case "비용":
@@ -253,7 +250,6 @@ $(function () {
             return false; 
         }
         if(!state.aprvEdateValid) {
-            //window.alert("결재 종료일을 입력하세요.");
             showAjaxAlarm('종료일을 입력하세요', 'btn-negative', '[name=aprvEdate]', 'right');
             $("[name=aprvEdate]").focus();
             return false; 
@@ -291,16 +287,13 @@ $(function () {
         }
         
         if(!state.aprvContentValid) {
-            //window.alert("내용을 입력하세요.");
             showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=aprvContent]', 'left');
             $("[name=aprvContent]").focus();
             return false;
         }
         // 🚨 결재자 미선택 시 명확하게 경고창을 띄우고 전송 중단
         if(!state.aprvLineNo1Valid) {
-            //window.alert("1차 결재 라인 결재자를 추가하세요.");
             showAjaxAlarm('1차 결재 라인 결재자를 추가하세요', 'btn-negative', '.aprv-line-1', 'left');
-            //$(".aprv-line-1").click();
             return false; // 무조건 전송 차단
         }
         
@@ -309,7 +302,6 @@ $(function () {
 	        var clickedButton = e.originalEvent.submitter; 
 	        if ($(clickedButton).hasClass("aprv-insert")) {
 	        	$(".aprv-status").val("대기");
-	        	//return confirm("문서를 기안하시겠습니까?");
 	        	openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-insert").click();');
 	        } else {
 	        	$(".aprv-status").val("임시저장");

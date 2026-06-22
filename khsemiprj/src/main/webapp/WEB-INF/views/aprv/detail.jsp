@@ -106,19 +106,12 @@
 	            // 특정 버튼일 때만 다르게 처리하고 싶다면?
 	            if ($(clickedButton).hasClass("aprv-save")) {
 	            	$(".form-check").attr("action", "./save");
-	            	/* if(confirm("문서를 기안하시겠습니까?")) {
-	    				state.aprvValid = true;
-	    			} */
 	    			openConfirm('문서를 기안하시겠습니까?', 'state.aprvValid = true; $(".aprv-save").click();');
 	            } else if($(clickedButton).hasClass("aprv-delete")) {
 	            	$(".form-check").attr("action", "./delete");
-	            	/* if(confirm("문서를 삭제하시겠습니까?")) {
-	    				state.aprvValid = true;
-	    			} */
 	            	openConfirm('문서를 삭제하시겠습니까?', 'state.aprvValid = true; $(".aprv-delete").click();');
 	            } else {
-	            	alert("잘못된 접근입니다. 페이지를 새로고침합니다.");
-	            	location.reload();
+					openAlert("잘못된 접근입니다.<br><br>페이지를 새로고침합니다.", "location.reload();");
 	            }
 			}
 			
@@ -172,7 +165,16 @@
 			<div class="flex-area w-100">
 				<div class="w-33 aprv-info-row-split">
 					<div class="aprv-info-label">기안자</div>
-					<div class="aprv-info-value"><span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span></div>
+					<div class="aprv-info-value">
+						<c:choose>
+						<c:when test="${aprvDetailVO.aprvWriter == null || aprvDetailVO.aprvWriter == ''}">
+						<span class="gray">(탈퇴한 사원)</span>
+						</c:when>
+						<c:otherwise>
+						<span>[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</span>
+						</c:otherwise>
+						</c:choose>
+					</div>
 				</div>
 				<div class="w-33 aprv-info-row-split">
 					<c:if test="${not empty aprvDetailVO.aprvWtime}">
@@ -333,8 +335,8 @@
 			        				</c:when>
 			        				<c:otherwise>
 				        				<c:choose>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
-				        					<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
+				        					<c:when test="${aprvLineList.aprvLineStatus == '승인'}"><span class="blue">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
+				        					<c:when test="${aprvLineList.aprvLineStatus == '반려'}"><span class="red">${aprvLineList.aprvLineStatus}</span> <i class="fa-regular fa-comment aprv-comment" data-comment="${aprvLineList.aprvLineComment}"></i></c:when>
 				        					<c:otherwise><span>${aprvLineList.aprvLineStatus}</span></c:otherwise>
 				        				</c:choose>
 			        				</c:otherwise>
@@ -425,7 +427,7 @@
         </div>
         <div class="modal-footer">
         	<button type="button" class="btn btn-negative" onclick="closeModal()">취소</button>
-        	<button type="button" class="btn btn-positive" onclick="aprvLineUpdate()">입력 완료</button>
+        	<button type="button" id="btnAprvLineUpdate" class="btn btn-positive" onclick="aprvLineUpdate()">입력 완료</button>
         </div>
     </div>
 </div>

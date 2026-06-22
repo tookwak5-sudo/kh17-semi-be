@@ -176,8 +176,11 @@
 				}
 				
 				// 얼럿 열기
-				function openAlert(message) {
+				function openAlert(message, clickScript) {
 					$('#alertMessage').html(message);
+					if(clickScript != undefined) {
+						$('#btnAlertAction').attr('onclick', clickScript + ' closeAlert();');
+					}
 					var alert = document.getElementById('modalAlert');
 					alert.classList.add('active');
 				}
@@ -202,6 +205,21 @@
 					confirm.classList.remove('active');
 					$('#btnConfirmAction').attr("onclick", '');
 				}
+				
+				document.body.addEventListener('keydown', function(event) {
+				    // 모달창 내부에서 발생한 이벤트인지 확인
+				    if (event.key === 'Enter') {
+				    	//열려있는 모달들을 확인
+				    	const modals = document.querySelectorAll('.modal-overlay.active');
+			        	if (modals.length > 0) {//열려있는 모달이 1개라도 있다면
+			        		event.preventDefault();//모달외의 submit을 막고
+			        	    // 배열의 마지막 요소가 가장 나중에 열린 모달입니다.
+			        	    const lastModal = modals[modals.length - 1];
+			        		$(lastModal).find(".btn-positive").click();//모달의 확인 버튼을 클릭
+			        	}
+				    }
+				});
+				
 			</script>
 			<c:choose>
 				<c:when test="${param.alarm != null}">
@@ -311,6 +329,11 @@
 						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();">중복된 직책단계입니다</a>
 						    </div>
 						</c:when>
+						<c:when test="${param.alarm == 'deptInsert'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();">부서등록이 완료되었습니다.</a>
+						    </div>
+						</c:when>
 					</c:choose>
 				</c:when>
 	    	</c:choose>
@@ -331,7 +354,7 @@
 			            </form>
 			        </div>
 			        <div class="modal-footer" style="txt-align:center;">
-			        	<button type="button" class="btn btn-positive" onclick="closeAlert()">확인</button>
+			        	<button id="btnAlertAction" type="button" class="btn btn-positive" onclick="closeAlert()">확인</button>
 			        </div>
 			    </div>
 			</div>

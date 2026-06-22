@@ -99,7 +99,16 @@
 							<c:otherwise>${aprvDetailVO.aprvStatus}</c:otherwise>
 							</c:choose>
 						</td>
-						<td class="left" style="padding-left:20px;"><a class="writer-name" data-id="${aprvDetailVO.aprvWriter}">[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</a></td>
+						<td class="left" style="padding-left:20px;">
+							<c:choose>
+							<c:when test="${aprvDetailVO.aprvWriter == null || aprvDetailVO.aprvWriter == ''}">
+							<span class="gray">(탈퇴한 사원)</span>
+							</c:when>
+							<c:otherwise>
+							<a class="writer-name" data-id="${aprvDetailVO.aprvWriter}">[ ${aprvDetailVO.deptName} ] ${aprvDetailVO.empName} ${aprvDetailVO.empPositionName} ( ${aprvDetailVO.aprvWriter} )</a>
+							</c:otherwise>
+							</c:choose>
+						</td>
 						<td><fmt:formatDate value="${aprvDetailVO.aprvWtime}" pattern="yyyy-MM-dd HH:mm" /></td>
 					</tr>
 				</c:forEach>
@@ -124,7 +133,7 @@
     <div class="modal-box">
         <div class="modal-header center">결재 양식 선택</div>
         
-        <div class="modal-body">
+        <div class="modal-body" style="overflow-y: auto; max-height: 400px;">
             <form id="popupForm1" class="flex-area">
             	<div class="cell w-100">
             		<c:forEach var="aprvFormDto" items="${formList}">
@@ -135,7 +144,7 @@
 				</div>
             </form>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer mt-20">
         	<button type="button" class="btn btn-negative" onclick="closeModal()">취소</button>
         </div>
     </div>

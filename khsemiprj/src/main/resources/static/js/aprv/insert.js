@@ -439,8 +439,19 @@ function getEmpPositionDeptList(deptNo, No) {
 	                	var template = $("#emp-template").text();
 	                	const tr = $.parseHTML(template)[1];
 	                	$(tr).find(".emp-checkbox").attr("value", empId);
+						$(tr).find(".emp-checkbox").attr("id", "emp1_" + empId);
+						$(tr).find("label").attr("for", "emp1_" + empId);
 						if(lineIdList.includes(empId)) {
 							$(tr).find(".emp-checkbox").attr("disabled", true);
+							const targetId = "emp1_" + empId; 
+							const targetCb = $(tr).find("#" + targetId);
+				            if (targetCb) {
+				                targetCb.disabled = true; // 클릭 불가
+								if($(targetCb).next()) {
+									$(targetCb).next()[0].style.opacity = "0.3"; // 흐릿하게
+									$(targetCb).next()[0].style.cursor = "not-allowed";
+								}
+				            }
 						}
 	                	$(tr).find("td:eq(1)").text(deptName);
 	                	$(tr).find("td:eq(2)").text(empId);
@@ -471,8 +482,19 @@ function getEmpPositionDeptList(deptNo, No) {
 	                	var template = $("#emp-template").text();
 	                	const tr = $.parseHTML(template)[1];
 	                	$(tr).find(".emp-checkbox").attr("value", empId);
+						$(tr).find(".emp-checkbox").attr("id", "emp2_" + empId);
+						$(tr).find("label").attr("for", "emp2_" + empId);
 						if(lineIdList.includes(empId)) {
 							$(tr).find(".emp-checkbox").attr("disabled", true);
+							const targetId = "emp2_" + empId; 
+							const targetCb = $(tr).find("#" + targetId);
+				            if (targetCb) {
+				                targetCb.disabled = true; // 클릭 불가
+								if($(targetCb).next()) {
+									$(targetCb).next()[0].style.opacity = "0.3"; // 흐릿하게
+									$(targetCb).next()[0].style.cursor = "not-allowed";
+								}
+				            }
 						}
 	                	$(tr).find("td:eq(1)").text(deptName);
 	                	$(tr).find("td:eq(2)").text(empId);
