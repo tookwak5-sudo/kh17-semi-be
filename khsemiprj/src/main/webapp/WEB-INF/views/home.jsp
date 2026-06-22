@@ -150,7 +150,6 @@
 	        <div class="cell">
 	        	<label>유형<i class="fa-solid fa-asterisk red"></i></label>
 	        	<select class="field w-100" name="planType">
-	                <option value="">선택하세요</option>
 	                <option value="개인">개인</option>
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
@@ -472,7 +471,7 @@
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
 			
 		    var headList = JSON.parse('${planHeadJson}');
-            var options = "<option value=''>선택하세요</option>";
+            var options = "";
             for(var i = 0; i < headList.length; i++) {
             	if(headList[i].headType == "일반"){
             		var isSelected = (headList[i].headNo == planHeadNo) ? "selected" : "";
@@ -563,7 +562,7 @@
 	            $("#modal-body").html(template);
 	            
 	            var headList = JSON.parse('${planHeadJson}');
-	            var options = "<option value=''>선택하세요</option>";
+	            var options = "";
 	            for(var i = 0; i < headList.length; i++) {
 	            	if(headList[i].headType == "일반"){
 	        			options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";

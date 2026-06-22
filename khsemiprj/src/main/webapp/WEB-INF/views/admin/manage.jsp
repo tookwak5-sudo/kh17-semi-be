@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
  
- 		//상태객체
+ 		//상태객체(헤더)
 		var state = {
 			headNameValid: false,//형식 검사 반영
 			headTypeValid : false,
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	        state.headTypeValid = $(this).val().trim().length > 0;
 	    });
  		 
-		$(".form-check").on("submit", function(e){
+		$(".form-checkH").on("submit", function(e){
 	    	$(this).find("select[name]").trigger("input");
 	        $(this).find("input[name], textarea[name]").trigger("blur");
 	    	
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	    	return state.ok();
 	  	});
 
-		//상태객체
+		//상태객체(직책)
 		var positionState = {
 			empPositionNameValid: false,
 			empPositionLevelValid: false,
@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	    	positionState.empPositionLevelValid = $(this).val().trim().length > 0;
 	    });
  		 
-		$(".form-check").on("submit", function(e){
+		$(".form-checkP").on("submit", function(e){
 	    	$(this).find("select[name]").trigger("input");
 	        $(this).find("input[name], textarea[name]").trigger("blur");
 	    	
@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				<hr>
 				<div id="headWriteArea" style="display: none;">
 					<div class="cell">
-						<form action="/admin/headWrite" method="post" class="form-check">
+						<form action="/admin/headWrite" method="post" class="form-checkH">
 					    	<div class="cell">
 								<label>헤더 이름</label> <input type="text" name="headName" class="w-100">
 							</div>
@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
 					<span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
 					</h1>
 					
-					<form id="empPositionDeleteForm" action="/admin/empPositionDelete" method="POST" class="form-check">
+					<form id="empPositionDeleteForm" action="/admin/empPositionDelete" method="POST">
 						<div class="cell list-area">
 							<table class="table">
 							    <thead>
@@ -346,14 +346,14 @@ document.addEventListener("DOMContentLoaded", function () {
 					<hr>
 					<div id="positionWriteArea" style="display: none;">
 						<div class="cell">
-							<form action="/admin/empPositionWrite" method="post" class="form-check">
+							<form action="/admin/empPositionWrite" method="post" class="form-checkP">
 						    	<div class="cell">
 									<label>직급명</label> <input type="text" name="empPositionName" class="w-100">
 								</div>
 								<div class="cell">
 									<label>직급 단계</label> <input type="text" name="empPositionLevel" class="w-100">
 								</div>
-							   	<button type="submit" class="btn btn-positive">헤더생성</button>
+							   	<button type="submit" class="btn btn-positive">직책생성</button>
 							</form>
 						</div>
 					</div>
