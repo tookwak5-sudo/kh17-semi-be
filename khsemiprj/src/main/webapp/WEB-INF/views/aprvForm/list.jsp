@@ -44,9 +44,9 @@ $(function(){
 </script>
 
 <c:if test="${sessionScope.loginId != null && sessionScope.empGrade >=1 }">
-<div class="container w-80 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-	    <div class="w-20 flex-area" style="justify-content: left">
+	    <div class="w-25 flex-area" style="justify-content: left">
 				<div>
 			        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 			            결재양식 관리
@@ -55,52 +55,50 @@ $(function(){
 				</div>
 	    </div>
 
-	<div class="w-70 flex-area flex-center">
-    <form action="./list" method="get" autocomplete="off">
-        <input type="hidden" name="size" value="${pageVO.size}">
-        <div class="flex-area" style="align-items: center; gap: 10px;">
-            
-            <select name="column" class="field field-sm">
-                <option value="form_name" ${param.column == 'form_name' ? 'selected' : ''}>양식명</option>
-                <option value="form_head_no" ${param.column == 'form_head_no' ? 'selected' : ''}>구분(업무/비용 등)</option>
-            </select>
-                
-            <div class="form-search-zone" style="display: inline-block;">
-                <input type="text" name="keyword" class="field-sm"
-                    placeholder="양식 이름 입력" value="${param.keyword}" style="width: 300px;" id="name">
-            </div>   
-           
-            <div class="head-search-zone" style="display: inline-block;">
-                <select name="keyword" class="field-sm">
-                    <option value="">선택하세요</option>
-                    <c:forEach var="head" items="${filterHeadList}">
-                        <option value="${head.headName}" ${param.keyword == head.headName ? 'selected' : ''}>
-                            ${head.headName}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-            
-            <button type="submit" class="btn btn-positive">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span>검색</span>
-            </button>
-        </div>
-    </form>
-</div>
-	    
-	    <div class="w-15 flex-area flex-center" style="justify-content: right; align-items: center;">
+	<div class="cell flex-area background-fill">
+	    <form action="./list" method="get" autocomplete="off">
+	        <input type="hidden" name="size" value="${pageVO.size}">
+	        <div class="flex-area" style="align-items: center; gap: 10px;">
+	            <select name="column" class="field field-sm">
+	                <option value="form_name" ${param.column == 'form_name' ? 'selected' : ''}>양식명</option>
+	                <option value="form_head_no" ${param.column == 'form_head_no' ? 'selected' : ''}>구분(업무/비용 등)</option>
+	            </select>
+	                
+	            <div class="form-search-zone" style="display: inline-block;">
+	                <input type="text" name="keyword" class="field-sm"
+	                    placeholder="양식 이름 입력" value="${param.keyword}" style="width: 300px;" id="name">
+	            </div>   
+	           
+	            <div class="head-search-zone" style="display: inline-block;">
+	                <select name="keyword" class="field-sm">
+	                    <option value="">선택하세요</option>
+	                    <c:forEach var="head" items="${filterHeadList}">
+	                        <option value="${head.headName}" ${param.keyword == head.headName ? 'selected' : ''}>
+	                            ${head.headName}
+	                        </option>
+	                    </c:forEach>
+	                </select>
+	            </div>
+	            
+	            <button type="submit" class="btn btn-positive">
+	                <i class="fa-solid fa-magnifying-glass"></i>
+	                <span>검색</span>
+	            </button>
+	        </div>
+	    </form>
+	</div>    
+	    <div class="w-15 flex-area" style="justify-content: right; align-items: center;">
 	        <c:if test="${sessionScope.loginId != null}">
 	            <a href="./insert" class="btn btn-neutral">
 	                <i class="fa-solid fa-plus"></i> 양식 등록
 	            </a>
 	        </c:if>
 	    </div>
-	</div>
+</div>
 	
-    <div class="cell right">
-       ${pageVO.getBeginRownum()}-${pageVO.getEndRownum()} / 총 ${pageVO.count}개의 양식
-    </div>
+    <div class="right" style="font-size: 14px; color: #666;">
+		    <strong style="color: #007bff;">${pageVO.count}</strong>개의 항목
+	</div>
 
     <div class="cell">
         <table class="table">

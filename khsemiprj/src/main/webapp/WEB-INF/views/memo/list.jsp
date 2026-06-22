@@ -32,6 +32,11 @@
 		font-size: 12px;
 		font-weight: bold;
 	}
+	.memo-title {
+		white-space: nowrap; /*줄바꿈 금지*/
+        overflow: hidden; /* 넘어가면 숨김처리 */
+        text-overflow: ellipsis; /* 글자가 넘어간 부분을 말줄임표로 표시 */
+	}
 </style>
 
 <div class="container w-600 mt-20 mb-50 background-card">
@@ -93,16 +98,20 @@
 											<c:otherwise><span style="color: #7f8fa6;">[일반]</span></c:otherwise>
 										</c:choose>
 									</td>
-									<td align="left" style="padding-left: 15px; font-weight: ${memo.memoReadStatus == 'N' ? 'bold' : 'normal'};">
-										<c:if test="${memo.memoReadStatus == 'N'}">
-											<span class="unread-badge">New</span>
-										</c:if>
-										<c:if test="${memo.memoReadStatus == 'Y'}">
-											<span style="color: #adb5bd;">읽음</span>
-										</c:if>
-										<a href="./detail?memoNo=${memo.memoNo}">
-											${memo.memoTitle}										
-										</a>
+									<td align="left" style="padding-left: 15px; font-weight: ${memo.memoReadStatus == 'N' ? 'bold' : 'normal'}; max-width: 120px" >
+										<div style="display: flex; align-items: center; width: 100%; gap: 6px;">
+											<div style="flex-shrink: 0; display: inline-flex; align-items: center;">
+												<c:if test="${memo.memoReadStatus == 'N'}">
+													<span class="unread-badge">New</span>
+												</c:if>
+												<c:if test="${memo.memoReadStatus == 'Y'}">
+													<span style="color: #adb5bd;">읽음</span>
+												</c:if>
+											</div>
+												<a href="./detail?memoNo=${memo.memoNo}" class="memo-title" style="flex-grow: 1; min-width: 0; color: inherit; text-decoration: none;">
+													${memo.memoTitle}										
+												</a>
+										</div>
 									</td>
 									<td>${memo.memoSenderId}(${memo.empName})</td>
 									<td>

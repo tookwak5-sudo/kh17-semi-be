@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		</div>
 	</div>
 	
-	<div class="container w-1200 mt-20 mb-50">
+	<div class="container w-100 mt-20 mb-50">
 		<div class="cell flex-area" style="align-items: flex-start;">
 			<div class="cell w-50 me-10 card p-20">
 				<div class="cell">

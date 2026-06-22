@@ -240,7 +240,6 @@
 <body>
 
 <%-- 세션ID : ${pageContext.session.id} --%>
-<%-- loginId : ${sessionScope.loginId} --%>
 <%-- empGrade : ${sessionScope.empGrade} --%>
 <%-- 부서 정보 : ${sessionScope.empDept} --%>
 <%-- 직책 정보 : ${sessionScope.empPosition} --%>
@@ -328,7 +327,7 @@
 						    var $badge = $('.badge');
 						    if($badge.length > 0) {
 						        var currentCount = parseInt($badge.text()) || 0;
-						        $badge.text(currentCount + 1);
+						        $badge.text(currentCount);
 						    }
 						}
 					}, // success 끝
@@ -336,7 +335,7 @@
 						console.log("쪽지 동기화 중");
 					}
 				});
-			}, 60000);
+			}, 3000);
 			
 		}
 	});

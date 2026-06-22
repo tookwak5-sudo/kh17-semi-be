@@ -48,7 +48,7 @@
 
 <div class="container w-100 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-		<div class="w-20 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 		            휴가 관리
@@ -57,7 +57,7 @@
 			</div>
         </div>
         
-        <div class="w-70 flex-area flex-center">
+        <div class="cell flex-area flex-vertical background-fill">
 			<form action="./list" method="get" style="display: flex; align-items: center; gap: 8px;">
 				<select name="column" class="field select">
 					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
@@ -72,20 +72,19 @@
 				</button>
 			</form>
 		</div>
+	</div>
+	
+	<div class="flext-area">
+		<div class="w-50 cell">
+		<c:if test="${param.column != null && param.keyword != null && param.keyword != ''}">
+			<h3>총 <span class="red">${list.size()}</span>명의 회원이 검색되었습니다</h3>
+		</c:if>
+		</div>
 		
-		<div class="w-20 flex-area flex-center" style="justify-content: right;">
+		<div class="cell right" style="font-size: 14px; color: #666;">
+			    <strong style="color: #007bff;">${pageVO.count}</strong>명의 회원
 		</div>
 	</div>
-
-	
-	
-	<c:if test="${param.column != null && param.keyword != null && param.keyword != ''}">
-	<div class="cell">
-		<h3>총 <span class="red">${list.size()}</span>명의 회원이 검색되었습니다</h3>
-	</div>
-	</c:if>
-	
-	
 	<c:if test="${list.size() > 0}">
 	<div class="cell">
 			<table class="table table-hover">

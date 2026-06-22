@@ -124,7 +124,7 @@
 </style>
 
 
-<div class="container w-90 mt-20 mb-50 background-card">
+<div class="container w-100 mt-20 mb-50 background-card">
 	<div style="margin-bottom: 40px;">
 	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 	            마이 페이지

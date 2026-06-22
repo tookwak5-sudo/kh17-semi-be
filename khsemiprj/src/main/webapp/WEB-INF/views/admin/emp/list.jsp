@@ -37,7 +37,7 @@
 
 <div class="container w-90 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
-		<div class="w-20 flex-area" style="justify-content: left">
+		<div class="w-25 flex-area" style="justify-content: left">
 			<div>
 		        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
 		            사원 관리
@@ -46,7 +46,7 @@
 			</div>
         </div>
         
-        <div class="w-60 flex-area flex-center">
+        <div class="cell flex-area flex-vertical background-fill">
 			<form action="./list" method="get" style="display: flex; align-items: center; gap: 8px;">
 				<select name="column" class="field">
 					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
@@ -77,7 +77,6 @@
             </button>
        	</div>
        	<div id="waitListArea" style="display: none; margin-top: 0px;">
-<!-- 				<h3 class="mt-0 black" style="border-left: 5px solid #739BED; padding-left: 12px;">승인 대기 사원 목록</h3> -->
 					<table class="table" style="background-color: white; margin-bottom: 0;">
 						<thead>
 							<tr style="border-bottom: 2px solid #e9ecef;">
@@ -104,25 +103,6 @@
 		<hr class="mt-20 mb-30">
 		</c:if>
 				
-				
-		<!-- 기존 검색창 -->
-		<%-- <div class="cell" style="display: flex; justify-content: flex-end;">
-			<form action="./list" method="get" style="margin-left:auto; display: flex; align-items: center; gap: 8px">
-				<select name="column" class="field">
-					<option value="emp_id" ${param.column == 'emp_id' ? 'selected' : ''}>아이디</option>
-					<option value="emp_name" ${param.column == 'emp_name' ? 'selected' : ''}>이름</option>
-					<option value="dept_name" ${param.column == 'dept_name' ? 'selected' : ''}>부서명</option>
-					<option value="emp_position_name" ${param.column == 'emp_position_name' ? 'selected' : ''}>직급</option>
-				</select>
-				<input type="text" name="keyword" class="field-sm" value="${param.keyword}">
-				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
-					<i class="fa-solid fa-magnifying-glass"></i>
-					<span>검색</span>
-				</button>
-			</form>
-	</div> --%>
-	
-	
 	<c:if test="${param.column != null && param.keyword != null && param.keyword != ''}">
 	<div class="cell">
 		<h3>총 <span class="red">${list.size()}</span>명의 회원이 검색되었습니다</h3>
