@@ -56,6 +56,8 @@ public class LogAccessDao {
 	    Set<String> allowList = Set.of("access_emp_id", "access_url");
 	    if(allowList.contains(pageVO.getColumn()) == false)
 	        return List.of();
+	    
+	    String col = pageVO.getColumn();
 	        
 	    String sql = "select * from ("
 	            + "select rownum rn, TMP.* from ("
@@ -64,11 +66,15 @@ public class LogAccessDao {
 	            + "  left outer join emp e on l.access_emp_id = e.emp_id "
 	            + "  left outer join emp_dept_relation r on e.emp_id = r.emp_id "
 	            + "  left outer join dept d on r.dept_no = d.dept_no "
-	            + "  where instr (l." + pageVO.getColumn() + ", ?) > 0 "
+	            + "  where "
+//	            + "instr (l." + pageVO.getColumn() + ", ?) > 0 "
+				+ "  (instr(" + (col.equals("access_emp_id") ? "e.emp_name" : col) + ", ?) > 0 "
+				+ "  or instr(" + (col.equals("access_emp_id") ? "l.access_emp_id" : col) + ", ?) > 0 ) "
 	            + "  order by l.access_no desc"
 	            + ") TMP"
 	        + ") where rn between ? and ?";
 	    Object [] params = {
+	    		pageVO.getKeyword(),
 	            pageVO.getKeyword(),
 	            pageVO.getBeginRownum(),
 	            pageVO.getEndRownum()
@@ -84,8 +90,14 @@ public class LogAccessDao {
 	public int count(PageVO pageVO) {
 		if(pageVO.isList()) return count();
 		
-		String sql = "select count(*) from log_access where instr("+pageVO.getColumn()+", ?) > 0";
-		Object[] params = { pageVO.getKeyword() };
+		String col = pageVO.getColumn();
+		
+		String sql = "select count(*) "
+	               + "from log_access l "
+	               + "left outer join emp e on l.access_emp_id = e.emp_id "
+	               + "where (instr(" + (col.equals("access_emp_id") ? "e.emp_name" : col) + ", ?) > 0 "
+	               + "or instr(" + (col.equals("access_emp_id") ? "l.access_emp_id" : col) + ", ?) > 0 )";
+		Object[] params = { pageVO.getKeyword(), pageVO.getKeyword() };
 		return jdbcTemplate.queryForObject(sql, int.class, params);	
 	}
 	

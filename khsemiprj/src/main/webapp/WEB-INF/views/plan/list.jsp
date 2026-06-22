@@ -130,7 +130,33 @@ $(function() {
     }
 });
 </script>
-<script>
+
+<script type="text/javascript">
+var deleteConfirmState = {
+    deleteConfirmValid: false,
+    ok: function(){
+        return Object.values(this)
+        .filter(v => typeof v === "boolean")
+        .every(v => v === true);
+    }
+};
+	
+$(document).on("click", ".btn-delete-confirm", function(e){
+    var $btn = $(this); // 클릭된 버튼 요소
+    
+    if(!deleteConfirmState.deleteConfirmValid){
+        e.preventDefault();
+        var deleteUrl = $btn.attr("href"); // 클릭한 버튼의 href 가져오기
+        
+        openConfirm(
+            '정말 삭제 하시겠습니까?', 
+            'deleteConfirmState.deleteConfirmValid = true; location.href="' + deleteUrl + '";'
+        );
+    }
+    
+    return deleteConfirmState.ok();
+});
+
 	$(function () {
 		 var picker8 = new Lightpick({
              field : $(".picker-sdate")[0] ,
@@ -199,6 +225,7 @@ $(function() {
 					<th>일정 기간</th>
 					<th>부서</th>
 					<th>작성자</th>
+					<th>수정/삭제</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -230,6 +257,12 @@ $(function() {
 						</c:otherwise>
 							</c:choose></td>
 						<td class="center"><a class="writer-name" data-id="${planDto.empName}">${planDto.empName}(${planDto.planEmpId})</a></td>
+						<td class="center">
+						    <c:if test="${sessionScope.loginId == planDto.planEmpId && planDto.headType == '일반'}">
+						        <a class="btn btn-neutral" href="/plan/edit?planNo=${planDto.planNo}">수정</a>
+						        <a class="btn btn-negative btn-delete-confirm" href="/plan/delete?planNo=${planDto.planNo}">삭제</a>
+						    </c:if>
+						</td>
 					</tr>
 				</c:forEach>
 
@@ -247,6 +280,7 @@ $(function() {
 	<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
 </div>
 <script>
+	
 	$(document).on("click", ".writer-name", function(e){
 		e.stopPropagation(); //클릭 이벤트가 문서 전체로 퍼지는 것을 막음 (바로 닫히는 현상 방지)
 		var memberId = $(this).data("id"); // 현재 클릭한 작성자 이름 태그($(this))에 심어져 있는 data-id의 속성값을 가져오기
@@ -279,6 +313,7 @@ $(function() {
 	}
 	
 </script>
+
 <!-- 닉네임 클릭 시 나타날 창 -->
 <div id="user-context-menu" style="display: none;">
 	<a href="#" id="link-view-posts">

@@ -20,4 +20,6 @@ public class PlanEmpDeptVO {
 	
 	private String empName;
 	private String deptName;
+	
+	private String headType;
 }

@@ -162,14 +162,16 @@ $(function(){
             	</div>
 	        </div>
 			<div class="cell">
-	        	<label>종류(헤더)</label>
-	        	<select class="field w-100" name="headNo">
-	                <option value="">선택하세요</option>
-	                 <c:forEach var="aprvHeadDto" items="${headList}" varStatus="stat">
-                   		<option value="${aprvHeadDto.headNo}">${aprvHeadDto.headName}</option>
-                  		 </c:forEach>
-	            </select>
-	        </div>
+			    <label>종류(헤더)</label>
+			    <select class="field w-100" name="planHeadNo">
+			        <option value="">선택하세요</option>
+			        <c:forEach var="HeadDto" items="${headList}">
+			            <option value="${HeadDto.headNo}">
+			                ${HeadDto.headName}
+			            </option>
+			        </c:forEach>
+			    </select>
+			</div>
 	        <div class="cell">   
 	            <label>일정 <i class="fa-solid fa-asterisk red"></i></label>
 	        </div>
@@ -184,6 +186,10 @@ $(function(){
 	            <textarea name="planExplain" class="field w-100"></textarea>
 	        </div>
 	        <div class="cell mt-40 right">
+	        	 <a href="/plan/list" class="btn btn-neutral">
+	        	 	<i class="fa-solid fa-list"></i>
+	        	 	<span>목록으로</span>
+	        	 </a>
 	            <button type="submit" class="btn btn-positive btn-plan">
 	                <i class="fa-solid fa-plus"></i>등록하기
 	            </button>

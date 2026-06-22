@@ -334,6 +334,16 @@
 						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();">부서등록이 완료되었습니다.</a>
 						    </div>
 						</c:when>
+						<c:when test="${param.alarm == 'planDelete'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-negative btn-slide-hidden" onclick="$(this).parent().hide();">일정이 삭제되었습니다.</a>
+						    </div>
+						</c:when>
+						<c:when test="${param.alarm == 'planEdit'}">
+							<div style="position: absolute;">
+						        <a id="send-alarm" class="btn btn-positive btn-slide-hidden" onclick="$(this).parent().hide();">일정이 수정되었습니다.</a>
+						    </div>
+						</c:when>
 					</c:choose>
 				</c:when>
 	    	</c:choose>

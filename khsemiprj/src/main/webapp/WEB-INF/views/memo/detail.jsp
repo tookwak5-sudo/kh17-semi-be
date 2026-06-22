@@ -109,7 +109,7 @@ function deleteMemo(no) {
 			<span>삭제</span>
 		</a> --%>
 		<a class="btn btn-negative" onclick="openConfirm('정말 삭제하시겠습니까?', 'deleteMemo(${memoDto.memoNo});')">
-			<i class="fa-solid fa-list"></i>
+			<i class="fa-solid fa-trash"></i>
 			<span>삭제</span>
 		</a>
 	</div>

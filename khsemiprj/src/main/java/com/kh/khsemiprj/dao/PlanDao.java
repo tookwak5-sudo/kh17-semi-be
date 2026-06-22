@@ -100,9 +100,16 @@ public class PlanDao {
 	
 	//plan head type ='일반'조인 조회
 	public List<PlanHeadVO> selectListPlanHeadType() {
-		String sql = "select * from aprv_head where head_type = '일반'";
+		String sql = "SELECT p.*, h.* FROM plan p " +
+	             "JOIN aprv_head h ON p.plan_head_no = h.head_no " +
+	             "WHERE h.head_type = '일반'";
 		return jdbcTemplate.query(sql, planHeadMapper);
 	}	
+	
+	public List<HeadDto> selectListHead() {
+		String sql = "select * from aprv_head where head_type = '일반'";
+		return jdbcTemplate.query(sql, headMapper);
+	}
 	
 	//전체 일정 조회
     public List<PlanDto> selectList(String empId) {
@@ -135,10 +142,11 @@ public class PlanDao {
     public List<PlanEmpDeptVO> selectList(String empId, String planSdate, String planEdate, int beginRownum, int endRownum){
     	String sql = "select * from ("
     	        + "select rownum rn, TMP.* from ("
-    	        + "  select p.*, e.emp_name, d.dept_name "
+    	        + "  select p.*, e.emp_name, d.dept_name, h.head_type "
     	        + "  from plan p "
     	        + "  left outer join emp e on p.plan_emp_id = e.emp_id "
     	        + "  left outer join dept d on p.plan_dept_no = d.dept_no "
+    	        + "  left outer join aprv_head h on p.plan_head_no = h.head_no "
     	        + "  where ((p.plan_type = '개인' and p.plan_emp_id = ?) or p.plan_type IN ('회사','부서')) "
     	        + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
                 + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END "
@@ -166,12 +174,15 @@ public class PlanDao {
             
         String sql = "select * from ("
                 + "select rownum rn, TMP.* from ("
-                + "  select p.*, e.emp_name, d.dept_name "
+                + "  select p.*, e.emp_name, d.dept_name, h.head_type "
                 + "  from plan p " 
                 + "  left outer join emp e on p.plan_emp_id = e.emp_id "
-                + "  left outer join dept d on p.plan_dept_no = d.dept_no " // 👈 [핵심수정] 여기도 똑같이 직조인!
+                + "  left outer join dept d on p.plan_dept_no = d.dept_no "
+                + "  left outer join aprv_head h on p.plan_head_no = h.head_no "
                 + "  where"
-                + "  instr (" + col + ", ?) > 0 " 
+//                + "  instr (" + col + ", ?) > 0 " 
+				+ " (instr(" + (col.equals("e.emp_name") ? "e.emp_name" : col)  + ", ?) > 0 "
+				+ "or instr(" + (col.equals("e.emp_name") ? "p.plan_emp_id" : col)  + ", ?) > 0 )"
                 + "  and ((p.plan_type = '개인' and p.plan_emp_id = ?) or p.plan_type IN ('회사','부서'))"
                 + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
                 + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END "
@@ -180,6 +191,7 @@ public class PlanDao {
             + ") where rn between ? and ?";
             
         Object [] params = {
+        		pageForPlanVO.getKeyword(),
         		pageForPlanVO.getKeyword(),
                 empId,
                 pageForPlanVO.getPlanEdate(),
@@ -195,6 +207,7 @@ public class PlanDao {
 
     public int count(String empId, String planSdate, String planEdate) {
         String sql = "select count(*) from plan p "
+                   + "left outer join aprv_head h on p.plan_head_no = h.head_no " // 조인 추가
                    + "where ((p.plan_type = '개인' and p.plan_emp_id = ?) "
                    + "   or p.plan_type in ('회사', '부서')) "
                    + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
@@ -217,13 +230,17 @@ public class PlanDao {
                 + "left outer join emp e on p.plan_emp_id = e.emp_id "
                 + "left outer join emp_dept_relation r on e.emp_id = r.emp_id "
                 + "left outer join dept d on r.dept_no = d.dept_no "
+                + "left outer join aprv_head h on p.plan_head_no = h.head_no " // 👈 조인 추가
                 + "where " 
-                + "instr(" + col + ", ?) > 0 "
+//                + "instr(" + col + ", ?) > 0 "
+                + " (instr(" + (col.equals("e.emp_name") ? "e.emp_name" : col)  + ", ?) > 0 "
+				+ "or instr(" + (col.equals("e.emp_name") ? "p.plan_emp_id" : col)  + ", ?) > 0 )"
                 + "  and ((p.plan_type = '개인' and p.plan_emp_id = ?) or p.plan_type IN ('회사','부서')) "
                 + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
                 + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END ";
-                
+        System.out.println("count sql = " + sql);
         Object[] params = { pageForPlanVO.getKeyword(),
+        					pageForPlanVO.getKeyword(),
         					empId,
         					pageForPlanVO.getPlanEdate(),
         					pageForPlanVO.getPlanEdate(),

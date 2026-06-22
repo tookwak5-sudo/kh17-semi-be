@@ -4,7 +4,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="/WEB-INF/views/template/memoHeader.jsp"></jsp:include> 
-  
+
+<link rel="stylesheet" type="text/css" href="/css/modal.css">
 <style>
 	.table-hover tbody tr:hover {
 		background-color : #f8f9fa;
@@ -37,7 +38,29 @@
         overflow: hidden; /* 넘어가면 숨김처리 */
         text-overflow: ellipsis; /* 글자가 넘어간 부분을 말줄임표로 표시 */
 	}
+	.memo-content-area { word-break: break-all; overflow-wrap: break-word; }
 </style>
+
+<script>
+//컨펌 열기
+function openConfirm(message, clickScript) {
+	$('#confirmMessage').html(message);
+	$('#btnConfirmAction').attr('onclick', clickScript + ' closeConfirm();');
+	var confirm = document.getElementById('modalConfirm');
+	confirm.classList.add('active');
+}
+
+// 컨펌 닫기
+function closeConfirm() {
+	var confirm = document.getElementById('modalConfirm');
+	confirm.classList.remove('active');
+	$('#btnConfirmAction').attr("onclick", '');
+}
+
+function deleteMemo(no) {
+	location.href= "./delete?memoNo=" + no;
+}
+</script>
 
 <div class="container w-600 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
@@ -55,6 +78,7 @@
 					<option value="memo_sender_id" ${pageVO.column == 'memo_sender_id' ? 'selected' : ''}>보낸사람</option>
 					<option value="memo_title" ${pageVO.column == 'memo_title' ? 'selected' : ''}>제목</option>
 					<option value="memo_content" ${pageVO.column == 'memo_content' ? 'selected' : ''}>내용</option>
+					<option value="memo_type" ${pageVO.column == 'memo_type' ? 'selected' : ''}>분류</option>
 				</select>
 				<input type="text" name="keyword" class="field-sm" value="${pageVO.keyword}" placeholder="검색어를 입력하세요" style="padding: 8px 18px; font-size: 16px;">
 				<button class="btn btn-positive" style="padding: 8px 18px; font-size: 16px;">
@@ -132,7 +156,11 @@
 			</table>
 		</div>
 		<div class="cell right">
-				<a class="btn btn-positive" href="./write">
+				<a class="btn btn-negative" style="width:147px" onclick="openConfirm('정말 삭제하시겠습니까?', 'location.href=\'./writeDelete\';')">
+					<i class="fa-solid fa-trash"></i>
+					읽은 쪽지 삭제
+				</a>
+				<a class="btn btn-positive" style="width:147px" href="./write">
 					<i class="fa-regular fa-pen-to-square"></i>
 					<span>쪽지쓰기</span>
 				</a>
@@ -324,5 +352,22 @@
 
 	<div class="cell">    
 		<jsp:include page="/WEB-INF/views/template/pagination.jsp"></jsp:include>
+	</div>
+	<!-- 커스텀 컨펌 -->
+    <div class="modal-overlay" id="modalConfirm">
+	    <div class="modal-box" style="width:400px;">
+	        <!-- <div class="modal-header center"></div> -->
+	        <div class="modal-body">
+	            <form id="popupFormConfirm" class="flex-area">
+	            	<div class="cell w-100">
+	            		<span id="confirmMessage"></span>
+					</div>
+	            </form>
+	        </div>
+	        <div class="modal-footer" style="txt-align:center;">
+	        	<button id="btnConfirmAction" type="button" class="btn btn-positive" onclick="">확인</button>
+	        	<button type="button" class="btn btn-neutral" onclick="closeConfirm()">취소</button>
+	        </div>
+	    </div>
 	</div>
 </div>

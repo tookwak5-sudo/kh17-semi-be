@@ -26,11 +26,9 @@ public class LogInoutController {
 	@RequestMapping("/list")
 	public String list(Model model, @ModelAttribute PageVO pageVO) {
 		
-		
 		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
 		int count = logInoutDao.count(pageVO);
 		pageVO.setCount(count);//데이터 개수 설정
-		
 		// 출퇴근 목록 리스트
 		List<EmpLogInoutVO> list = logInoutDao.selectList(pageVO);
 		
