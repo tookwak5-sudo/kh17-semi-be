@@ -180,6 +180,8 @@
 					$('#alertMessage').html(message);
 					if(clickScript != undefined) {
 						$('#btnAlertAction').attr('onclick', clickScript + ' closeAlert();');
+					} else {
+						$('#btnAlertAction').attr('onclick', 'closeAlert();');
 					}
 					var alert = document.getElementById('modalAlert');
 					alert.classList.add('active');

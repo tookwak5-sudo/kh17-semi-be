@@ -399,7 +399,7 @@ function getAprmFormAttach(formNo) {
 				const a = $.parseHTML(template)[1];
 				$(a).find("span:eq(0)").text(attachName);
 				$(a).find("span:eq(1)").text(formatBytes(attachSize));
-				$(a).attr("href", "/download/legacy?attachNo=" + attachNo);
+				$(a).find('a').attr("href", "/download/legacy?attachNo=" + attachNo);
 				$(".aprv-form-file").append(a);
 			} else if(result == "empty") {
 				var template = $("#aprv-form-file-empty-template").text();

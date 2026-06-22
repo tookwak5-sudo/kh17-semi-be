@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
             if (!checkedBox) {
                 e.preventDefault(); // 체크 안 됐으면 서버 전송 취소!
-                alert("삭제할 항목을 선택해주세요.");
+                openAlert("삭제할 항목을 선택해주세요.");
                 return;
             }
 
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
             if (!checkedBox) {
                 e.preventDefault(); // 체크 안 됐으면 서버 전송 취소!
-                alert("삭제할 항목을 선택해주세요.");
+                openAlert("삭제할 항목을 선택해주세요.");
                 return;
             }
 

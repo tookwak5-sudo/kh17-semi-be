@@ -83,6 +83,7 @@ $(function() {
             }
         }
     }
+});
 </script>
 <div class="container w-90 mt-20 mb-50 background-card">
 	<div class="cell center flex-area">
@@ -317,20 +318,20 @@ $(function() {
         var positionNo = document.querySelector('[name="empPositionNo"]');
         
         if (!hireDate.value.trim()) {
-            window.alert("입사일을 지정해 주세요.");
-            hireDate.focus();
+            openAlert("입사일을 지정해 주세요.", "$('[name=deptNo]').focus();");
+            //hireDate.focus();
             return false; // 전송 중단
         }
         
         if (!deptNo.value) {
-            window.alert("부서를 배치해 주세요.");
-            $(deptNo).select2('open'); // Select2 창 열기
+            openAlert("부서를 배치해 주세요.", "$('[name=deptNo]').select2('open');");
+            //$(deptNo).select2('open'); // Select2 창 열기
             return false;
         }
         
         if (!positionNo.value) {
-            window.alert("직급을 지정해 주세요.");
-            $(positionNo).select2('open'); // Select2 창 열기
+            openAlert("직급을 지정해 주세요.", "$([name=empPositionNo]).select2('open');");
+            //$(positionNo).select2('open'); // Select2 창 열기
             return false;
         }
 

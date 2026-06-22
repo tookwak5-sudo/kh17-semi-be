@@ -619,6 +619,7 @@
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
                 var planHeadNo = info.event.extendedProps.planHeadNo;
+                var planHeadType = info.event.extendedProps.planHeadType;
                 
                 var sdateObj = new Date(planSdate);
                 var edateObj = new Date(planEdate);
@@ -650,7 +651,7 @@
 	            var loginId = "${loginId}";
 	            
 	            // 4. 작성자와 로그인 아이디를 비교하여 버튼 제어
-	            if(data.planEmpId === loginId) {
+	            if(data.planEmpId === loginId && planHeadType == '일반') {
 	            	$("#modalEditBtn").show();
 	            	$("#modalDeleteBtn").show();
 	            }
@@ -672,7 +673,7 @@
                 $("#modalEditBtn").data("plan-head-no", planHeadNo);
             	
             	document.getElementById('detailTitle').innerText = planTitle;
-                document.getElementById('detailType').innerText = planType;
+                document.getElementById('detailType').innerText = '[' + planType + '] ';
                 
                 // ★ 시작일과 종료일을 각각 매핑 (필드명은 Dto와 일치시켜주세요)
                 document.getElementById('detailSdate').innerText = sResult; 

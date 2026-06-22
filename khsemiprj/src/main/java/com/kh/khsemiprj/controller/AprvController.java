@@ -78,7 +78,6 @@ public class AprvController {
 	
 	@RequestMapping("/list")
 	public String list(HttpServletRequest request, Model model, @ModelAttribute PageForAprvVO pageForAprvVO) {
-		
 		HttpSession session = request.getSession();
 		String loginId = (String)session.getAttribute("loginId");
 		
@@ -88,16 +87,12 @@ public class AprvController {
 		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
 		
-		
 		//페이징을 위해 추가로 전달할 값이 있다면 전달해야 한다
 		int count = aprvDao.count(pageForAprvVO, loginId);
 		pageForAprvVO.setCount(count);//데이터 개수 설정
 		model.addAttribute("pageVO", pageForAprvVO);
-		//System.out.println(pageForAprvVO);
 		List<AprvDetailVO> aprvList = aprvDao.selectList(pageForAprvVO, loginId);
 		model.addAttribute("aprvList", aprvList);
-		System.out.println("count = " + count);
-		System.out.println("aprvList = " + aprvList);
 		return "aprv/list";
 	}
 	
@@ -109,7 +104,6 @@ public class AprvController {
 		
 		EmpLeaveDto empLeaveDto = empLeaveDao.selectOne(loginId);
 		double leaveRemain = empLeaveDto == null ? 0 : empLeaveDto.getLeaveRemain();
-	//	System.out.println("loginId - " + loginId + ", empLeaveDto - " + empLeaveDto);
 		model.addAttribute("leaveRemain", leaveRemain);
 		
 		// 1. 부서 목록 가져오기
@@ -347,9 +341,6 @@ public class AprvController {
 		
  		List<AprvFormVO> formList = aprvFormDao.selectListForInsert();
 		model.addAttribute("formList", formList);
-		
-		System.out.println(aprvDto);
-		System.out.println(formList);
 		
 		return "aprv/edit";
 	}

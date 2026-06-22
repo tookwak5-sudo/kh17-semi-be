@@ -33,7 +33,10 @@ $(function() {
     var state = {
         empPasswordValid: false
     };
-		
+	
+    $("[name=empPassword]").on("blur", function(){
+    	state.empPasswordValid = $(this).val().trim().length > 0;
+    });
     
 	var $failDiv = $("[name=empPassword]").siblings(".fail-feedback");
     $("#confirm").on("click", function(){

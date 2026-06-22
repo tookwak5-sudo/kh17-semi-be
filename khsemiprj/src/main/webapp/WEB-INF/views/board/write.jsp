@@ -27,11 +27,10 @@
 	</div>
 	<div class="cell mt-0">
 		<select name="boardHead" class="field select-head">
-			<option value="">선택 안함</option>
 			<c:if test="${sessionScope.empGrade == '2'}">
 				<option value="공지">공지</option>
 			</c:if>
-			<option value="자유">자유</option>
+			<option value="자유" selected>자유</option>
 			<option value="유머">유머</option>
 			<option value="정보">정보</option>
 			<option value="질문">질문</option>
@@ -148,21 +147,18 @@ $(document).ready(function() {
     	
         // 순차적으로 검사 후 경고창 띄우고 전송 중단(return false)
         if (!state.boardTitleValid) {
-            //alert("게시글 제목을 입력해주세요.");
             showAjaxAlarm('게시글 제목을 입력해주세요', 'btn-negative', '.input-title', 'left');
             $(".input-title").focus();
             return false;
         }
         
         if (!state.boardHeadValid) {
-            //alert("게시글의 말머리(구분)를 선택해주세요.");
             showAjaxAlarm('게시글의 말머리(구분)를 선택해주세요', 'btn-negative', '.select-head', 'left');
             $(".select-head").focus();
             return false;
         }
         
         if (!state.boardContentValid) {
-            //alert("게시글 내용을 입력해주세요.");
             showAjaxAlarm('게시글 내용을 입력해주세요', 'btn-negative', '.note-editable', 'left');
             $('#summernote').summernote('focus');
             return false;
@@ -192,7 +188,7 @@ function sendImageFile(file, editor) {
             $('#summernote').summernote('insertNode', imgNode);
         },
         error: function(err) {
-            alert("이미지 업로드 중 통신 오류가 발생했습니다.");
+            openAlert("이미지 업로드 중 통신 오류가 발생했습니다.");
             console.error(err);
         }
     });
