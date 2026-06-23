@@ -35,7 +35,7 @@
         border-radius: 8px;
         padding: 20px;
         margin-bottom: 30px;
-    }
+    }	
 
     .id-label {
         font-size: 0.9rem;
@@ -60,7 +60,7 @@
         <h1 class="result-title">비밀번호 찾기 결과</h1>
         
         <div class="id-display-box">
-            <span class="id-label">요청하신 정보와 일치하는 비밀번호</span>
+            <span class="id-label">임시 비밀번호</span>
             <h2 class="id-value">
                 ${empPassword}
             </h2>

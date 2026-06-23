@@ -3,6 +3,54 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <jsp:include page="/WEB-INF/views/template/header.jsp"></jsp:include>
+<style>
+/* -----------------------------------------
+   커스텀 체크박스 클래스 (.checkbox-custom) [형태 토글박스]
+----------------------------------------- */
+/* 1. 기본 체크박스 숨기기 */
+input[type="checkbox"] {
+    display: none;
+}
+
+/* 체크박스를 스위치 모양으로 */
+input[type="checkbox"] + label {
+    position: relative;
+    padding-left: 60px; /* 스위치 크기만큼 여백 */
+    cursor: pointer;
+}
+
+input[type="checkbox"] + label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 50px;
+    height: 26px;
+    background-color: #cbd5e1;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+input[type="checkbox"] + label::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+/* 체크 되었을 때 */
+input[type="checkbox"]:checked + label::before {
+    background-color: #4f46e5;
+}
+
+input[type="checkbox"]:checked + label::after {
+    transform: translateX(24px);
+}
+</style>
 
 <script>
 $(function() {
@@ -210,10 +258,9 @@ $(function() {
 		</div>
 
 		<div class="cell mb-20 flex-area" style="align-items: center;">
-			<label class="font-bold" style="color: #666; margin-right: 20px;">양식 사용 여부</label> 
-			<input type="checkbox" name="formUseYn" value="Y" <c:if test="${aprvFormDto.formUseYn == 'Y'}">checked</c:if>>
+			<input type="checkbox" id="formUseYn" name="formUseYn" value="Y" <c:if test="${aprvFormDto.formUseYn == 'Y'}">checked</c:if>>
+			<label for="formUseYn" class="font-bold" style="color: #666; margin-right: 20px;">양식 사용 여부</label> 
 		</div>
-
 		<div class="cell mb-10">
 			<label class="font-bold" style="color: #666;">첨부</label>
 			<c:if test="${attachNo != null}">
@@ -230,10 +277,10 @@ $(function() {
 		<div class="cell file-info-area"></div>
 		
 		<div class="flex-area" style="display: flex; justify-content: flex-end; gap: 10px; width: 100%;">
-			<a href="./detail?formNo=${aprvFormDto.formNo}" class="btn btn-neutral" style="border: 1px solid #ccc; padding: 10px 30px; font-size: 16px; text-decoration: none;">
+			<a href="./detail?formNo=${aprvFormDto.formNo}" class="btn btn-negative">
 			   취소하기
 			</a>
-			<button type="submit" class="btn" style="background-color: #556b82; color: white; border: none; padding: 10px 30px; font-size: 16px; cursor: pointer;">
+			<button type="submit" class="btn btn-positive">
 				수정하기
 			</button>
 		</div>	

@@ -67,6 +67,9 @@ $(function() {
 			<c:when test="${param.valid != null}">
 			승인되지 않은 계정입니다
 			</c:when>
+			<c:when test="${param.exit != null}">
+			퇴사한 사원 입니다
+			</c:when>
 			</c:choose>
 			</div>
 		</div>

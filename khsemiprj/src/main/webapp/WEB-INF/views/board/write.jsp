@@ -172,7 +172,6 @@ $(document).ready(function() {
 function sendImageFile(file, editor) {
     var data = new FormData();
     data.append("uploadFile", file);
-
     $.ajax({
         url: "/rest/file/upload",
         type: "POST",

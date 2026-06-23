@@ -149,7 +149,7 @@ $(document).ready(function() {
         
         return true;
     });
-    
+    $('.note-modal-footer').remove();
 });
 
 // 이미지 업로드 통신

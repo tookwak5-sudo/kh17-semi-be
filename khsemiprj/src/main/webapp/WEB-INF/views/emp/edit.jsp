@@ -526,6 +526,9 @@ $(function() {
 
         <div class="cell mt-50">
             <button type="submit" class="btn btn-positive w-100">수정하기</button>
+            <a href="./mypage" class="btn btn-negative w-100 mt-10">
+				<span>취소하고 마이페이지로 돌아가기</span>			
+			</a>
         </div>
 
     </form>

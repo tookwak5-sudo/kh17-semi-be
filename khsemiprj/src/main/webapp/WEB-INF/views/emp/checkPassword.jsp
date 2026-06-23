@@ -117,6 +117,9 @@ $(function() {
 				<button type="button" id="confirm" class="btn btn-positive w-100">
 					<i class="fa-solid fa-lock fa-fade"></i> <span>확인</span>
 				</button>
+				<a href="./mypage" class="btn btn-negative w-100 mt-10">
+				<span>취소하고 마이페이지로 돌아가기</span>			
+				</a>
 			</div>
 	
 			<c:if test="${param.error != null}">
