@@ -96,6 +96,7 @@
 							<c:choose>
 							<c:when test="${aprvDetailVO.aprvStatus == '승인'}"><span class="blue">${aprvDetailVO.aprvStatus}</span></c:when>
 							<c:when test="${aprvDetailVO.aprvStatus == '반려'}"><span class="red">${aprvDetailVO.aprvStatus}</span></c:when>
+							<c:when test="${aprvDetailVO.aprvStatus == '임시저장'}"><span style="color: #F4C47A">${aprvDetailVO.aprvStatus}</span></c:when>
 							<c:otherwise>${aprvDetailVO.aprvStatus}</c:otherwise>
 							</c:choose>
 						</td>
@@ -204,7 +205,7 @@
 	
 	function sendMemo(empId) {
 		var w = 650; 
-		var h = 650; 
+		var h = 750; 
 		var left = (screen.width/2) - (w/2); 
 		var top = (screen.height/2) - (h/2); 
 		window.open('/memo/write?memoSenderId=' + empId, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no');

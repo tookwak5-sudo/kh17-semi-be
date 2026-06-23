@@ -150,7 +150,6 @@
 	        <div class="cell">
 	        	<label>유형<i class="fa-solid fa-asterisk red"></i></label>
 	        	<select class="field w-100" name="planType">
-	                <option value="">선택하세요</option>
 	                <option value="개인">개인</option>
 					<option value="부서">부서</option>
 					<option value="회사">회사</option>
@@ -472,7 +471,7 @@
 		    $("#modal-body").find(".btn-plan-edit").data("key", planNo);
 			
 		    var headList = JSON.parse('${planHeadJson}');
-            var options = "<option value=''>선택하세요</option>";
+            var options = "";
             for(var i = 0; i < headList.length; i++) {
             	if(headList[i].headType == "일반"){
             		var isSelected = (headList[i].headNo == planHeadNo) ? "selected" : "";
@@ -563,7 +562,7 @@
 	            $("#modal-body").html(template);
 	            
 	            var headList = JSON.parse('${planHeadJson}');
-	            var options = "<option value=''>선택하세요</option>";
+	            var options = "";
 	            for(var i = 0; i < headList.length; i++) {
 	            	if(headList[i].headType == "일반"){
 	        			options += "<option value='" + headList[i].headNo + "'>" + headList[i].headName + "</option>";
@@ -619,6 +618,7 @@
                 var planEdate = info.event.end;
                 var planType = info.event.extendedProps.planType;
                 var planHeadNo = info.event.extendedProps.planHeadNo;
+                var planHeadType = info.event.extendedProps.planHeadType;
                 
                 var sdateObj = new Date(planSdate);
                 var edateObj = new Date(planEdate);
@@ -650,7 +650,7 @@
 	            var loginId = "${loginId}";
 	            
 	            // 4. 작성자와 로그인 아이디를 비교하여 버튼 제어
-	            if(data.planEmpId === loginId) {
+	            if(data.planEmpId === loginId && planHeadType == '일반') {
 	            	$("#modalEditBtn").show();
 	            	$("#modalDeleteBtn").show();
 	            }
@@ -672,7 +672,7 @@
                 $("#modalEditBtn").data("plan-head-no", planHeadNo);
             	
             	document.getElementById('detailTitle').innerText = planTitle;
-                document.getElementById('detailType').innerText = planType;
+                document.getElementById('detailType').innerText = '[' + planType + '] ';
                 
                 // ★ 시작일과 종료일을 각각 매핑 (필드명은 Dto와 일치시켜주세요)
                 document.getElementById('detailSdate').innerText = sResult; 

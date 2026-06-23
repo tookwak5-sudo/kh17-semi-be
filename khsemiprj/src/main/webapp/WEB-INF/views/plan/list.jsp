@@ -306,7 +306,7 @@ $(document).on("click", ".btn-delete-confirm", function(e){
 	
 	function sendMemo(empId) {
 		var w = 650; 
-		var h = 650; 
+		var h = 750; 
 		var left = (screen.width/2) - (w/2); 
 		var top = (screen.height/2) - (h/2); 
 		window.open('/memo/write?memoSenderId=' + empId, 'memoListPopup', 'width='+w+',height='+h+',top='+top+',left='+left+',scrollbars=yes,resizable=no');

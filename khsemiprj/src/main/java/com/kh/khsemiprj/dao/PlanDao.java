@@ -122,6 +122,21 @@ public class PlanDao {
         return jdbcTemplate.query(sql,  planMapper, params);
     }
     
+  //전체 일정 조회
+    public List<PlanHeadVO> selectVOList(String empId) {
+    	String sql = "SELECT TMP.*, h.* FROM ("
+    			+ "(SELECT * FROM PLAN p WHERE p.PLAN_EMP_ID = ? and p.PLAN_TYPE = '개인') "
+    			+ "UNION "
+    			+ "(SELECT * FROM plan p WHERE p.PLAN_DEPT_NO = (SELECT edr.DEPT_NO FROM EMP_DEPT_RELATION edr WHERE edr.EMP_ID = ?) and p.PLAN_TYPE = '부서') "
+    			+ "UNION "
+    			+ "(SELECT * FROM plan p WHERE p.PLAN_TYPE = '회사')"
+    			+ ") TMP "
+    			+ "INNER JOIN aprv_head h ON h.head_no = TMP.plan_head_no ";
+    	System.out.println("sql = " + sql);
+        Object[] params = { empId, empId };
+        return jdbcTemplate.query(sql,  planHeadMapper, params);
+    }
+    
     //일정제목 중복검사 조회
     public PlanDto selectOnePlanName(String planName) {
     	String sql = "select * from plan where plan_name = ?";
@@ -238,7 +253,6 @@ public class PlanDao {
                 + "  and ((p.plan_type = '개인' and p.plan_emp_id = ?) or p.plan_type IN ('회사','부서')) "
                 + "  and p.plan_sdate <= CASE WHEN ? IS NULL THEN p.plan_sdate ELSE ? END "
                 + "  and p.plan_edate >= CASE WHEN ? IS NULL THEN p.plan_edate ELSE ? END ";
-        System.out.println("count sql = " + sql);
         Object[] params = { pageForPlanVO.getKeyword(),
         					pageForPlanVO.getKeyword(),
         					empId,

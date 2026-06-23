@@ -33,7 +33,10 @@ $(function() {
     var state = {
         empPasswordValid: false
     };
-		
+	
+    $("[name=empPassword]").on("blur", function(){
+    	state.empPasswordValid = $(this).val().trim().length > 0;
+    });
     
 	var $failDiv = $("[name=empPassword]").siblings(".fail-feedback");
     $("#confirm").on("click", function(){
@@ -114,6 +117,9 @@ $(function() {
 				<button type="button" id="confirm" class="btn btn-positive w-100">
 					<i class="fa-solid fa-lock fa-fade"></i> <span>확인</span>
 				</button>
+				<a href="./mypage" class="btn btn-negative w-100 mt-10">
+				<span>취소하고 마이페이지로 돌아가기</span>			
+				</a>
 			</div>
 	
 			<c:if test="${param.error != null}">

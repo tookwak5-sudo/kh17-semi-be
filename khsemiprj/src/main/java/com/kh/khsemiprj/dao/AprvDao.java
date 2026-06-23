@@ -193,7 +193,6 @@ public class AprvDao {
 		int beginRow = page * size - (size-1);
 		int endRow = page * size;
 		Object[] params = { empId, aprvStatus, aprvStatus, aprvHead, aprvHead, beginRow , endRow };
-		System.out.println("sql = " + sql);
 		return jdbcTemplate.query(sql, aprvDetailMapper, params);
 	}
 	

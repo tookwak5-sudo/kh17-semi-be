@@ -130,21 +130,18 @@ $(document).ready(function() {
         state.boardContentValid = (content !== '' && content !== '<p><br></p>' && content !== '<br>');
         
         if (!state.boardTitleValid) {
-            //alert("게시글 제목을 입력해주세요.");
             showAjaxAlarm('게시글 제목을 입력해주세요', 'btn-negative', '.input-title', 'left');
             $(".input-title").focus();
             return false;
         }
         
         if (!state.boardHeadValid) {
-            //alert("게시글의 말머리(구분)를 선택해주세요.");
             showAjaxAlarm('게시글의 말머리(구분)를 선택해주세요', 'btn-negative', '.select-head', 'left');
             $(".select-head").focus();
             return false;
         }
         
         if (!state.boardContentValid) {
-            //alert("게시글 내용을 입력해주세요.");
             showAjaxAlarm('게시글 내용을 입력해주세요', 'btn-negative', '.note-editable', 'left');
             $('#summernote').summernote('focus');
             return false;
@@ -152,7 +149,7 @@ $(document).ready(function() {
         
         return true;
     });
-    
+    $('.note-modal-footer').remove();
 });
 
 // 이미지 업로드 통신
@@ -175,7 +172,7 @@ function sendImageFile(file, editor) {
             $('#summernote').summernote('insertNode', imgNode);
         },
         error: function(err) {
-            alert("이미지 업로드 중 통신 오류가 발생했습니다.");
+            openAlert("이미지 업로드 중 통신 오류가 발생했습니다.");
             console.error(err);
         }
     });

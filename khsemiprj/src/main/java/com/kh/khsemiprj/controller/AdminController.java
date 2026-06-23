@@ -28,6 +28,7 @@ import com.kh.khsemiprj.dto.EmpPositionDto;
 import com.kh.khsemiprj.dto.HeadDto;
 import com.kh.khsemiprj.dto.LogAccessDto;
 import com.kh.khsemiprj.dto.LogInoutDto;
+import com.kh.khsemiprj.vo.LeaveManageVO;
 import com.kh.khsemiprj.vo.PageVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -51,7 +52,6 @@ public class AdminController {
 	private LogInoutDao logInoutDao;
 	@Autowired
 	private LogAccessDao logAccessDao;
-
 	
 	@RequestMapping("/manage")
 	public String list(Model model, HttpSession session ,PageVO pageVO ) {
@@ -164,6 +164,7 @@ public class AdminController {
 		
 		List<EmpPositionDto> positionList = empPositionDao.positionSelectList();
 		model.addAttribute("positionList", positionList);
+		
 		
 		String loginId = (String) session.getAttribute("loginId");
 		if (loginId == null) {

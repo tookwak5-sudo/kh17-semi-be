@@ -32,9 +32,14 @@ $(function () {
 <form id="planEditForm" action="/plan/edit" method="post" novalidate autocomplete="off">
 	<input type="hidden" name="planNo" value="${planDto.planNo}">
 	<div class="container w-950 mt-20 mb-50 background-card">
-		<div class="flex-area flex-center mb-10">
-		        <h1 class= "mt-40 flex-fill ms-20">일정 수정</h1>
-		</div>
+	<div class="cell center flex-area">
+		<div>
+	        <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; position: relative; display: inline-block;">
+	            일정 수정
+	            <span style="display: block; width: 40px; height: 4px; background: #4f46e5; border-radius: 2px; margin-top: 8px;"></span>
+	        </h1>
+    	</div>
+    </div>
 		<div class="cell">
 	       	<label>일정명<i class="fa-solid fa-asterisk red"></i></label>
 	       	<input type="text" name="planName" class="field w-100" value="${planDto.planName}">
