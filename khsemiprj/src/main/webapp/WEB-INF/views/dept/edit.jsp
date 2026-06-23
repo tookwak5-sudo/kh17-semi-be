@@ -41,6 +41,12 @@
                 	<c:if test="${param.deptNo != dept.deptNo}">
 			        <option value="${dept.deptNo}" 
 			            <c:if test="${dept.deptNo == deptDto.deptParentNo}">selected</c:if>>
+			            <c:if test="${dept.deptDepth > 0}">
+						    <c:forEach begin="1" end="${dept.deptDepth}">
+						    	&#12288;
+						    </c:forEach>
+						    └
+						</c:if>
 			            ${dept.deptName}
 			        </option>
 			        </c:if>

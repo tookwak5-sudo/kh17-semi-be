@@ -35,7 +35,7 @@ public class DeptController {
 	// 부서 정보 등록
 	@GetMapping("/insert")
 	public String insert(@ModelAttribute DeptDto deptDto, Model model) {
-		List<DeptDto> deptList = deptDao.deptList();
+		List<DeptDto> deptList = deptDao.deptListOrder();
 		model.addAttribute("deptList", deptList);
 		return "dept/insert";
 	}
@@ -97,7 +97,7 @@ public class DeptController {
 		boolean isChecked = "Y".equals(deptDto.getDeptUseYn());
 		model.addAttribute("isChecked", isChecked);
 		model.addAttribute("deptDto", deptDto);
-		model.addAttribute("deptList",deptDao.deptList());
+		model.addAttribute("deptList",deptDao.deptListOrder());
 		return "dept/edit";
 	}	
 	@PostMapping("/edit")

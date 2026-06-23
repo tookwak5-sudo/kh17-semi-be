@@ -117,7 +117,15 @@ input[type="checkbox"]:checked + label::after {
             <select class="field w-100" name="deptParentNo">
                 <option value="">선택하세요</option>
                 <c:forEach var="deptDto" items="${deptList}">
-                <option value="${deptDto.deptNo}">${deptDto.deptName}</option>
+                <option value="${deptDto.deptNo}">
+                	<c:if test="${deptDto.deptDepth > 0}">
+					    <c:forEach begin="1" end="${deptDto.deptDepth}">
+					    	&#12288;
+					    </c:forEach>
+					    └
+					</c:if>
+                	${deptDto.deptName}
+               	</option>
                 </c:forEach>
             </select>
         </div>
