@@ -32,7 +32,7 @@
 	    <div class="dept-chart-container" style="justify-content: flex-start; margin-bottom:0px;padding-top:0px;">
 	        <div class="tree" id="deptChart">
 	            <!-- JavaScript로 트리 구조가 생성됩니다. -->
-	        </div>
+	        </div>     
 	        
 	        <div id="empDetailCard" class="emp-detail-popup" style="display: none;">
 			    <div class="popup-close" onclick="closeDetailCard()">×</div>
