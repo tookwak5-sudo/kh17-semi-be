@@ -38,12 +38,17 @@
             <select class="field w-100" name="deptParentNo" value"${deptDto.deptParentNo}>
                 <option value="">선택하세요</option>
                 <c:forEach var="dept" items="${deptList}">
-                	<c:if test="${param.deptNo != dept.deptNo}">
 			        <option value="${dept.deptNo}" 
-			            <c:if test="${dept.deptNo == deptDto.deptParentNo}">selected</c:if>>
+			            <c:if test="${dept.deptNo == deptDto.deptParentNo}"> selected</c:if>
+			            <c:if test="${param.deptNo == dept.deptNo}"> disabled="disabled"</c:if>
+			            >
+			             <c:if test="${dept.deptDepth > 0}">
+						    <c:forEach begin="1" end="${dept.deptDepth}">
+						    	&#12288;
+						    </c:forEach>
+						</c:if>
 			            ${dept.deptName}
 			        </option>
-			        </c:if>
 			    </c:forEach>
             </select>
         </div>

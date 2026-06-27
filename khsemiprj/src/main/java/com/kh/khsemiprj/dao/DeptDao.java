@@ -50,6 +50,16 @@ public class DeptDao {
 		return jdbcTemplate.query(sql, deptMapper);
 	}
 	
+	//부서 전체 조회(정렬 순서 변경)
+	public List<DeptDto> deptListOrder() {
+		String sql = "SELECT * "
+				+ "FROM DEPT "
+				+ "START WITH DEPT_PARENT_NO IS NULL "
+				+ "CONNECT BY PRIOR DEPT_NO = DEPT_PARENT_NO "
+				+ "ORDER SIBLINGS BY DEPT_NO ASC";
+		return jdbcTemplate.query(sql, deptMapper);
+	}
+	
 	public List<DeptVO> selectListAll() {
 		String sql = "select * from dept order by dept_name asc";
 		Object[] params = {  };

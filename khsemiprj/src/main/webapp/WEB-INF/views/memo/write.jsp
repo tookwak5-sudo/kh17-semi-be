@@ -78,11 +78,15 @@ $(function () {
             return false;
     	}
     	
-    	if(!state.memoReceiverIdValid) {    		
-    		showAjaxAlarm('받을사람 아이디를 입력하세요', 'btn-negative', '[name=memoReceiverId]', 'bottom');
-            $("[name=memoReceiverId]").focus();
-            return false;
-    	}
+    	if($('#memoTypeSelect').val() == '일반') {
+	    	if(!state.memoReceiverIdValid) {    		
+	    		showAjaxAlarm('받을사람 아이디를 입력하세요', 'btn-negative', '[name=memoReceiverId]', 'bottom');
+	            $("[name=memoReceiverId]").focus();
+	            return false;
+	    	}
+	    } else {
+	    	state.memoReceiverIdValid = true;
+	    }
     	
     	if(!state.memoContentValid) {
     		showAjaxAlarm('내용을 입력하세요', 'btn-negative', '[name=memoContent]', 'bottom');
@@ -126,7 +130,7 @@ $(function () {
 		</c:if>
 		<div class="cell" id="receiverCell">
 			<label>받을사람 아이디<i class="fa-solid fa-asterisk red"></i></label>
-			<input type="text" name="memoReceiverId" value="${replyReceiverId}" class="field w-100">
+			<input type="text" id="memoReceiverId" name="memoReceiverId" value="${replyReceiverId}" class="field w-100">
 		</div>
 		<div class="cell">
 			<label>내용 <i class="fa-solid fa-asterisk red"></i></label>
