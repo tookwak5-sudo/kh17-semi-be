@@ -211,7 +211,7 @@ $(function() {
     $("[name=empPassword], .password-check").on("blur",function(){
     	var empPassword = $("[name=empPassword]").val()
     	
-		var regex1 = /^[A-Za-z0-9!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\'\"`~\<\>\.\,\/\?\\\|]{8,16}$/;
+		var regex1 = /^[A-Za-z0-9!\@\#\$\%\^\&\*\(\)\-\_\=\+\{\}\~\<\>\.\,\/\?\\\|]{8,16}$/;
     	var regex2 =/[A-Z]+/;
     	var regex3 =/[a-z]+/;
     	var regex4 =/[0-9]+/;
